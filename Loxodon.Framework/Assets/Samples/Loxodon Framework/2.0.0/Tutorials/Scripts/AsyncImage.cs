@@ -28,21 +28,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class AsyncImage : Image
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class AsyncImage : Image {
         private string spriteName;
         private Material originMaterial;
         private CancellationTokenSource source;
         public Sprite loadingSprite;
         public Material loadingMaterial;
 
-        public string SpriteName
-        {
+        public string SpriteName {
             get { return this.spriteName; }
-            set
-            {
+            set {
                 if (string.Equals(this.spriteName, value))
                     return;
 
@@ -51,16 +47,13 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             this.originMaterial = this.material;
         }
 
-        protected async void OnSpriteNameChanged(string spriteName)
-        {
-            if (string.IsNullOrEmpty(spriteName))
-            {
+        protected async void OnSpriteNameChanged(string spriteName) {
+            if (string.IsNullOrEmpty(spriteName)) {
                 this.material = originMaterial;
                 this.sprite = null;
                 return;
@@ -71,22 +64,18 @@ namespace Loxodon.Framework.Tutorials
 
             this.source = new CancellationTokenSource();
             CancellationToken token = this.source.Token;
-            try
-            {
+            try {
                 this.sprite = loadingSprite;
                 this.material = loadingMaterial;
                 Sprite sprite = await LoadSprite(spriteName);
-                if (!token.IsCancellationRequested)
-                {
+                if (!token.IsCancellationRequested) {
                     this.material = originMaterial;
                     this.sprite = sprite;
                     this.source = null;
                 }
             }
-            catch
-            {
-                if (!token.IsCancellationRequested)
-                {
+            catch {
+                if (!token.IsCancellationRequested) {
                     this.material = originMaterial;
                     this.sprite = null;
                     this.source = null;
@@ -94,8 +83,7 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
-        protected async Task<Sprite> LoadSprite(string spriteName)
-        {
+        protected async Task<Sprite> LoadSprite(string spriteName) {
             return (Sprite)await Resources.LoadAsync<Sprite>(spriteName);
         }
     }

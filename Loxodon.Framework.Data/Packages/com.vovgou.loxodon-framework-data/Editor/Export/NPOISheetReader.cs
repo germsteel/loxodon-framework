@@ -28,10 +28,8 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public class NPOISheetReader : ISheetReader
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public class NPOISheetReader : ISheetReader {
         protected static readonly char[] ITEM_SEPARATOR = new char[] { ';', ',', '；', '，' };
         protected static readonly char[] KEY_VALUE_SEPARATOR = new char[] { '=' };
         protected static readonly Regex INDEX_REGEX = new Regex("\\((index|unique)\\)$");
@@ -45,8 +43,7 @@ namespace Loxodon.Framework.Data.Editors
 
         protected List<ColumnInfo> columnInfos;
 
-        public NPOISheetReader(ISheet sheet, int columnNameLineNo = 0, int typeNameLineNo = 1, int commentLineNo = 2, int dataStartLineNo = 3)
-        {
+        public NPOISheetReader(ISheet sheet, int columnNameLineNo = 0, int typeNameLineNo = 1, int commentLineNo = 2, int dataStartLineNo = 3) {
             this.sheet = sheet;
             this.columnNameLineNo = columnNameLineNo;
             this.typeNameLineNo = typeNameLineNo;
@@ -68,8 +65,7 @@ namespace Loxodon.Framework.Data.Editors
 
         public List<ColumnInfo> Headers { get { return this.columnInfos; } }
 
-        public virtual DataRecord ReadLine(int rowNum)
-        {
+        public virtual DataRecord ReadLine(int rowNum) {
             if (rowNum < this.dataStartLineNo || rowNum > totalCount)
                 throw new Exception(string.Format("Line number must be greater than or equal to {0} and less than or equal to {1}", dataStartLineNo, totalCount));
 
@@ -80,8 +76,7 @@ namespace Loxodon.Framework.Data.Editors
 
             DataRecord record = new DataRecord();
             bool isNullLine = true;
-            foreach (var info in columnInfos)
-            {
+            foreach (var info in columnInfos) {
                 bool isNull = false;
                 var value = ReadValue(row, info, out isNull);
                 AddValueToDict(record, info.ColumnName, value);
@@ -95,20 +90,16 @@ namespace Loxodon.Framework.Data.Editors
             return record;
         }
 
-        protected virtual string Trim(string input)
-        {
+        protected virtual string Trim(string input) {
             return Regex.Replace(input, @"(^\s+)|(\s+$)", "");
         }
 
-        protected virtual object ReadValue(IRow row, ColumnInfo info, out bool isNull)
-        {
+        protected virtual object ReadValue(IRow row, ColumnInfo info, out bool isNull) {
             ICell cell = row.GetCell(info.ColumnNo);
             string str = cell != null ? cell.ToString() : null;
             isNull = string.IsNullOrWhiteSpace(str);
-            try
-            {
-                switch (info.TypeName)
-                {
+            try {
+                switch (info.TypeName) {
                     case "string":
                         return str;
                     case "int":
@@ -121,8 +112,7 @@ namespace Loxodon.Framework.Data.Editors
                         return Convert.ToSingle(str);
                     case "bool":
                         return ToBoolean(str);
-                    case "string[]":
-                        {
+                    case "string[]": {
                             if (isNull)
                                 return new string[0];
 
@@ -132,8 +122,7 @@ namespace Loxodon.Framework.Data.Editors
                                 result[i] = Trim(values[i]);
                             return result;
                         }
-                    case "int[]":
-                        {
+                    case "int[]": {
                             if (isNull)
                                 return new int[0];
 
@@ -143,8 +132,7 @@ namespace Loxodon.Framework.Data.Editors
                                 result[i] = Convert.ToInt32(Trim(values[i]));
                             return result;
                         }
-                    case "float[]":
-                        {
+                    case "float[]": {
                             if (isNull)
                                 return new float[0];
 
@@ -154,8 +142,7 @@ namespace Loxodon.Framework.Data.Editors
                                 result[i] = Convert.ToSingle(Trim(values[i]));
                             return result;
                         }
-                    case "bool[]":
-                        {
+                    case "bool[]": {
                             if (isNull)
                                 return new bool[0];
 
@@ -165,15 +152,13 @@ namespace Loxodon.Framework.Data.Editors
                                 result[i] = ToBoolean(Trim(values[i]));
                             return result;
                         }
-                    case "string{}":
-                        {
+                    case "string{}": {
                             Dictionary<string, string> result = new Dictionary<string, string>();
                             if (isNull)
                                 return result;
 
                             string[] values = StringSpliter.Split(str, ITEM_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < values.Length; i++)
-                            {
+                            for (int i = 0; i < values.Length; i++) {
                                 string[] keyValueStr = StringSpliter.Split(values[i], KEY_VALUE_SEPARATOR);
                                 if (keyValueStr.Length != 2 || string.IsNullOrEmpty(keyValueStr[0]))
                                     throw new FormatException(string.Format("{0}", str));
@@ -187,15 +172,13 @@ namespace Loxodon.Framework.Data.Editors
                             }
                             return result;
                         }
-                    case "int{}":
-                        {
+                    case "int{}": {
                             Dictionary<string, int> result = new Dictionary<string, int>();
                             if (isNull)
                                 return result;
 
                             string[] values = str.Split(ITEM_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < values.Length; i++)
-                            {
+                            for (int i = 0; i < values.Length; i++) {
                                 string[] keyValueStr = values[i].Split(KEY_VALUE_SEPARATOR);
                                 if (keyValueStr.Length != 2 || string.IsNullOrEmpty(keyValueStr[0]))
                                     throw new FormatException(string.Format("{0}", str));
@@ -209,15 +192,13 @@ namespace Loxodon.Framework.Data.Editors
                             }
                             return result;
                         }
-                    case "float{}":
-                        {
+                    case "float{}": {
                             Dictionary<string, float> result = new Dictionary<string, float>();
                             if (isNull)
                                 return result;
 
                             string[] values = str.Split(ITEM_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < values.Length; i++)
-                            {
+                            for (int i = 0; i < values.Length; i++) {
                                 string[] keyValueStr = values[i].Split(KEY_VALUE_SEPARATOR);
                                 if (keyValueStr.Length != 2 || string.IsNullOrEmpty(keyValueStr[0]))
                                     throw new FormatException(string.Format("{0}", str));
@@ -231,15 +212,13 @@ namespace Loxodon.Framework.Data.Editors
                             }
                             return result;
                         }
-                    case "bool{}":
-                        {
+                    case "bool{}": {
                             Dictionary<string, bool> result = new Dictionary<string, bool>();
                             if (isNull)
                                 return result;
 
                             string[] values = str.Split(ITEM_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
-                            for (int i = 0; i < values.Length; i++)
-                            {
+                            for (int i = 0; i < values.Length; i++) {
                                 string[] keyValueStr = values[i].Split(KEY_VALUE_SEPARATOR);
                                 if (keyValueStr.Length != 2 || string.IsNullOrEmpty(keyValueStr[0]))
                                     throw new FormatException(string.Format("{0}", str));
@@ -257,21 +236,18 @@ namespace Loxodon.Framework.Data.Editors
                         return null;
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new FormatException(string.Format("In the address \"row:{0} column:{1}\" of sheet \"{2}\", the input string \"{3}\" is incorrect.", cell.RowIndex + 1, cell.ColumnIndex + 1, sheet.SheetName, str), e);
             }
         }
 
-        protected virtual List<ColumnInfo> ReadHeader()
-        {
+        protected virtual List<ColumnInfo> ReadHeader() {
             List<ColumnInfo> infos = new List<ColumnInfo>();
             if (sheet.LastRowNum <= 0)
                 return infos;
 
             var firstRow = sheet.GetRow(0);
-            for (int i = firstRow.FirstCellNum; i < firstRow.LastCellNum; i++)
-            {
+            for (int i = firstRow.FirstCellNum; i < firstRow.LastCellNum; i++) {
                 ICell colunmNameCell = sheet.GetRow(this.columnNameLineNo).GetCell(i);
                 ICell typeNameCell = sheet.GetRow(this.typeNameLineNo).GetCell(i);
                 ICell commentCell = this.commentLineNo >= 0 ? sheet.GetRow(this.commentLineNo).GetCell(i) : null;
@@ -294,16 +270,13 @@ namespace Loxodon.Framework.Data.Editors
             return infos;
         }
 
-        protected virtual string ParseTypeName(string str)
-        {
+        protected virtual string ParseTypeName(string str) {
             return INDEX_REGEX.Replace(str, "");
         }
 
-        protected virtual IndexType ParseIndexType(string str)
-        {
+        protected virtual IndexType ParseIndexType(string str) {
             Match match = INDEX_REGEX.Match(str);
-            if (match.Success)
-            {
+            if (match.Success) {
                 if ("unique".Equals(match.Groups[1].Value))
                     return IndexType.Unique;
                 return IndexType.Index;
@@ -311,10 +284,8 @@ namespace Loxodon.Framework.Data.Editors
             return IndexType.None;
         }
 
-        protected virtual bool Support(string typeName)
-        {
-            switch (typeName)
-            {
+        protected virtual bool Support(string typeName) {
+            switch (typeName) {
                 case "string":
                 case "int":
                 case "float":
@@ -333,8 +304,7 @@ namespace Loxodon.Framework.Data.Editors
             }
         }
 
-        protected virtual bool ToBoolean(string str)
-        {
+        protected virtual bool ToBoolean(string str) {
             if (string.IsNullOrWhiteSpace(str))
                 return false;
 
@@ -346,8 +316,7 @@ namespace Loxodon.Framework.Data.Editors
             return Convert.ToBoolean(str);
         }
 
-        protected virtual void AddValueToDict(Dictionary<string, object> dict, string path, object value)
-        {
+        protected virtual void AddValueToDict(Dictionary<string, object> dict, string path, object value) {
             if (string.IsNullOrWhiteSpace(path))
                 throw new FormatException(string.Format("The column name is null or empty"));
 
@@ -355,8 +324,7 @@ namespace Loxodon.Framework.Data.Editors
             if (index == 0)
                 throw new FormatException(string.Format("Illegal column name:{0}", path));
 
-            if (index < 0)
-            {
+            if (index < 0) {
                 dict.Add(path, value);
                 return;
             }
@@ -364,13 +332,11 @@ namespace Loxodon.Framework.Data.Editors
             string key = path.Substring(0, index);
             string childPath = path.Substring(index + 1);
             Dictionary<string, object> childDict;
-            if (!dict.ContainsKey(key))
-            {
+            if (!dict.ContainsKey(key)) {
                 childDict = new Dictionary<string, object>();
                 dict.Add(key, childDict);
             }
-            else
-            {
+            else {
                 childDict = (Dictionary<string, object>)dict[key];
             }
             AddValueToDict(childDict, childPath, value);

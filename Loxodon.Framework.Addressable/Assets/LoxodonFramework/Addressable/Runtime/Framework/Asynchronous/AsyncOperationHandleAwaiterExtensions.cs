@@ -27,36 +27,29 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace Loxodon.Framework.Asynchronous
-{
-    public static class AsyncOperationHandleAwaiterExtensions
-    {
-        public static IAwaiter<object> GetAwaiter(this AsyncOperationHandle target)
-        {
+namespace Loxodon.Framework.Asynchronous {
+    public static class AsyncOperationHandleAwaiterExtensions {
+        public static IAwaiter<object> GetAwaiter(this AsyncOperationHandle target) {
             return new AsyncOperationHandleAwaiter(target);
         }
 
-        public static IAwaiter<TResult> GetAwaiter<TResult>(this AsyncOperationHandle<TResult> target)
-        {
+        public static IAwaiter<TResult> GetAwaiter<TResult>(this AsyncOperationHandle<TResult> target) {
             return new AsyncOperationHandleAwaiter<TResult>(target);
         }
 
 
-        public struct AsyncOperationHandleAwaiter : IAwaiter<object>, ICriticalNotifyCompletion
-        {
+        public struct AsyncOperationHandleAwaiter : IAwaiter<object>, ICriticalNotifyCompletion {
             private AsyncOperationHandle asyncOperation;
             private Action<AsyncOperationHandle> continuationAction;
 
-            public AsyncOperationHandleAwaiter(AsyncOperationHandle asyncOperation)
-            {
+            public AsyncOperationHandleAwaiter(AsyncOperationHandle asyncOperation) {
                 this.asyncOperation = asyncOperation;
                 this.continuationAction = null;
             }
 
             public bool IsCompleted => asyncOperation.IsDone;
 
-            public object GetResult()
-            {
+            public object GetResult() {
                 if (!IsCompleted)
                     throw new Exception("The task is not finished yet");
 
@@ -70,48 +63,40 @@ namespace Loxodon.Framework.Asynchronous
                 return asyncOperation.Result;
             }
 
-            public void OnCompleted(Action continuation)
-            {
+            public void OnCompleted(Action continuation) {
                 UnsafeOnCompleted(continuation);
             }
 
-            public void UnsafeOnCompleted(Action continuation)
-            {
+            public void UnsafeOnCompleted(Action continuation) {
                 if (continuation == null)
                     throw new ArgumentNullException("continuation");
 
-                if (asyncOperation.IsDone)
-                {
+                if (asyncOperation.IsDone) {
                     continuation();
                 }
-                else
-                {
+                else {
                     continuationAction = (ao) => { continuation(); };
                     asyncOperation.Completed += continuationAction;
                 }
             }
         }
 
-        public struct AsyncOperationHandleAwaiter<TResult> : IAwaiter<TResult>, ICriticalNotifyCompletion
-        {
+        public struct AsyncOperationHandleAwaiter<TResult> : IAwaiter<TResult>, ICriticalNotifyCompletion {
             private AsyncOperationHandle<TResult> asyncOperation;
             private Action<AsyncOperationHandle<TResult>> continuationAction;
 
-            public AsyncOperationHandleAwaiter(AsyncOperationHandle<TResult> asyncOperation)
-            {
+            public AsyncOperationHandleAwaiter(AsyncOperationHandle<TResult> asyncOperation) {
                 this.asyncOperation = asyncOperation;
                 this.continuationAction = null;
             }
 
             public bool IsCompleted => asyncOperation.IsDone;
 
-            public TResult GetResult()
-            {
+            public TResult GetResult() {
                 if (!IsCompleted)
                     throw new Exception("The task is not finished yet");
 
-                if (continuationAction != null)
-                {
+                if (continuationAction != null) {
                     asyncOperation.Completed -= continuationAction;
                     continuationAction = null;
                 }
@@ -122,22 +107,18 @@ namespace Loxodon.Framework.Asynchronous
                 return asyncOperation.Result;
             }
 
-            public void OnCompleted(Action continuation)
-            {
+            public void OnCompleted(Action continuation) {
                 UnsafeOnCompleted(continuation);
             }
 
-            public void UnsafeOnCompleted(Action continuation)
-            {
+            public void UnsafeOnCompleted(Action continuation) {
                 if (continuation == null)
                     throw new ArgumentNullException("continuation");
 
-                if (asyncOperation.IsDone)
-                {
+                if (asyncOperation.IsDone) {
                     continuation();
                 }
-                else
-                {
+                else {
                     continuationAction = (ao) => { continuation(); };
                     asyncOperation.Completed += continuationAction;
                 }

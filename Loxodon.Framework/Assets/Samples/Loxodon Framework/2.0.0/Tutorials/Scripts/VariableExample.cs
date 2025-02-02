@@ -37,58 +37,48 @@ using UnityEngine.UI;
 using Loxodon.Framework.ViewModels;
 using UnityEngine;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class VariableViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class VariableViewModel : ViewModelBase {
         private bool remember;
         private string username;
         private string email;
         private Color color;
         private Vector3 vector;
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set(ref this.username, value); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set(ref this.email, value); }
         }
 
-        public bool Remember
-        {
+        public bool Remember {
             get { return this.remember; }
             set { this.Set(ref this.remember, value); }
         }
 
-        public Vector3 Vector
-        {
+        public Vector3 Vector {
             get { return this.vector; }
             set { this.Set(ref this.vector, value); }
         }
 
-        public Color Color
-        {
+        public Color Color {
             get { return this.color; }
             set { this.Set(ref this.color, value); }
         }
 
-        public void OnSubmit()
-        {
+        public void OnSubmit() {
             Debug.LogFormat("username:{0} email:{1} remember:{2} vector:{3} color:{4}", this.username, this.email, this.remember, this.vector, this.color);
         }
     }
 
-    public class VariableExample : UIView
-    {
+    public class VariableExample : UIView {
         public VariableArray variables;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
@@ -99,10 +89,8 @@ namespace Loxodon.Framework.Tutorials
             localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
         }
 
-        protected override void Start()
-        {
-            VariableViewModel viewModel = new VariableViewModel()
-            {
+        protected override void Start() {
+            VariableViewModel viewModel = new VariableViewModel() {
                 Username = "test",
                 Email = "yangpc.china@gmail.com",
                 Remember = true

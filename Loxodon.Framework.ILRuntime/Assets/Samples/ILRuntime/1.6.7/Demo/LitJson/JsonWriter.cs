@@ -16,10 +16,8 @@ using System.IO;
 using System.Text;
 
 
-namespace LitJson
-{
-    internal enum Condition
-    {
+namespace LitJson {
+    internal enum Condition {
         InArray,
         InObject,
         NotAProperty,
@@ -27,8 +25,7 @@ namespace LitJson
         Value
     }
 
-    internal class WriterContext
-    {
+    internal class WriterContext {
         public int  Count;
         public bool InArray;
         public bool InObject;
@@ -36,8 +33,7 @@ namespace LitJson
         public int  Padding;
     }
 
-    public class JsonWriter
-    {
+    public class JsonWriter {
         #region Fields
         private static NumberFormatInfo number_format;
 
@@ -80,13 +76,11 @@ namespace LitJson
 
 
         #region Constructors
-        static JsonWriter ()
-        {
+        static JsonWriter () {
             number_format = NumberFormatInfo.InvariantInfo;
         }
 
-        public JsonWriter ()
-        {
+        public JsonWriter () {
             inst_string_builder = new StringBuilder ();
             writer = new StringWriter (inst_string_builder);
 
@@ -94,12 +88,10 @@ namespace LitJson
         }
 
         public JsonWriter (StringBuilder sb) :
-            this (new StringWriter (sb))
-        {
+            this (new StringWriter (sb)) {
         }
 
-        public JsonWriter (TextWriter writer)
-        {
+        public JsonWriter (TextWriter writer) {
             if (writer == null)
                 throw new ArgumentNullException ("writer");
 
@@ -111,8 +103,7 @@ namespace LitJson
 
 
         #region Private Methods
-        private void DoValidation (Condition cond)
-        {
+        private void DoValidation (Condition cond) {
             if (! context.ExpectingValue)
                 context.Count++;
 
@@ -158,8 +149,7 @@ namespace LitJson
             }
         }
 
-        private void Init ()
-        {
+        private void Init () {
             has_reached_end = false;
             hex_seq = new char[4];
             indentation = 0;
@@ -172,8 +162,7 @@ namespace LitJson
             ctx_stack.Push (context);
         }
 
-        private static void IntToHex (int n, char[] hex)
-        {
+        private static void IntToHex (int n, char[] hex) {
             int num;
 
             for (int i = 0; i < 4; i++) {
@@ -188,15 +177,13 @@ namespace LitJson
             }
         }
 
-        private void Indent ()
-        {
+        private void Indent () {
             if (pretty_print)
                 indentation += indent_value;
         }
 
 
-        private void Put (string str)
-        {
+        private void Put (string str) {
             if (pretty_print && ! context.ExpectingValue)
                 for (int i = 0; i < indentation; i++)
                     writer.Write (' ');
@@ -204,13 +191,11 @@ namespace LitJson
             writer.Write (str);
         }
 
-        private void PutNewline ()
-        {
+        private void PutNewline () {
             PutNewline (true);
         }
 
-        private void PutNewline (bool add_comma)
-        {
+        private void PutNewline (bool add_comma) {
             if (add_comma && ! context.ExpectingValue &&
                 context.Count > 1)
                 writer.Write (',');
@@ -219,8 +204,7 @@ namespace LitJson
                 writer.Write ('\n');
         }
 
-        private void PutString (string str)
-        {
+        private void PutString (string str) {
             Put (String.Empty);
 
             writer.Write ('"');
@@ -269,24 +253,21 @@ namespace LitJson
             writer.Write ('"');
         }
 
-        private void Unindent ()
-        {
+        private void Unindent () {
             if (pretty_print)
                 indentation -= indent_value;
         }
         #endregion
 
 
-        public override string ToString ()
-        {
+        public override string ToString () {
             if (inst_string_builder == null)
                 return String.Empty;
 
             return inst_string_builder.ToString ();
         }
 
-        public void Reset ()
-        {
+        public void Reset () {
             has_reached_end = false;
 
             ctx_stack.Clear ();
@@ -297,8 +278,7 @@ namespace LitJson
                 inst_string_builder.Remove (0, inst_string_builder.Length);
         }
 
-        public void Write (bool boolean)
-        {
+        public void Write (bool boolean) {
             DoValidation (Condition.Value);
             PutNewline ();
 
@@ -307,8 +287,7 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
-        public void Write (decimal number)
-        {
+        public void Write (decimal number) {
             DoValidation (Condition.Value);
             PutNewline ();
 
@@ -317,8 +296,7 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
-        public void Write (double number)
-        {
+        public void Write (double number) {
             DoValidation (Condition.Value);
             PutNewline ();
 
@@ -332,8 +310,7 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
-        public void Write (int number)
-        {
+        public void Write (int number) {
             DoValidation (Condition.Value);
             PutNewline ();
 
@@ -342,8 +319,7 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
-        public void Write (long number)
-        {
+        public void Write (long number) {
             DoValidation (Condition.Value);
             PutNewline ();
 
@@ -352,8 +328,7 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
-        public void Write (string str)
-        {
+        public void Write (string str) {
             DoValidation (Condition.Value);
             PutNewline ();
 
@@ -365,8 +340,7 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
-        public void Write (ulong number)
-        {
+        public void Write (ulong number) {
             DoValidation (Condition.Value);
             PutNewline ();
 
@@ -375,8 +349,7 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
-        public void WriteArrayEnd ()
-        {
+        public void WriteArrayEnd () {
             DoValidation (Condition.InArray);
             PutNewline (false);
 
@@ -392,8 +365,7 @@ namespace LitJson
             Put ("]");
         }
 
-        public void WriteArrayStart ()
-        {
+        public void WriteArrayStart () {
             DoValidation (Condition.NotAProperty);
             PutNewline ();
 
@@ -406,8 +378,7 @@ namespace LitJson
             Indent ();
         }
 
-        public void WriteObjectEnd ()
-        {
+        public void WriteObjectEnd () {
             DoValidation (Condition.InObject);
             PutNewline (false);
 
@@ -423,8 +394,7 @@ namespace LitJson
             Put ("}");
         }
 
-        public void WriteObjectStart ()
-        {
+        public void WriteObjectStart () {
             DoValidation (Condition.NotAProperty);
             PutNewline ();
 
@@ -437,8 +407,7 @@ namespace LitJson
             Indent ();
         }
 
-        public void WritePropertyName (string property_name)
-        {
+        public void WritePropertyName (string property_name) {
             DoValidation (Condition.Property);
             PutNewline ();
 

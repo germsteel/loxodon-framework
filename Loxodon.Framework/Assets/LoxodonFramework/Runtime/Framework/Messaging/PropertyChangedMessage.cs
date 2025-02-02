@@ -22,16 +22,12 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Messaging
-{
-    public class PropertyChangedMessage<T> : MessageBase
-    {
-        public PropertyChangedMessage(T oldValue, T newValue, string propertyName) : this(null, oldValue, newValue, propertyName)
-        {
+namespace Loxodon.Framework.Messaging {
+    public class PropertyChangedMessage<T> : MessageBase {
+        public PropertyChangedMessage(T oldValue, T newValue, string propertyName) : this(null, oldValue, newValue, propertyName) {
         }
 
-        public PropertyChangedMessage(object sender, T oldValue, T newValue, string propertyName) : base(sender)
-        {
+        public PropertyChangedMessage(object sender, T oldValue, T newValue, string propertyName) : base(sender) {
             this.PropertyName = propertyName;
             this.OldValue = oldValue;
             this.NewValue = newValue;

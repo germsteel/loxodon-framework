@@ -35,11 +35,9 @@ using Loxodon.Framework.Localizations;
 using Loxodon.Framework.Binding;
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Editors
-{
+namespace Loxodon.Framework.Editors {
     [CustomPropertyDrawer(typeof(LocalizedBindingDescriptionSet))]
-    public class LocalizedBindingDescriptionSetDrawer : PropertyDrawer
-    {
+    public class LocalizedBindingDescriptionSetDrawer : PropertyDrawer {
         private static readonly ILog log = LogManager.GetLogger("LocalizedBindingDescriptionSetDrawer");
 
         //private const float HORIZONTAL_GAP = 5;
@@ -49,10 +47,8 @@ namespace Loxodon.Framework.Editors
         private List<TypeMeta> typeMetas;
         private object target;
 
-        private ReorderableList GetList(SerializedProperty property)
-        {
-            if (list == null)
-            {
+        private ReorderableList GetList(SerializedProperty property) {
+            if (list == null) {
                 list = new ReorderableList(property.serializedObject, property, true, true, true, true);
                 list.elementHeight = 22;
                 list.drawElementCallback = DrawElement;
@@ -64,15 +60,13 @@ namespace Loxodon.Framework.Editors
                 this.target = property.serializedObject.targetObject;
                 typeMetas = this.CreateTypeMetas((Component)target);
             }
-            else
-            {
+            else {
                 list.serializedProperty = property;
             }
             return list;
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             float height = base.GetPropertyHeight(property, label) + 40;
             var entries = property.FindPropertyRelative("descriptions");
 
@@ -80,8 +74,7 @@ namespace Loxodon.Framework.Editors
             return height;
         }
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             var list = GetList(property.FindPropertyRelative("descriptions"));
             if (list != null)
                 list.DoList(position);
@@ -89,10 +82,8 @@ namespace Loxodon.Framework.Editors
 
 
 
-        private void OnAddElement(ReorderableList list)
-        {
-            if (this.typeMetas == null || this.typeMetas.Count <= 0)
-            {
+        private void OnAddElement(ReorderableList list) {
+            if (this.typeMetas == null || this.typeMetas.Count <= 0) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("No components are supported on the game object, please add UI components and try again");
 
@@ -104,24 +95,20 @@ namespace Loxodon.Framework.Editors
             this.DrawContextMenu(entries, index);
         }
 
-        private void OnRemoveElement(ReorderableList list)
-        {
+        private void OnRemoveElement(ReorderableList list) {
             var entries = list.serializedProperty;
             AskRemoveEntry(entries, list.index);
         }
 
-        private void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        private void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused) {
             ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, isActive, false, true);
         }
 
-        private void DrawHeader(Rect rect)
-        {
+        private void DrawHeader(Rect rect) {
             GUI.Label(rect, "Localization Data Binder");
         }
 
-        private void DrawElement(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        private void DrawElement(Rect rect, int index, bool isActive, bool isFocused) {
             var entries = list.serializedProperty;
             if (index < 0 || index >= entries.arraySize)
                 return;
@@ -160,30 +147,26 @@ namespace Loxodon.Framework.Editors
                 nameSelectedIndex = 0;
 
             EditorGUI.LabelField(bindRect, "Bind(");
-            if (typeMeta == null)
-            {
+            if (typeMeta == null) {
                 Color old = GUI.color;
                 GUI.color = Color.red;
                 EditorGUI.LabelField(typeRect, new GUIContent(GetTypeName(typeFullname), string.Format("The \"{0}\" component has been deleted", typeFullname)));
                 GUI.color = old;
             }
-            else
-            {
+            else {
                 EditorGUI.LabelField(typeRect, new GUIContent(GetTypeName(typeFullname), typeFullname));
             }
             EditorGUI.LabelField(forRect, ").For(");
 
             EditorGUI.BeginChangeCheck();
             nameSelectedIndex = EditorGUI.Popup(nameRect, nameSelectedIndex, members);
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 propertyNameProperty.stringValue = members[nameSelectedIndex];
             }
             EditorGUI.LabelField(toRect, ").To(");
 
             EditorGUI.PropertyField(keyRect, keyProperty, GUIContent.none);
-            if (string.IsNullOrEmpty(keyProperty.stringValue))
-            {
+            if (string.IsNullOrEmpty(keyProperty.stringValue)) {
                 GUI.enabled = false;
                 EditorGUI.LabelField(keyRect, new GUIContent("key", "Please fill in the key value of the localized object"));
                 GUI.enabled = true;
@@ -194,15 +177,13 @@ namespace Loxodon.Framework.Editors
             int selectedModeIndex = mode == BindingMode.OneTime ? 1 : 0;
             EditorGUI.BeginChangeCheck();
             selectedModeIndex = EditorGUI.Popup(modeRect, selectedModeIndex, new GUIContent[] { new GUIContent("OneWay"), new GUIContent("OneTime") });
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 mode = selectedModeIndex == 1 ? BindingMode.OneTime : BindingMode.OneWay;
                 modeProperty.enumValueIndex = (int)mode;
             }
         }
 
-        private List<TypeMeta> CreateTypeMetas(Component target)
-        {
+        private List<TypeMeta> CreateTypeMetas(Component target) {
             Type targetType = target.GetType();
             List<TypeMeta> typeMetas = new List<TypeMeta>();
 
@@ -210,8 +191,7 @@ namespace Loxodon.Framework.Editors
             if (attributes == null || attributes.Length <= 0)
                 return new List<TypeMeta>();
 
-            foreach (AllowedMembersAttribute attribute in attributes)
-            {
+            foreach (AllowedMembersAttribute attribute in attributes) {
                 var type = attribute.Type;
                 var names = attribute.Names;
 
@@ -219,8 +199,7 @@ namespace Loxodon.Framework.Editors
                     continue;
 
                 List<string> members = new List<string>();
-                foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
-                {
+                foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
                     if (Array.IndexOf(names, propertyInfo.Name) < 0)
                         continue;
 
@@ -236,15 +215,13 @@ namespace Loxodon.Framework.Editors
             return typeMetas;
         }
 
-        private bool IsValid(PropertyInfo propertyInfo)
-        {
+        private bool IsValid(PropertyInfo propertyInfo) {
             if (!propertyInfo.CanWrite)
                 return false;
 
             var type = propertyInfo.PropertyType;
             var typeCode = Type.GetTypeCode(type);
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.Boolean:
                 case TypeCode.Char:
                 case TypeCode.SByte:
@@ -261,8 +238,7 @@ namespace Loxodon.Framework.Editors
                 case TypeCode.String:
                 case TypeCode.Decimal:
                     return true;
-                default:
-                    {
+                default: {
                         if (type.Equals(typeof(Version)))
                             return true;
                         if (type.Equals(typeof(Color)))
@@ -292,8 +268,7 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        private string GetTypeName(string fullname)
-        {
+        private string GetTypeName(string fullname) {
             int index = fullname.LastIndexOf('.');
             if (index < 0)
                 return fullname;
@@ -301,22 +276,18 @@ namespace Loxodon.Framework.Editors
             return fullname.Substring(index + 1);
         }
 
-        protected virtual void DrawContextMenu(SerializedProperty entries, int index)
-        {
+        protected virtual void DrawContextMenu(SerializedProperty entries, int index) {
             GenericMenu menu = new GenericMenu();
-            foreach (TypeMeta typeMeta in typeMetas)
-            {
+            foreach (TypeMeta typeMeta in typeMetas) {
                 var type = typeMeta.Type;
-                menu.AddItem(new GUIContent(type.FullName), false, context =>
-                {
+                menu.AddItem(new GUIContent(type.FullName), false, context => {
                     AddEntry(entries, index, typeMeta);
                 }, null);
             }
             menu.ShowAsContext();
         }
 
-        protected virtual void AddEntry(SerializedProperty entries, int index, TypeMeta typeMeta)
-        {
+        protected virtual void AddEntry(SerializedProperty entries, int index, TypeMeta typeMeta) {
             if (index < 0 || index > entries.arraySize)
                 return;
 
@@ -333,28 +304,24 @@ namespace Loxodon.Framework.Editors
             GUI.FocusControl(null);
         }
 
-        protected virtual void AskRemoveEntry(SerializedProperty entries, int index)
-        {
+        protected virtual void AskRemoveEntry(SerializedProperty entries, int index) {
             if (entries == null || index < 0 || index >= entries.arraySize)
                 return;
 
             var entry = entries.GetArrayElementAtIndex(index);
             var name = entry.FindPropertyRelative("PropertyName").stringValue;
             var key = entry.FindPropertyRelative("Key").stringValue;
-            if (string.IsNullOrEmpty(key))
-            {
+            if (string.IsNullOrEmpty(key)) {
                 RemoveEntry(entries, index);
                 return;
             }
 
-            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\"?", name), "Yes", "Cancel"))
-            {
+            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\"?", name), "Yes", "Cancel")) {
                 RemoveEntry(entries, index);
             }
         }
 
-        protected virtual void RemoveEntry(SerializedProperty entries, int index)
-        {
+        protected virtual void RemoveEntry(SerializedProperty entries, int index) {
             if (index < 0 || index >= entries.arraySize)
                 return;
 
@@ -364,18 +331,15 @@ namespace Loxodon.Framework.Editors
             GUI.FocusControl(null);
         }
 
-        protected class TypeMeta
-        {
+        protected class TypeMeta {
             private Type type;
             private readonly List<string> members = new List<string>();
-            public TypeMeta(Type type, string[] members)
-            {
+            public TypeMeta(Type type, string[] members) {
                 this.type = type;
                 this.members.AddRange(members);
             }
 
-            public TypeMeta(Type type, List<string> members)
-            {
+            public TypeMeta(Type type, List<string> members) {
                 this.type = type;
                 this.members.AddRange(members);
             }

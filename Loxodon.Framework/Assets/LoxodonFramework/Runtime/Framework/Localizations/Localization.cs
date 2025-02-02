@@ -31,10 +31,8 @@ using Loxodon.Framework.Observables;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 
-namespace Loxodon.Framework.Localizations
-{
-    public class Localization : ILocalization
-    {
+namespace Loxodon.Framework.Localizations {
+    public class Localization : ILocalization {
         private static readonly object _instanceLock = new object();
         private static Localization instance;
 
@@ -47,22 +45,18 @@ namespace Loxodon.Framework.Localizations
         //For compatibility with the "Configurable Enter Play Mode" feature
 #if UNITY_2019_3_OR_NEWER //&& UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-        static void OnInitialize()
-        {
+        static void OnInitialize() {
             if (instance != null)            
                 instance = null;
         }
 #endif
 
-        public static Localization Current
-        {
-            get
-            {
+        public static Localization Current {
+            get {
                 if (instance != null)
                     return instance;
 
-                lock (_instanceLock)
-                {
+                lock (_instanceLock) {
                     if (instance == null)
                         instance = new Localization();
                     return instance;
@@ -71,28 +65,23 @@ namespace Loxodon.Framework.Localizations
             set { lock (_instanceLock) { instance = value; } }
         }
 
-        protected Localization() : this(null)
-        {
+        protected Localization() : this(null) {
         }
 
-        protected Localization(CultureInfo cultureInfo)
-        {
+        protected Localization(CultureInfo cultureInfo) {
             this.cultureInfo = cultureInfo;
             if (this.cultureInfo == null)
                 this.cultureInfo = Locale.GetCultureInfo();
         }
 
-        public event EventHandler CultureInfoChanged
-        {
+        public event EventHandler CultureInfoChanged {
             add { lock (_lock) { this.cultureInfoChanged += value; } }
             remove { lock (_lock) { this.cultureInfoChanged -= value; } }
         }
 
-        public virtual CultureInfo CultureInfo
-        {
+        public virtual CultureInfo CultureInfo {
             get { return this.cultureInfo; }
-            set
-            {
+            set {
                 if (value == null || (this.cultureInfo != null && this.cultureInfo.Equals(value)))
                     return;
 
@@ -101,34 +90,28 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        protected void RaiseCultureInfoChanged()
-        {
-            try
-            {
+        protected void RaiseCultureInfoChanged() {
+            try {
                 this.cultureInfoChanged?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception) { }
         }
 
-        protected virtual void OnCultureInfoChanged()
-        {
+        protected virtual void OnCultureInfoChanged() {
             RaiseCultureInfoChanged();
             this.Refresh();
         }
 
-        public Task AddDataProvider(IDataProvider provider)
-        {
+        public Task AddDataProvider(IDataProvider provider) {
             return DoAddDataProvider(provider);
         }
 
-        protected virtual async Task DoAddDataProvider(IDataProvider provider)
-        {
+        protected virtual async Task DoAddDataProvider(IDataProvider provider) {
             if (provider == null)
                 return;
 
             var entry = new ProviderEntry(provider);
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (this.providers.Exists(e => e.Provider == provider))
                     return;
                 this.providers.Add(entry);
@@ -137,18 +120,14 @@ namespace Loxodon.Framework.Localizations
             await this.Load(entry);
         }
 
-        public virtual void RemoveDataProvider(IDataProvider provider)
-        {
+        public virtual void RemoveDataProvider(IDataProvider provider) {
             if (provider == null)
                 return;
 
-            lock (_lock)
-            {
-                for (int i = this.providers.Count - 1; i >= 0; i--)
-                {
+            lock (_lock) {
+                for (int i = this.providers.Count - 1; i >= 0; i--) {
                     var entry = providers[i];
-                    if (entry.Provider == provider)
-                    {
+                    if (entry.Provider == provider) {
                         this.providers.RemoveAt(i);
                         OnUnloadCompleted(entry.Keys);
                         (provider as IDisposable)?.Dispose();
@@ -158,22 +137,18 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        public Task Refresh()
-        {
+        public Task Refresh() {
             return this.Load(this.providers.ToArray());
         }
 
-        protected virtual async Task Load(params ProviderEntry[] providers)
-        {
+        protected virtual async Task Load(params ProviderEntry[] providers) {
             if (providers == null || providers.Length <= 0)
                 return;
 
             int count = providers.Length;
             var cultureInfo = this.CultureInfo;
-            for (int i = 0; i < count; i++)
-            {
-                try
-                {
+            for (int i = 0; i < count; i++) {
+                try {
                     var entry = providers[i];
                     var provider = entry.Provider;
                     var dict = await provider.Load(cultureInfo);
@@ -183,18 +158,15 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        protected virtual void OnLoadCompleted(ProviderEntry entry, Dictionary<string, object> dict)
-        {
+        protected virtual void OnLoadCompleted(ProviderEntry entry, Dictionary<string, object> dict) {
             if (dict == null || dict.Count <= 0)
                 return;
 
-            lock (_lock)
-            {
+            lock (_lock) {
                 var keys = entry.Keys;
                 keys.Clear();
 
-                foreach (KeyValuePair<string, object> kv in dict)
-                {
+                foreach (KeyValuePair<string, object> kv in dict) {
                     var key = kv.Key;
                     var value = kv.Value;
                     keys.Add(key);
@@ -203,120 +175,95 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        protected virtual void AddValue(string key, object value)
-        {
+        protected virtual void AddValue(string key, object value) {
             IObservableProperty property;
-            if (!data.TryGetValue(key, out property))
-            {
+            if (!data.TryGetValue(key, out property)) {
                 Type valueType = value != null ? value.GetType() : typeof(object);
 #if NETFX_CORE
                 TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(valueType);
 #else
                 TypeCode typeCode = Type.GetTypeCode(valueType);
 #endif
-                switch (typeCode)
-                {
-                    case TypeCode.Boolean:
-                        {
+                switch (typeCode) {
+                    case TypeCode.Boolean: {
                             property = new ObservableProperty<bool>();
                             break;
                         }
-                    case TypeCode.Byte:
-                        {
+                    case TypeCode.Byte: {
                             property = new ObservableProperty<byte>();
                             break;
                         }
-                    case TypeCode.Char:
-                        {
+                    case TypeCode.Char: {
                             property = new ObservableProperty<char>();
                             break;
                         }
-                    case TypeCode.DateTime:
-                        {
+                    case TypeCode.DateTime: {
                             property = new ObservableProperty<DateTime>();
                             break;
                         }
-                    case TypeCode.Decimal:
-                        {
+                    case TypeCode.Decimal: {
                             property = new ObservableProperty<Decimal>();
                             break;
                         }
-                    case TypeCode.Double:
-                        {
+                    case TypeCode.Double: {
                             property = new ObservableProperty<Double>();
                             break;
                         }
-                    case TypeCode.Int16:
-                        {
+                    case TypeCode.Int16: {
                             property = new ObservableProperty<short>();
                             break;
                         }
-                    case TypeCode.Int32:
-                        {
+                    case TypeCode.Int32: {
                             property = new ObservableProperty<int>();
                             break;
                         }
-                    case TypeCode.Int64:
-                        {
+                    case TypeCode.Int64: {
                             property = new ObservableProperty<long>();
                             break;
                         }
-                    case TypeCode.SByte:
-                        {
+                    case TypeCode.SByte: {
                             property = new ObservableProperty<sbyte>();
                             break;
                         }
-                    case TypeCode.Single:
-                        {
+                    case TypeCode.Single: {
                             property = new ObservableProperty<float>();
                             break;
                         }
-                    case TypeCode.String:
-                        {
+                    case TypeCode.String: {
                             property = new ObservableProperty<string>();
                             break;
                         }
-                    case TypeCode.UInt16:
-                        {
+                    case TypeCode.UInt16: {
                             property = new ObservableProperty<UInt16>();
                             break;
                         }
-                    case TypeCode.UInt32:
-                        {
+                    case TypeCode.UInt32: {
                             property = new ObservableProperty<UInt32>();
                             break;
                         }
-                    case TypeCode.UInt64:
-                        {
+                    case TypeCode.UInt64: {
                             property = new ObservableProperty<UInt64>();
                             break;
                         }
-                    case TypeCode.Object:
-                        {
-                            if (valueType.Equals(typeof(Vector2)))
-                            {
+                    case TypeCode.Object: {
+                            if (valueType.Equals(typeof(Vector2))) {
                                 property = new ObservableProperty<Vector2>();
                             }
-                            else if (valueType.Equals(typeof(Vector3)))
-                            {
+                            else if (valueType.Equals(typeof(Vector3))) {
                                 property = new ObservableProperty<Vector3>();
                             }
-                            else if (valueType.Equals(typeof(Vector4)))
-                            {
+                            else if (valueType.Equals(typeof(Vector4))) {
                                 property = new ObservableProperty<Vector4>();
                             }
-                            else if (valueType.Equals(typeof(Color)))
-                            {
+                            else if (valueType.Equals(typeof(Color))) {
                                 property = new ObservableProperty<Color>();
                             }
-                            else
-                            {
+                            else {
                                 property = new ObservableProperty();
                             }
                             break;
                         }
-                    default:
-                        {
+                    default: {
                             property = new ObservableProperty();
                             break;
                         }
@@ -326,10 +273,8 @@ namespace Loxodon.Framework.Localizations
             property.Value = value;
         }
 
-        protected virtual void OnUnloadCompleted(List<string> keys)
-        {
-            foreach (string key in keys)
-            {
+        protected virtual void OnUnloadCompleted(List<string> keys) {
+            foreach (string key in keys) {
                 IObservableProperty value;
                 if (data.TryRemove(key, out value) && value != null)
                     value.Value = null;
@@ -343,8 +288,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="prefix">The prefix used to select the localization.</param>
         /// <returns>a subset localization</returns>
-        public virtual ILocalization Subset(string prefix)
-        {
+        public virtual ILocalization Subset(string prefix) {
             return new SubsetLocalization(this, prefix);
         }
 
@@ -353,8 +297,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual bool ContainsKey(string key)
-        {
+        public virtual bool ContainsKey(string key) {
             return data.ContainsKey(key);
         }
 
@@ -363,8 +306,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual string GetText(string key)
-        {
+        public virtual string GetText(string key) {
             return this.GetText(key, key);
         }
 
@@ -374,8 +316,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual string GetText(string key, string defaultValue)
-        {
+        public virtual string GetText(string key, string defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -385,8 +326,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public virtual string GetFormattedText(string key, params object[] args)
-        {
+        public virtual string GetFormattedText(string key, params object[] args) {
             string format = this.Get<string>(key, null);
             if (format == null)
                 return key;
@@ -399,8 +339,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual bool GetBoolean(string key)
-        {
+        public virtual bool GetBoolean(string key) {
             return this.Get(key, false);
         }
 
@@ -410,8 +349,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual bool GetBoolean(string key, bool defaultValue)
-        {
+        public virtual bool GetBoolean(string key, bool defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -420,8 +358,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual int GetInt(string key)
-        {
+        public virtual int GetInt(string key) {
             return this.Get<int>(key);
         }
 
@@ -431,8 +368,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual int GetInt(string key, int defaultValue)
-        {
+        public virtual int GetInt(string key, int defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -441,8 +377,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual long GetLong(string key)
-        {
+        public virtual long GetLong(string key) {
             return this.Get<long>(key);
         }
 
@@ -452,8 +387,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual long GetLong(string key, long defaultValue)
-        {
+        public virtual long GetLong(string key, long defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -462,8 +396,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual double GetDouble(string key)
-        {
+        public virtual double GetDouble(string key) {
             return this.Get<double>(key);
         }
 
@@ -473,8 +406,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual double GetDouble(string key, double defaultValue)
-        {
+        public virtual double GetDouble(string key, double defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -483,8 +415,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual float GetFloat(string key)
-        {
+        public virtual float GetFloat(string key) {
             return this.Get<float>(key);
         }
 
@@ -494,8 +425,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual float GetFloat(string key, float defaultValue)
-        {
+        public virtual float GetFloat(string key, float defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -504,8 +434,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual Color GetColor(string key)
-        {
+        public virtual Color GetColor(string key) {
             return this.Get<Color>(key);
         }
 
@@ -515,8 +444,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual Color GetColor(string key, Color defaultValue)
-        {
+        public virtual Color GetColor(string key, Color defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -525,8 +453,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual Vector3 GetVector3(string key)
-        {
+        public virtual Vector3 GetVector3(string key) {
             return this.Get<Vector3>(key);
         }
 
@@ -536,8 +463,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual Vector3 GetVector3(string key, Vector3 defaultValue)
-        {
+        public virtual Vector3 GetVector3(string key, Vector3 defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -546,8 +472,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual DateTime GetDateTime(string key)
-        {
+        public virtual DateTime GetDateTime(string key) {
             return this.Get(key, new DateTime(0));
         }
 
@@ -557,8 +482,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual DateTime GetDateTime(string key, DateTime defaultValue)
-        {
+        public virtual DateTime GetDateTime(string key, DateTime defaultValue) {
             return this.Get(key, defaultValue);
         }
 
@@ -568,8 +492,7 @@ namespace Loxodon.Framework.Localizations
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual T Get<T>(string key)
-        {
+        public virtual T Get<T>(string key) {
             return this.Get(key, default(T));
         }
 
@@ -580,14 +503,12 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public virtual T Get<T>(string key, T defaultValue)
-        {
+        public virtual T Get<T>(string key, T defaultValue) {
             if (typeof(IObservableProperty).IsAssignableFrom(typeof(T)))
                 return (T)GetValue(key);
 
             IObservableProperty value;
-            if (data.TryGetValue(key, out value))
-            {
+            if (data.TryGetValue(key, out value)) {
                 var p = value as IObservableProperty<T>;
                 if (p != null)
                     return p.Value;
@@ -605,8 +526,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual IObservableProperty GetValue(string key)
-        {
+        public virtual IObservableProperty GetValue(string key) {
             return GetValue(key, true);
         }
 
@@ -615,8 +535,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public virtual IObservableProperty GetValue(string key, bool isAutoCreated)
-        {
+        public virtual IObservableProperty GetValue(string key, bool isAutoCreated) {
             IObservableProperty value;
             if (data.TryGetValue(key, out value))
                 return value;
@@ -624,8 +543,7 @@ namespace Loxodon.Framework.Localizations
             if (!isAutoCreated)
                 return null;
 
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (data.TryGetValue(key, out value))
                     return value;
 
@@ -635,10 +553,8 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        protected class ProviderEntry
-        {
-            public ProviderEntry(IDataProvider provider)
-            {
+        protected class ProviderEntry {
+            public ProviderEntry(IDataProvider provider) {
                 this.Provider = provider;
                 this.Keys = new List<string>();
             }

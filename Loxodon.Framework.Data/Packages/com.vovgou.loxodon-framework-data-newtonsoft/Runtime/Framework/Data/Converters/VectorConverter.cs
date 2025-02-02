@@ -27,19 +27,15 @@ using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Loxodon.Framework.Data.Converters
-{
-    public class VectorConverter : JsonConverter
-    {
+namespace Loxodon.Framework.Data.Converters {
+    public class VectorConverter : JsonConverter {
         private static readonly char[] COMMA_SEPARATOR = new char[] { ',' };
         private static readonly string PATTERN = @"(^\()|(\)$)";
-        public override bool CanConvert(Type objectType)
-        {
+        public override bool CanConvert(Type objectType) {
             return typeof(Vector2).Equals(objectType) || typeof(Vector3).Equals(objectType) || typeof(Vector4).Equals(objectType) || typeof(Vector2Int).Equals(objectType) || typeof(Vector3Int).Equals(objectType);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
             string value;
             if (reader.TokenType == JsonToken.Null)
                 value = null;
@@ -48,10 +44,8 @@ namespace Loxodon.Framework.Data.Converters
             else
                 throw ExceptionUtil.Create(reader, string.Format("Unexpected token or value when parsing {0}.", objectType.Name));
 
-            try
-            {
-                if (typeof(Vector2).Equals(objectType))
-                {
+            try {
+                if (typeof(Vector2).Equals(objectType)) {
                     if (string.IsNullOrWhiteSpace(value))
                         return default(Vector2);
 
@@ -59,8 +53,7 @@ namespace Loxodon.Framework.Data.Converters
                     if (s.Length == 2)
                         return new Vector2(float.Parse(s[0]), float.Parse(s[1]));
                 }
-                else if (typeof(Vector3).Equals(objectType))
-                {
+                else if (typeof(Vector3).Equals(objectType)) {
                     if (string.IsNullOrWhiteSpace(value))
                         return default(Vector3);
 
@@ -68,8 +61,7 @@ namespace Loxodon.Framework.Data.Converters
                     if (s.Length == 3)
                         return new Vector3(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]));
                 }
-                else if (typeof(Vector4).Equals(objectType))
-                {
+                else if (typeof(Vector4).Equals(objectType)) {
                     if (string.IsNullOrWhiteSpace(value))
                         return default(Vector4);
 
@@ -77,8 +69,7 @@ namespace Loxodon.Framework.Data.Converters
                     if (s.Length == 4)
                         return new Vector4(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]), float.Parse(s[3]));
                 }
-                else if (typeof(Vector2Int).Equals(objectType))
-                {
+                else if (typeof(Vector2Int).Equals(objectType)) {
                     if (string.IsNullOrWhiteSpace(value))
                         return default(Vector2Int);
 
@@ -86,8 +77,7 @@ namespace Loxodon.Framework.Data.Converters
                     if (s.Length == 2)
                         return new Vector2Int(int.Parse(s[0]), int.Parse(s[1]));
                 }
-                else if (typeof(Vector3Int).Equals(objectType))
-                {
+                else if (typeof(Vector3Int).Equals(objectType)) {
                     if (string.IsNullOrWhiteSpace(value))
                         return default(Vector3Int);
 
@@ -98,38 +88,30 @@ namespace Loxodon.Framework.Data.Converters
 
                 throw ExceptionUtil.Create(reader, string.Format("Error parsing {0} string: {1}", objectType.Name, reader.Value));
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 throw ExceptionUtil.Create(reader, string.Format("Error parsing {0} string: {1}", objectType.Name, reader.Value), ex);
             }
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
             if (value == null)
                 writer.WriteNull();
-            else if (value is Vector2 v2)
-            {
+            else if (value is Vector2 v2) {
                 writer.WriteValue(v2.ToString());
             }
-            else if (value is Vector3 v3)
-            {
+            else if (value is Vector3 v3) {
                 writer.WriteValue(v3.ToString());
             }
-            else if (value is Vector4 v4)
-            {
+            else if (value is Vector4 v4) {
                 writer.WriteValue(v4.ToString());
             }
-            else if (value is Vector2Int v2int)
-            {
+            else if (value is Vector2Int v2int) {
                 writer.WriteValue(v2int.ToString());
             }
-            else if (value is Vector3Int v3int)
-            {
+            else if (value is Vector3Int v3int) {
                 writer.WriteValue(v3int.ToString());
             }
-            else
-            {
+            else {
                 throw new JsonSerializationException(string.Format("Unsupported types:{0}", value));
             }
         }

@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Views
-{
-    public enum WindowType
-    {
+namespace Loxodon.Framework.Views {
+    public enum WindowType {
         /// <summary>
         /// The full screen window.
         /// </summary>
@@ -54,8 +52,7 @@ namespace Loxodon.Framework.Views
         QUEUED_POPUP
     }
 
-    public enum WindowState
-    {
+    public enum WindowState {
         NONE,
         CREATE_BEGIN,
         CREATE_END,
@@ -75,13 +72,11 @@ namespace Loxodon.Framework.Views
         DISMISS_END
     }
 
-    public class WindowStateEventArgs : EventArgs
-    {
+    public class WindowStateEventArgs : EventArgs {
         private readonly WindowState oldState;
         private readonly WindowState state;
         private readonly IWindow window;
-        public WindowStateEventArgs(IWindow window, WindowState oldState, WindowState newState)
-        {
+        public WindowStateEventArgs(IWindow window, WindowState oldState, WindowState newState) {
             this.window = window;
             this.oldState = oldState;
             this.state = newState;
@@ -96,8 +91,7 @@ namespace Loxodon.Framework.Views
     /// <summary>
     /// Window
     /// </summary>
-    public interface IWindow
-    {
+    public interface IWindow {
         /// <summary>
         /// Triggered when the Visibility's value to be changed.
         /// </summary>

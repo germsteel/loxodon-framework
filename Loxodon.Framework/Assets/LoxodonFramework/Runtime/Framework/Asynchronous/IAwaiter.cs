@@ -24,10 +24,8 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Loxodon.Framework.Asynchronous
-{
-    public interface IAwaiter : ICriticalNotifyCompletion
-    {
+namespace Loxodon.Framework.Asynchronous {
+    public interface IAwaiter : ICriticalNotifyCompletion {
         /// <summary>
         /// Returns <code>true</code> if the asynchronous operation is finished.
         /// </summary>
@@ -39,8 +37,7 @@ namespace Loxodon.Framework.Asynchronous
         void GetResult();
     }
 
-    public interface IAwaiter<T> : ICriticalNotifyCompletion
-    {
+    public interface IAwaiter<T> : ICriticalNotifyCompletion {
         /// <summary>
         /// Returns <code>true</code> if the asynchronous operation is finished.
         /// </summary>

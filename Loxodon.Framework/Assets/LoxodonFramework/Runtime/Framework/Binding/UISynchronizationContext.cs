@@ -25,13 +25,10 @@
 using System.Threading;
 using UnityEngine;
 
-namespace Loxodon.Framework.Binding
-{
-    public class UISynchronizationContext
-    {
+namespace Loxodon.Framework.Binding {
+    public class UISynchronizationContext {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void OnInitialize()
-        {
+        static void OnInitialize() {
             context = SynchronizationContext.Current;
             threadId = Thread.CurrentThread.ManagedThreadId;
         }
@@ -41,15 +38,13 @@ namespace Loxodon.Framework.Binding
 
         public static bool InThread { get { return threadId == Thread.CurrentThread.ManagedThreadId; } }
 
-        public static void Post(SendOrPostCallback callback, object state)
-        {
+        public static void Post(SendOrPostCallback callback, object state) {
             if (threadId == Thread.CurrentThread.ManagedThreadId)
                 callback(state);
             else
                 context.Post(callback, state);
         }
-        public static void Send(SendOrPostCallback callback, object state)
-        {
+        public static void Send(SendOrPostCallback callback, object state) {
             if (threadId == Thread.CurrentThread.ManagedThreadId)
                 callback(state);
             else

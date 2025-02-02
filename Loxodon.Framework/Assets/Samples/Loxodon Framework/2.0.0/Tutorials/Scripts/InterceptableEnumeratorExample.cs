@@ -28,38 +28,31 @@ using System.Collections;
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Execution;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class InterceptableEnumeratorExample : MonoBehaviour
-    {
-        IEnumerator Start()
-        {
+namespace Loxodon.Framework.Tutorials {
+    public class InterceptableEnumeratorExample : MonoBehaviour {
+        IEnumerator Start() {
             yield return this.TestInterceptException();
 
             //yield return this.TestInterceptMoveNextMethod();
         }
 
-        protected IEnumerator TestInterceptException()
-        {
+        protected IEnumerator TestInterceptException() {
             ProgressResult<float, bool> result = new ProgressResult<float, bool>(true);
 
             /* Register a callback */
             result.Callbackable().OnProgressCallback(p => Debug.LogFormat("Progress:{0}%", p * 100));
 
-            result.Callbackable().OnCallback((r) =>
-            {
+            result.Callbackable().OnCallback((r) => {
                 Debug.LogFormat("The task is finished. IsCancelled:{0} Result:{1} Exception:{2}", r.IsCancelled, r.Result, r.Exception);
             });
 
             InterceptableEnumerator routine = InterceptableEnumerator.Create(DoTask(result));
 
-            routine.RegisterCatchBlock((e) =>
-            {
+            routine.RegisterCatchBlock((e) => {
                 Debug.LogError(e);
             });
 
-            routine.RegisterFinallyBlock(() =>
-            {
+            routine.RegisterFinallyBlock(() => {
                 Debug.Log("this is a finally block.");
             });
 
@@ -68,15 +61,13 @@ namespace Loxodon.Framework.Tutorials
             yield break;
         }
 
-        protected IEnumerator TestInterceptMoveNextMethod()
-        {
+        protected IEnumerator TestInterceptMoveNextMethod() {
             ProgressResult<float, bool> result = new ProgressResult<float, bool>(true);
 
             /* Register a callback */
             result.Callbackable().OnProgressCallback(p => Debug.LogFormat("Progress:{0}%", p * 100));
 
-            result.Callbackable().OnCallback((r) =>
-            {
+            result.Callbackable().OnCallback((r) => {
                 Debug.LogFormat("The task is finished. IsCancelled:{0} Result:{1} Exception:{2}", r.IsCancelled, r.Result, r.Exception);
             });
 
@@ -85,8 +76,7 @@ namespace Loxodon.Framework.Tutorials
             /* if result.IsCancellationRequested == true ,the task will be cancelled. */
             routine.RegisterConditionBlock(() => !(result.IsCancellationRequested));
 
-            routine.RegisterFinallyBlock(() =>
-            {
+            routine.RegisterFinallyBlock(() => {
                 Debug.Log("this is a finally block.");
             });
 
@@ -103,11 +93,9 @@ namespace Loxodon.Framework.Tutorials
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask(IProgressPromise<float, bool> promise)
-        {
+        protected IEnumerator DoTask(IProgressPromise<float, bool> promise) {
             int n = 50;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 promise.UpdateProgress((float)i / n);
                 yield return new WaitForSeconds(0.1f);
                 if (i == 20)

@@ -39,11 +39,9 @@ using INotifyPropertyChanged = System.ComponentModel.INotifyPropertyChanged;
 using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
 using PropertyChangedEventHandler = System.ComponentModel.PropertyChangedEventHandler;
 
-namespace Loxodon.Framework.Observables
-{
+namespace Loxodon.Framework.Observables {
     [Serializable]
-    public class ObservableList<T> : IList<T>, IList, INotifyCollectionChanged, INotifyPropertyChanged
-    {
+    public class ObservableList<T> : IList<T>, IList, INotifyCollectionChanged, INotifyPropertyChanged {
         private static readonly PropertyChangedEventArgs CountEventArgs = new PropertyChangedEventArgs("Count");
         private static readonly PropertyChangedEventArgs IndexerEventArgs = new PropertyChangedEventArgs("Item[]");
 
@@ -58,31 +56,26 @@ namespace Loxodon.Framework.Observables
         [NonSerialized]
         private Object syncRoot;
 
-        public event PropertyChangedEventHandler PropertyChanged
-        {
+        public event PropertyChangedEventHandler PropertyChanged {
             add { lock (propertyChangedLock) { this.propertyChanged += value; } }
             remove { lock (propertyChangedLock) { this.propertyChanged -= value; } }
         }
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged
-        {
+        public event NotifyCollectionChangedEventHandler CollectionChanged {
             add { lock (collectionChangedLock) { this.collectionChanged += value; } }
             remove { lock (collectionChangedLock) { this.collectionChanged -= value; } }
         }
 
-        public ObservableList()
-        {
+        public ObservableList() {
             items = new List<T>();
         }
 
-        public ObservableList(List<T> list)
-        {
+        public ObservableList(List<T> list) {
             if (list == null)
                 throw new ArgumentNullException("list");
 
             items = new List<T>();
-            foreach (T item in list)
-            {
+            foreach (T item in list) {
                 items.Add(item);
             }
         }
@@ -91,11 +84,9 @@ namespace Loxodon.Framework.Observables
 
         protected IList<T> Items { get { return items; } }
 
-        public T this[int index]
-        {
+        public T this[int index] {
             get { return items[index]; }
-            set
-            {
+            set {
                 if (IsReadOnly)
                     throw new NotSupportedException("ReadOnlyCollection");
 
@@ -106,8 +97,7 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        public void Add(T item)
-        {
+        public void Add(T item) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
@@ -115,31 +105,26 @@ namespace Loxodon.Framework.Observables
             InsertItem(index, item);
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             ClearItems();
         }
 
-        public void CopyTo(T[] array, int index)
-        {
+        public void CopyTo(T[] array, int index) {
             items.CopyTo(array, index);
         }
 
-        public bool Contains(T item)
-        {
+        public bool Contains(T item) {
             return items.Contains(item);
         }
 
-        public int IndexOf(T item)
-        {
+        public int IndexOf(T item) {
             return items.IndexOf(item);
         }
 
-        public void Insert(int index, T item)
-        {
+        public void Insert(int index, T item) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
@@ -149,8 +134,7 @@ namespace Loxodon.Framework.Observables
             InsertItem(index, item);
         }
 
-        public bool Remove(T item)
-        {
+        public bool Remove(T item) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
@@ -161,8 +145,7 @@ namespace Loxodon.Framework.Observables
             return true;
         }
 
-        public void RemoveAt(int index)
-        {
+        public void RemoveAt(int index) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
@@ -172,13 +155,11 @@ namespace Loxodon.Framework.Observables
             RemoveItem(index);
         }
 
-        public void Move(int oldIndex, int newIndex)
-        {
+        public void Move(int oldIndex, int newIndex) {
             MoveItem(oldIndex, newIndex);
         }
 
-        public void AddRange(IEnumerable<T> collection)
-        {
+        public void AddRange(IEnumerable<T> collection) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
@@ -186,8 +167,7 @@ namespace Loxodon.Framework.Observables
             InsertItem(index, collection);
         }
 
-        public void InsertRange(int index, IEnumerable<T> collection)
-        {
+        public void InsertRange(int index, IEnumerable<T> collection) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
@@ -197,8 +177,7 @@ namespace Loxodon.Framework.Observables
             InsertItem(index, collection);
         }
 
-        public void RemoveRange(int index, int count)
-        {
+        public void RemoveRange(int index, int count) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
@@ -208,46 +187,36 @@ namespace Loxodon.Framework.Observables
             RemoveItem(index, count);
         }
 
-        public List<T>.Enumerator GetEnumerator()
-        {
+        public List<T>.Enumerator GetEnumerator() {
             return items.GetEnumerator();
         }
 
         bool IsReadOnly { get { return Items.IsReadOnly; } }
 
-        bool ICollection<T>.IsReadOnly
-        {
+        bool ICollection<T>.IsReadOnly {
             get { return IsReadOnly; }
         }
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() {
             return items.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return ((IEnumerable)items).GetEnumerator();
         }
 
-        bool ICollection.IsSynchronized
-        {
+        bool ICollection.IsSynchronized {
             get { return false; }
         }
 
-        object ICollection.SyncRoot
-        {
-            get
-            {
-                if (this.syncRoot == null)
-                {
+        object ICollection.SyncRoot {
+            get {
+                if (this.syncRoot == null) {
                     ICollection c = items as ICollection;
-                    if (c != null)
-                    {
+                    if (c != null) {
                         this.syncRoot = c.SyncRoot;
                     }
-                    else
-                    {
+                    else {
 #if UNITY_WEBGL
                         this.syncRoot = new object();
 #else
@@ -259,8 +228,7 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        void ICollection.CopyTo(Array array, int index)
-        {
+        void ICollection.CopyTo(Array array, int index) {
             if (array == null)
                 throw new ArgumentNullException("array");
 
@@ -277,12 +245,10 @@ namespace Loxodon.Framework.Observables
                 throw new ArgumentException("ArrayPlusOffTooSmall");
 
             T[] tArray = array as T[];
-            if (tArray != null)
-            {
+            if (tArray != null) {
                 items.CopyTo(tArray, index);
             }
-            else
-            {
+            else {
                 Type targetType = array.GetType().GetElementType();
                 Type sourceType = typeof(T);
                 if (!(targetType.IsAssignableFrom(sourceType) || sourceType.IsAssignableFrom(targetType)))
@@ -293,34 +259,27 @@ namespace Loxodon.Framework.Observables
                     throw new ArgumentException("InvalidArrayType");
 
                 int count = items.Count;
-                try
-                {
-                    for (int i = 0; i < count; i++)
-                    {
+                try {
+                    for (int i = 0; i < count; i++) {
                         objects[index++] = items[i];
                     }
                 }
-                catch (ArrayTypeMismatchException)
-                {
+                catch (ArrayTypeMismatchException) {
                     throw new ArgumentException("InvalidArrayType");
                 }
             }
         }
 
-        object IList.this[int index]
-        {
+        object IList.this[int index] {
             get { return items[index]; }
-            set
-            {
+            set {
                 if (value == null && !(default(T) == null))
                     throw new ArgumentNullException("value");
 
-                try
-                {
+                try {
                     this[index] = (T)value;
                 }
-                catch (InvalidCastException e)
-                {
+                catch (InvalidCastException e) {
                     throw new ArgumentException("", e);
                 }
             }
@@ -328,89 +287,73 @@ namespace Loxodon.Framework.Observables
 
         bool IList.IsReadOnly { get { return IsReadOnly; } }
 
-        bool IList.IsFixedSize
-        {
-            get
-            {
+        bool IList.IsFixedSize {
+            get {
                 IList list = items as IList;
-                if (list != null)
-                {
+                if (list != null) {
                     return list.IsFixedSize;
                 }
                 return IsReadOnly;
             }
         }
 
-        int IList.Add(object value)
-        {
+        int IList.Add(object value) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (value == null && !(default(T) == null))
                 throw new ArgumentNullException("value");
 
-            try
-            {
+            try {
                 Add((T)value);
             }
-            catch (InvalidCastException e)
-            {
+            catch (InvalidCastException e) {
                 throw new ArgumentException("", e);
             }
 
             return this.Count - 1;
         }
 
-        bool IList.Contains(object value)
-        {
-            if (IsCompatibleObject(value))
-            {
+        bool IList.Contains(object value) {
+            if (IsCompatibleObject(value)) {
                 return Contains((T)value);
             }
             return false;
         }
 
-        int IList.IndexOf(object value)
-        {
-            if (IsCompatibleObject(value))
-            {
+        int IList.IndexOf(object value) {
+            if (IsCompatibleObject(value)) {
                 return IndexOf((T)value);
             }
             return -1;
         }
 
-        void IList.Insert(int index, object value)
-        {
+        void IList.Insert(int index, object value) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
             if (value == null && !(default(T) == null))
                 throw new ArgumentNullException("value");
 
-            try
-            {
+            try {
                 Insert(index, (T)value);
             }
-            catch (InvalidCastException e)
-            {
+            catch (InvalidCastException e) {
                 throw new ArgumentException("", e);
             }
 
         }
 
-        void IList.Remove(object value)
-        {
+        void IList.Remove(object value) {
             if (IsReadOnly)
                 throw new NotSupportedException("ReadOnlyCollection");
 
-            if (IsCompatibleObject(value))
-            {
+            if (IsCompatibleObject(value)) {
                 Remove((T)value);
             }
         }
 
-        protected virtual void ClearItems()
-        {
+        protected virtual void ClearItems() {
             CheckReentrancy();
             items.Clear();
             OnPropertyChanged(CountEventArgs);
@@ -418,8 +361,7 @@ namespace Loxodon.Framework.Observables
             OnCollectionReset();
         }
 
-        protected virtual void RemoveItem(int index)
-        {
+        protected virtual void RemoveItem(int index) {
             CheckReentrancy();
             T removedItem = this[index];
 
@@ -430,8 +372,7 @@ namespace Loxodon.Framework.Observables
             OnCollectionChanged(NotifyCollectionChangedAction.Remove, removedItem, index);
         }
 
-        protected virtual void RemoveItem(int index, int count)
-        {
+        protected virtual void RemoveItem(int index, int count) {
             CheckReentrancy();
 
             List<T> list = items as List<T>;
@@ -443,8 +384,7 @@ namespace Loxodon.Framework.Observables
             OnCollectionChanged(NotifyCollectionChangedAction.Remove, changedItems, index);
         }
 
-        protected virtual void InsertItem(int index, T item)
-        {
+        protected virtual void InsertItem(int index, T item) {
             CheckReentrancy();
 
             items.Insert(index, item);
@@ -454,8 +394,7 @@ namespace Loxodon.Framework.Observables
             OnCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
         }
 
-        protected virtual void InsertItem(int index, IEnumerable<T> collection)
-        {
+        protected virtual void InsertItem(int index, IEnumerable<T> collection) {
             CheckReentrancy();
 
             (items as List<T>).InsertRange(index, collection);
@@ -465,8 +404,7 @@ namespace Loxodon.Framework.Observables
             OnCollectionChanged(NotifyCollectionChangedAction.Add, ToList(collection), index);
         }
 
-        protected virtual void SetItem(int index, T item)
-        {
+        protected virtual void SetItem(int index, T item) {
             CheckReentrancy();
             T originalItem = this[index];
 
@@ -476,8 +414,7 @@ namespace Loxodon.Framework.Observables
             OnCollectionChanged(NotifyCollectionChangedAction.Replace, originalItem, item, index);
         }
 
-        protected virtual void MoveItem(int oldIndex, int newIndex)
-        {
+        protected virtual void MoveItem(int oldIndex, int newIndex) {
             CheckReentrancy();
 
             T removedItem = this[oldIndex];
@@ -490,42 +427,33 @@ namespace Loxodon.Framework.Observables
         }
 
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            if (this.propertyChanged != null)
-            {
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) {
+            if (this.propertyChanged != null) {
                 this.propertyChanged(this, e);
             }
         }
 
-        protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            if (this.collectionChanged != null)
-            {
-                using (BlockReentrancy())
-                {
+        protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
+            if (this.collectionChanged != null) {
+                using (BlockReentrancy()) {
                     this.collectionChanged(this, e);
                 }
             }
         }
 
-        protected IDisposable BlockReentrancy()
-        {
+        protected IDisposable BlockReentrancy() {
             this.monitor.Enter();
             return this.monitor;
         }
 
-        protected void CheckReentrancy()
-        {
-            if (this.monitor.Busy)
-            {
+        protected void CheckReentrancy() {
+            if (this.monitor.Busy) {
                 if ((this.collectionChanged != null) && (this.collectionChanged.GetInvocationList().Length > 1))
                     throw new InvalidOperationException();
             }
         }
 
-        private IList ToList(IEnumerable<T> collection)
-        {
+        private IList ToList(IEnumerable<T> collection) {
             if (collection is IList)
                 return (IList)collection;
 
@@ -534,54 +462,45 @@ namespace Loxodon.Framework.Observables
             return list;
         }
 
-        private static bool IsCompatibleObject(object value)
-        {
+        private static bool IsCompatibleObject(object value) {
             return ((value is T) || (value == null && default(T) == null));
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index)
-        {
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index) {
             if (this.collectionChanged != null)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index));
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, IList changedItems, int index)
-        {
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, IList changedItems, int index) {
             if (this.collectionChanged != null)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItems, index));
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index, int oldIndex)
-        {
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index, int oldIndex) {
             if (this.collectionChanged != null)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index, oldIndex));
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, object oldItem, object newItem, int index)
-        {
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, object oldItem, object newItem, int index) {
             if (this.collectionChanged != null)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, newItem, oldItem, index));
         }
 
-        private void OnCollectionReset()
-        {
+        private void OnCollectionReset() {
             if (this.collectionChanged != null)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         [Serializable()]
-        private class SimpleMonitor : IDisposable
-        {
+        private class SimpleMonitor : IDisposable {
             private int _busyCount;
             public bool Busy { get { return _busyCount > 0; } }
 
-            public void Enter()
-            {
+            public void Enter() {
                 ++_busyCount;
             }
 
-            public void Dispose()
-            {
+            public void Dispose() {
                 --_busyCount;
             }
         }

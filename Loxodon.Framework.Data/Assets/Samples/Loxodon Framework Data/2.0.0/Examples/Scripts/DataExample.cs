@@ -29,10 +29,8 @@ using UnityEngine;
 using LiteDB;
 #endif
 
-public class DataExample : MonoBehaviour
-{
-    void Start()
-    {
+public class DataExample : MonoBehaviour {
+    void Start() {
 #if NEWTONSOFT
         LoadFromJson();
 #endif
@@ -43,8 +41,7 @@ public class DataExample : MonoBehaviour
     }
 
 #if NEWTONSOFT
-    void LoadFromJson()
-    {
+    void LoadFromJson() {
         JsonEquipmentInfoRepository equipmentInfoRepository = new JsonEquipmentInfoRepository();
 
         var e1 = equipmentInfoRepository.GetById(1);
@@ -57,20 +54,17 @@ public class DataExample : MonoBehaviour
 #if LITEDB
     private LiteDatabase database;
 
-    private LiteDatabase LoadDatabase()
-    {
+    private LiteDatabase LoadDatabase() {
         TextAsset textAsset = Resources.Load<TextAsset>("LiteDB/data");
         return new LiteDatabase(new MemoryStream(textAsset.bytes));
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         if (database != null)
             database.Dispose();
     }
 
-    void LoadFromLiteDB()
-    {
+    void LoadFromLiteDB() {
         if (database == null)
             database = LoadDatabase();
 

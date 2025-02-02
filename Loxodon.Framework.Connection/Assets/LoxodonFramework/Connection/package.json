@@ -26,8 +26,7 @@
   "relatedPackages": {},
   "dependencies": {
   },
-  "samples": [
-    {
+  "samples": [ {
       "displayName": "Tutorials",
       "description": "Tutorials",
       "path": "Samples~/Tutorials"

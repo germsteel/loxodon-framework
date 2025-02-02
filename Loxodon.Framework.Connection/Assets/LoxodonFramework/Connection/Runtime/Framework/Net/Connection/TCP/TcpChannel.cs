@@ -29,26 +29,21 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public class TcpChannel : ChannelBase
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public class TcpChannel : ChannelBase {
         private const int DEFAULT_TIMEOUT = 5000;
         protected readonly SemaphoreSlim connectLock = new SemaphoreSlim(1, 1);
         protected TcpClient client;
         protected AddressFamily family = AddressFamily.InterNetwork;
         protected bool adaptiveAddressFamily = true;
-        public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder) : base(decoder, encoder)
-        {
+        public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder) : base(decoder, encoder) {
         }
 
         [Obsolete("Please move the handshake handler to the DefaultConnector.")]
-        public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler) : base(decoder, encoder, handshakeHandler)
-        {
+        public TcpChannel(IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler) : base(decoder, encoder, handshakeHandler) {
         }
 
-        public TcpChannel(AddressFamily family, IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder) : base(decoder, encoder)
-        {
+        public TcpChannel(AddressFamily family, IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder) : base(decoder, encoder) {
             if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
                 throw new ArgumentException("family");
 
@@ -57,8 +52,7 @@ namespace Loxodon.Framework.Net.Connection
         }
 
         [Obsolete("Please move the handshake handler to the DefaultConnector.")]
-        public TcpChannel(AddressFamily family, IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler) : base(decoder, encoder, handshakeHandler)
-        {
+        public TcpChannel(AddressFamily family, IMessageDecoder<IMessage> decoder, IMessageEncoder<IMessage> encoder, IHandshakeHandler handshakeHandler) : base(decoder, encoder, handshakeHandler) {
             if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
                 throw new ArgumentException("family");
 
@@ -66,17 +60,14 @@ namespace Loxodon.Framework.Net.Connection
             this.adaptiveAddressFamily = false;
         }
 
-        public TcpChannel(ICodecFactory<IMessage> codecFactory) : base(codecFactory)
-        {
+        public TcpChannel(ICodecFactory<IMessage> codecFactory) : base(codecFactory) {
         }
 
         [Obsolete("Please move the handshake handler to the DefaultConnector.")]
-        public TcpChannel(ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler) : base(codecFactory, handshakeHandler)
-        {
+        public TcpChannel(ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler) : base(codecFactory, handshakeHandler) {
         }
 
-        public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory) : base(codecFactory)
-        {
+        public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory) : base(codecFactory) {
             if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
                 throw new ArgumentException("family");
 
@@ -85,8 +76,7 @@ namespace Loxodon.Framework.Net.Connection
         }
 
         [Obsolete("Please move the handshake handler to the DefaultConnector.")]
-        public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler) : base(codecFactory, handshakeHandler)
-        {
+        public TcpChannel(AddressFamily family, ICodecFactory<IMessage> codecFactory, IHandshakeHandler handshakeHandler) : base(codecFactory, handshakeHandler) {
             if (family != AddressFamily.InterNetwork && family != AddressFamily.InterNetworkV6)
                 throw new ArgumentException("family");
 
@@ -96,24 +86,20 @@ namespace Loxodon.Framework.Net.Connection
 
         public override bool Connected { get { return client != null ? client.Connected && connected : false; } }
 
-        public override async Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken)
-        {
+        public override async Task Connect(string hostname, int port, int timeoutMilliseconds, CancellationToken cancellationToken) {
             if (timeoutMilliseconds <= 0)
                 timeoutMilliseconds = DEFAULT_TIMEOUT;
 
             if (!await connectLock.WaitAsync(timeoutMilliseconds, cancellationToken).ConfigureAwait(false))
                 throw new TimeoutException();
-            try
-            {
-                if (client != null)
-                {
+            try {
+                if (client != null) {
                     client.Close();
                     client = null;
                 }
 
                 this.connected = false;
-                client = await Task.Run(async () =>
-                {
+                client = await Task.Run(async () => {
                     IPAddress[] addresses = await Dns.GetHostAddressesAsync(hostname);
 
                     cancellationToken.ThrowIfCancellationRequested();
@@ -122,69 +108,57 @@ namespace Loxodon.Framework.Net.Connection
                     TcpClient ipv6Client = null;
                     TcpClient ipv4Client = null;
                     IPAddress nat64Address = null;
-                    if ((adaptiveAddressFamily && Socket.OSSupportsIPv4) || family == AddressFamily.InterNetwork)
-                    {
+                    if ((adaptiveAddressFamily && Socket.OSSupportsIPv4) || family == AddressFamily.InterNetwork) {
                         ipv4Client = new TcpClient(AddressFamily.InterNetwork);
                         ipv4Client.NoDelay = NoDelay;
                         ipv4Client.ReceiveBufferSize = ReceiveBufferSize;
                         ipv4Client.SendBufferSize = SendBufferSize;
                     }
 
-                    if ((adaptiveAddressFamily && Socket.OSSupportsIPv6) || family == AddressFamily.InterNetworkV6)
-                    {
+                    if ((adaptiveAddressFamily && Socket.OSSupportsIPv6) || family == AddressFamily.InterNetworkV6) {
                         ipv6Client = new TcpClient(AddressFamily.InterNetworkV6);
                         ipv6Client.NoDelay = NoDelay;
                         ipv6Client.ReceiveBufferSize = ReceiveBufferSize;
                         ipv6Client.SendBufferSize = SendBufferSize;
 
                         //Try to connect to the server through the NAT64 gateway
-                        if (Regex.IsMatch(hostname, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$"))
-                        {
+                        if (Regex.IsMatch(hostname, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$")) {
                             nat64Address = IPAddress.Parse("64:ff9b::" + hostname);
                         }
                     }
 
-                    foreach (var address in addresses)
-                    {
+                    foreach (var address in addresses) {
                         cancellationToken.ThrowIfCancellationRequested();
-                        try
-                        {
-                            if (address.AddressFamily == AddressFamily.InterNetwork && ipv4Client != null)
-                            {
+                        try {
+                            if (address.AddressFamily == AddressFamily.InterNetwork && ipv4Client != null) {
                                 var result = ipv4Client.BeginConnect(address, port, null, null);
-                                if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds))
-                                {
+                                if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds)) {
                                     ipv4Client.EndConnect(result);
                                     if (ipv6Client != null)
                                         ipv6Client.Close();
                                     return ipv4Client;
                                 }
-                                else
-                                {
+                                else {
                                     ipv4Client.Close();
                                     throw new SocketException((int)SocketError.TimedOut);
                                 }
                             }
 
-                            if (address.AddressFamily == AddressFamily.InterNetworkV6 && ipv6Client != null)
-                            {
+                            if (address.AddressFamily == AddressFamily.InterNetworkV6 && ipv6Client != null) {
                                 var result = ipv6Client.BeginConnect(address, port, null, null);
-                                if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds))
-                                {
+                                if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds)) {
                                     ipv6Client.EndConnect(result);
                                     if (ipv4Client != null)
                                         ipv4Client.Close();
                                     return ipv6Client;
                                 }
-                                else
-                                {
+                                else {
                                     ipv6Client.Close();
                                     throw new SocketException((int)SocketError.TimedOut);
                                 }
                             }
                         }
-                        catch (Exception ex)
-                        {
+                        catch (Exception ex) {
                             if (ex is ThreadAbortException || ex is StackOverflowException || ex is OutOfMemoryException)
                                 throw;
                             lastex = ex;
@@ -193,28 +167,23 @@ namespace Loxodon.Framework.Net.Connection
 
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    try
-                    {
-                        if (nat64Address != null)
-                        {
+                    try {
+                        if (nat64Address != null) {
                             //Try to connect to the server through the NAT64 gateway
                             var result = ipv6Client.BeginConnect(nat64Address, port, null, null);
-                            if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds))
-                            {
+                            if (result.AsyncWaitHandle.WaitOne(timeoutMilliseconds)) {
                                 ipv6Client.EndConnect(result);
                                 if (ipv4Client != null)
                                     ipv4Client.Close();
                                 return ipv6Client;
                             }
-                            else
-                            {
+                            else {
                                 ipv6Client.Close();
                                 throw new SocketException((int)SocketError.TimedOut);
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         if (lastex == null)
                             lastex = ex;
                     }
@@ -234,8 +203,7 @@ namespace Loxodon.Framework.Net.Connection
                 reader = new BinaryReader(stream, false, IsBigEndian);
                 writer = new BinaryWriter(stream, false, IsBigEndian);
 
-                if (this.codecFactory != null)
-                {
+                if (this.codecFactory != null) {
                     this.decoder = this.codecFactory.CreateDecoder();
                     this.encoder = this.codecFactory.CreateEncoder();
                 }
@@ -248,40 +216,32 @@ namespace Loxodon.Framework.Net.Connection
                 cancellationToken.ThrowIfCancellationRequested();
                 this.connected = true;
             }
-            catch (Exception)
-            {
-                if (client != null)
-                {
+            catch (Exception) {
+                if (client != null) {
                     client.Close();
                     client = null;
                 }
 
-                if (reader != null)
-                {
+                if (reader != null) {
                     reader.Dispose();
                     reader = null;
                 }
 
-                if (writer != null)
-                {
+                if (writer != null) {
                     writer.Dispose();
                     writer = null;
                 }
                 throw;
             }
-            finally
-            {
+            finally {
                 connectLock.Release();
             }
         }
 
-        public override async Task Close()
-        {
+        public override async Task Close() {
             await connectLock.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                if (client != null)
-                {
+            try {
+                if (client != null) {
                     this.connected = false;
                     int delayTime = 0;
                     var state = client.LingerState;
@@ -296,20 +256,17 @@ namespace Loxodon.Framework.Net.Connection
                         await Task.Delay(delayTime).ConfigureAwait(false);
                 }
 
-                if (reader != null)
-                {
+                if (reader != null) {
                     reader.Dispose();
                     reader = null;
                 }
 
-                if (writer != null)
-                {
+                if (writer != null) {
                     writer.Dispose();
                     writer = null;
                 }
             }
-            finally
-            {
+            finally {
                 connectLock.Release();
             }
         }

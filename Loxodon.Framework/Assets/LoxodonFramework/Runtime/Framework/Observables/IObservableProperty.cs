@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Observables
-{
-    public interface IObservableProperty
-    {
+namespace Loxodon.Framework.Observables {
+    public interface IObservableProperty {
         event EventHandler ValueChanged;
 
         Type Type { get; }
@@ -35,8 +33,7 @@ namespace Loxodon.Framework.Observables
         object Value { get; set; }
     }
 
-    public interface IObservableProperty<T> : IObservableProperty
-    {
+    public interface IObservableProperty<T> : IObservableProperty {
         new T Value { get; set; }
     }
 }

@@ -26,15 +26,12 @@ using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Loxodon.Framework.Data
-{
-    public static class VectorUtility
-    {
+namespace Loxodon.Framework.Data {
+    public static class VectorUtility {
         private static readonly char[] COMMA_SEPARATOR = new char[] { ',' };
         private static readonly string PATTERN = @"(^\()|(\)$)";
 
-        public static Vector2 ParseVector2(string value)
-        {
+        public static Vector2 ParseVector2(string value) {
             string val = Regex.Replace(value.Trim(), PATTERN, "");
             string[] s = val.Split(COMMA_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
             if (s.Length == 2)
@@ -43,8 +40,7 @@ namespace Loxodon.Framework.Data
             throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"Vector2\"", value));
         }
 
-        public static Vector3 ParseVector3(string value)
-        {
+        public static Vector3 ParseVector3(string value) {
             string val = Regex.Replace(value.Trim(), PATTERN, "");
             string[] s = val.Split(COMMA_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
             if (s.Length == 3)
@@ -53,8 +49,7 @@ namespace Loxodon.Framework.Data
             throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"Vector3\"", value));
         }
 
-        public static Vector4 ParseVector4(string value)
-        {
+        public static Vector4 ParseVector4(string value) {
             string val = Regex.Replace(value.Trim(), PATTERN, "");
             string[] s = val.Split(COMMA_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
             if (s.Length == 4)
@@ -63,8 +58,7 @@ namespace Loxodon.Framework.Data
             throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"Vector4\"", value));
         }
 
-        public static Vector2Int ParseVector2Int(string value)
-        {
+        public static Vector2Int ParseVector2Int(string value) {
             string val = Regex.Replace(value.Trim(), PATTERN, "");
             string[] s = val.Split(COMMA_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
             if (s.Length == 2)
@@ -73,8 +67,7 @@ namespace Loxodon.Framework.Data
             throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"Vector2Int\"", value));
         }
 
-        public static Vector3Int ParseVector3Int(string value)
-        {
+        public static Vector3Int ParseVector3Int(string value) {
             string val = Regex.Replace(value.Trim(), PATTERN, "");
             string[] s = val.Split(COMMA_SEPARATOR, StringSplitOptions.RemoveEmptyEntries);
             if (s.Length == 3)

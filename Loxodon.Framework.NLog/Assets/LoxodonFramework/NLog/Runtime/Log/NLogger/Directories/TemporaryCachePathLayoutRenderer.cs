@@ -4,13 +4,11 @@ using NLog.LayoutRenderers;
 using System.IO;
 using System.Text;
 
-namespace Loxodon.Log.NLogger.Directories
-{
+namespace Loxodon.Log.NLogger.Directories {
     [LayoutRenderer("temporary-cache-path")]
     [AppDomainFixedOutput]
     [ThreadAgnostic]
-    public class TemporaryCachePathLayoutRenderer : LayoutRenderer
-    {
+    public class TemporaryCachePathLayoutRenderer : LayoutRenderer {
         private static string temporaryCachePath;
 
         /// <summary>
@@ -26,8 +24,7 @@ namespace Loxodon.Log.NLogger.Directories
         public string Dir { get; set; }
 
         /// <inheritdoc/>
-        protected override void InitializeLayoutRenderer()
-        {
+        protected override void InitializeLayoutRenderer() {
             if (string.IsNullOrEmpty(temporaryCachePath))
                 temporaryCachePath = UnityEngine.Application.temporaryCachePath;
 
@@ -35,13 +32,11 @@ namespace Loxodon.Log.NLogger.Directories
         }
 
         /// <inheritdoc/>
-        protected override void Append(StringBuilder builder, LogEventInfo logEvent)
-        {
+        protected override void Append(StringBuilder builder, LogEventInfo logEvent) {
             builder.Append(CombinePaths(temporaryCachePath, Dir, File));
         }
 
-        internal static string CombinePaths(string path, string dir, string file)
-        {
+        internal static string CombinePaths(string path, string dir, string file) {
             if (dir != null)
                 path = Path.Combine(path, dir);
 

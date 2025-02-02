@@ -25,16 +25,13 @@
 using Loxodon.Framework.Binding.Reflection;
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class FieldTargetProxy : ValueTargetProxyBase
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class FieldTargetProxy : ValueTargetProxyBase {
         //private static readonly ILog log = LogManager.GetLogger(typeof(FieldTargetProxy));
 
         protected readonly IProxyFieldInfo fieldInfo;
 
-        public FieldTargetProxy(object target, IProxyFieldInfo fieldInfo) : base(target)
-        {
+        public FieldTargetProxy(object target, IProxyFieldInfo fieldInfo) : base(target) {
             this.fieldInfo = fieldInfo;
         }
 
@@ -44,8 +41,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWay; } }
 
-        public override object GetValue()
-        {
+        public override object GetValue() {
             var target = this.Target;
             if (target == null)
                 return null;
@@ -53,8 +49,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return fieldInfo.GetValue(target);
         }
 
-        public override TValue GetValue<TValue>()
-        {
+        public override TValue GetValue<TValue>() {
             var target = this.Target;
             if (target == null)
                 return default(TValue);
@@ -65,8 +60,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return (TValue)fieldInfo.GetValue(target);
         }
 
-        public override void SetValue(object value)
-        {
+        public override void SetValue(object value) {
             var target = this.Target;
             if (target == null)
                 return;
@@ -74,14 +68,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             this.fieldInfo.SetValue(target, value);
         }
 
-        public override void SetValue<TValue>(TValue value)
-        {
+        public override void SetValue<TValue>(TValue value) {
             var target = this.Target;
             if (target == null)
                 return;
 
-            if (fieldInfo is IProxyFieldInfo<TValue>)
-            {
+            if (fieldInfo is IProxyFieldInfo<TValue>) {
                 ((IProxyFieldInfo<TValue>)fieldInfo).SetValue(target, value);
                 return;
             }

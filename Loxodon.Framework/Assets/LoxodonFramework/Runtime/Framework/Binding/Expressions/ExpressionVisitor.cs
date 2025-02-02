@@ -27,17 +27,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 
-namespace Loxodon.Framework.Binding.Expressions
-{
-    abstract class ExpressionVisitor
-    {
-        public virtual Expression Visit(Expression expr)
-        {
+namespace Loxodon.Framework.Binding.Expressions {
+    abstract class ExpressionVisitor {
+        public virtual Expression Visit(Expression expr) {
             if (expr == null)
                 return null;
 
-            switch (expr.NodeType)
-            {
+            switch (expr.NodeType) {
                 case ExpressionType.Negate:
                 case ExpressionType.NegateChecked:
                 case ExpressionType.Not:
@@ -111,21 +107,16 @@ namespace Loxodon.Framework.Binding.Expressions
             }
         }
 
-        protected virtual ReadOnlyCollection<T> VisitExpressionList<T>(ReadOnlyCollection<T> original) where T : Expression
-        {
+        protected virtual ReadOnlyCollection<T> VisitExpressionList<T>(ReadOnlyCollection<T> original) where T : Expression {
             List<T> list = null;
-            for (int i = 0, n = original.Count; i < n; i++)
-            {
+            for (int i = 0, n = original.Count; i < n; i++) {
                 Expression p = this.Visit(original[i]);
-                if (list != null)
-                {
+                if (list != null) {
                     list.Add((T)p);
                 }
-                else if (p != original[i])
-                {
+                else if (p != original[i]) {
                     list = new List<T>(n);
-                    for (int j = 0; j < i; j++)
-                    {
+                    for (int j = 0; j < i; j++) {
                         list.Add(original[j]);
                     }
                     list.Add((T)p);
@@ -137,14 +128,12 @@ namespace Loxodon.Framework.Binding.Expressions
             return original;
         }
 
-        protected virtual Expression VisitBinary(BinaryExpression expr)
-        {
+        protected virtual Expression VisitBinary(BinaryExpression expr) {
             Expression left = this.Visit(expr.Left);
             Expression right = this.Visit(expr.Right);
             Expression conversion = this.Visit(expr.Conversion);
 
-            if (left != expr.Left || right != expr.Right || conversion != expr.Conversion)
-            {
+            if (left != expr.Left || right != expr.Right || conversion != expr.Conversion) {
                 if (expr.NodeType == ExpressionType.Coalesce && expr.Conversion != null)
                     return Expression.Coalesce(left, right, conversion as LambdaExpression);
                 else
@@ -153,8 +142,7 @@ namespace Loxodon.Framework.Binding.Expressions
             return expr;
         }
 
-        protected virtual Expression VisitConditional(ConditionalExpression expr)
-        {
+        protected virtual Expression VisitConditional(ConditionalExpression expr) {
             Expression test = this.Visit(expr.Test);
             Expression ifTrue = this.Visit(expr.IfTrue);
             Expression ifFalse = this.Visit(expr.IfFalse);
@@ -163,8 +151,7 @@ namespace Loxodon.Framework.Binding.Expressions
             return expr;
         }
 
-        protected virtual Expression VisitLambda(LambdaExpression expr)
-        {
+        protected virtual Expression VisitLambda(LambdaExpression expr) {
             Expression body = this.Visit(expr.Body);
             IEnumerable<ParameterExpression> parameters = VisitExpressionList(expr.Parameters);
             if (body != expr.Body || parameters != expr.Parameters)
@@ -172,8 +159,7 @@ namespace Loxodon.Framework.Binding.Expressions
             return expr;
         }
 
-        protected virtual Expression VisitInvocation(InvocationExpression expr)
-        {
+        protected virtual Expression VisitInvocation(InvocationExpression expr) {
             IEnumerable<Expression> args = VisitExpressionList(expr.Arguments);
             Expression expression = this.Visit(expr.Expression);
             if (args != expr.Arguments || expression != expr.Expression)
@@ -181,16 +167,14 @@ namespace Loxodon.Framework.Binding.Expressions
             return expr;
         }
 
-        protected virtual Expression VisitMember(MemberExpression expr)
-        {
+        protected virtual Expression VisitMember(MemberExpression expr) {
             Expression expression = this.Visit(expr.Expression);
             if (expression != expr.Expression)
                 return Expression.MakeMemberAccess(expression, expr.Member);
             return expr;
         }
 
-        protected virtual Expression VisitMethodCall(MethodCallExpression expr)
-        {
+        protected virtual Expression VisitMethodCall(MethodCallExpression expr) {
             Expression obj = this.Visit(expr.Object);
             IEnumerable<Expression> args = VisitExpressionList(expr.Arguments);
             if (obj != expr.Object || args != expr.Arguments)
@@ -198,37 +182,32 @@ namespace Loxodon.Framework.Binding.Expressions
             return expr;
         }
 
-        protected virtual Expression VisitUnary(UnaryExpression expr)
-        {
+        protected virtual Expression VisitUnary(UnaryExpression expr) {
             Expression operand = this.Visit(expr.Operand);
             if (operand != expr.Operand)
                 return Expression.MakeUnary(expr.NodeType, operand, expr.Type, expr.Method);
             return expr;
         }
 
-        protected virtual Expression VisitTypeBinary(TypeBinaryExpression expr)
-        {
+        protected virtual Expression VisitTypeBinary(TypeBinaryExpression expr) {
             Expression expression = this.Visit(expr.Expression);
             if (expression != expr.Expression)
                 return Expression.TypeIs(expression, expr.TypeOperand);
             return expr;
         }
 
-        protected virtual Expression VisitNewArrayInit(NewArrayExpression expr)
-        {
+        protected virtual Expression VisitNewArrayInit(NewArrayExpression expr) {
             IEnumerable<Expression> args = VisitExpressionList(expr.Expressions);
             if (args != expr.Expressions)
                 return Expression.NewArrayInit(expr.Type, args);
             return expr;
         }
 
-        protected virtual Expression VisitConstant(ConstantExpression expr)
-        {
+        protected virtual Expression VisitConstant(ConstantExpression expr) {
             return expr;
         }
 
-        protected virtual Expression VisitParameter(ParameterExpression expr)
-        {
+        protected virtual Expression VisitParameter(ParameterExpression expr) {
             return expr;
         }
     }

@@ -26,23 +26,17 @@ using Loxodon.Framework.Interactivity;
 using System;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Views.InteractionActions
-{
-    public class LoadingInteractionAction : InteractionActionBase<VisibilityNotification>
-    {
+namespace Loxodon.Framework.Views.InteractionActions {
+    public class LoadingInteractionAction : InteractionActionBase<VisibilityNotification> {
         private List<Loading> list = new List<Loading>();
-        public override void Action(VisibilityNotification notification, Action callback)
-        {
-            try
-            {
-                if (notification.Visible)
-                {
+        public override void Action(VisibilityNotification notification, Action callback) {
+            try {
+                if (notification.Visible) {
                     Loading loading = Loading.Show(true);
                     if (loading != null)
                         list.Insert(0, loading);
                 }
-                else
-                {
+                else {
                     if (list.Count <= 0)
                         return;
 
@@ -51,8 +45,7 @@ namespace Loxodon.Framework.Views.InteractionActions
                     loading.Dispose();
                 }
             }
-            finally
-            {
+            finally {
                 callback?.Invoke();
             }
         }

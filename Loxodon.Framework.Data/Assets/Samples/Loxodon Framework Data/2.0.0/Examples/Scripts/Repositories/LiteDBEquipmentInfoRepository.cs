@@ -26,22 +26,17 @@
 using LiteDB;
 using Loxodon.Framework.Examples.Domains;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public class LiteDBEquipmentInfoRepository : LiteDBRepository<EquipmentInfo>, IEquipmentInfoRepository
-    {
-        public LiteDBEquipmentInfoRepository(ILiteDatabase database) : base(database)
-        {
+namespace Loxodon.Framework.Examples.Repositories {
+    public class LiteDBEquipmentInfoRepository : LiteDBRepository<EquipmentInfo>, IEquipmentInfoRepository {
+        public LiteDBEquipmentInfoRepository(ILiteDatabase database) : base(database) {
         }
 
 
-        public EquipmentInfo GetById(int id)
-        {
+        public EquipmentInfo GetById(int id) {
             return GetCollection().FindById(id);
         }
 
-        public EquipmentInfo GetBySign(string sign, int quality)
-        {
+        public EquipmentInfo GetBySign(string sign, int quality) {
             return GetCollection().FindOne(c => c.Sign.Equals(sign) && c.Quality == quality);
         }
     }

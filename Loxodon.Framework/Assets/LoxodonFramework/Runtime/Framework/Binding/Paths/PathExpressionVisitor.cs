@@ -33,18 +33,15 @@ using Loxodon.Log;
 using Loxodon.Framework.Binding.Expressions;
 #endif
 
-namespace Loxodon.Framework.Binding.Paths
-{
-    public class PathExpressionVisitor
-    {
+namespace Loxodon.Framework.Binding.Paths {
+    public class PathExpressionVisitor {
         //private static readonly ILog log = LogManager.GetLogger(typeof(PathExpressionVisitor));
 
         private readonly List<Path> list = new List<Path>();
 
         public List<Path> Paths { get { return list; } }
 
-        public virtual Expression Visit(Expression expression)
-        {
+        public virtual Expression Visit(Expression expression) {
             if (expression == null)
                 return null;
 
@@ -107,8 +104,7 @@ namespace Loxodon.Framework.Binding.Paths
             throw new NotSupportedException("Expressions of type " + expression.Type + " are not supported.");
         }
 
-        protected virtual void Visit(IList<Expression> nodes)
-        {
+        protected virtual void Visit(IList<Expression> nodes) {
             if (nodes == null || nodes.Count <= 0)
                 return;
 
@@ -116,121 +112,99 @@ namespace Loxodon.Framework.Binding.Paths
                 Visit(expression);
         }
 
-        protected virtual Expression VisitLambda(LambdaExpression node)
-        {
+        protected virtual Expression VisitLambda(LambdaExpression node) {
             if (node.Parameters != null)
                 Visit(node.Parameters.Select(p => (Expression)p).ToList());
             return Visit(node.Body);
         }
 
-        protected virtual Expression VisitBinary(BinaryExpression node)
-        {
-            if (node.NodeType == ExpressionType.ArrayIndex)
-            {
+        protected virtual Expression VisitBinary(BinaryExpression node) {
+            if (node.NodeType == ExpressionType.ArrayIndex) {
                 this.Visit(this.ParseMemberPath(node, null, this.list));
             }
-            else
-            {
+            else {
                 List<Expression> list = new List<Expression>() { node.Left, node.Right, node.Conversion };
                 this.Visit(list);
             }
             return null;
         }
 
-        protected virtual Expression VisitConditional(ConditionalExpression node)
-        {
+        protected virtual Expression VisitConditional(ConditionalExpression node) {
             List<Expression> list = new List<Expression>() { node.IfFalse, node.IfTrue, node.Test };
             this.Visit(list);
             return null;
         }
 
-        protected virtual Expression VisitConstant(ConstantExpression node)
-        {
+        protected virtual Expression VisitConstant(ConstantExpression node) {
             return null;
         }
 
-        protected virtual void VisitElementInit(ElementInit init)
-        {
+        protected virtual void VisitElementInit(ElementInit init) {
             if (init == null)
                 return;
 
             this.Visit(init.Arguments);
         }
 
-        protected virtual Expression VisitListInit(ListInitExpression node)
-        {
-            if (node.Initializers != null)
-            {
-                foreach (ElementInit init in node.Initializers)
-                {
+        protected virtual Expression VisitListInit(ListInitExpression node) {
+            if (node.Initializers != null) {
+                foreach (ElementInit init in node.Initializers) {
                     VisitElementInit(init);
                 }
             }
             return Visit(node.NewExpression);
         }
 
-        protected virtual Expression VisitMember(MemberExpression node)
-        {
+        protected virtual Expression VisitMember(MemberExpression node) {
             this.Visit(ParseMemberPath(node, null, this.list));
             return null;
         }
 
-        protected virtual Expression VisitInvocation(InvocationExpression node)
-        {
+        protected virtual Expression VisitInvocation(InvocationExpression node) {
             this.Visit(node.Arguments);
             return this.Visit(node.Expression);
         }
 
-        protected virtual Expression VisitMemberInit(MemberInitExpression expr)
-        {
+        protected virtual Expression VisitMemberInit(MemberInitExpression expr) {
             return Visit(expr.NewExpression);
         }
 
-        protected virtual MemberListBinding VisitMemberListBinding(MemberListBinding binding)
-        {
+        protected virtual MemberListBinding VisitMemberListBinding(MemberListBinding binding) {
             return null;
         }
 
-        protected virtual MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding binding)
-        {
+        protected virtual MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding binding) {
             return null;
         }
 
-        protected virtual Expression VisitMethodCall(MethodCallExpression node)
-        {
+        protected virtual Expression VisitMethodCall(MethodCallExpression node) {
             this.Visit(ParseMemberPath(node, null, this.list));
             return null;
         }
 
-        protected virtual Expression VisitNew(NewExpression expr)
-        {
+        protected virtual Expression VisitNew(NewExpression expr) {
             Visit(expr.Arguments);
             return null;
         }
 
-        protected virtual Expression VisitNewArray(NewArrayExpression node)
-        {
+        protected virtual Expression VisitNewArray(NewArrayExpression node) {
             this.Visit(node.Expressions);
             return null;
         }
 
-        protected virtual Expression VisitParameter(ParameterExpression node)
-        {
+        protected virtual Expression VisitParameter(ParameterExpression node) {
             return null;
         }
 
-        protected virtual Expression VisitTypeBinary(TypeBinaryExpression node)
-        {
+        protected virtual Expression VisitTypeBinary(TypeBinaryExpression node) {
             return Visit(node.Expression);
         }
 
-        protected virtual Expression VisitUnary(UnaryExpression node)
-        {
+        protected virtual Expression VisitUnary(UnaryExpression node) {
             return Visit(node.Operand);
         }
 
-        private static Expression ConvertMemberAccessToConstant(Expression argument)
-        {
+        private static Expression ConvertMemberAccessToConstant(Expression argument) {
             if (argument is ConstantExpression)
                 return argument;
 
@@ -247,48 +221,39 @@ namespace Loxodon.Framework.Binding.Paths
             return Expression.Constant(constant);
         }
 
-        private IList<Expression> ParseMemberPath(Expression expression, Path path, IList<Path> list)
-        {
+        private IList<Expression> ParseMemberPath(Expression expression, Path path, IList<Path> list) {
             if (expression.NodeType != ExpressionType.MemberAccess && expression.NodeType != ExpressionType.Call && expression.NodeType != ExpressionType.ArrayIndex)
                 throw new Exception();
 
             List<Expression> result = new List<Expression>();
 
             Expression current = expression;
-            while (current != null && (current is MemberExpression || current is MethodCallExpression || current is BinaryExpression || current is ParameterExpression || current is ConstantExpression))
-            {
-                if (current is MemberExpression)
-                {
-                    if (path == null)
-                    {
+            while (current != null && (current is MemberExpression || current is MethodCallExpression || current is BinaryExpression || current is ParameterExpression || current is ConstantExpression)) {
+                if (current is MemberExpression) {
+                    if (path == null) {
                         path = new Path();
                         list.Add(path);
                     }
 
                     MemberExpression me = (MemberExpression)current;
                     var field = me.Member as FieldInfo;
-                    if (field != null)
-                    {
+                    if (field != null) {
                         //static or instance
                         path.Prepend(new MemberNode(field));
                     }
 
                     var property = me.Member as PropertyInfo;
-                    if (property != null)
-                    {
+                    if (property != null) {
                         //static or instance
                         path.Prepend(new MemberNode(property));
                     }
 
                     current = me.Expression;
                 }
-                else if (current is MethodCallExpression)
-                {
+                else if (current is MethodCallExpression) {
                     MethodCallExpression mc = (MethodCallExpression)current;
-                    if (mc.Method.Name.Equals("get_Item") && mc.Arguments.Count == 1)
-                    {
-                        if (path == null)
-                        {
+                    if (mc.Method.Name.Equals("get_Item") && mc.Arguments.Count == 1) {
+                        if (path == null) {
                             path = new Path();
                             list.Add(path);
                         }
@@ -298,31 +263,25 @@ namespace Loxodon.Framework.Binding.Paths
                             argument = ConvertMemberAccessToConstant(argument);
 
                         object value = (argument as ConstantExpression).Value;
-                        if (value is string)
-                        {
+                        if (value is string) {
                             path.PrependIndexed((string)value);
                         }
-                        else if (value is Int32)
-                        {
+                        else if (value is Int32) {
                             path.PrependIndexed((int)value);
                         }
 
                         current = mc.Object;
                     }
-                    else
-                    {
+                    else {
                         current = null;
                         result.AddRange(mc.Arguments);
                         result.Add(mc.Object);
                     }
                 }
-                else if (current is BinaryExpression)
-                {
+                else if (current is BinaryExpression) {
                     var binary = current as BinaryExpression;
-                    if (binary.NodeType == ExpressionType.ArrayIndex)
-                    {
-                        if (path == null)
-                        {
+                    if (binary.NodeType == ExpressionType.ArrayIndex) {
+                        if (path == null) {
                             path = new Path();
                             list.Add(path);
                         }
@@ -333,28 +292,23 @@ namespace Loxodon.Framework.Binding.Paths
                             right = ConvertMemberAccessToConstant(right);
 
                         object value = (right as ConstantExpression).Value;
-                        if (value is string)
-                        {
+                        if (value is string) {
                             path.PrependIndexed((string)value);
                         }
-                        else if (value is Int32)
-                        {
+                        else if (value is Int32) {
                             path.PrependIndexed((int)value);
                         }
 
                         current = left;
                     }
-                    else
-                    {
+                    else {
                         current = null;
                     }
                 }
-                else if (current is ParameterExpression)
-                {
+                else if (current is ParameterExpression) {
                     current = null;
                 }
-                else if (current is ConstantExpression)
-                {
+                else if (current is ConstantExpression) {
                     current = null;
                 }
             }

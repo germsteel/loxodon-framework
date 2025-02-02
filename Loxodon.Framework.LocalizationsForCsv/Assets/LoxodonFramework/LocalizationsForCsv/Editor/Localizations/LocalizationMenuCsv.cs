@@ -10,10 +10,8 @@ using System.Xml;
 using UnityEditor;
 using UnityEngine;
 
-namespace Loxodon.Framework.Editors
-{
-    public static class LocalizationMenuCsv
-    {
+namespace Loxodon.Framework.Editors {
+    public static class LocalizationMenuCsv {
         private const string XML_OUTPUT_DIR_KEY = "_LOXODON_LOCALIZATION_XML_OUTPUT_DIR_KEY";
         private const string CSV_OUTPUT_DIR_KEY = "_LOXODON_LOCALIZATION_CSV_OUTPUT_DIR_KEY";
         private const string DEFAULT_OUTPUT_DIR = "Assets";
@@ -28,8 +26,7 @@ namespace Loxodon.Framework.Editors
         private readonly static char[] CSV_SPECIAL_CHARS = new char[] { ',' };
 
         [MenuItem(XML2CSV_MENU_NAME, false, 0)]
-        static void Xml2Csv()
-        {
+        static void Xml2Csv() {
             var selections = Selection.objects;
             if (selections == null || selections.Length <= 0)
                 return;
@@ -52,17 +49,14 @@ namespace Loxodon.Framework.Editors
                 return;
 
             Dictionary<string, DataTable> dict = new Dictionary<string, DataTable>();
-            foreach (var file in files)
-            {
-                try
-                {
+            foreach (var file in files) {
+                try {
                     FileInfo fileInfo = new FileInfo(file);
                     string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
                     string localeName = fileInfo.Directory.Name;
 
                     DataTable dataTable = null;
-                    if (!dict.TryGetValue(fileName, out dataTable))
-                    {
+                    if (!dict.TryGetValue(fileName, out dataTable)) {
                         dataTable = new DataTable();
                         dict.Add(fileName, dataTable);
                     }
@@ -70,17 +64,14 @@ namespace Loxodon.Framework.Editors
                     TextAsset textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
                     ReadXml(new MemoryStream(textAsset.bytes), dataTable, localeName);
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                 }
             }
 
-            foreach (var kv in dict)
-            {
+            foreach (var kv in dict) {
                 string fileName = kv.Key;
                 DataTable dataTable = kv.Value;
-                using (MemoryStream output = new MemoryStream())
-                {
+                using (MemoryStream output = new MemoryStream()) {
                     WriteCsv(output, dataTable);
                     File.WriteAllBytes(string.Format("{0}/{1}{2}", dir, fileName, CSV_EXTENSION), output.ToArray());
                 }
@@ -90,8 +81,7 @@ namespace Loxodon.Framework.Editors
 
 
         [MenuItem(CSV2XML_MENU_NAME, false, 0)]
-        static void Csv2Xml()
-        {
+        static void Csv2Xml() {
             var selections = Selection.objects;
             if (selections == null || selections.Length <= 0)
                 return;
@@ -114,15 +104,12 @@ namespace Loxodon.Framework.Editors
                 return;
 
             Dictionary<string, DataTable> dict = new Dictionary<string, DataTable>();
-            foreach (var file in files)
-            {
-                try
-                {
+            foreach (var file in files) {
+                try {
                     FileInfo fileInfo = new FileInfo(file);
                     string fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
                     DataTable dataTable = null;
-                    if (!dict.TryGetValue(fileName, out dataTable))
-                    {
+                    if (!dict.TryGetValue(fileName, out dataTable)) {
                         dataTable = new DataTable();
                         dict.Add(fileName, dataTable);
                     }
@@ -130,23 +117,19 @@ namespace Loxodon.Framework.Editors
                     TextAsset textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
                     ReadCsv(new MemoryStream(textAsset.bytes), dataTable);
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                 }
             }
 
-            foreach (var kv in dict)
-            {
+            foreach (var kv in dict) {
                 string fileName = kv.Key;
                 DataTable dataTable = kv.Value;
 
-                foreach (DataColumn column in dataTable.Columns)
-                {
+                foreach (DataColumn column in dataTable.Columns) {
                     if (Regex.IsMatch(column.ColumnName, @"^((key)|(type)|(description))$", RegexOptions.IgnoreCase))
                         continue;
 
-                    using (MemoryStream output = new MemoryStream())
-                    {
+                    using (MemoryStream output = new MemoryStream()) {
                         WriteXml(output, dataTable, column.ColumnName);
                         FileInfo fileInfo = new FileInfo(string.Format("{0}/{1}/{2}{3}", dir, column.ColumnName, fileName, XML_EXTENSION));
                         if (!fileInfo.Directory.Exists)
@@ -161,19 +144,16 @@ namespace Loxodon.Framework.Editors
         }
 
         [MenuItem(XML2CSV_MENU_NAME, true)]
-        static bool IsValidatedXml()
-        {
+        static bool IsValidatedXml() {
             return IsValidated(XML_EXTENSION);
         }
 
         [MenuItem(CSV2XML_MENU_NAME, true)]
-        static bool IsValidatedCsv()
-        {
+        static bool IsValidatedCsv() {
             return IsValidated(CSV_EXTENSION);
         }
 
-        static string GetRelativeDirectory(string dir)
-        {
+        static string GetRelativeDirectory(string dir) {
             int start = dir.LastIndexOf("Assets");
             if (start < 0)
                 return "Assets";
@@ -181,11 +161,9 @@ namespace Loxodon.Framework.Editors
             return dir.Substring(start);
         }
 
-        static void ReadXml(Stream input, DataTable dataTable, string columnName)
-        {
+        static void ReadXml(Stream input, DataTable dataTable, string columnName) {
             var columns = dataTable.Columns;
-            if (columns.Count <= 0)
-            {
+            if (columns.Count <= 0) {
                 columns.Add("key", typeof(string));
                 columns.Add("type", typeof(string));
                 dataTable.PrimaryKey = new DataColumn[] { columns["key"] };
@@ -195,23 +173,19 @@ namespace Loxodon.Framework.Editors
                 columns.Add(columnName, typeof(string));
 
             var rows = dataTable.Rows;
-            using (XmlTextReader reader = new XmlTextReader(input))
-            {
+            using (XmlTextReader reader = new XmlTextReader(input)) {
                 string elementName = null;
                 string key = null;
                 string value = null;
                 List<string> list = new List<string>();
-                while (reader.Read())
-                {
-                    switch (reader.NodeType)
-                    {
+                while (reader.Read()) {
+                    switch (reader.NodeType) {
                         case XmlNodeType.Element:
                             elementName = reader.Name;
                             if (string.IsNullOrEmpty(elementName) || elementName.Equals("resources"))
                                 break;
 
-                            if (elementName.Equals("item"))
-                            {
+                            if (elementName.Equals("item")) {
                                 //array item
                                 var content = reader.ReadElementString();
                                 list.Add(content);
@@ -222,21 +196,18 @@ namespace Loxodon.Framework.Editors
                             if (string.IsNullOrEmpty(key))
                                 throw new XmlException("The attribute of name is null.");
 
-                            if (elementName.EndsWith("-array"))
-                            {
+                            if (elementName.EndsWith("-array")) {
                                 //array item
                                 list.Clear();
                                 break;
                             }
 
                             value = reader.ReadElementString();
-                            if (rows.Contains(key))
-                            {
+                            if (rows.Contains(key)) {
                                 var dataRow = rows.Find(key);
                                 dataRow[columnName] = value;
                             }
-                            else
-                            {
+                            else {
                                 var dataRow = dataTable.NewRow();
                                 dataRow["key"] = key;
                                 dataRow["type"] = elementName;
@@ -246,13 +217,11 @@ namespace Loxodon.Framework.Editors
                             break;
                         case XmlNodeType.EndElement:
                             elementName = reader.Name;
-                            if (!string.IsNullOrEmpty(elementName) && elementName.EndsWith("-array"))
-                            {
+                            if (!string.IsNullOrEmpty(elementName) && elementName.EndsWith("-array")) {
                                 //array
                                 bool hasSpecialChar = list.Exists(v => !string.IsNullOrEmpty(v) && ((!Regex.IsMatch(v.Trim(), @"^((\(\S*\))|(\[\S*\])|(\{\S*\})|(<\S*>))$") && v.IndexOfAny(CSV_SPECIAL_CHARS) != -1) || (v.IndexOf('"') != -1)));
                                 StringBuilder buf = new StringBuilder();
-                                for (int i = 0; i < list.Count; i++)
-                                {
+                                for (int i = 0; i < list.Count; i++) {
                                     if (hasSpecialChar)
                                         buf.AppendFormat("\"{0}\"", list[i].Replace("\"", "&quot;"));
                                     else
@@ -264,13 +233,11 @@ namespace Loxodon.Framework.Editors
                                 value = buf.ToString();
                                 list.Clear();
 
-                                if (rows.Contains(key))
-                                {
+                                if (rows.Contains(key)) {
                                     var dataRow = rows.Find(key);
                                     dataRow[columnName] = value;
                                 }
-                                else
-                                {
+                                else {
                                     var dataRow = dataTable.NewRow();
                                     dataRow["key"] = key;
                                     dataRow["type"] = elementName;
@@ -286,36 +253,28 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        static void WriteXml(Stream output, DataTable dataTable, string columnName)
-        {
-            using (XmlTextWriter writer = new XmlTextWriter(output, Encoding.UTF8))
-            {
+        static void WriteXml(Stream output, DataTable dataTable, string columnName) {
+            using (XmlTextWriter writer = new XmlTextWriter(output, Encoding.UTF8)) {
                 writer.Formatting = Formatting.Indented;
                 writer.WriteStartDocument();
                 writer.WriteStartElement("resources");
-                foreach (DataRow row in dataTable.Rows)
-                {
+                foreach (DataRow row in dataTable.Rows) {
                     string key = (string)row["key"];
                     string type = (string)row["type"];
                     string value = row[columnName] is DBNull ? null : (string)row[columnName];
 
-                    if (type.EndsWith("-array"))
-                    {
-                        if (!string.IsNullOrEmpty(value))
-                        {
+                    if (type.EndsWith("-array")) {
+                        if (!string.IsNullOrEmpty(value)) {
                             writer.WriteStartElement(type);
                             writer.WriteAttributeString("name", key);
 
                             string[] values = StringSpliter.Split(value, CSV_SPECIAL_CHARS);
-                            foreach (string v in values)
-                            {
+                            foreach (string v in values) {
                                 writer.WriteStartElement("item");
-                                if (!string.IsNullOrEmpty(v) & v.IndexOfAny(XML_SPECIAL_CHARS) != -1)
-                                {
+                                if (!string.IsNullOrEmpty(v) & v.IndexOfAny(XML_SPECIAL_CHARS) != -1) {
                                     writer.WriteCData(v);
                                 }
-                                else
-                                {
+                                else {
                                     writer.WriteValue(v);
                                 }
                                 writer.WriteEndElement();
@@ -323,18 +282,14 @@ namespace Loxodon.Framework.Editors
                             writer.WriteEndElement();
                         }
                     }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(value))
-                        {
+                    else {
+                        if (!string.IsNullOrEmpty(value)) {
                             writer.WriteStartElement(type);
                             writer.WriteAttributeString("name", key);
-                            if (value.IndexOfAny(XML_SPECIAL_CHARS) != -1)
-                            {
+                            if (value.IndexOfAny(XML_SPECIAL_CHARS) != -1) {
                                 writer.WriteCData(value);
                             }
-                            else
-                            {
+                            else {
                                 writer.WriteValue(value);
                             }
                             writer.WriteEndElement();
@@ -346,31 +301,23 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        static void ReadCsv(Stream input, DataTable dataTable)
-        {
-            using (CsvReader reader = new CsvReader(new StreamReader(input, Encoding.UTF8)))
-            {
-                using (var dataReader = new CsvDataReader(reader))
-                {
+        static void ReadCsv(Stream input, DataTable dataTable) {
+            using (CsvReader reader = new CsvReader(new StreamReader(input, Encoding.UTF8))) {
+                using (var dataReader = new CsvDataReader(reader)) {
                     dataTable.Load(dataReader);
                 }
             }
         }
 
-        static void WriteCsv(Stream output, DataTable dataTable)
-        {
-            using (CsvWriter writer = new CsvWriter(new StreamWriter(output, Encoding.UTF8)))
-            {
-                foreach (DataColumn column in dataTable.Columns)
-                {
+        static void WriteCsv(Stream output, DataTable dataTable) {
+            using (CsvWriter writer = new CsvWriter(new StreamWriter(output, Encoding.UTF8))) {
+                foreach (DataColumn column in dataTable.Columns) {
                     writer.WriteField(column.ColumnName);
                 }
                 writer.NextRecord();
 
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    foreach (object item in row.ItemArray)
-                    {
+                foreach (DataRow row in dataTable.Rows) {
+                    foreach (object item in row.ItemArray) {
                         writer.WriteField(item);
                     }
                     writer.NextRecord();
@@ -378,23 +325,19 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        static bool IsValidated(string extension)
-        {
+        static bool IsValidated(string extension) {
             var selections = Selection.objects;
             if (selections == null || selections.Length <= 0)
                 return false;
 
-            foreach (var s in selections)
-            {
+            foreach (var s in selections) {
                 string path = AssetDatabase.GetAssetPath(s);
-                if (s is DefaultAsset && Directory.Exists(path))
-                {
+                if (s is DefaultAsset && Directory.Exists(path)) {
                     string[] files = Directory.GetFiles(path, "*" + extension, SearchOption.AllDirectories);
                     if (files != null && files.Length > 0)
                         return true;
                 }
-                else if (s is TextAsset)
-                {
+                else if (s is TextAsset) {
                     if (path.ToLower().EndsWith(extension))
                         return true;
                 }
@@ -402,25 +345,20 @@ namespace Loxodon.Framework.Editors
             return false;
         }
 
-        static ISet<string> GetSelections(string extension)
-        {
+        static ISet<string> GetSelections(string extension) {
             HashSet<string> set = new HashSet<string>();
             var selections = Selection.objects;
             if (selections == null || selections.Length <= 0)
                 return null;
 
-            foreach (var s in selections)
-            {
+            foreach (var s in selections) {
                 string path = AssetDatabase.GetAssetPath(s);
-                if (s is DefaultAsset && Directory.Exists(path))
-                {
-                    foreach (string file in Directory.GetFiles(path, "*" + extension, SearchOption.AllDirectories))
-                    {
+                if (s is DefaultAsset && Directory.Exists(path)) {
+                    foreach (string file in Directory.GetFiles(path, "*" + extension, SearchOption.AllDirectories)) {
                         set.Add(file);
                     }
                 }
-                else if (s is TextAsset)
-                {
+                else if (s is TextAsset) {
                     if (path.ToLower().EndsWith(extension))
                         set.Add(path);
                 }

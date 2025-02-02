@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public interface IProxyObject:IDisposable
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public interface IProxyObject:IDisposable {
         event EventHandler ValueChanged;
 
         Type Type { get; }
@@ -55,8 +53,7 @@ namespace Loxodon.Framework.Binding.Reflection
         IProxyInvoker GetMethodInvoker(string name, Type[] parameterTypes);
     }
 
-    public interface IProxyObject<T> : IProxyObject
-    {
+    public interface IProxyObject<T> : IProxyObject {
         new T Value { get; set; }
 
         IProxyObject<E> GetPropertyProxy<E>(string name);
@@ -66,15 +63,13 @@ namespace Loxodon.Framework.Binding.Reflection
         TResult Invoke<TResult>(string name, Type[] parameterTypes, params object[] args);
     }
 
-    public interface IProxyCollection : IProxyObject
-    {
+    public interface IProxyCollection : IProxyObject {
         object this[object key] { get; set; }
 
         IProxyObject GetItemProxy(object key);
     }
 
-    public interface IProxyCollection<T> : IProxyObject<T>, IProxyCollection
-    {       
+    public interface IProxyCollection<T> : IProxyObject<T>, IProxyCollection {       
         new T this[object key] { get; set; }
 
         new IProxyObject<T> GetItemProxy(object key);

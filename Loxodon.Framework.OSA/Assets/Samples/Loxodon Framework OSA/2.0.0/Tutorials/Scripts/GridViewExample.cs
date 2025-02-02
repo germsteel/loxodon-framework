@@ -32,71 +32,57 @@ using Loxodon.Framework.Views.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials.OSA
-{
-    public class GridViewExampleViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Tutorials.OSA {
+    public class GridViewExampleViewModel : ViewModelBase {
         private int id = 0;
         private ObservableList<ItemViewModel> items;
         private ItemViewModel selectedItem;
         private SimpleCommand<ItemViewModel> itemSelectCommand;
-        public GridViewExampleViewModel()
-        {
+        public GridViewExampleViewModel() {
             itemSelectCommand = new SimpleCommand<ItemViewModel>(OnItemSelect);
             this.items = this.CreateItems(3);
         }
 
         public SimpleCommand<ItemViewModel> ItemSelectCommand { get { return this.itemSelectCommand; } }
 
-        public ObservableList<ItemViewModel> Items
-        {
+        public ObservableList<ItemViewModel> Items {
             get { return this.items; }
             set { this.Set(ref items, value); }
         }
 
-        public ItemViewModel SelectedItem
-        {
+        public ItemViewModel SelectedItem {
             get { return this.selectedItem; }
             set { Set(ref selectedItem, value); }
         }
 
-        public void AddItem()
-        {
+        public void AddItem() {
             items.Add(CreateItem());
         }
 
-        public void ChangeItem()
-        {
-            if (items != null && items.Count > 0)
-            {
+        public void ChangeItem() {
+            if (items != null && items.Count > 0) {
                 var model = items[0];
                 model.Color = DemosUtil.GetRandomColor();
             }
         }
 
-        public void MoveItem()
-        {
-            if (items != null && items.Count > 1)
-            {
+        public void MoveItem() {
+            if (items != null && items.Count > 1) {
                 items.Move(0, items.Count - 1);
             }
         }
 
-        public void ResetItem()
-        {
+        public void ResetItem() {
             items.Clear();
         }
 
-        private void OnItemSelect(ItemViewModel item)
-        {
+        private void OnItemSelect(ItemViewModel item) {
             item.Selected = !item.Selected;
             if (item.Selected)
                 this.SelectedItem = item;
 
-            if (items != null && item.Selected)
-            {
-                foreach (var i in items)
-                {
+            if (items != null && item.Selected) {
+                foreach (var i in items) {
                     if (i == item)
                         continue;
                     i.Selected = false;
@@ -104,40 +90,34 @@ namespace Loxodon.Framework.Tutorials.OSA
             }
         }
 
-        private ObservableList<ItemViewModel> CreateItems(int count)
-        {
+        private ObservableList<ItemViewModel> CreateItems(int count) {
             var models = new ObservableList<ItemViewModel>();
             for (int i = 0; i < count; i++)
                 models.Add(CreateItem());
             return models;
         }
 
-        private ItemViewModel CreateItem()
-        {
-            return new ItemViewModel()
-            {
+        private ItemViewModel CreateItem() {
+            return new ItemViewModel() {
                 Title = "Item #" + (id++),
             };
         }
     }
 
-    public class GridViewExample : MonoBehaviour
-    {
+    public class GridViewExample : MonoBehaviour {
         public Button addButton;
         public Button changeButton;
         public Button moveButton;
         public Button resetButton;
         public GridViewBindingAdapter gridView;
 
-        protected void Awake()
-        {
+        protected void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
         }
 
-        private void Start()
-        {
+        private void Start() {
             var bindingSet = this.CreateBindingSet<GridViewExample, GridViewExampleViewModel>();
 
             bindingSet.Bind(addButton).For(v => v.onClick).To(vm => vm.AddItem);

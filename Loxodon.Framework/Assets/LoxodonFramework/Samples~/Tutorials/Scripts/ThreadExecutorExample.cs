@@ -33,14 +33,11 @@ using System.Threading.Tasks;
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Execution;
 
-namespace Loxodon.Framework.Tutorials
-{
-	public class ThreadExecutorExample : MonoBehaviour
-	{
+namespace Loxodon.Framework.Tutorials {
+	public class ThreadExecutorExample : MonoBehaviour {
 		private IThreadExecutor executor;
 
-		IEnumerator Start ()
-		{
+		IEnumerator Start () {
 			this.executor = new ThreadExecutor (); 
 
 			IAsyncResult r1 = this.executor.Execute (Task1);
@@ -64,13 +61,11 @@ namespace Loxodon.Framework.Tutorials
 			Debug.LogFormat ("Task4 Result:{0}", r4.Result);
 		}
 
-		void Task1 ()
-		{
+		void Task1 () {
 			Debug.Log ("The task1 is running.");
 		}
 
-		void Task2 (IPromise promise)
-		{
+		void Task2 (IPromise promise) {
 			Debug.Log ("The task2 start");
 #if NETFX_CORE
             Task.Delay(100).Wait();
@@ -81,8 +76,7 @@ namespace Loxodon.Framework.Tutorials
 			Debug.Log ("The task2 end");
 		}
 
-		void Task3 (IPromise<string> promise)
-		{
+		void Task3 (IPromise<string> promise) {
 			Debug.Log ("The task3 start");
 			StringBuilder buf = new StringBuilder ();
 			for (int i = 0; i < 50; i++) {
@@ -103,8 +97,7 @@ namespace Loxodon.Framework.Tutorials
 			Debug.Log ("The task3 end");
 		}
 
-		void Task4 (IProgressPromise<float,string> promise)
-		{
+		void Task4 (IProgressPromise<float,string> promise) {
 			Debug.Log ("The task4 start");
 			int n = 10;
 			StringBuilder buf = new StringBuilder ();

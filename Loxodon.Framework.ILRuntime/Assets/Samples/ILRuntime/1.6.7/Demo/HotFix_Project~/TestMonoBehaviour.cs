@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HotFix_Project
-{
-    class SomeMonoBehaviour : MonoBehaviour
-    {
+namespace HotFix_Project {
+    class SomeMonoBehaviour : MonoBehaviour {
         float time;
-        void Awake()
-        {
+        void Awake() {
             Debug.Log("!! SomeMonoBehaviour.Awake");
         }
 
-        void Start()
-        {
+        void Start() {
             Debug.Log("!! SomeMonoBehaviour.Start");
 
 
@@ -21,46 +17,37 @@ namespace HotFix_Project
 
         }
 
-        void Update()
-        {
-            if (Time.time - time > 1)
-            {
+        void Update() {
+            if (Time.time - time > 1) {
                 Debug.Log("!! SomeMonoBehaviour.Update, t=" + Time.time);
                 time = Time.time;
             }
         }
 
-        public void Test()
-        {
+        public void Test() {
             Debug.Log("SomeMonoBehaviour");
         }
 
-        public static void Run(GameObject go)
-        {
+        public static void Run(GameObject go) {
             go.AddComponent<SomeMonoBehaviour>();
         }
 
     }
 
-    class SomeMonoBehaviour2 : MonoBehaviour
-    {
+    class SomeMonoBehaviour2 : MonoBehaviour {
         public GameObject TargetGO;
         public Texture2D Texture;
-        public void Test2()
-        {
+        public void Test2() {
             Debug.Log("!!! SomeMonoBehaviour2.Test2");
         }
     }
 
-    public class TestMonoBehaviour
-    {
-        public static void RunTest(GameObject go)
-        {
+    public class TestMonoBehaviour {
+        public static void RunTest(GameObject go) {
             go.AddComponent<SomeMonoBehaviour>();
         }
 
-        public static void RunTest2(GameObject go)
-        {
+        public static void RunTest2(GameObject go) {
             go.AddComponent<SomeMonoBehaviour2>();
             var mb = go.GetComponent<SomeMonoBehaviour2>();
             Debug.Log("!!!TestMonoBehaviour.RunTest2 mb= " + mb);

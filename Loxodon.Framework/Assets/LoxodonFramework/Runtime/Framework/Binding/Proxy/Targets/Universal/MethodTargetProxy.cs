@@ -27,14 +27,11 @@ using System;
 using System.Threading;
 using UnityEngine;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class MethodTargetProxy : TargetProxyBase, IObtainable, IProxyInvoker
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class MethodTargetProxy : TargetProxyBase, IObtainable, IProxyInvoker {
         protected readonly IProxyMethodInfo methodInfo;
         protected SendOrPostCallback postCallback;
-        public MethodTargetProxy(object target, IProxyMethodInfo methodInfo) : base(target)
-        {
+        public MethodTargetProxy(object target, IProxyMethodInfo methodInfo) : base(target) {
             this.methodInfo = methodInfo;
             if (!methodInfo.ReturnType.Equals(typeof(void)))
                 throw new ArgumentException("methodInfo");
@@ -46,22 +43,17 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public IProxyMethodInfo ProxyMethodInfo { get { return this.methodInfo; } }
 
-        public object GetValue()
-        {
+        public object GetValue() {
             return this;
         }
 
-        public TValue GetValue<TValue>()
-        {
+        public TValue GetValue<TValue>() {
             return (TValue)this.GetValue();
         }
 
-        public object Invoke(params object[] args)
-        {
-            if (UISynchronizationContext.InThread)
-            {
-                if (this.methodInfo.IsStatic)
-                {
+        public object Invoke(params object[] args) {
+            if (UISynchronizationContext.InThread) {
+                if (this.methodInfo.IsStatic) {
                     this.methodInfo.Invoke(null, args);
                     return null;
                 }
@@ -72,14 +64,10 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
                 return this.methodInfo.Invoke(target, args);
             }
-            else
-            {
-                if (postCallback == null)
-                {
-                    postCallback = state =>
-                    {
-                        if (this.methodInfo.IsStatic)
-                        {
+            else {
+                if (postCallback == null) {
+                    postCallback = state => {
+                        if (this.methodInfo.IsStatic) {
                             this.methodInfo.Invoke(null, args);
                             return;
                         }

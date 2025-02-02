@@ -47,8 +47,7 @@ Requires Unity 2018.4 or higher.
 ### 通过修改 Packages/manifest.json 文件安装插件(推荐)
 
 在Unity项目的Packages目录中找到manifest.json 文件，增加第三方仓库 "https://package.openupm.com"或者"https://registry.npmjs.org"到配置文件中，然后增加"com.vovgou.loxodon-framework-fody" 到dependencies节点下，Unity会自动下载插件，使用这种方式安装也相当方便，且省去了安装nodejs和openm-cli客户端的麻烦。
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
@@ -57,8 +56,7 @@ Requires Unity 2018.4 or higher.
         "com.vovgou.loxodon-framework-fody-tostring": "2.6.0",
         "com.vovgou.loxodon-framework-fody-bindingproxy": "2.6.0"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -93,8 +91,7 @@ FodyWeavers.xml
 在项目中创建一个User类，添加注解"AddINotifyPropertyChangedInterface", 代码如下:
 
     [AddINotifyPropertyChangedInterface]
-    public class User
-    {
+    public class User {
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -104,20 +101,15 @@ FodyWeavers.xml
 
 在代码被Unity编译后，PropertyChanged.Fody会自动织入INotifyPropertyChanged接口相关的代码，所有的属性都会增加RaisePropertyChanged或者OnPropertyChanged函数触发属性改变通知事件。使用ILSpy反编译工具打开Assembly-CSharp.dll程序集，User类的代码如下：
 
-	public class User : INotifyPropertyChanged
-	{
-		public string FirstName
-		{
+	public class User : INotifyPropertyChanged {
+		public string FirstName {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return FirstName;
 			}
 			[CompilerGenerated]
-			set
-			{
-				if (!string.Equals(FirstName, value, StringComparison.Ordinal))
-				{
+			set {
+				if (!string.Equals(FirstName, value, StringComparison.Ordinal)) {
 					FirstName = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
@@ -125,18 +117,14 @@ FodyWeavers.xml
 			}
 		}
 
-		public string LastName
-		{
+		public string LastName {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return LastName;
 			}
 			[CompilerGenerated]
-			set
-			{
-				if (!string.Equals(LastName, value, StringComparison.Ordinal))
-				{
+			set {
+				if (!string.Equals(LastName, value, StringComparison.Ordinal)) {
 					LastName = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
@@ -151,8 +139,7 @@ FodyWeavers.xml
 
 		[GeneratedCode("PropertyChanged.Fody", "3.4.1.0")]
 		[DebuggerNonUserCode]
-		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-		{
+		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs) {
 			this.PropertyChanged?.Invoke(this, eventArgs);
 		}
 	}
@@ -172,8 +159,7 @@ User类代码如下，为User类添加[ToString]注解。
 
     [AddINotifyPropertyChangedInterface]
     [ToString]
-    public class User
-    {
+    public class User {
         public string FirstName { get; set; }  
 
         public string LastName { get; set; }
@@ -183,18 +169,14 @@ User类代码如下，为User类添加[ToString]注解。
 
 织入后的代码如下，自动生成了ToString函数。
 
-	public string FirstName
-	{
+	public string FirstName {
 		[CompilerGenerated]
-		get
-		{
+		get {
 			return FirstName;
 		}
 		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(FirstName, value, StringComparison.Ordinal))
-			{
+		set {
+			if (!string.Equals(FirstName, value, StringComparison.Ordinal)) {
 				FirstName = value;
 				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 				<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
@@ -202,18 +184,14 @@ User类代码如下，为User类添加[ToString]注解。
 		}
 	}
 
-	public string LastName
-	{
+	public string LastName {
 		[CompilerGenerated]
-		get
-		{
+		get {
 			return LastName;
 		}
 		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(LastName, value, StringComparison.Ordinal))
-			{
+		set {
+			if (!string.Equals(LastName, value, StringComparison.Ordinal)) {
 				LastName = value;
 				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 				<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
@@ -228,17 +206,14 @@ User类代码如下，为User类添加[ToString]注解。
 
 	[GeneratedCode("PropertyChanged.Fody", "4.0.2.0")]
 	[DebuggerNonUserCode]
-	protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-	{
+	protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs) {
 		this.PropertyChanged?.Invoke(this, eventArgs);
 	}
 
 	[GeneratedCode("Fody.ToString", "1.11.1.0")]
 	[DebuggerNonUserCode]
-	public override string ToString()
-	{
-		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
-		{
+	public override string ToString() {
+		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3] {
 			FirstName ?? "null",
 			LastName ?? "null",
 			FullName ?? "null"
@@ -274,12 +249,10 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	using System;
 	using UnityEngine;
 	
-	public class PerformanceTest : MonoBehaviour
-	{
+	public class PerformanceTest : MonoBehaviour {
 	    [AddINotifyPropertyChangedInterface]
 	    [GeneratePropertyProxy]
-	    public class AccountViewModel : ObservableObject
-	    {
+	    public class AccountViewModel : ObservableObject {
 	        public string FirstName { get; set; }
 	
 	        public string LastName { get; set; }
@@ -288,8 +261,7 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	
 	    }
 	
-	    void Start()
-	    {
+	    void Start() {
 	        AccountViewModel account = new AccountViewModel();
 	        account.FirstName = "Clark";
 	
@@ -305,16 +277,14 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	        int n = 1000000;
 	        System.Diagnostics.Stopwatch w = new System.Diagnostics.Stopwatch();
 	        w.Start();
-	        for (int i = 0; i < n; i++)
-	        {
+	        for (int i = 0; i < n; i++) {
 	            var v = account.FirstName;
 	        }
 	        w.Stop();
 	        Debug.LogFormat("直接调用100万次取值函数，耗时:{0}ms", w.ElapsedMilliseconds);
 	        w.Reset();
 	        w.Start();
-	        for (int i = 0; i < n; i++)
-	        {
+	        for (int i = 0; i < n; i++) {
 	            var v = obtainable.GetValue();
 	        }
 	        w.Stop();
@@ -322,8 +292,7 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	
 	        w.Reset();
 	        w.Start();
-	        for (int i = 0; i < n; i++)
-	        {
+	        for (int i = 0; i < n; i++) {
 	            var v = proxyPropertyInfo.GetValue(account);
 	        }
 	        w.Stop();
@@ -331,8 +300,7 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	
 	        w.Reset();
 	        w.Start();
-	        for (int i = 0; i < n; i++)
-	        {
+	        for (int i = 0; i < n; i++) {
 	            var v = propertyInfo.GetValue(account);
 	        }
 	        w.Stop();
@@ -342,8 +310,7 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	        string value2 = "Clark2";
 	        w.Reset();
 	        w.Start();
-	        for (int i = 0; i < n; i++)
-	        {
+	        for (int i = 0; i < n; i++) {
 	            account.FirstName = ((i & 0x1) == 0x1 ? value1 : value2);
 	        }
 	        w.Stop();
@@ -351,8 +318,7 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	
 	        w.Reset();
 	        w.Start();
-	        for (int i = 0; i < n; i++)
-	        {
+	        for (int i = 0; i < n; i++) {
 	            modifiable.SetValue((i & 0x1) == 0x1 ? value1 : value2);
 	        }
 	        w.Stop();
@@ -360,8 +326,7 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	
 	        w.Reset();
 	        w.Start();
-	        for (int i = 0; i < n; i++)
-	        {
+	        for (int i = 0; i < n; i++) {
 	            proxyPropertyInfo.SetValue(account, (i & 0x1) == 0x1 ? value1 : value2);
 	        }
 	        w.Stop();
@@ -369,8 +334,7 @@ BindingProxy.Fody是一个性能优化组件，它可以为一个类的Property�
 	
 	        w.Reset();
 	        w.Start();
-	        for (int i = 0; i < n; i++)
-	        {
+	        for (int i = 0; i < n; i++) {
 	            propertyInfo.SetValue(account, (i & 0x1) == 0x1 ? value1 : value2);
 	        }
 	        w.Stop();
@@ -427,8 +391,7 @@ FodyWeavers.xml
     //当defaultWeaveProperty ="true" 或者类添加GeneratePropertyProxy注解，则会为类中所有public的Property生成PropertyProxyNodeProxy类。
     [GeneratePropertyProxy]
     [AddINotifyPropertyChangedInterface]
-    public class AccountViewModel : INotifyPropertyChanged
-    {
+    public class AccountViewModel : INotifyPropertyChanged {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -445,13 +408,11 @@ FodyWeavers.xml
         public int Age { get; set; }
 
         [GenerateMethodProxy]
-        public void OnValueChanged()
-        {
+        public void OnValueChanged() {
         }
 
         [GenerateMethodProxy]
-        public void OnValueChanged(int value)
-        {
+        public void OnValueChanged(int value) {
         }
     }
 
@@ -459,25 +420,20 @@ FodyWeavers.xml
 
 织入后的代码如下：
 
-	public class AccountViewModel : INotifyPropertyChanged, IWovenNodeProxyFinder
-	{
+	public class AccountViewModel : INotifyPropertyChanged, IWovenNodeProxyFinder {
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class MobileFieldNodeProxy : WovenFieldNodeProxy<AccountViewModel, string>
-		{
+		private class MobileFieldNodeProxy : WovenFieldNodeProxy<AccountViewModel, string> {
 			public MobileFieldNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public override string GetValue()
-			{
+			public override string GetValue() {
 				return source.Mobile;
 			}
 	
-			public override void SetValue(string value)
-			{
+			public override void SetValue(string value) {
 				source.Mobile = value;
 			}
 		}
@@ -485,20 +441,16 @@ FodyWeavers.xml
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class FirstNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string>
-		{
+		private class FirstNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string> {
 			public FirstNamePropertyNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public override string GetValue()
-			{
+			public override string GetValue() {
 				return source.FirstName;
 			}
 	
-			public override void SetValue(string value)
-			{
+			public override void SetValue(string value) {
 				source.FirstName = value;
 			}
 		}
@@ -506,20 +458,16 @@ FodyWeavers.xml
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class LastNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string>
-		{
+		private class LastNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string> {
 			public LastNamePropertyNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public override string GetValue()
-			{
+			public override string GetValue() {
 				return source.LastName;
 			}
 	
-			public override void SetValue(string value)
-			{
+			public override void SetValue(string value) {
 				throw new MemberAccessException("AccountViewModel.LastName is read-only or inaccessible.");
 			}
 		}
@@ -527,20 +475,16 @@ FodyWeavers.xml
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class FullNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string>
-		{
+		private class FullNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string> {
 			public FullNamePropertyNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public override string GetValue()
-			{
+			public override string GetValue() {
 				return source.FullName;
 			}
 	
-			public override void SetValue(string value)
-			{
+			public override void SetValue(string value) {
 				throw new MemberAccessException("AccountViewModel.FullName is read-only or inaccessible.");
 			}
 		}
@@ -548,29 +492,23 @@ FodyWeavers.xml
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class OnValueChangedMethodNodeProxy : WovenMethodNodeProxy<AccountViewModel>, IInvoker<int>
-		{
+		private class OnValueChangedMethodNodeProxy : WovenMethodNodeProxy<AccountViewModel>, IInvoker<int> {
 			public OnValueChangedMethodNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public object Invoke()
-			{
+			public object Invoke() {
 				source.OnValueChanged();
 				return null;
 			}
 	
-			public object Invoke(int value)
-			{
+			public object Invoke(int value) {
 				source.OnValueChanged(value);
 				return null;
 			}
 	
-			public override object Invoke(params object[] args)
-			{
-				switch ((args != null) ? args.Length : 0)
-				{
+			public override object Invoke(params object[] args) {
+				switch ((args != null) ? args.Length : 0) {
 				case 0:
 					return Invoke();
 				case 1:
@@ -586,18 +524,14 @@ FodyWeavers.xml
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		private WovenNodeProxyFinder _finder;
 	
-		public string FirstName
-		{
+		public string FirstName {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return FirstName;
 			}
 			[CompilerGenerated]
-			set
-			{
-				if (!string.Equals(FirstName, value, StringComparison.Ordinal))
-				{
+			set {
+				if (!string.Equals(FirstName, value, StringComparison.Ordinal)) {
 					FirstName = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
@@ -605,18 +539,14 @@ FodyWeavers.xml
 			}
 		}
 	
-		public string LastName
-		{
+		public string LastName {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return LastName;
 			}
 			[CompilerGenerated]
-			protected set
-			{
-				if (!string.Equals(LastName, value, StringComparison.Ordinal))
-				{
+			protected set {
+				if (!string.Equals(LastName, value, StringComparison.Ordinal)) {
 					LastName = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
@@ -626,18 +556,14 @@ FodyWeavers.xml
 	
 		public string FullName => FirstName + " " + LastName;
 	
-		public int Age
-		{
+		public int Age {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return Age;
 			}
 			[CompilerGenerated]
-			set
-			{
-				if (Age != value)
-				{
+			set {
+				if (Age != value) {
 					Age = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.Age);
 				}
@@ -646,27 +572,22 @@ FodyWeavers.xml
 	
 		public event PropertyChangedEventHandler PropertyChanged;
 	
-		public void OnValueChanged()
-		{
+		public void OnValueChanged() {
 		}
 	
-		public void OnValueChanged(int value)
-		{
+		public void OnValueChanged(int value) {
 		}
 	
 		[GeneratedCode("PropertyChanged.Fody", "3.4.1.0")]
 		[DebuggerNonUserCode]
-		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-		{
+		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs) {
 			this.PropertyChanged?.Invoke(this, eventArgs);
 		}
 	
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
-		ISourceProxy IWovenNodeProxyFinder.GetSourceProxy(string name)
-		{
-			if (_finder == null)
-			{
+		ISourceProxy IWovenNodeProxyFinder.GetSourceProxy(string name) {
+			if (_finder == null) {
 				_finder = new WovenNodeProxyFinder(this);
 			}
 			return _finder.GetSourceProxy(name);

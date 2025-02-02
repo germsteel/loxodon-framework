@@ -24,11 +24,9 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy
-{
+namespace Loxodon.Framework.Binding.Proxy {
 
-    public interface INotifiable
-    {
+    public interface INotifiable {
         event EventHandler ValueChanged;
     }
 }

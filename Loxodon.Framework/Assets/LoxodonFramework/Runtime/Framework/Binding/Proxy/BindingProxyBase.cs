@@ -25,23 +25,18 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy
-{
-    public abstract class BindingProxyBase : IBindingProxy
-    {
+namespace Loxodon.Framework.Binding.Proxy {
+    public abstract class BindingProxyBase : IBindingProxy {
         #region IDisposable Support
 
-        protected virtual void Dispose(bool disposing)
-        {
+        protected virtual void Dispose(bool disposing) {
         }
 
-        ~BindingProxyBase()
-        {
+        ~BindingProxyBase() {
             Dispose(false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }

@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Fody
-{
-    public interface IWeaver
-    {
+namespace Loxodon.Framework.Fody {
+    public interface IWeaver {
         void Weave(string assembliesRootPath);
     }
 }

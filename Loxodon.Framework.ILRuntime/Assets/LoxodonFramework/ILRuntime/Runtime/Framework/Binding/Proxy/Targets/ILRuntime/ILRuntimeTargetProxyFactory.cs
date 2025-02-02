@@ -6,12 +6,9 @@ using Loxodon.Framework.Observables;
 using System;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class ILRuntimeTargetProxyFactory : ITargetProxyFactory
-    {
-        public ITargetProxy CreateProxy(object target, BindingDescription description)
-        {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class ILRuntimeTargetProxyFactory : ITargetProxyFactory {
+        public ITargetProxy CreateProxy(object target, BindingDescription description) {
             if (target == null || !(target is ILTypeInstance || target is CrossBindingAdaptorType))
                 return null;
 
@@ -28,11 +25,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 throw new MissingMemberException(type.Type.FullName, description.TargetName);
 
             var propertyInfo = memberInfo as IProxyPropertyInfo;
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 var valueType = propertyInfo.ValueType;
-                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-                {
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                     object observableValue = propertyInfo.GetValue(target);
                     if (observableValue == null)
                         throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", propertyInfo.Name, propertyInfo.DeclaringType.Name));
@@ -40,8 +35,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
                 }
 
-                if (typeof(IInteractionAction).IsAssignableFrom(valueType))
-                {
+                if (typeof(IInteractionAction).IsAssignableFrom(valueType)) {
                     object interactionAction = propertyInfo.GetValue(target);
                     if (interactionAction == null)
                         return null;
@@ -53,11 +47,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             var fieldInfo = memberInfo as IProxyFieldInfo;
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 var valueType = fieldInfo.ValueType;
-                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-                {
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                     object observableValue = fieldInfo.GetValue(target);
                     if (observableValue == null)
                         throw new NullReferenceException(string.Format("The \"{0}\" field is null in class \"{1}\".", fieldInfo.Name, fieldInfo.DeclaringType.Name));
@@ -65,8 +57,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
                 }
 
-                if (typeof(IInteractionAction).IsAssignableFrom(valueType))
-                {
+                if (typeof(IInteractionAction).IsAssignableFrom(valueType)) {
                     object interactionAction = fieldInfo.GetValue(target);
                     if (interactionAction == null)
                         return null;

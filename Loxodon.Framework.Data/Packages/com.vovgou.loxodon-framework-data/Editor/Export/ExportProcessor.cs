@@ -33,10 +33,8 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public abstract class ExportProcessor : ScriptableObject, IExportProcessor
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public abstract class ExportProcessor : ScriptableObject, IExportProcessor {
         protected readonly string[] EXTENSIONS = new string[] { "xls", "xlsx", "xlsm" };
 
         [SerializeField]
@@ -51,65 +49,55 @@ namespace Loxodon.Framework.Data.Editors
         [NonSerialized]
         protected string projectPath;
 
-        public ExportProcessor()
-        {
+        public ExportProcessor() {
             this.columnNameLine = LineNo.Line1;
             this.typeNameLine = LineNo.Line2;
             this.commentLine = LineNo.Line3;
             this.dataStartLine = LineNo.Line4;
         }
 
-        public virtual void ImportFiles(string inputRoot, Action<string, float> onProgress, Action<List<FileEntry>> onFinished)
-        {
+        public virtual void ImportFiles(string inputRoot, Action<string, float> onProgress, Action<List<FileEntry>> onFinished) {
             EditorExecutors.RunOnCoroutine(DoImportFiles(inputRoot, onProgress, onFinished));
         }
 
-        protected virtual IEnumerator DoImportFiles(string inputRoot, Action<string, float> onProgress, Action<List<FileEntry>> onFinished)
-        {
+        protected virtual IEnumerator DoImportFiles(string inputRoot, Action<string, float> onProgress, Action<List<FileEntry>> onFinished) {
             List<FileEntry> entries = new List<FileEntry>();
             DirectoryInfo dir = new DirectoryInfo(inputRoot);
             FileInfo[] files = dir.EnumerateFiles("*.*", SearchOption.AllDirectories).Where(file => Filter(file)).ToArray();
-            if (files == null || files.Length <= 0)
-            {
+            if (files == null || files.Length <= 0) {
                 if (onFinished != null)
                     onFinished(entries);
                 yield break;
             }
 
             int total = files.Length;
-            for (int i = 0; i < total; i++)
-            {
+            for (int i = 0; i < total; i++) {
                 var file = files[i];
                 if (!file.Exists)
                     continue;
 
-                try
-                {
+                try {
                     string filename = this.GetRelativePath(file.FullName);
                     List<SheetInfo> sheets = new List<SheetInfo>();
 
                     IWorkbook workbook = Open(file);
-                    try
-                    {
+                    try {
                         if (workbook.NumberOfSheets <= 0)
                             throw new NotSupportedException(string.Format("The file \"{0}\" is not supported.", filename));
 
-                        for (int j = 0; j < workbook.NumberOfSheets; j++)
-                        {
+                        for (int j = 0; j < workbook.NumberOfSheets; j++) {
                             ISheet sheet = workbook.GetSheetAt(j);
                             bool isValid = Filter(file, sheet);
                             sheets.Add(new SheetInfo(sheet.SheetName, isValid));
                         }
                         entries.Add(new FileEntry(filename, sheets));
                     }
-                    finally
-                    {
+                    finally {
                         if (workbook != null)
                             workbook.Close();
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (e is IOException)
                         Debug.LogErrorFormat("Please check if the file is opened by another application.Error:{0}", e);
                     else
@@ -130,36 +118,28 @@ namespace Loxodon.Framework.Data.Editors
                 onFinished(entries);
         }
 
-        public virtual void ExportFiles(string outputRoot, List<FileEntry> files, Action<string, float> onProgress, Action onFinished)
-        {
+        public virtual void ExportFiles(string outputRoot, List<FileEntry> files, Action<string, float> onProgress, Action onFinished) {
             EditorExecutors.RunOnCoroutine(DoExportFiles(outputRoot, files, onProgress, onFinished));
         }
 
-        protected virtual IEnumerator DoExportFiles(string outputRoot, List<FileEntry> files, Action<string, float> onProgress, Action onFinished)
-        {
+        protected virtual IEnumerator DoExportFiles(string outputRoot, List<FileEntry> files, Action<string, float> onProgress, Action onFinished) {
             int total = files.Count;
-            for (int i = 0; i < total; i++)
-            {
+            for (int i = 0; i < total; i++) {
                 FileEntry fileEntry = files[i];
                 FileInfo file = new FileInfo(fileEntry.Filename);
-                if (file.Exists)
-                {
+                if (file.Exists) {
                     IWorkbook workbook = Open(file);
-                    try
-                    {
-                        for (int j = 0; j < workbook.NumberOfSheets; j++)
-                        {
+                    try {
+                        for (int j = 0; j < workbook.NumberOfSheets; j++) {
                             ISheet sheet = workbook.GetSheetAt(j);
-                            try
-                            {
+                            try {
                                 if (fileEntry.Sheets.Exists(info => info.Name.Equals(sheet.SheetName) && !info.IsValid))
                                     continue;
 
                                 var reader = new NPOISheetReader(sheet, (int)columnNameLine, (int)typeNameLine, (int)commentLine, (int)dataStartLine);
                                 this.DoExportSheet(file, sheet, reader, outputRoot);
                             }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
                                 Debug.LogErrorFormat("File:{0} Sheet:{1} Failed，Exception:{2}", GetRelativePath(file.FullName), sheet.SheetName, e);
                             }
 
@@ -169,8 +149,7 @@ namespace Loxodon.Framework.Data.Editors
                             yield return null;
                         }
                     }
-                    finally
-                    {
+                    finally {
                         if (workbook != null)
                             workbook.Close();
                     }
@@ -181,8 +160,7 @@ namespace Loxodon.Framework.Data.Editors
                 onFinished();
         }
 
-        protected virtual IWorkbook Open(FileInfo file)
-        {
+        protected virtual IWorkbook Open(FileInfo file) {
             IWorkbook workbook = null;
             if (file.Extension.Equals(".xlsx"))
                 workbook = new XSSFWorkbook(file.OpenRead());
@@ -195,18 +173,15 @@ namespace Loxodon.Framework.Data.Editors
 
         protected abstract void DoExportSheet(FileInfo file, ISheet sheet, ISheetReader reader, string outputRoot);
 
-        protected virtual bool Filter(FileInfo file)
-        {
+        protected virtual bool Filter(FileInfo file) {
             return EXTENSIONS.Contains(file.Extension.ToLower().Replace(".", ""));
         }
 
-        protected virtual bool Filter(FileInfo file, ISheet sheet)
-        {
+        protected virtual bool Filter(FileInfo file, ISheet sheet) {
             return true;
         }
 
-        protected virtual string GetRelativePath(string path)
-        {
+        protected virtual string GetRelativePath(string path) {
             if (string.IsNullOrEmpty(projectPath))
                 this.projectPath = Path.GetFullPath(".").Replace("\\", "/");
 

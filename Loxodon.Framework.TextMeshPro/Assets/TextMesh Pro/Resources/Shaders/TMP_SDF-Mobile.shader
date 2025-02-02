@@ -53,16 +53,14 @@ Properties {
 }
 
 SubShader {
-	Tags 
-	{
+	Tags  {
 		"Queue"="Transparent"
 		"IgnoreProjector"="True"
 		"RenderType"="Transparent"
 	}
 
 
-	Stencil
-	{
+	Stencil {
 		Ref [_Stencil]
 		Comp [_StencilComp]
 		Pass [_StencilOp] 
@@ -117,8 +115,7 @@ SubShader {
 		};
 
 
-		pixel_t VertShader(vertex_t input)
-		{
+		pixel_t VertShader(vertex_t input) {
 			pixel_t output;
 
 			UNITY_INITIALIZE_OUTPUT(pixel_t, output);
@@ -192,8 +189,7 @@ SubShader {
 
 
 		// PIXEL SHADER
-		fixed4 PixShader(pixel_t input) : SV_Target
-		{
+		fixed4 PixShader(pixel_t input) : SV_Target {
 			UNITY_SETUP_INSTANCE_ID(input);
 			
 			half d = tex2D(_MainTex, input.texcoord0.xy).a * input.param.x;

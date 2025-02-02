@@ -33,13 +33,10 @@ using System.Threading.Tasks;
 using UnityEngine.Networking;
 #endif
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class AsyncAndAwaitSwitchThreadsExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class AsyncAndAwaitSwitchThreadsExample : MonoBehaviour {
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        async void Start()
-        {
+        async void Start() {
             //Unity Thread
             Debug.LogFormat("1. ThreadID:{0}",Thread.CurrentThread.ManagedThreadId);
 

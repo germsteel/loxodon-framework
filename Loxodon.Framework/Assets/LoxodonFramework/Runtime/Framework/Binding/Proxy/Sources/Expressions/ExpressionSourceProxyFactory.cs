@@ -29,28 +29,22 @@ using Loxodon.Framework.Binding.Paths;
 using Loxodon.Framework.Binding.Proxy.Sources.Object;
 using Loxodon.Framework.Binding.Expressions;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
-{
-    public class ExpressionSourceProxyFactory : TypedSourceProxyFactory<ExpressionSourceDescription>
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions {
+    public class ExpressionSourceProxyFactory : TypedSourceProxyFactory<ExpressionSourceDescription> {
         private ISourceProxyFactory factory;
         private IExpressionPathFinder pathFinder;
-        public ExpressionSourceProxyFactory(ISourceProxyFactory factory, IExpressionPathFinder pathFinder)
-        {
+        public ExpressionSourceProxyFactory(ISourceProxyFactory factory, IExpressionPathFinder pathFinder) {
             this.factory = factory;
             this.pathFinder = pathFinder;
         }
 
-        protected override bool TryCreateProxy(object source, ExpressionSourceDescription description, out ISourceProxy proxy)
-        {
+        protected override bool TryCreateProxy(object source, ExpressionSourceDescription description, out ISourceProxy proxy) {
             proxy = null;
             var expression = description.Expression;
             List<ISourceProxy> list = new List<ISourceProxy>();
             List<Path> paths = this.pathFinder.FindPaths(expression);
-            foreach (Path path in paths)
-            {
-                if (!path.IsStatic)
-                {
+            foreach (Path path in paths) {
+                if (!path.IsStatic) {
                     if (source == null)
                         continue;//ignore the path
 
@@ -68,22 +62,18 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
             Func<object[], object> del = expression.DynamicCompile();
             proxy = new ExpressionSourceProxy(description.IsStatic ? null : source, del, description.ReturnType, list);
 #else
-            try
-            {
+            try {
                 var del = expression.Compile();
                 Type returnType = del.ReturnType();
                 Type parameterType = del.ParameterType();
-                if (parameterType != null)
-                {
+                if (parameterType != null) {
                     proxy = (ISourceProxy)Activator.CreateInstance(typeof(ExpressionSourceProxy<,>).MakeGenericType(parameterType, returnType), source, del, list);
                 }
-                else
-                {
+                else {
                     proxy = (ISourceProxy)Activator.CreateInstance(typeof(ExpressionSourceProxy<>).MakeGenericType(returnType), del, list);
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 //JIT Exception
                 Func<object[], object> del = expression.DynamicCompile();
                 proxy = new ExpressionSourceProxy(description.IsStatic ? null : source, del, description.ReturnType, list);

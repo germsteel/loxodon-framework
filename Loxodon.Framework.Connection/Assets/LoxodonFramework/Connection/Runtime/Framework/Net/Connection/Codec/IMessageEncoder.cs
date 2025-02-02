@@ -24,10 +24,8 @@
 
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface IMessageEncoder<TMessage>
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface IMessageEncoder<TMessage> {
         Task Encode(IMessage message, BinaryWriter writer);
     }
 }

@@ -24,28 +24,21 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy
-{
-    public class ProxyException : BindingException
-    {
-        public ProxyException()
-        {
+namespace Loxodon.Framework.Binding.Proxy {
+    public class ProxyException : BindingException {
+        public ProxyException() {
         }
 
-        public ProxyException(string message) : base(message)
-        {
+        public ProxyException(string message) : base(message) {
         }
 
-        public ProxyException(string message, Exception exception) : base(message, exception)
-        {
+        public ProxyException(string message, Exception exception) : base(message, exception) {
         }
 
-        public ProxyException(string format, params object[] arguments) : base(string.Format(format, arguments))
-        {
+        public ProxyException(string format, params object[] arguments) : base(string.Format(format, arguments)) {
         }
 
-        public ProxyException(Exception exception, string format, params object[] arguments) : base(string.Format(format, arguments), exception)
-        {
+        public ProxyException(Exception exception, string format, params object[] arguments) : base(string.Format(format, arguments), exception) {
         }
     }
 }

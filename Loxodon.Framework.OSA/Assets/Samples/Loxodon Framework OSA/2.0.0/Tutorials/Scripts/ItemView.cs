@@ -27,18 +27,15 @@ using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Views;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials.OSA
-{
-    public class ItemView : UIView
-    {
+namespace Loxodon.Framework.Tutorials.OSA {
+    public class ItemView : UIView {
         public Image background;
         public Text titleText;
         public Image border;
         public Button selectButton;
         public Button clickButton;
         public ItemButtonEventBehaviour eventBehaviour;
-        protected override void Start()
-        {
+        protected override void Start() {
             BindingSet<ItemView, ItemViewModel> bindingSet = this.CreateBindingSet<ItemView, ItemViewModel>();
             bindingSet.Bind(this.titleText).For(v => v.text).To(vm => vm.Title).OneWay();
             bindingSet.Bind(this.background).For(v => v.color).To(vm => vm.Color).OneWay();
@@ -55,13 +52,11 @@ namespace Loxodon.Framework.Tutorials.OSA
                 this.clickButton.onClick.AddListener(this.OnClick);
         }
 
-        protected void OnSelected()
-        {
+        protected void OnSelected() {
             eventBehaviour.OnSelected.Invoke((ItemViewModel)this.GetDataContext());
         }
 
-        protected void OnClick()
-        {
+        protected void OnClick() {
             eventBehaviour.OnClick.Invoke((ItemViewModel)this.GetDataContext());
         }
     }

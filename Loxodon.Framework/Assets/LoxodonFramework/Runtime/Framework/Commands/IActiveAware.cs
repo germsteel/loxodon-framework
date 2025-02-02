@@ -24,14 +24,12 @@
 
 using System;
 
-namespace Loxodon.Framework.Commands
-{
+namespace Loxodon.Framework.Commands {
     /// <summary>
     /// Interface that defines if the object instance is active
     /// and notifies when the activity changes.
     /// </summary>
-    public interface IActiveAware
-    {
+    public interface IActiveAware {
         /// <summary>
         /// Gets or sets a value indicating whether the object is active.
         /// </summary>

@@ -11,30 +11,26 @@
 // Author Clark
 // 
 
-namespace Loxodon.Framework.TextFormatting
-{
+namespace Loxodon.Framework.TextFormatting {
     using System;
     using System.Diagnostics.Contracts;
     using System.Globalization;
     using System.Text;
 
-    internal static class TimeSpanFormat
-    {
+    internal static class TimeSpanFormat {
         private static readonly string FullTimeSpanPositivePattern = "d':'h':'mm':'ss'.'FFFFFFF";
         private static readonly string FullTimeSpanNegativePattern = "'-'d':'h':'mm':'ss'.'FFFFFFF";
 
         internal static readonly FormatLiterals PositiveInvariantFormatLiterals = FormatLiterals.InitInvariant(false /*isNegative*/);
         internal static readonly FormatLiterals NegativeInvariantFormatLiterals = FormatLiterals.InitInvariant(true  /*isNegative*/);
 
-        internal enum Pattern
-        {
+        internal enum Pattern {
             None = 0,
             Minimum = 1,
             Full = 2,
         }
 
-        internal static void Format(TimeSpan value, ReadOnlySpan<char> format,ref ValueStringBuilder result)
-        {
+        internal static void Format(TimeSpan value, ReadOnlySpan<char> format,ref ValueStringBuilder result) {
             Format(value, format, null,ref result);
         }
 
@@ -43,21 +39,17 @@ namespace Loxodon.Framework.TextFormatting
         //
         //  Actions: Main method called from TimeSpan.ToString
         // 
-        internal static void Format(TimeSpan value, ReadOnlySpan<char> format, IFormatProvider formatProvider, ref ValueStringBuilder result)
-        {
+        internal static void Format(TimeSpan value, ReadOnlySpan<char> format, IFormatProvider formatProvider, ref ValueStringBuilder result) {
             // standard formats
-            if (format == null || format.Length <= 1)
-            {
+            if (format == null || format.Length <= 1) {
                 char f = (format == null || format.Length == 0) ? 'c' : format[0];
 
-                if (f == 'c' || f == 't' || f == 'T')
-                {
+                if (f == 'c' || f == 't' || f == 'T') {
                     FormatStandard(value, true, format, Pattern.Minimum, ref result);
                     return;
                 }
 
-                if (f == 'g' || f == 'G')
-                {
+                if (f == 'g' || f == 'G') {
                     Pattern pattern;
                     //DateTimeFormatInfo dtfi = DateTimeFormatInfo.GetInstance(formatProvider);
 
@@ -84,13 +76,11 @@ namespace Loxodon.Framework.TextFormatting
         //
         //  Actions: Format the TimeSpan instance using the specified format.
         // 
-        private static void FormatStandard(TimeSpan value, bool isInvariant, ReadOnlySpan<char> format, Pattern pattern, ref ValueStringBuilder result)
-        {
+        private static void FormatStandard(TimeSpan value, bool isInvariant, ReadOnlySpan<char> format, Pattern pattern, ref ValueStringBuilder result) {
             int day = (int)(value.Ticks / TimeSpan.TicksPerDay);
             long time = value.Ticks % TimeSpan.TicksPerDay;
 
-            if (value.Ticks < 0)
-            {
+            if (value.Ticks < 0) {
                 day = -day;
                 time = -time;
             }
@@ -100,20 +90,17 @@ namespace Loxodon.Framework.TextFormatting
             int fraction = (int)(time % TimeSpan.TicksPerSecond);
 
             FormatLiterals literal;
-            if (isInvariant)
-            {
+            if (isInvariant) {
                 if (value.Ticks < 0)
                     literal = NegativeInvariantFormatLiterals;
                 else
                     literal = PositiveInvariantFormatLiterals;
             }
-            else
-            {
+            else {
                 literal = new FormatLiterals();
                 literal.Init(format, pattern == Pattern.Full);
             }
-            if (fraction != 0)
-            { // truncate the partial second to the specified length
+            if (fraction != 0) { // truncate the partial second to the specified length
                 fraction = (int)((long)fraction / (long)Math.Pow(10, DateTimeFormat.MaxSecondsFractionDigits - literal.ff));
             }
 
@@ -121,8 +108,7 @@ namespace Loxodon.Framework.TextFormatting
             // Pattern.Minimum: [-][d.]hh:mm:ss[.fffffff] 
 
             result.Append(literal.Start);                           // [-]
-            if (pattern == Pattern.Full || day != 0)
-            {
+            if (pattern == Pattern.Full || day != 0) {
                 //result.Append(day);                                 // [dd]
                 NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.dd - 1], day, CultureInfo.InvariantCulture, ref result);
                 result.Append(literal.DayHourSep);                  // [.]
@@ -135,30 +121,24 @@ namespace Loxodon.Framework.TextFormatting
             result.Append(literal.MinuteSecondSep);                 // :
             //sb.Append(IntToString(seconds, literal.ss));        // ss
             NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.ss - 1], seconds, CultureInfo.InvariantCulture, ref result);
-            if (!isInvariant && pattern == Pattern.Minimum)
-            {
+            if (!isInvariant && pattern == Pattern.Minimum) {
                 int effectiveDigits = literal.ff;
-                while (effectiveDigits > 0)
-                {
-                    if (fraction % 10 == 0)
-                    {
+                while (effectiveDigits > 0) {
+                    if (fraction % 10 == 0) {
                         fraction = fraction / 10;
                         effectiveDigits--;
                     }
-                    else
-                    {
+                    else {
                         break;
                     }
                 }
-                if (effectiveDigits > 0)
-                {
+                if (effectiveDigits > 0) {
                     result.Append(literal.SecondFractionSep);           // [.FFFFFFF]
                     //outputBuffer.Append((fraction).ToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], CultureInfo.InvariantCulture));
                     NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], fraction, CultureInfo.InvariantCulture, ref result);
                 }
             }
-            else if (pattern == Pattern.Full || fraction != 0)
-            {
+            else if (pattern == Pattern.Full || fraction != 0) {
                 result.Append(literal.SecondFractionSep);           // [.]
                 //sb.Append(IntToString(fraction, literal.ff));   // [fffffff]
                 NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[literal.ff - 1], fraction, CultureInfo.InvariantCulture, ref result);
@@ -172,21 +152,18 @@ namespace Loxodon.Framework.TextFormatting
         //  Actions: Format the TimeSpan instance using the specified format.
         // 
 
-        internal static void FormatCustomized(TimeSpan value, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, ref ValueStringBuilder result)
-        {
+        internal static void FormatCustomized(TimeSpan value, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, ref ValueStringBuilder result) {
             FormatCustomized(value, format, 0, format.Length, dtfi, ref result);
         }
 
-        internal static void FormatCustomized(TimeSpan value, ReadOnlySpan<char> format, int index, int length, DateTimeFormatInfo dtfi, ref ValueStringBuilder result)
-        {
+        internal static void FormatCustomized(TimeSpan value, ReadOnlySpan<char> format, int index, int length, DateTimeFormatInfo dtfi, ref ValueStringBuilder result) {
 
             Contract.Assert(dtfi != null, "dtfi == null");
 
             int day = (int)(value.Ticks / TimeSpan.TicksPerDay);
             long time = value.Ticks % TimeSpan.TicksPerDay;
 
-            if (value.Ticks < 0)
-            {
+            if (value.Ticks < 0) {
                 day = -day;
                 time = -time;
             }
@@ -200,12 +177,10 @@ namespace Loxodon.Framework.TextFormatting
             int end = index + length;// format.Length;
             int tokenLen;
 
-            while (i < end)
-            {
+            while (i < end) {
                 char ch = format[i];
                 int nextChar;
-                switch (ch)
-                {
+                switch (ch) {
                     case 'h':
                         tokenLen = DateTimeFormat.ParseRepeatPattern(format, i, ch);
                         if (tokenLen > 2)
@@ -248,20 +223,16 @@ namespace Loxodon.Framework.TextFormatting
                         tmp = (long)fraction;
                         tmp /= (long)Math.Pow(10, DateTimeFormat.MaxSecondsFractionDigits - tokenLen);
                         int effectiveDigits = tokenLen;
-                        while (effectiveDigits > 0)
-                        {
-                            if (tmp % 10 == 0)
-                            {
+                        while (effectiveDigits > 0) {
+                            if (tmp % 10 == 0) {
                                 tmp = tmp / 10;
                                 effectiveDigits--;
                             }
-                            else
-                            {
+                            else {
                                 break;
                             }
                         }
-                        if (effectiveDigits > 0)
-                        {
+                        if (effectiveDigits > 0) {
                             //result.Append((tmp).ToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], CultureInfo.InvariantCulture));
                             NumberFormatter.NumberToString(DateTimeFormat.fixedNumberFormats[effectiveDigits - 1], tmp, CultureInfo.InvariantCulture, ref result);
                         }
@@ -287,14 +258,12 @@ namespace Loxodon.Framework.TextFormatting
                         nextChar = DateTimeFormat.ParseNextChar(format, i);
                         // nextChar will be -1 if we already reach the end of the format string.
                         // Besides, we will not allow "%%" appear in the pattern.
-                        if (nextChar >= 0 && nextChar != (int)'%')
-                        {
+                        if (nextChar >= 0 && nextChar != (int)'%') {
                             //result.Append(FormatCustomized(value, ((char)nextChar).ToString(), dtfi));
                             FormatCustomized(value, format, i + 1, 1, dtfi, ref result);
                             tokenLen = 2;
                         }
-                        else
-                        {
+                        else {
                             //
                             // This means that '%' is at the end of the format string or
                             // "%%" appears in the format string.
@@ -307,13 +276,11 @@ namespace Loxodon.Framework.TextFormatting
                         // For example, "\d" will insert the character 'd' into the string.
                         //
                         nextChar = DateTimeFormat.ParseNextChar(format, i);
-                        if (nextChar >= 0)
-                        {
+                        if (nextChar >= 0) {
                             result.Append(((char)nextChar));
                             tokenLen = 2;
                         }
-                        else
-                        {
+                        else {
                             //
                             // This means that '\' is at the end of the formatting string.
                             //
@@ -327,8 +294,7 @@ namespace Loxodon.Framework.TextFormatting
             }
         }
 
-        internal struct FormatLiterals
-        {
+        internal struct FormatLiterals {
             internal string Start { get { return literals[0]; } }
             internal string DayHourSep { get { return literals[1]; } }
             internal string HourMinuteSep { get { return literals[2]; } }
@@ -347,8 +313,7 @@ namespace Loxodon.Framework.TextFormatting
 
 
             /* factory method for static invariant FormatLiterals */
-            internal static FormatLiterals InitInvariant(bool isNegative)
-            {
+            internal static FormatLiterals InitInvariant(bool isNegative) {
                 FormatLiterals x = new FormatLiterals();
                 x.literals = new string[6];
                 x.literals[0] = isNegative ? "-" : string.Empty;
@@ -370,8 +335,7 @@ namespace Loxodon.Framework.TextFormatting
             // the constants guaranteed to include DHMSF ordered greatest to least significant.
             // Once the data becomes more complex than this we will need to write a proper tokenizer for
             // parsing and formatting
-            internal void Init(ReadOnlySpan<char> format, bool useInvariantFieldLengths)
-            {
+            internal void Init(ReadOnlySpan<char> format, bool useInvariantFieldLengths) {
                 literals = new string[6];
                 for (int i = 0; i < literals.Length; i++)
                     literals[i] = string.Empty;
@@ -388,35 +352,28 @@ namespace Loxodon.Framework.TextFormatting
                 int field = 0;
 
                 int len = format.Length;
-                for (int i = 0; i < len; i++)
-                {
-                    switch (format[i])
-                    {
+                for (int i = 0; i < len; i++) {
+                    switch (format[i]) {
                         case '\'':
                         case '\"':
-                            if (inQuote && (quote == format[i]))
-                            {
+                            if (inQuote && (quote == format[i])) {
                                 /* we were in a quote and found a matching exit quote, so we are outside a quote now */
                                 Contract.Assert(field >= 0 && field <= 5, "field >= 0 && field <= 5");
-                                if (field >= 0 && field <= 5)
-                                {
+                                if (field >= 0 && field <= 5) {
                                     literals[field] = buffer.Slice(0, bufferLength).ToString();
                                     bufferLength = 0;
                                     inQuote = false;
                                 }
-                                else
-                                {
+                                else {
                                     return; // how did we get here?
                                 }
                             }
-                            else if (!inQuote)
-                            {
+                            else if (!inQuote) {
                                 /* we are at the start of a new quote block */
                                 quote = format[i];
                                 inQuote = true;
                             }
-                            else
-                            {
+                            else {
                                 /* we were in a quote and saw the other type of quote character, so we are still in a quote */
                             }
                             break;
@@ -424,15 +381,13 @@ namespace Loxodon.Framework.TextFormatting
                             Contract.Assert(false, "Unexpected special token '%', Bug in DateTimeFormatInfo.FullTimeSpan[Positive|Negative]Pattern");
                             goto default;
                         case '\\':
-                            if (!inQuote)
-                            {
+                            if (!inQuote) {
                                 i++; /* skip next character that is escaped by this backslash or percent sign */
                                 break;
                             }
                             goto default;
                         case 'd':
-                            if (!inQuote)
-                            {
+                            if (!inQuote) {
                                 Contract.Assert((field == 0 && bufferLength == 0) || field == 1,
                                                 "field == 0 || field == 1, Bug in DateTimeFormatInfo.FullTimeSpan[Positive|Negative]Pattern");
                                 field = 1; // DayHourSep
@@ -440,8 +395,7 @@ namespace Loxodon.Framework.TextFormatting
                             }
                             break;
                         case 'h':
-                            if (!inQuote)
-                            {
+                            if (!inQuote) {
                                 Contract.Assert((field == 1 && bufferLength == 0) || field == 2,
                                                 "field == 1 || field == 2, Bug in DateTimeFormatInfo.FullTimeSpan[Positive|Negative]Pattern");
                                 field = 2; // HourMinuteSep
@@ -449,8 +403,7 @@ namespace Loxodon.Framework.TextFormatting
                             }
                             break;
                         case 'm':
-                            if (!inQuote)
-                            {
+                            if (!inQuote) {
                                 Contract.Assert((field == 2 && bufferLength == 0) || field == 3,
                                                 "field == 2 || field == 3, Bug in DateTimeFormatInfo.FullTimeSpan[Positive|Negative]Pattern");
                                 field = 3; // MinuteSecondSep
@@ -458,8 +411,7 @@ namespace Loxodon.Framework.TextFormatting
                             }
                             break;
                         case 's':
-                            if (!inQuote)
-                            {
+                            if (!inQuote) {
                                 Contract.Assert((field == 3 && bufferLength == 0) || field == 4,
                                                 "field == 3 || field == 4, Bug in DateTimeFormatInfo.FullTimeSpan[Positive|Negative]Pattern");
                                 field = 4; // SecondFractionSep
@@ -468,8 +420,7 @@ namespace Loxodon.Framework.TextFormatting
                             break;
                         case 'f':
                         case 'F':
-                            if (!inQuote)
-                            {
+                            if (!inQuote) {
                                 Contract.Assert((field == 4 && bufferLength == 0) || field == 5,
                                                 "field == 4 || field == 5, Bug in DateTimeFormatInfo.FullTimeSpan[Positive|Negative]Pattern");
                                 field = 5; // End
@@ -491,16 +442,14 @@ namespace Loxodon.Framework.TextFormatting
                 Contract.Assert(0 < ss && ss < 3, "0 < ss && ss < 3, Bug in System.Globalization.DateTimeFormatInfo.FullTimeSpan[Positive|Negative]Pattern");
                 Contract.Assert(0 < ff && ff < 8, "0 < ff && ff < 8, Bug in System.Globalization.DateTimeFormatInfo.FullTimeSpan[Positive|Negative]Pattern");
 
-                if (useInvariantFieldLengths)
-                {
+                if (useInvariantFieldLengths) {
                     dd = 2;
                     hh = 2;
                     mm = 2;
                     ss = 2;
                     ff = DateTimeFormat.MaxSecondsFractionDigits;
                 }
-                else
-                {
+                else {
                     if (dd < 1 || dd > 2) dd = 2;   // The DTFI property has a problem. let's try to make the best of the situation.
                     if (hh < 1 || hh > 2) hh = 2;
                     if (mm < 1 || mm > 2) mm = 2;

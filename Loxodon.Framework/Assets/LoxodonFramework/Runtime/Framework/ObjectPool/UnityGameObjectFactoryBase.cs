@@ -24,12 +24,9 @@
 
 using UnityEngine;
 
-namespace Loxodon.Framework.ObjectPool
-{
-    public abstract class UnityGameObjectFactoryBase : IObjectFactory<GameObject>
-    {
-        public virtual GameObject Create(IObjectPool<GameObject> pool)
-        {
+namespace Loxodon.Framework.ObjectPool {
+    public abstract class UnityGameObjectFactoryBase : IObjectFactory<GameObject> {
+        public virtual GameObject Create(IObjectPool<GameObject> pool) {
             GameObject target = this.Create();
             PooledUnityObject pooledObj = target.AddComponent<PooledUnityObject>();
             pooledObj.pool = pool;
@@ -40,22 +37,18 @@ namespace Loxodon.Framework.ObjectPool
 
         public abstract void Reset(GameObject obj);
 
-        public virtual void Destroy(GameObject obj)
-        {
+        public virtual void Destroy(GameObject obj) {
             Object.Destroy(obj);
         }
 
-        public virtual bool Validate(GameObject obj)
-        {
+        public virtual bool Validate(GameObject obj) {
             return true;
         }
 
-        class PooledUnityObject : MonoBehaviour, IPooledObject
-        {
+        class PooledUnityObject : MonoBehaviour, IPooledObject {
             internal IObjectPool<GameObject> pool;
 
-            public void Free()
-            {
+            public void Free() {
                 if (pool != null)
                     pool.Free(this.gameObject);
             }

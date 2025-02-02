@@ -22,9 +22,7 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface IMessage
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface IMessage {
     }
 }

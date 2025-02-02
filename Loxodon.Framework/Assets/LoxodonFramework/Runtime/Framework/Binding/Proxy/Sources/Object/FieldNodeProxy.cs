@@ -25,18 +25,14 @@
 using Loxodon.Framework.Binding.Reflection;
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
-    public class FieldNodeProxy : SourceProxyBase, IObtainable, IModifiable
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
+    public class FieldNodeProxy : SourceProxyBase, IObtainable, IModifiable {
         protected IProxyFieldInfo fieldInfo;
 
-        public FieldNodeProxy(IProxyFieldInfo fieldInfo) : this(null, fieldInfo)
-        {
+        public FieldNodeProxy(IProxyFieldInfo fieldInfo) : this(null, fieldInfo) {
         }
 
-        public FieldNodeProxy(object source, IProxyFieldInfo fieldInfo) : base(source)
-        {
+        public FieldNodeProxy(object source, IProxyFieldInfo fieldInfo) : base(source) {
             this.fieldInfo = fieldInfo;
         }
 
@@ -44,13 +40,11 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         public override TypeCode TypeCode { get { return fieldInfo.ValueTypeCode; } }
 
-        public virtual object GetValue()
-        {
+        public virtual object GetValue() {
             return fieldInfo.GetValue(source);
         }
 
-        public virtual TValue GetValue<TValue>()
-        {
+        public virtual TValue GetValue<TValue>() {
             var proxy = fieldInfo as IProxyFieldInfo<TValue>;
             if (proxy != null)
                 return proxy.GetValue(source);
@@ -58,16 +52,13 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return (TValue)this.fieldInfo.GetValue(source);
         }
 
-        public virtual void SetValue(object value)
-        {
+        public virtual void SetValue(object value) {
             fieldInfo.SetValue(source, value);
         }
 
-        public virtual void SetValue<TValue>(TValue value)
-        {
+        public virtual void SetValue<TValue>(TValue value) {
             var proxy = fieldInfo as IProxyFieldInfo<TValue>;
-            if (proxy != null)
-            {
+            if (proxy != null) {
                 proxy.SetValue(source, value);
                 return;
             }

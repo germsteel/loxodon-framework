@@ -28,10 +28,8 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace Loxodon.Framework.Utilities
-{
-    public class ZipAccessorForAndroidStreamingAssets : FileUtil.IZipAccessor
-    {
+namespace Loxodon.Framework.Utilities {
+    public class ZipAccessorForAndroidStreamingAssets : FileUtil.IZipAccessor {
         private const string ACTIVITY_JAVA_CLASS = "com.unity3d.player.UnityPlayer";
         private const string ASSET_MANGER_CLASS_NAME = "android.content.res.AssetManager";
 
@@ -39,41 +37,31 @@ namespace Loxodon.Framework.Utilities
 
         private static AndroidJavaObject assetManager;
 
-        protected static AndroidJavaObject AssetManager
-        {
-            get
-            {
+        protected static AndroidJavaObject AssetManager {
+            get {
                 if (assetManager != null)
                     return assetManager;
 
-                try
-                {
-                    using (AndroidJavaClass activityClass = new AndroidJavaClass(ACTIVITY_JAVA_CLASS))
-                    {
-                        using (var context = activityClass.GetStatic<AndroidJavaObject>("currentActivity"))
-                        {
+                try {
+                    using (AndroidJavaClass activityClass = new AndroidJavaClass(ACTIVITY_JAVA_CLASS)) {
+                        using (var context = activityClass.GetStatic<AndroidJavaObject>("currentActivity")) {
                             assetManager = context.Call<AndroidJavaObject>("getAssets");
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Failed to get the AssetManager from the Activity, try to get it from android.content.res.AssetManager", e);
                 }
 
-                try
-                {
-                    if (assetManager == null)
-                    {
-                        using (AndroidJavaClass assetManagerClass = new AndroidJavaClass(ASSET_MANGER_CLASS_NAME))
-                        {
+                try {
+                    if (assetManager == null) {
+                        using (AndroidJavaClass assetManagerClass = new AndroidJavaClass(ASSET_MANGER_CLASS_NAME)) {
                             assetManager = assetManagerClass.GetStatic<AndroidJavaObject>("getSystem");
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Failed to get the AssetManager from android.content.res.AssetManager", e);
                 }
@@ -82,13 +70,11 @@ namespace Loxodon.Framework.Utilities
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void OnInitialized()
-        {
+        static void OnInitialized() {
             FileUtil.Register(new ZipAccessorForAndroidStreamingAssets());
         }
 
-        protected string GetAssetFilePath(string path)
-        {
+        protected string GetAssetFilePath(string path) {
             if (string.IsNullOrEmpty(path))
                 return path;
 
@@ -101,12 +87,9 @@ namespace Loxodon.Framework.Utilities
 
         public int Priority { get { return 0; } }
 
-        public bool Exists(string path)
-        {
-            try
-            {
-                using (AndroidJavaObject fileDescriptor = AssetManager.Call<AndroidJavaObject>("openFd", GetAssetFilePath(path)))
-                {
+        public bool Exists(string path) {
+            try {
+                using (AndroidJavaObject fileDescriptor = AssetManager.Call<AndroidJavaObject>("openFd", GetAssetFilePath(path))) {
                     if (fileDescriptor != null)
                         return true;
                 }
@@ -116,16 +99,14 @@ namespace Loxodon.Framework.Utilities
             return false;
         }
 
-        public Stream OpenRead(string path)
-        {
+        public Stream OpenRead(string path) {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentException("the filename is null or empty.");
 
             return new InputStreamWrapper(AssetManager.Call<AndroidJavaObject>("open", GetAssetFilePath(path)));
         }
 
-        public bool Support(string path)
-        {
+        public bool Support(string path) {
             if (string.IsNullOrEmpty(path))
                 return false;
 
@@ -136,54 +117,44 @@ namespace Loxodon.Framework.Utilities
             return false;
         }
 
-        public class InputStreamWrapper : Stream
-        {
+        public class InputStreamWrapper : Stream {
             private object _lock = new object();
             private long length = 0;
             private long position = 0;
             private AndroidJavaObject inputStream;
-            public InputStreamWrapper(AndroidJavaObject inputStream)
-            {
+            public InputStreamWrapper(AndroidJavaObject inputStream) {
                 this.inputStream = inputStream;
                 this.length = inputStream.Call<int>("available");
             }
 
             public override bool CanRead { get { return this.position < this.length; } }
 
-            public override bool CanSeek
-            {
+            public override bool CanSeek {
                 get { return false; }
             }
 
-            public override bool CanWrite
-            {
+            public override bool CanWrite {
                 get { return false; }
             }
 
-            public override long Length
-            {
+            public override long Length {
                 get { return this.length; }
             }
 
-            public override long Position
-            {
+            public override long Position {
                 get { return this.position; }
                 set { throw new NotSupportedException(); }
             }
 
-            public override void Flush()
-            {
+            public override void Flush() {
                 throw new NotSupportedException();
             }
 
-            public override int Read(byte[] buffer, int offset, int count)
-            {
-                lock (_lock)
-                {
+            public override int Read(byte[] buffer, int offset, int count) {
+                lock (_lock) {
                     int ret = 0;
                     IntPtr array = IntPtr.Zero;
-                    try
-                    {
+                    try {
                         array = AndroidJNI.NewByteArray(count);
                         var method = AndroidJNIHelper.GetMethodID(inputStream.GetRawClass(), "read", "([B)I");
                         ret = AndroidJNI.CallIntMethod(inputStream.GetRawObject(), method, new[] { new jvalue() { l = array } });
@@ -195,8 +166,7 @@ namespace Loxodon.Framework.Utilities
                         Buffer.BlockCopy(data, 0, buffer, 0, ret);
                         this.position += ret;
                     }
-                    finally
-                    {
+                    finally {
                         if (array != IntPtr.Zero)
                             AndroidJNI.DeleteLocalRef(array);
                     }
@@ -204,27 +174,22 @@ namespace Loxodon.Framework.Utilities
                 }
             }
 
-            public override long Seek(long offset, SeekOrigin origin)
-            {
+            public override long Seek(long offset, SeekOrigin origin) {
                 throw new NotSupportedException();
             }
 
-            public override void SetLength(long value)
-            {
+            public override void SetLength(long value) {
                 throw new NotSupportedException();
             }
 
-            public override void Write(byte[] buffer, int offset, int count)
-            {
+            public override void Write(byte[] buffer, int offset, int count) {
                 throw new NotSupportedException();
             }
 
-            protected override void Dispose(bool disposing)
-            {
+            protected override void Dispose(bool disposing) {
                 base.Dispose(disposing);
 
-                if (inputStream != null)
-                {
+                if (inputStream != null) {
                     inputStream.Call("close");
                     inputStream.Dispose();
                     inputStream = null;

@@ -25,35 +25,28 @@
 using Loxodon.Framework.Observables;
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
-    public class ObservableNodeProxy : NotifiableSourceProxyBase, IObtainable, IModifiable, INotifiable
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
+    public class ObservableNodeProxy : NotifiableSourceProxyBase, IObtainable, IModifiable, INotifiable {
         protected IObservableProperty property;
 
-        public ObservableNodeProxy(IObservableProperty property) : this(null, property)
-        {
+        public ObservableNodeProxy(IObservableProperty property) : this(null, property) {
         }
-        public ObservableNodeProxy(object source, IObservableProperty property) : base(source)
-        {
+        public ObservableNodeProxy(object source, IObservableProperty property) : base(source) {
             this.property = property;
             this.property.ValueChanged += OnValueChanged;
         }
 
         public override Type Type { get { return property.Type; } }
 
-        protected virtual void OnValueChanged(object sender, EventArgs e)
-        {
+        protected virtual void OnValueChanged(object sender, EventArgs e) {
             this.RaiseValueChanged();
         }
 
-        public virtual object GetValue()
-        {
+        public virtual object GetValue() {
             return property.Value;
         }
 
-        public virtual TValue GetValue<TValue>()
-        {
+        public virtual TValue GetValue<TValue>() {
             var observableProperty = property as IObservableProperty<TValue>;
             if (observableProperty != null)
                 return observableProperty.Value;
@@ -61,16 +54,13 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return (TValue)this.property.Value;
         }
 
-        public virtual void SetValue(object value)
-        {
+        public virtual void SetValue(object value) {
             property.Value = value;
         }
 
-        public virtual void SetValue<TValue>(TValue value)
-        {
+        public virtual void SetValue<TValue>(TValue value) {
             var observableProperty = property as IObservableProperty<TValue>;
-            if (observableProperty != null)
-            {
+            if (observableProperty != null) {
                 observableProperty.Value = value;
                 return;
             }
@@ -81,10 +71,8 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
         #region IDisposable Support    
         private bool disposedValue = false;
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
+        protected override void Dispose(bool disposing) {
+            if (!disposedValue) {
                 if (this.property != null)
                     this.property.ValueChanged -= OnValueChanged;
 

@@ -27,33 +27,27 @@ using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
 
-namespace Loxodon.Framework.TextUGUI.Editors
-{
+namespace Loxodon.Framework.TextUGUI.Editors {
     [CustomEditor(typeof(FormattableText), true)]
     [CanEditMultipleObjects]
-    public class FormattableTextEditor : GraphicEditor
-    {
+    public class FormattableTextEditor : GraphicEditor {
         SerializedProperty m_Format;
         SerializedProperty m_FontData;
         SerializedProperty m_ParameterCount;
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             m_Format = serializedObject.FindProperty("m_Format");
             m_FontData = serializedObject.FindProperty("m_FontData");
             m_ParameterCount = serializedObject.FindProperty("m_ParameterCount");
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             serializedObject.Update();
 
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(m_Format);
-            if (EditorGUI.EndChangeCheck())
-            {
-                try
-                {
+            if (EditorGUI.EndChangeCheck()) {
+                try {
                     int count = ParamsCount(m_Format.stringValue);
                     m_ParameterCount.intValue = count;
                 }
@@ -69,8 +63,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
             serializedObject.ApplyModifiedProperties();
         }
 
-        private static int ParamsCount(string format)
-        {
+        private static int ParamsCount(string format) {
             if (string.IsNullOrEmpty(format))
                 return 0;
 
@@ -78,26 +71,21 @@ namespace Loxodon.Framework.TextUGUI.Editors
             int len = format.Length;
             char ch = '\x0';
             int maxIndex = -1;
-            while (true)
-            {
-                while (pos < len)
-                {
+            while (true) {
+                while (pos < len) {
                     ch = format[pos];
                     pos++;
-                    if (ch == '}')
-                    {
+                    if (ch == '}') {
                         if (pos < len && format[pos] == '}') // Treat as escape character for }}
                             pos++;
                         else
                             FormatError();
                     }
 
-                    if (ch == '{')
-                    {
+                    if (ch == '{') {
                         if (pos < len && format[pos] == '{') // Treat as escape character for {{
                             pos++;
-                        else
-                        {
+                        else {
                             pos--;
                             break;
                         }
@@ -111,8 +99,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
                 if (pos == len || (ch = format[pos]) < '0' || ch > '9')
                     FormatError();
                 int index = 0;
-                do
-                {
+                do {
                     index = index * 10 + ch - '0';
                     pos++;
                     if (pos == len)
@@ -126,8 +113,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
                     pos++;
 
                 int width = 0;
-                if (ch == ',')
-                {
+                if (ch == ',') {
                     pos++;
                     while (pos < len && format[pos] == ' ')
                         pos++;
@@ -135,8 +121,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
                     if (pos == len)
                         FormatError();
                     ch = format[pos];
-                    if (ch == '-')
-                    {
+                    if (ch == '-') {
                         pos++;
                         if (pos == len)
                             FormatError();
@@ -144,8 +129,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
                     }
                     if (ch < '0' || ch > '9')
                         FormatError();
-                    do
-                    {
+                    do {
                         width = width * 10 + ch - '0';
                         pos++;
                         if (pos == len)
@@ -157,11 +141,9 @@ namespace Loxodon.Framework.TextUGUI.Editors
                 while (pos < len && (ch = format[pos]) == ' ')
                     pos++;
 
-                if (ch == ':')
-                {
+                if (ch == ':') {
                     pos++;
-                    while (true)
-                    {
+                    while (true) {
                         if (pos == len)
                             FormatError();
                         ch = format[pos];
@@ -182,8 +164,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
             return maxIndex + 1;
         }
 
-        private static bool IsValidFormatChar(char ch)
-        {
+        private static bool IsValidFormatChar(char ch) {
             if (ch == 123 || ch == 125)//{ } 
                 return false;
 
@@ -192,8 +173,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
             return false;
         }
 
-        private static void FormatError()
-        {
+        private static void FormatError() {
             throw new FormatException("Invalid Format");
         }
     }

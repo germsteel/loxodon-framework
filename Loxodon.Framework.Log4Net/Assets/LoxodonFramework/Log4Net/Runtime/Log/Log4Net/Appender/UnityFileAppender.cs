@@ -2,14 +2,10 @@
 using UnityEngine;
 using log4net.Appender;
 
-namespace Loxodon.Log.Log4Net.Appender
-{
-    public class UnityFileAppender : FileAppender
-    {
-        public override string File
-        {
-            set
-            {
+namespace Loxodon.Log.Log4Net.Appender {
+    public class UnityFileAppender : FileAppender {
+        public override string File {
+            set {
                 string path;
                 if (Application.isEditor)
                     path = Path.Combine(Directory.GetCurrentDirectory(), "Logs");

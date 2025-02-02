@@ -28,17 +28,14 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace Loxodon.Framework.Localizations
-{
+namespace Loxodon.Framework.Localizations {
     [Serializable]
-    public class LocalizedBindingDescriptionSet
-    {
+    public class LocalizedBindingDescriptionSet {
         public List<LocalizedBindingDescription> descriptions = new List<LocalizedBindingDescription>();
     }
 
     [Serializable]
-    public class LocalizedBindingDescription
-    {
+    public class LocalizedBindingDescription {
         [SerializeField]
         public string TypeName;
 
@@ -51,8 +48,7 @@ namespace Loxodon.Framework.Localizations
         [SerializeField]
         public BindingMode Mode = BindingMode.OneWay;
 
-        public override string ToString()
-        {
+        public override string ToString() {
             StringBuilder buf = new StringBuilder();
             buf.Append(TypeName).Append(" ");
             buf.Append("{binding ").Append(PropertyName);

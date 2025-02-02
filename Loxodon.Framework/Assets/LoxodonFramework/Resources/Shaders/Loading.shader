@@ -55,8 +55,7 @@ Category {
 			
 			float4 _MainTex_ST;
 
-			v2f vert (appdata_t v)
-			{
+			v2f vert (appdata_t v) {
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
@@ -74,8 +73,7 @@ Category {
 			UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 			float _InvFade;
 			
-			fixed4 frag (v2f i) : SV_Target
-			{
+			fixed4 frag (v2f i) : SV_Target {
 				#ifdef SOFTPARTICLES_ON
 				float sceneZ = LinearEyeDepth (SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)));
 				float partZ = i.projPos.z;

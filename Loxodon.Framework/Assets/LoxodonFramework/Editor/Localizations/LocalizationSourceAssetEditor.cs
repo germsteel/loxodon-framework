@@ -30,19 +30,16 @@ using UnityEngine;
 
 using ValueType = Loxodon.Framework.Localizations.ValueType;
 
-namespace Loxodon.Framework.Editors
-{
+namespace Loxodon.Framework.Editors {
     [CustomEditor(typeof(LocalizationSourceAsset))]
     [CanEditMultipleObjects]
-    public class LocalizationSourceAssetEditor : LocalizationSourceEditor
-    {
+    public class LocalizationSourceAssetEditor : LocalizationSourceEditor {
         private int foldoutIndex = -1;
         private float elementHeight = 0;
 
         private ReorderableList entryList;
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             var source = serializedObject.FindProperty("Source");
             var entries = source.FindPropertyRelative("entries");
 
@@ -56,10 +53,8 @@ namespace Loxodon.Framework.Editors
             entryList.elementHeightCallback = EntryListElementHeight;
         }
 
-        public override void OnInspectorGUI()
-        {
-            if (GUILayout.Button("Localization Source", TitleGUIStyle))
-            {
+        public override void OnInspectorGUI() {
+            if (GUILayout.Button("Localization Source", TitleGUIStyle)) {
                 Application.OpenURL("https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md");
             }
             GUILayout.Space(10);
@@ -68,20 +63,17 @@ namespace Loxodon.Framework.Editors
             this.serializedObject.ApplyModifiedProperties();
         }
 
-        protected virtual float EntryListElementHeight(int index)
-        {
+        protected virtual float EntryListElementHeight(int index) {
             if (this.foldoutIndex == index)
                 return this.elementHeight;
             return entryList.elementHeight;
         }
 
-        protected virtual void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        protected virtual void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused) {
             ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, isActive, false, true);
         }
 
-        protected virtual void DrawElement(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        protected virtual void DrawElement(Rect rect, int index, bool isActive, bool isFocused) {
             var entries = entryList.serializedProperty;
             if (index < 0 || index >= entries.arraySize)
                 return;
@@ -99,18 +91,15 @@ namespace Loxodon.Framework.Editors
             var buttonLeftRect = new Rect(entryRect.xMax + HORIZONTAL_GAP, y - 1, 18, 18);
             var buttonRightRect = new Rect(buttonLeftRect.xMax, y - 1, 18, 18);
 
-            if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft))
-            {
+            if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft)) {
                 DuplicateEntry(entries, index);
             }
-            if (GUI.Button(buttonRightRect, new GUIContent("-"), EditorStyles.miniButtonRight))
-            {
+            if (GUI.Button(buttonRightRect, new GUIContent("-"), EditorStyles.miniButtonRight)) {
                 AskRemoveEntry(entries, index);
             }
         }
 
-        protected virtual void DrawEntryField(Rect position, SerializedProperty entry, int index)
-        {
+        protected virtual void DrawEntryField(Rect position, SerializedProperty entry, int index) {
             var keyProperty = entry.FindPropertyRelative("key");
             var typeProperty = entry.FindPropertyRelative("type");
             var valueProperty = entry.FindPropertyRelative("value");
@@ -126,14 +115,12 @@ namespace Loxodon.Framework.Editors
             var foldout = index == foldoutIndex;
             EditorGUI.BeginChangeCheck();
             foldout = EditorGUI.Foldout(foldoutRect, foldout, GUIContent.none);
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 this.foldoutIndex = foldout ? index : -1;
                 this.entryList.index = foldoutIndex;
             }
 
-            if (foldoutIndex != index)
-            {
+            if (foldoutIndex != index) {
                 Rect keyRect = new Rect(foldoutRect.xMax - 15, y, Mathf.Min(200, width * 0.4f), height);
                 Rect typeRect = new Rect(keyRect.xMax + HORIZONTAL_GAP, y, Mathf.Min(120, width * 0.2f), height);
                 Rect valueRect = new Rect(typeRect.xMax + HORIZONTAL_GAP, y, position.xMax - typeRect.xMax - HORIZONTAL_GAP, height);
@@ -143,8 +130,7 @@ namespace Loxodon.Framework.Editors
                 EditorGUI.LabelField(typeRect, type.ToString());
                 DrawValueField(valueRect, valueProperty, type);
             }
-            else
-            {
+            else {
                 y += height + VERTICAL_GAP;
                 width = position.width + 40;
 
@@ -174,40 +160,33 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        protected virtual void DrawHeader(Rect rect)
-        {
+        protected virtual void DrawHeader(Rect rect) {
             GUI.Label(rect, "Localizations");
         }
 
-        protected virtual void OnAdd(ReorderableList list)
-        {
+        protected virtual void OnAdd(ReorderableList list) {
             var entries = list.serializedProperty;
             int index = entries.arraySize > 0 ? entries.arraySize : 0;
             this.DrawContextMenu(entries, index);
         }
 
-        protected virtual void OnRemove(ReorderableList list)
-        {
+        protected virtual void OnRemove(ReorderableList list) {
             var entries = list.serializedProperty;
             AskRemoveEntry(entries, list.index);
         }
 
-        protected virtual void DrawContextMenu(SerializedProperty entries, int index)
-        {
+        protected virtual void DrawContextMenu(SerializedProperty entries, int index) {
             GenericMenu menu = new GenericMenu();
-            foreach (ValueType valueType in Enum.GetValues(typeof(ValueType)))
-            {
+            foreach (ValueType valueType in Enum.GetValues(typeof(ValueType))) {
                 var type = valueType;
-                menu.AddItem(new GUIContent(valueType.ToString()), false, context =>
-                {
+                menu.AddItem(new GUIContent(valueType.ToString()), false, context => {
                     AddEntry(entries, index, type);
                 }, null);
             }
             menu.ShowAsContext();
         }
 
-        protected virtual void AddEntry(SerializedProperty entries, int index, ValueType type)
-        {
+        protected virtual void AddEntry(SerializedProperty entries, int index, ValueType type) {
             if (index < 0 || index > entries.arraySize)
                 return;
 
@@ -228,8 +207,7 @@ namespace Loxodon.Framework.Editors
             GUI.FocusControl(null);
         }
 
-        protected virtual void DuplicateEntry(SerializedProperty entries, int index)
-        {
+        protected virtual void DuplicateEntry(SerializedProperty entries, int index) {
             if (index < 0 || index >= entries.arraySize)
                 return;
 
@@ -248,27 +226,23 @@ namespace Loxodon.Framework.Editors
             GUI.FocusControl(null);
         }
 
-        protected virtual void AskRemoveEntry(SerializedProperty entries, int index)
-        {
+        protected virtual void AskRemoveEntry(SerializedProperty entries, int index) {
             if (entries == null || index < 0 || index >= entries.arraySize)
                 return;
 
             var variable = entries.GetArrayElementAtIndex(index);
             var key = variable.FindPropertyRelative("key").stringValue;
-            if (string.IsNullOrEmpty(key))
-            {
+            if (string.IsNullOrEmpty(key)) {
                 RemoveEntry(entries, index);
                 return;
             }
 
-            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\"?", key), "Yes", "Cancel"))
-            {
+            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\"?", key), "Yes", "Cancel")) {
                 RemoveEntry(entries, index);
             }
         }
 
-        protected virtual void RemoveEntry(SerializedProperty entries, int index)
-        {
+        protected virtual void RemoveEntry(SerializedProperty entries, int index) {
             if (index < 0 || index >= entries.arraySize)
                 return;
 

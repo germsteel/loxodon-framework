@@ -27,10 +27,8 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Loxodon.Framework.Security.Cryptography
-{
-    public class AesCTRCryptoStream : Stream
-    {
+namespace Loxodon.Framework.Security.Cryptography {
+    public class AesCTRCryptoStream : Stream {
         private readonly object _lock = new object();
         private Stream stream;
 
@@ -43,12 +41,10 @@ namespace Loxodon.Framework.Security.Cryptography
         private byte[] readBuffer;
         private AesCTRCryptoTransform transform;
 
-        public AesCTRCryptoStream(Stream stream, AesCTRCryptoTransform transform, CryptoStreamMode streamMode) : this(stream, transform, streamMode, false)
-        {
+        public AesCTRCryptoStream(Stream stream, AesCTRCryptoTransform transform, CryptoStreamMode streamMode) : this(stream, transform, streamMode, false) {
         }
 
-        public AesCTRCryptoStream(Stream stream, AesCTRCryptoTransform transform, CryptoStreamMode streamMode, bool leaveOpen)
-        {
+        public AesCTRCryptoStream(Stream stream, AesCTRCryptoTransform transform, CryptoStreamMode streamMode, bool leaveOpen) {
             this.stream = stream;
             this.transform = transform;
             this.leaveOpen = leaveOpen;
@@ -65,12 +61,10 @@ namespace Loxodon.Framework.Security.Cryptography
 
 
             this.transform.Position = stream.Position;
-            if (streamMode == CryptoStreamMode.Read)
-            {
+            if (streamMode == CryptoStreamMode.Read) {
                 this.readBuffer = new byte[8192];
             }
-            else
-            {
+            else {
                 this.writeBuffer = new byte[8192];
             }
         }
@@ -83,11 +77,9 @@ namespace Loxodon.Framework.Security.Cryptography
 
         public override long Length { get { return stream.Length; } }
 
-        public override long Position
-        {
+        public override long Position {
             get { return stream.Position; }
-            set
-            {
+            set {
                 if (stream.Position == value)
                     return;
 
@@ -95,18 +87,14 @@ namespace Loxodon.Framework.Security.Cryptography
             }
         }
 
-        public override void Flush()
-        {
+        public override void Flush() {
             this.stream.Flush();
         }
 
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            lock (_lock)
-            {
+        public override int Read(byte[] buffer, int offset, int count) {
+            lock (_lock) {
                 int remainingSize = count;
-                while (remainingSize > 0)
-                {
+                while (remainingSize > 0) {
                     int length = stream.Read(readBuffer, 0, Math.Min(readBuffer.Length, remainingSize));
                     if (length <= 0)
                         return count - remainingSize;
@@ -119,28 +107,22 @@ namespace Loxodon.Framework.Security.Cryptography
             }
         }
 
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            lock (_lock)
-            {
+        public override long Seek(long offset, SeekOrigin origin) {
+            lock (_lock) {
                 long position = this.stream.Seek(offset, origin);
                 transform.Position = position;
                 return position;
             }
         }
 
-        public override void SetLength(long value)
-        {
+        public override void SetLength(long value) {
             this.stream.SetLength(value);
         }
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            lock (_lock)
-            {
+        public override void Write(byte[] buffer, int offset, int count) {
+            lock (_lock) {
                 int remainingSize = count;
-                while (remainingSize > 0)
-                {
+                while (remainingSize > 0) {
                     int length = transform.TransformBlock(buffer, offset, Math.Min(writeBuffer.Length, remainingSize), writeBuffer, 0);
                     if (length <= 0)
                         return;
@@ -152,26 +134,19 @@ namespace Loxodon.Framework.Security.Cryptography
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            try
-            {
-                if (disposing)
-                {
-                    if (!leaveOpen)
-                    {
-                        if (stream != null)
-                        {
+        protected override void Dispose(bool disposing) {
+            try {
+                if (disposing) {
+                    if (!leaveOpen) {
+                        if (stream != null) {
                             stream.Close();
                             stream = null;
                         }
                     }
                 }
             }
-            finally
-            {
-                try
-                {
+            finally {
+                try {
                     if (readBuffer != null)
                         Array.Clear(readBuffer, 0, readBuffer.Length);
                     if (writeBuffer != null)
@@ -182,8 +157,7 @@ namespace Loxodon.Framework.Security.Cryptography
                     this.canRead = false;
                     this.canWrite = false;
                 }
-                finally
-                {
+                finally {
                     base.Dispose(disposing);
                 }
             }

@@ -58,16 +58,14 @@ Properties {
 }
 
 SubShader {
-	Tags 
-	{
+	Tags  {
 		"Queue"="Transparent"
 		"IgnoreProjector"="True"
 		"RenderType"="Transparent"
 	}
 
 
-	Stencil
-	{
+	Stencil {
 		Ref [_Stencil]
 		Comp [_StencilComp]
 		Pass [_StencilOp] 
@@ -124,8 +122,7 @@ SubShader {
 		fixed4 _MaskEdgeColor;
 		bool _MaskInverse;
 
-		pixel_t VertShader(vertex_t input)
-		{
+		pixel_t VertShader(vertex_t input) {
 			float bold = step(input.texcoord1.y, 0);
 
 			float4 vert = input.vertex;
@@ -195,8 +192,7 @@ SubShader {
 
 
 		// PIXEL SHADER
-		fixed4 PixShader(pixel_t input) : SV_Target
-		{
+		fixed4 PixShader(pixel_t input) : SV_Target {
 			half d = tex2D(_MainTex, input.texcoord0.xy).a * input.param.x;
 			half4 c = input.faceColor * saturate(d - input.param.w);
 

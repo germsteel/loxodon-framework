@@ -27,28 +27,22 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace Loxodon.Framework.Net.Http
-{
-    public abstract class FileDownloaderBase : IFileDownloader
-    {
+namespace Loxodon.Framework.Net.Http {
+    public abstract class FileDownloaderBase : IFileDownloader {
         private Uri baseUri;
         private int maxTaskCount;
 
-        public FileDownloaderBase() : this(null, SystemInfo.processorCount * 2)
-        {
+        public FileDownloaderBase() : this(null, SystemInfo.processorCount * 2) {
         }
 
-        public FileDownloaderBase(Uri baseUri, int maxTaskCount)
-        {
+        public FileDownloaderBase(Uri baseUri, int maxTaskCount) {
             this.BaseUri = baseUri;
             this.MaxTaskCount = maxTaskCount;
         }
 
-        public virtual Uri BaseUri
-        {
+        public virtual Uri BaseUri {
             get { return this.baseUri; }
-            set
-            {
+            set {
                 if (value != null && !this.IsAllowedAbsoluteUri(value))
                     throw new NotSupportedException(string.Format("Invalid uri:{0}", value == null ? "null" : value.OriginalString));
 
@@ -56,14 +50,12 @@ namespace Loxodon.Framework.Net.Http
             }
         }
 
-        public virtual int MaxTaskCount
-        {
+        public virtual int MaxTaskCount {
             get { return this.maxTaskCount; }
             set { this.maxTaskCount = Mathf.Max(value > 0 ? value : SystemInfo.processorCount * 2, 1); }
         }
 
-        protected virtual bool IsAllowedAbsoluteUri(Uri uri)
-        {
+        protected virtual bool IsAllowedAbsoluteUri(Uri uri) {
             if (!uri.IsAbsoluteUri)
                 return false;
 
@@ -76,16 +68,14 @@ namespace Loxodon.Framework.Net.Http
             return false;
         }
 
-        protected virtual Uri GetAbsoluteUri(Uri relativePath)
-        {
+        protected virtual Uri GetAbsoluteUri(Uri relativePath) {
             if (this.baseUri == null || this.IsAllowedAbsoluteUri(relativePath))
                 return relativePath;
 
             return new Uri(this.baseUri, relativePath);
         }
 
-        public virtual IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(Uri path, string fileName)
-        {
+        public virtual IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(Uri path, string fileName) {
             return DownloadFileAsync(path, new FileInfo(fileName));
         }
 

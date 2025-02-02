@@ -28,12 +28,9 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Examples
-{
-    public class HandshakeHandler : IHandshakeHandler
-    {
-        public async Task OnHandshake(IChannel<IMessage> channel)
-        {
+namespace Loxodon.Framework.Examples {
+    public class HandshakeHandler : IHandshakeHandler {
+        public async Task OnHandshake(IChannel<IMessage> channel) {
             //send a handshake message
             Request request = new Request();
             request.CommandID = 0;

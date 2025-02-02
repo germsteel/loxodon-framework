@@ -24,23 +24,18 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
-{
-    public abstract class WovenFieldNodeProxy<T, TValue> : SourceProxyBase, IObtainable<TValue>, IObtainable, IModifiable<TValue>, IModifiable where T : class
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving {
+    public abstract class WovenFieldNodeProxy<T, TValue> : SourceProxyBase, IObtainable<TValue>, IObtainable, IModifiable<TValue>, IModifiable where T : class {
         private readonly Type valueType;
         protected new T source;
-        public WovenFieldNodeProxy(T source) : base(source)
-        {
+        public WovenFieldNodeProxy(T source) : base(source) {
             this.source = source;
             this.valueType = typeof(TValue);
         }
 
-        public new T Source
-        {
+        public new T Source {
             get { return this.source; }
-            set
-            {
+            set {
                 if (this.source == value)
                     return;
                 this.source = value;
@@ -53,26 +48,22 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
 
         public abstract void SetValue(TValue value);
 
-        object IObtainable.GetValue()
-        {
+        object IObtainable.GetValue() {
             return this.GetValue();
         }
 
-        TValue1 IObtainable.GetValue<TValue1>()
-        {
+        TValue1 IObtainable.GetValue<TValue1>() {
             if (this is IObtainable<TValue1> proxy)
                 return proxy.GetValue();
 
             return (TValue1)Convert.ChangeType(GetValue(), typeof(TValue1));
         }
 
-        void IModifiable.SetValue(object value)
-        {
+        void IModifiable.SetValue(object value) {
             this.SetValue((TValue)value);
         }
 
-        void IModifiable.SetValue<TValue1>(TValue1 value)
-        {
+        void IModifiable.SetValue<TValue1>(TValue1 value) {
             if (this is IModifiable<TValue1> proxy)
                 proxy.SetValue(value);
             else

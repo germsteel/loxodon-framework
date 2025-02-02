@@ -27,17 +27,14 @@ using UnityEngine;
 
 using Loxodon.Framework.Prefs;
 
-namespace Loxodon.Framework.Tutorials
-{
+namespace Loxodon.Framework.Tutorials {
     /// <summary>
     /// Prefs example.
     /// Supported Types:ValueType, Vector2 ,Vector3 ,Vector4,Color,Color32 etc.
     /// </summary>
-    public class PrefsExample : MonoBehaviour
-    {
+    public class PrefsExample : MonoBehaviour {
 
-        void Start()
-        {
+        void Start() {
             BinaryFilePreferencesFactory factory = new BinaryFilePreferencesFactory();
 
             /* Custom a ITypeEncoder for the type of CustomData. */
@@ -73,10 +70,8 @@ namespace Loxodon.Framework.Tutorials
         }
     }
 
-    public struct CustomData
-    {
-        public CustomData(string name, string description)
-        {
+    public struct CustomData {
+        public CustomData(string name, string description) {
             this.name = name;
             this.description = description;
         }
@@ -88,28 +83,23 @@ namespace Loxodon.Framework.Tutorials
     /// <summary>
     /// Custom a ITypeEncoder for the type of CustomData. 
     /// </summary>
-    public class CustomDataTypeEncoder : ITypeEncoder
-    {
+    public class CustomDataTypeEncoder : ITypeEncoder {
         private int priority = 0;
 
-        public int Priority
-        {
+        public int Priority {
             get { return this.priority; }
             set { this.priority = value; }
         }
 
-        public bool IsSupport(Type type)
-        {
+        public bool IsSupport(Type type) {
             return typeof(CustomData).Equals(type);
         }
 
-        public object Decode(Type type, string value)
-        {
+        public object Decode(Type type, string value) {
             return JsonUtility.FromJson(value, type);
         }
 
-        public string Encode(object value)
-        {
+        public string Encode(object value) {
             return JsonUtility.ToJson(value);
         }
     }

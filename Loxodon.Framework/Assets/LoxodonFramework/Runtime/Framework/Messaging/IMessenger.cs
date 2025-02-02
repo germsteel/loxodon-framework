@@ -24,13 +24,11 @@
 
 using System;
 
-namespace Loxodon.Framework.Messaging
-{
+namespace Loxodon.Framework.Messaging {
     /// <summary>
     /// The Messenger is a class allowing objects to exchange messages.
     /// </summary>
-    public interface IMessenger
-    {
+    public interface IMessenger {
         /// <summary>
         /// Subscribe a message.
         /// </summary>

@@ -24,17 +24,14 @@
 
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
-    public enum ScriptReferenceType
-    {
+namespace Loxodon.Framework.Views {
+    public enum ScriptReferenceType {
         TextAsset,
         Filename
     }
 
     [System.Serializable]
-    public class ScriptReference : ISerializationCallbackReceiver
-    {
+    public class ScriptReference : ISerializationCallbackReceiver {
 #if UNITY_EDITOR
         [SerializeField]
         private Object cachedAsset;
@@ -48,36 +45,29 @@ namespace Loxodon.Framework.Views
         [SerializeField]
         protected ScriptReferenceType type = ScriptReferenceType.TextAsset;
 
-        public virtual ScriptReferenceType Type
-        {
+        public virtual ScriptReferenceType Type {
             get { return this.type; }
         }
 
-        public virtual TextAsset Text
-        {
+        public virtual TextAsset Text {
             get { return this.text; }
         }
 
-        public virtual string Filename
-        {
+        public virtual string Filename {
             get { return this.filename; }
         }
 
-        public void OnAfterDeserialize()
-        {
+        public void OnAfterDeserialize() {
             Clear();
         }
 
-        public void OnBeforeSerialize()
-        {
+        public void OnBeforeSerialize() {
             Clear();
         }
 
-        protected virtual void Clear()
-        {
+        protected virtual void Clear() {
 #if !UNITY_EDITOR
-            switch (type)
-            {
+            switch (type) {
                 case ScriptReferenceType.TextAsset:
                     this.filename = null;
                     break;

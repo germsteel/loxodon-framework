@@ -21501,13 +21501,11 @@
             <example>
             Example of how to override this method, and call custom async method
             <code>
-            protected override Task WriteAsyncTask(LogEventInfo logEvent, CancellationToken token)
-            {
+            protected override Task WriteAsyncTask(LogEventInfo logEvent, CancellationToken token) {
                return CustomWriteAsync(logEvent, token);
             }
             
-            private async Task CustomWriteAsync(LogEventInfo logEvent, CancellationToken token)
-            {
+            private async Task CustomWriteAsync(LogEventInfo logEvent, CancellationToken token) {
                 await MyLogMethodAsync(logEvent, token).ConfigureAwait(false);
             }
             </code></example>

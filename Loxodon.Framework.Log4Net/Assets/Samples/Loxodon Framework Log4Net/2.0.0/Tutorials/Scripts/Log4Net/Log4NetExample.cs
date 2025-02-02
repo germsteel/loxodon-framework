@@ -1,23 +1,18 @@
 ﻿using UnityEngine;
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class Log4NetExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class Log4NetExample : MonoBehaviour {
         private ILog log;
 
-        void Start()
-        {
+        void Start() {
             log = LogManager.GetLogger(typeof(Log4NetExample));
         }
 
 
-        void Update()
-        {
+        void Update() {
             int r = Random.Range(0, 5);
-            switch (r)
-            {
+            switch (r) {
 
                 case 0:
                     if (log.IsDebugEnabled)

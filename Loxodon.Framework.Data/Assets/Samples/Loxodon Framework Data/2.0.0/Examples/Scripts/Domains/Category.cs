@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Examples.Domains
-{
-    public enum Category
-    {
+namespace Loxodon.Framework.Examples.Domains {
+    public enum Category {
         WEAPON,
         HELMET,
         ARMOUR,

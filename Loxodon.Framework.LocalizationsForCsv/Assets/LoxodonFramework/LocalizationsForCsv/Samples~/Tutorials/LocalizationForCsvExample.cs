@@ -26,12 +26,9 @@ using Loxodon.Framework.Localizations;
 using System.Globalization;
 using UnityEngine;
 
-namespace Loxodon.Framework.Examples
-{
-    public class LocalizationForCsvExample : MonoBehaviour
-    {
-        void Start()
-        {
+namespace Loxodon.Framework.Examples {
+    public class LocalizationForCsvExample : MonoBehaviour {
+        void Start() {
             CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage(SystemLanguage.Chinese);
 
             var localization = Localization.Current;

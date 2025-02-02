@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Services
-{
-    public interface IServiceLocator
-    {
+namespace Loxodon.Framework.Services {
+    public interface IServiceLocator {
         object Resolve(Type type);
 
         T Resolve<T>();

@@ -32,25 +32,19 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Loxodon.Framework.Localizations
-{
-    public class CsvDocumentParser : AbstractDocumentParser
-    {
+namespace Loxodon.Framework.Localizations {
+    public class CsvDocumentParser : AbstractDocumentParser {
         private static readonly ILog log = LogManager.GetLogger(typeof(CsvDocumentParser));
 
-        public CsvDocumentParser() : this(null)
-        {
+        public CsvDocumentParser() : this(null) {
         }
 
-        public CsvDocumentParser(List<ITypeConverter> converters) : base(converters)
-        {
+        public CsvDocumentParser(List<ITypeConverter> converters) : base(converters) {
         }
 
-        public override Dictionary<string, object> Parse(Stream input, CultureInfo cultureInfo)
-        {
+        public override Dictionary<string, object> Parse(Stream input, CultureInfo cultureInfo) {
             Dictionary<string, object> data = new Dictionary<string, object>();
-            using (CsvReader reader = new CsvReader(new StreamReader(input, Encoding.UTF8)))
-            {
+            using (CsvReader reader = new CsvReader(new StreamReader(input, Encoding.UTF8))) {
                 if (!reader.Read() || !reader.ReadHeader())
                     return data;
 
@@ -60,11 +54,9 @@ namespace Loxodon.Framework.Localizations
                 string cultureISOName = cultureInfo.TwoLetterISOLanguageName;//eg:zh  en
                 string cultureName = cultureInfo.Name;//eg:zh-CN  en-US              
 
-                if (Array.IndexOf(headers, "default") < 0)
-                {
+                if (Array.IndexOf(headers, "default") < 0) {
                     /* If the default column is not configured, the first data column is used as the default column */
-                    foreach (string header in headers)
-                    {
+                    foreach (string header in headers) {
                         if (Regex.IsMatch(header, @"^((key)|(type)|(description))$", RegexOptions.IgnoreCase))
                             continue;
 
@@ -77,28 +69,24 @@ namespace Loxodon.Framework.Localizations
                 string value = null;
                 List<string> list = new List<string>();
 
-                while (reader.Read())
-                {
+                while (reader.Read()) {
                     key = reader.GetField("key");
                     typeName = reader.GetField("type");
 
                     if (string.IsNullOrEmpty(key))
                         continue;
 
-                    if (reader.TryGetField<string>(cultureName, out value) && !string.IsNullOrEmpty(value))
-                    {
+                    if (reader.TryGetField<string>(cultureName, out value) && !string.IsNullOrEmpty(value)) {
                         data[key] = this.ParseValue(typeName, value);
                         continue;
                     }
 
-                    if (reader.TryGetField<string>(cultureISOName, out value) && !string.IsNullOrEmpty(value))
-                    {
+                    if (reader.TryGetField<string>(cultureISOName, out value) && !string.IsNullOrEmpty(value)) {
                         data[key] = this.ParseValue(typeName, value);
                         continue;
                     }
 
-                    if (reader.TryGetField<string>(defaultName, out value) && !string.IsNullOrEmpty(value))
-                    {
+                    if (reader.TryGetField<string>(defaultName, out value) && !string.IsNullOrEmpty(value)) {
                         data[key] = this.ParseValue(typeName, value);
                         continue;
                     }
@@ -112,15 +100,12 @@ namespace Loxodon.Framework.Localizations
             return data;
         }
 
-        protected virtual object ParseValue(string typeName, string value)
-        {
-            if (typeName.EndsWith("-array", StringComparison.OrdinalIgnoreCase))
-            {
+        protected virtual object ParseValue(string typeName, string value) {
+            if (typeName.EndsWith("-array", StringComparison.OrdinalIgnoreCase)) {
                 string[] array = StringSpliter.Split(value, ',');
                 return this.Parse(typeName.Replace("-array", ""), array);
             }
-            else
-            {
+            else {
                 return this.Parse(typeName, value);
             }
         }

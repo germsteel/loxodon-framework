@@ -27,58 +27,47 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
-    public class Toast : UIBase
-    {
+namespace Loxodon.Framework.Views {
+    public class Toast : UIBase {
         private static readonly ILog log = LogManager.GetLogger(typeof(Toast));
 
         private const string DEFAULT_VIEW_NAME = "UI/Toast";
 
-        public static new IUIViewGroup GetCurrentViewGroup()
-        {
+        public static new IUIViewGroup GetCurrentViewGroup() {
             return UIBase.GetCurrentViewGroup();
         }
 
         private static string viewName;
-        public static string ViewName
-        {
+        public static string ViewName {
             get { return string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName; }
             set { viewName = value; }
         }
 
-        public static Toast Show(string text, float duration = 3f)
-        {
+        public static Toast Show(string text, float duration = 3f) {
             return Show(ViewName, null, text, duration, null, null);
         }
 
-        public static Toast Show(string text, float duration, UILayout layout)
-        {
+        public static Toast Show(string text, float duration, UILayout layout) {
             return Show(ViewName, null, text, duration, layout, null);
         }
 
-        public static Toast Show(string text, float duration, UILayout layout, Action callback)
-        {
+        public static Toast Show(string text, float duration, UILayout layout, Action callback) {
             return Show(ViewName, null, text, duration, layout, callback);
         }
 
-        public static Toast Show(IUIViewGroup viewGroup, string text, float duration = 3f)
-        {
+        public static Toast Show(IUIViewGroup viewGroup, string text, float duration = 3f) {
             return Show(ViewName, viewGroup, text, duration, null, null);
         }
 
-        public static Toast Show(IUIViewGroup viewGroup, string text, float duration, UILayout layout)
-        {
+        public static Toast Show(IUIViewGroup viewGroup, string text, float duration, UILayout layout) {
             return Show(ViewName, viewGroup, text, duration, layout, null);
         }
 
-        public static Toast Show(IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback)
-        {
+        public static Toast Show(IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback) {
             return Show(ViewName, viewGroup, text, duration, layout, callback);
         }
 
-        public static Toast Show(string viewName, IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback)
-        {
+        public static Toast Show(string viewName, IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback) {
             if (string.IsNullOrEmpty(viewName))
                 viewName = ViewName;
 
@@ -102,16 +91,13 @@ namespace Loxodon.Framework.Views
         private readonly UILayout layout;
         private readonly Action callback;
 
-        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration) : this(view, viewGroup, text, duration, null, null)
-        {
+        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration) : this(view, viewGroup, text, duration, null, null) {
         }
 
-        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration, UILayout layout) : this(view, viewGroup, text, duration, layout, null)
-        {
+        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration, UILayout layout) : this(view, viewGroup, text, duration, layout, null) {
         }
 
-        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback)
-        {
+        protected Toast(ToastViewBase view, IUIViewGroup viewGroup, string text, float duration, UILayout layout, Action callback) {
             this.view = view;
             this.viewGroup = viewGroup;
             this.text = text;
@@ -120,44 +106,36 @@ namespace Loxodon.Framework.Views
             this.callback = callback;
         }
 
-        public float Duration
-        {
+        public float Duration {
             get { return this.duration; }
         }
 
-        public string Text
-        {
+        public string Text {
             get { return this.text; }
         }
 
-        public ToastViewBase View
-        {
+        public ToastViewBase View {
             get { return this.view; }
         }
 
-        public void Cancel()
-        {
+        public void Cancel() {
             if (this.view == null || this.view.Owner == null)
                 return;
 
-            if (!this.view.Visibility)
-            {
+            if (!this.view.Visibility) {
                 GameObject.Destroy(this.view.Owner);
                 return;
             }
 
-            if (this.view.ExitAnimation != null)
-            {
-                this.view.ExitAnimation.OnEnd(() =>
-                {
+            if (this.view.ExitAnimation != null) {
+                this.view.ExitAnimation.OnEnd(() => {
                     this.view.Visibility = false;
                     this.viewGroup.RemoveView(this.view);
                     GameObject.Destroy(this.view.Owner);
                     this.DoCallback();
                 }).Play();
             }
-            else
-            {
+            else {
                 this.view.Visibility = false;
                 this.viewGroup.RemoveView(this.view);
                 GameObject.Destroy(this.view.Owner);
@@ -165,8 +143,7 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public void Show()
-        {
+        public void Show() {
             if (this.view.Visibility)
                 return;
 
@@ -180,21 +157,17 @@ namespace Loxodon.Framework.Views
             this.view.StartCoroutine(DelayDismiss(duration));
         }
 
-        protected IEnumerator DelayDismiss(float duration)
-        {
+        protected IEnumerator DelayDismiss(float duration) {
             yield return new WaitForSeconds(duration);
             this.Cancel();
         }
 
-        protected void DoCallback()
-        {
-            try
-            {
+        protected void DoCallback() {
+            try {
                 if (this.callback != null)
                     this.callback();
             }
-            catch (Exception)
-            {
+            catch (Exception) {
             }
         }
     }

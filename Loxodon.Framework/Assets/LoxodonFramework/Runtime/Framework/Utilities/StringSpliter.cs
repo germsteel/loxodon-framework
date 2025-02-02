@@ -28,41 +28,33 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace Loxodon.Framework.Utilities
-{
-    public class StringSpliter : IEnumerator<char>
-    {
+namespace Loxodon.Framework.Utilities {
+    public class StringSpliter : IEnumerator<char> {
         private static readonly char[] SEPARATOR = new char[] { ',' };
         [ThreadStatic]
         private static StringSpliter spliter;
-        private static StringSpliter Spliter
-        {
-            get
-            {
+        private static StringSpliter Spliter {
+            get {
                 if (spliter == null)
                     spliter = new StringSpliter();
                 return spliter;
             }
         }
 
-        public static string[] Split(string input, params char[] characters)
-        {
+        public static string[] Split(string input, params char[] characters) {
             return Split(input, characters, StringSplitOptions.None);
         }
 
-        public static string[] Split(string input, char[] characters, StringSplitOptions options)
-        {
+        public static string[] Split(string input, char[] characters, StringSplitOptions options) {
             if (string.IsNullOrEmpty(input))
                 return new string[0];
 
             var spliter = Spliter;
-            try
-            {
+            try {
                 spliter.Reset(input, characters);
                 return spliter.Split(options);
             }
-            finally
-            {
+            finally {
                 spliter.Clear();
             }
         }
@@ -72,12 +64,10 @@ namespace Loxodon.Framework.Utilities
         private int total = 0;
         private int pos = -1;
         private readonly List<string> items = new List<string>();
-        private StringSpliter()
-        {
+        private StringSpliter() {
         }
 
-        public void Reset(string text, char[] separators)
-        {
+        public void Reset(string text, char[] separators) {
             if (string.IsNullOrEmpty(text))
                 throw new ArgumentException("Invalid argument", "text");
 
@@ -92,40 +82,33 @@ namespace Loxodon.Framework.Utilities
             this.items.Clear();
         }
 
-        public char Current
-        {
+        public char Current {
             get { return this.text[pos]; }
         }
 
-        object IEnumerator.Current
-        {
+        object IEnumerator.Current {
             get { return this.text[pos]; }
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             this.text = null;
             this.pos = -1;
         }
 
-        public bool MoveNext()
-        {
-            if (this.pos < this.total - 1)
-            {
+        public bool MoveNext() {
+            if (this.pos < this.total - 1) {
                 this.pos++;
                 return true;
             }
             return false;
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             this.pos = -1;
             this.items.Clear();
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             this.text = null;
             this.separators = null;
             this.pos = -1;
@@ -133,13 +116,10 @@ namespace Loxodon.Framework.Utilities
             this.items.Clear();
         }
 
-        public string[] Split(StringSplitOptions options)
-        {
-            while (this.MoveNext())
-            {
+        public string[] Split(StringSplitOptions options) {
+            while (this.MoveNext()) {
                 char ch = this.Current;
-                if (separators.Contains(ch))
-                {
+                if (separators.Contains(ch)) {
                     if (options == StringSplitOptions.None)
                         items.Add("");
                     continue;
@@ -155,39 +135,32 @@ namespace Loxodon.Framework.Utilities
             return items.ToArray();
         }
 
-        private bool IsEOF()
-        {
+        private bool IsEOF() {
             return this.pos >= this.total;
         }
 
-        private void ReadStructString(StringBuilder buf, char start, char end)
-        {
+        private void ReadStructString(StringBuilder buf, char start, char end) {
             char ch = this.Current;
             if (ch != start)
                 throw new Exception(string.Format("Error parsing string , unexpected quote character {0} in text {1}", ch, this.text));
 
             buf.Append(ch);
 
-            while (this.MoveNext())
-            {
+            while (this.MoveNext()) {
                 ch = this.Current;
-                if (ch == '(')
-                {
+                if (ch == '(') {
                     ReadStructString(buf, '(', ')');
                     continue;
                 }
-                else if (ch == '[')
-                {
+                else if (ch == '[') {
                     ReadStructString(buf, '[', ']');
                     continue;
                 }
-                else if (ch == '{')
-                {
+                else if (ch == '{') {
                     ReadStructString(buf, '{', '}');
                     continue;
                 }
-                else if (ch == '<')
-                {
+                else if (ch == '<') {
                     ReadStructString(buf, '<', '>');
                     continue;
                 }
@@ -200,15 +173,13 @@ namespace Loxodon.Framework.Utilities
             throw new Exception(string.Format("Not found the end character '{0}' in the text {1}.", end, this.text));
         }
 
-        private void ReadQuotedString(StringBuilder buf, char start, char end)
-        {
+        private void ReadQuotedString(StringBuilder buf, char start, char end) {
             char prev = '\0';
             char ch = this.Current;
             if (ch != start)
                 throw new Exception(string.Format("Error parsing string , unexpected quote character {0} in text {1}", ch, this.text));
 
-            while (this.MoveNext())
-            {
+            while (this.MoveNext()) {
                 prev = ch;
                 ch = this.Current;
                 if (prev != '\\' && ch == end)
@@ -220,39 +191,30 @@ namespace Loxodon.Framework.Utilities
             throw new Exception(string.Format("Not found the end character '{0}' in the text {1}.", end, this.text));
         }
 
-        private string ReadString(char[] separators)
-        {
+        private string ReadString(char[] separators) {
             StringBuilder buf = new StringBuilder();
             char ch = this.Current;
-            do
-            {
+            do {
                 ch = this.Current;
-                if (ch == '(')
-                {
+                if (ch == '(') {
                     this.ReadStructString(buf, '(', ')');
                 }
-                else if (ch == '[')
-                {
+                else if (ch == '[') {
                     this.ReadStructString(buf, '[', ']');
                 }
-                else if (ch == '{')
-                {
+                else if (ch == '{') {
                     this.ReadStructString(buf, '{', '}');
                 }
-                else if (ch == '<')
-                {
+                else if (ch == '<') {
                     this.ReadStructString(buf, '<', '>');
                 }
-                else if (ch == '\'')
-                {
+                else if (ch == '\'') {
                     this.ReadQuotedString(buf, '\'', '\'');
                 }
-                else if (ch == '\"')
-                {
+                else if (ch == '\"') {
                     this.ReadQuotedString(buf, '\"', '\"');
                 }
-                else
-                {
+                else {
                     if (separators.Contains(ch))
                         break;
 

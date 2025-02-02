@@ -27,33 +27,27 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Loxodon.Framework.Views.UGUI.FormattableText;
 
-namespace Loxodon.Framework.Views.UGUI
-{
+namespace Loxodon.Framework.Views.UGUI {
     [RequireComponent(typeof(CanvasRenderer))]
     [AddComponentMenu("UI/Legacy/TemplateText", 100)]
-    public class TemplateText : Text
-    {
+    public class TemplateText : Text {
         [SerializeField]
         [TextArea(5, 10)]
         private string m_Template;
         private object data;
         private TextTemplateBinding templateBinding;
 
-        protected TextTemplateBinding Binding
-        {
-            get
-            {
+        protected TextTemplateBinding Binding {
+            get {
                 if (templateBinding == null)
                     templateBinding = new TextTemplateBinding(SetText);
                 return templateBinding;
             }
         }
 
-        public string Template
-        {
+        public string Template {
             get { return this.m_Template; }
-            set
-            {
+            set {
                 if (string.Equals(this.m_Template, value))
                     return;
 
@@ -61,11 +55,9 @@ namespace Loxodon.Framework.Views.UGUI
                 Binding.Template = this.m_Template;
             }
         }
-        public object Data
-        {
+        public object Data {
             get { return this.data; }
-            set
-            {
+            set {
                 if (Equals(this.data, value))
                     return;
 
@@ -74,33 +66,27 @@ namespace Loxodon.Framework.Views.UGUI
             }
         }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             Initialize();
         }
 
-        public override void SetAllDirty()
-        {
+        public override void SetAllDirty() {
             base.SetAllDirty();
             Initialize();
         }
 
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
             if (this.data == null)
                 SetText(BUFFER.Clear().Append(m_Template));
         }
 
-        public void SetText(StringBuilder builder)
-        {
+        public void SetText(StringBuilder builder) {
             this.text = builder.ToString();
         }
 
-        protected override void OnDestroy()
-        {
-            if (templateBinding != null)
-            {
+        protected override void OnDestroy() {
+            if (templateBinding != null) {
                 templateBinding.Dispose();
                 templateBinding = null;
             }

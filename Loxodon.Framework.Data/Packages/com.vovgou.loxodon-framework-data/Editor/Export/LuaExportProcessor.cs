@@ -29,34 +29,28 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public class LuaExportProcessor : ExportProcessor
-    {
-        protected virtual string GenerateFilename(string outputRoot, FileInfo file, ISheet sheet)
-        {
+namespace Loxodon.Framework.Data.Editors {
+    public class LuaExportProcessor : ExportProcessor {
+        protected virtual string GenerateFilename(string outputRoot, FileInfo file, ISheet sheet) {
             string filename = string.Format("{0}.lua", sheet.SheetName).ToLower();
             return Path.Combine(outputRoot, filename);
         }
 
-        protected override void DoExportSheet(FileInfo file, ISheet sheet, ISheetReader reader, string outputRoot)
-        {
+        protected override void DoExportSheet(FileInfo file, ISheet sheet, ISheetReader reader, string outputRoot) {
             string fullname = this.GenerateFilename(outputRoot, file, sheet);
             StringBuilder text = Parse(reader);
             File.WriteAllText(fullname, text.ToString());
             Debug.LogFormat("File:{0} Sheet:{1} OK……", GetRelativePath(file.FullName), sheet.SheetName);
         }
 
-        protected virtual StringBuilder Parse(ISheetReader reader)
-        {
+        protected virtual StringBuilder Parse(ISheetReader reader) {
             StringBuilder buf = new StringBuilder();
             int curr = 0;
 
             buf.Append("---\r\n");
             buf.AppendFormat("--@module {0}\r\n", reader.Name);
             buf.Append("local M = {\r\n");
-            for (int i = reader.StartLine; i <= reader.TotalCount; i++)
-            {
+            for (int i = reader.StartLine; i <= reader.TotalCount; i++) {
                 var data = reader.ReadLine(i);
                 if (data == null)
                     continue;
@@ -74,34 +68,28 @@ namespace Loxodon.Framework.Data.Editors
             return buf;
         }
 
-        protected virtual void ToLua(IDictionary data, StringBuilder buf)
-        {
+        protected virtual void ToLua(IDictionary data, StringBuilder buf) {
             int count = data.Count;
             List<string> keys = new List<string>();
             foreach (var key in data.Keys)
                 keys.Add((string)key);
 
             buf.Append("{ ");
-            for (int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 var key = keys[i];
                 var value = data[key];
 
                 buf.AppendFormat("{0}=", key);
-                if (value is IList)
-                {
+                if (value is IList) {
                     ToLua((IList)value, buf);
                 }
-                else if (value is IDictionary)
-                {
+                else if (value is IDictionary) {
                     ToLua((IDictionary)value, buf);
                 }
-                else if (value is string)
-                {
+                else if (value is string) {
                     buf.AppendFormat("\"{0}\"", StringEscapeUtils.Escape((string)value));
                 }
-                else
-                {
+                else {
                     buf.AppendFormat("{0}", value);
                 }
 
@@ -111,27 +99,21 @@ namespace Loxodon.Framework.Data.Editors
             buf.Append(" }");
         }
 
-        protected virtual void ToLua(IList data, StringBuilder buf)
-        {
+        protected virtual void ToLua(IList data, StringBuilder buf) {
             int count = data.Count;
             buf.Append("[ ");
-            for (int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 var value = data[i];
-                if (value is IList)
-                {
+                if (value is IList) {
                     ToLua((IList)value, buf);
                 }
-                else if (value is IDictionary)
-                {
+                else if (value is IDictionary) {
                     ToLua((IDictionary)value, buf);
                 }
-                else if (value is string)
-                {
+                else if (value is string) {
                     buf.AppendFormat("\"{0}\"", StringEscapeUtils.Escape((string)value));
                 }
-                else
-                {
+                else {
                     buf.AppendFormat("{0}", value);
                 }
 

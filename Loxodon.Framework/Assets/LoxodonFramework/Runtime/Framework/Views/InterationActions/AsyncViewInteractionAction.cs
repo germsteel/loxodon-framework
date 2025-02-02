@@ -29,43 +29,35 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views.InteractionActions
-{
-    public class AsyncViewInteractionAction : AsyncLoadableInteractionActionBase<VisibilityNotification>
-    {
+namespace Loxodon.Framework.Views.InteractionActions {
+    public class AsyncViewInteractionAction : AsyncLoadableInteractionActionBase<VisibilityNotification> {
         private IUIViewGroup viewGroup;
         private UIView view;
         private bool autoDestroy;
-        public AsyncViewInteractionAction(string viewName, IUIViewGroup viewGroup, bool autoDestroy = true) : this(viewName, viewGroup, null, autoDestroy)
-        {
+        public AsyncViewInteractionAction(string viewName, IUIViewGroup viewGroup, bool autoDestroy = true) : this(viewName, viewGroup, null, autoDestroy) {
         }
 
-        public AsyncViewInteractionAction(string viewName, IUIViewGroup viewGroup, IUIViewLocator locator, bool autoDestroy = true) : base(viewName, locator)
-        {
+        public AsyncViewInteractionAction(string viewName, IUIViewGroup viewGroup, IUIViewLocator locator, bool autoDestroy = true) : base(viewName, locator) {
             this.viewGroup = viewGroup;
             this.autoDestroy = autoDestroy;
         }
 
-        public AsyncViewInteractionAction(UIView view, bool autoDestroy = false) : base(null, null, null)
-        {
+        public AsyncViewInteractionAction(UIView view, bool autoDestroy = false) : base(null, null, null) {
             this.view = view;
             this.autoDestroy = autoDestroy;
         }
 
         public UIView View { get { return this.view; } }
 
-        public override Task Action(VisibilityNotification notification)
-        {
+        public override Task Action(VisibilityNotification notification) {
             if (notification.Visible)
                 return Show(notification.ViewModel, notification.WaitDisabled);
             else
                 return Hide();
         }
 
-        protected virtual async Task Show(object viewModel, bool waitDisabled)
-        {
-            try
-            {
+        protected virtual async Task Show(object viewModel, bool waitDisabled) {
+            try {
                 if (view == null)
                     view = await this.LoadViewAsync<UIView>();
 
@@ -75,10 +67,8 @@ namespace Loxodon.Framework.Views.InteractionActions
                 if (this.viewGroup != null)
                     this.viewGroup.AddView(view);
 
-                if (autoDestroy)
-                {
-                    view.WaitDisabled().Callbackable().OnCallback(r =>
-                    {
+                if (autoDestroy) {
+                    view.WaitDisabled().Callbackable().OnCallback(r => {
                         this.view = null;
                     });
                 }
@@ -91,18 +81,15 @@ namespace Loxodon.Framework.Views.InteractionActions
                 if (waitDisabled)
                     await view.WaitDisabled();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (autoDestroy)
                     Destroy();
                 throw e;
             }
         }
 
-        protected Task Hide()
-        {
-            if (view != null)
-            {
+        protected Task Hide() {
+            if (view != null) {
                 this.view.Visibility = false;
                 if (autoDestroy)
                     Destroy();
@@ -110,8 +97,7 @@ namespace Loxodon.Framework.Views.InteractionActions
             return Task.CompletedTask;
         }
 
-        private void Destroy()
-        {
+        private void Destroy() {
             if (view == null)
                 return;
 

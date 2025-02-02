@@ -26,10 +26,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Views
-{
-    public interface IAttributes
-    {
+namespace Loxodon.Framework.Views {
+    public interface IAttributes {
         object Get(Type type);
 
         T Get<T>();
@@ -46,12 +44,10 @@ namespace Loxodon.Framework.Views
 
     }
 
-    public class Attributes : IAttributes
-    {
+    public class Attributes : IAttributes {
         private Dictionary<Type, object> attributes = null;
 
-        public virtual void Add(Type type, object target)
-        {
+        public virtual void Add(Type type, object target) {
             if (this.attributes == null)
                 this.attributes = new Dictionary<Type, object>();
 
@@ -61,26 +57,22 @@ namespace Loxodon.Framework.Views
             this.attributes[type] = target;
         }
 
-        public virtual void Add<T>(T target)
-        {
+        public virtual void Add<T>(T target) {
             this.Add(typeof(T), target);
         }
 
-        public virtual object Get(Type type)
-        {
+        public virtual object Get(Type type) {
             if (type == null || this.attributes == null || !this.attributes.ContainsKey(type))
                 return null;
 
             return this.attributes[type];
         }
 
-        public virtual T Get<T>()
-        {
+        public virtual T Get<T>() {
             return (T)Get(typeof(T));
         }
 
-        public virtual object Remove(Type type)
-        {
+        public virtual object Remove(Type type) {
             if (type == null || this.attributes == null || !this.attributes.ContainsKey(type))
                 return null;
 
@@ -89,33 +81,27 @@ namespace Loxodon.Framework.Views
             return target;
         }
 
-        public virtual T Remove<T>()
-        {
+        public virtual T Remove<T>() {
             return (T)this.Remove(typeof(T));
         }
 
-        public virtual IEnumerator GetEnumerator()
-        {
+        public virtual IEnumerator GetEnumerator() {
             if (this.attributes == null)
                 return new EmptyEnumerator();
 
             return this.attributes.GetEnumerator();
         }
 
-        class EmptyEnumerator : IEnumerator
-        {
-            public object Current
-            {
+        class EmptyEnumerator : IEnumerator {
+            public object Current {
                 get { return null; }
             }
 
-            public bool MoveNext()
-            {
+            public bool MoveNext() {
                 return false;
             }
 
-            public void Reset()
-            {
+            public void Reset() {
             }
         }
     }

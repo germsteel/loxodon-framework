@@ -30,12 +30,9 @@ using System;
 using System.Collections;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
-    public class UniversalNodeProxyFactory : INodeProxyFactory
-    {
-        public ISourceProxy Create(object source, PathToken token)
-        {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
+    public class UniversalNodeProxyFactory : INodeProxyFactory {
+        public ISourceProxy Create(object source, PathToken token) {
             IPathNode node = token.Current;
             if (source == null && !node.IsStatic)
                 return null;
@@ -46,11 +43,9 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return CreateProxy(source, node);
         }
 
-        protected virtual ISourceProxy CreateProxy(object source, IPathNode node)
-        {
+        protected virtual ISourceProxy CreateProxy(object source, IPathNode node) {
             Type type = source.GetType();
-            if (node is IndexedNode)
-            {
+            if (node is IndexedNode) {
                 IProxyType proxyType = type.AsProxy();
                 if (!(source is ICollection))
                     throw new ProxyException("Type \"{0}\" is not a collection and cannot be accessed by index \"{1}\".", type.Name, node.ToString());
@@ -85,55 +80,47 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 throw new MissingMemberException(type.FullName, memberNode.Name);
 
             var propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 IProxyPropertyInfo proxyPropertyInfo = propertyInfo.AsProxy();
                 var valueType = proxyPropertyInfo.ValueType;
-                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-                {
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                     object observableValue = proxyPropertyInfo.GetValue(source);
                     if (observableValue == null)
                         return null;
 
                     return new ObservableNodeProxy(source, (IObservableProperty)observableValue);
                 }
-                else if (typeof(IInteractionRequest).IsAssignableFrom(valueType))
-                {
+                else if (typeof(IInteractionRequest).IsAssignableFrom(valueType)) {
                     object request = proxyPropertyInfo.GetValue(source);
                     if (request == null)
                         return null;
 
                     return new InteractionNodeProxy(source, (IInteractionRequest)request);
                 }
-                else
-                {
+                else {
                     return new PropertyNodeProxy(source, proxyPropertyInfo);
                 }
             }
 
             var fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 IProxyFieldInfo proxyFieldInfo = fieldInfo.AsProxy();
                 var valueType = proxyFieldInfo.ValueType;
-                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-                {
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                     object observableValue = proxyFieldInfo.GetValue(source);
                     if (observableValue == null)
                         return null;
 
                     return new ObservableNodeProxy(source, (IObservableProperty)observableValue);
                 }
-                else if (typeof(IInteractionRequest).IsAssignableFrom(valueType))
-                {
+                else if (typeof(IInteractionRequest).IsAssignableFrom(valueType)) {
                     object request = proxyFieldInfo.GetValue(source);
                     if (request == null)
                         return null;
 
                     return new InteractionNodeProxy(source, (IInteractionRequest)request);
                 }
-                else
-                {
+                else {
                     return new FieldNodeProxy(source, proxyFieldInfo);
                 }
             }
@@ -149,8 +136,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return null;
         }
 
-        protected virtual ISourceProxy CreateStaticProxy(IPathNode node)
-        {
+        protected virtual ISourceProxy CreateStaticProxy(IPathNode node) {
             var memberNode = node as MemberNode;
             if (memberNode == null)
                 return null;
@@ -164,55 +150,47 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 throw new MissingMemberException(type.FullName, memberNode.Name);
 
             var propertyInfo = memberInfo as PropertyInfo;
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 var proxyPropertyInfo = propertyInfo.AsProxy();
                 var valueType = proxyPropertyInfo.ValueType;
-                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-                {
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                     object observableValue = proxyPropertyInfo.GetValue(null);
                     if (observableValue == null)
                         throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", propertyInfo.Name, type.Name));
 
                     return new ObservableNodeProxy((IObservableProperty)observableValue);
                 }
-                else if (typeof(IInteractionRequest).IsAssignableFrom(valueType))
-                {
+                else if (typeof(IInteractionRequest).IsAssignableFrom(valueType)) {
                     object request = proxyPropertyInfo.GetValue(null);
                     if (request == null)
                         throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", propertyInfo.Name, type.Name));
 
                     return new InteractionNodeProxy((IInteractionRequest)request);
                 }
-                else
-                {
+                else {
                     return new PropertyNodeProxy(proxyPropertyInfo);
                 }
             }
 
             var fieldInfo = memberInfo as FieldInfo;
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 var proxyFieldInfo = fieldInfo.AsProxy();
                 var valueType = proxyFieldInfo.ValueType;
-                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-                {
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                     object observableValue = proxyFieldInfo.GetValue(null);
                     if (observableValue == null)
                         throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", fieldInfo.Name, type.Name));
 
                     return new ObservableNodeProxy((IObservableProperty)observableValue);
                 }
-                else if (typeof(IInteractionRequest).IsAssignableFrom(valueType))
-                {
+                else if (typeof(IInteractionRequest).IsAssignableFrom(valueType)) {
                     object request = proxyFieldInfo.GetValue(null);
                     if (request == null)
                         throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", fieldInfo.Name, type.Name));
 
                     return new InteractionNodeProxy((IInteractionRequest)request);
                 }
-                else
-                {
+                else {
                     return new FieldNodeProxy(proxyFieldInfo);
                 }
             }

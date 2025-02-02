@@ -27,26 +27,22 @@ using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views.TextMeshPro.Editor
-{
+namespace Loxodon.Framework.Views.TextMeshPro.Editor {
     [CustomEditor(typeof(FormattableTextMeshProUGUI), true), CanEditMultipleObjects]
-    public class FormattableTextMeshProUIEditorPanel : TMP_EditorPanelUI
-    {
+    public class FormattableTextMeshProUIEditorPanel : TMP_EditorPanelUI {
         static readonly GUIContent k_FormatLabel = new GUIContent("Format", "text formatting");
         static readonly GUIContent k_ParameterCountLabel = new GUIContent("Parameter Count", "Parameter Count");
 
         SerializedProperty m_FormatProp;
         SerializedProperty m_ParameterCountProp;
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             m_FormatProp = serializedObject.FindProperty("m_Format");
             m_ParameterCountProp = serializedObject.FindProperty("m_ParameterCount");
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             // Make sure Multi selection only includes TMP Text objects.
             if (IsMixSelectionTypes()) return;
 
@@ -60,24 +56,20 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
 
             EditorGUILayout.Space();
 
-            if (serializedObject.ApplyModifiedProperties() || m_HavePropertiesChanged)
-            {
+            if (serializedObject.ApplyModifiedProperties() || m_HavePropertiesChanged) {
                 m_TextComponent.havePropertiesChanged = true;
                 m_HavePropertiesChanged = false;
                 EditorUtility.SetDirty(target);
             }
         }
 
-        protected void DrawFormatParameters()
-        {
+        protected void DrawFormatParameters() {
             GUILayout.Label(new GUIContent("<b>Format Settings</b>"), TMP_UIStyleManager.sectionHeader);
 
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(m_FormatProp, k_FormatLabel);
-            if (EditorGUI.EndChangeCheck())
-            {
-                try
-                {
+            if (EditorGUI.EndChangeCheck()) {
+                try {
                     int count = ParamsCount(m_FormatProp.stringValue);
                     m_ParameterCountProp.intValue = count;
                 }
@@ -90,8 +82,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             GUI.enabled = true;
         }
 
-        private static int ParamsCount(string format)
-        {
+        private static int ParamsCount(string format) {
             if (string.IsNullOrEmpty(format))
                 return 0;
 
@@ -99,26 +90,21 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             int len = format.Length;
             char ch = '\x0';
             int maxIndex = -1;
-            while (true)
-            {
-                while (pos < len)
-                {
+            while (true) {
+                while (pos < len) {
                     ch = format[pos];
                     pos++;
-                    if (ch == '}')
-                    {
+                    if (ch == '}') {
                         if (pos < len && format[pos] == '}') // Treat as escape character for }}
                             pos++;
                         else
                             FormatError();
                     }
 
-                    if (ch == '{')
-                    {
+                    if (ch == '{') {
                         if (pos < len && format[pos] == '{') // Treat as escape character for {{
                             pos++;
-                        else
-                        {
+                        else {
                             pos--;
                             break;
                         }
@@ -132,8 +118,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
                 if (pos == len || (ch = format[pos]) < '0' || ch > '9')
                     FormatError();
                 int index = 0;
-                do
-                {
+                do {
                     index = index * 10 + ch - '0';
                     pos++;
                     if (pos == len)
@@ -147,8 +132,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
                     pos++;
 
                 int width = 0;
-                if (ch == ',')
-                {
+                if (ch == ',') {
                     pos++;
                     while (pos < len && format[pos] == ' ')
                         pos++;
@@ -156,8 +140,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
                     if (pos == len)
                         FormatError();
                     ch = format[pos];
-                    if (ch == '-')
-                    {
+                    if (ch == '-') {
                         pos++;
                         if (pos == len)
                             FormatError();
@@ -165,8 +148,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
                     }
                     if (ch < '0' || ch > '9')
                         FormatError();
-                    do
-                    {
+                    do {
                         width = width * 10 + ch - '0';
                         pos++;
                         if (pos == len)
@@ -178,11 +160,9 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
                 while (pos < len && (ch = format[pos]) == ' ')
                     pos++;
 
-                if (ch == ':')
-                {
+                if (ch == ':') {
                     pos++;
-                    while (true)
-                    {
+                    while (true) {
                         if (pos == len)
                             FormatError();
                         ch = format[pos];
@@ -203,8 +183,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             return maxIndex + 1;
         }
 
-        private static bool IsValidFormatChar(char ch)
-        {
+        private static bool IsValidFormatChar(char ch) {
             if (ch == 123 || ch == 125)//{ } 
                 return false;
 
@@ -213,8 +192,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             return false;
         }
 
-        private static void FormatError()
-        {
+        private static void FormatError() {
             throw new FormatException("Invalid Format");
         }
     }

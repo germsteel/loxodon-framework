@@ -41,13 +41,10 @@ using UnityEngine;
 using XLua;
 using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
 
-namespace Loxodon.Framework.Editors
-{
-    public static class LuaFrameworkGenConfig
-    {
+namespace Loxodon.Framework.Editors {
+    public static class LuaFrameworkGenConfig {
         [LuaCallCSharp]
-        public static List<Type> lua_call_cs_list = new List<Type>()
-        {
+        public static List<Type> lua_call_cs_list = new List<Type>() {
             typeof(Executors),
             typeof(Context),
             typeof(ApplicationContext),
@@ -81,8 +78,7 @@ namespace Loxodon.Framework.Editors
         };
 
         [CSharpCallLua]
-        public static List<Type> cs_call_lua_list = new List<Type>()
-        {
+        public static List<Type> cs_call_lua_list = new List<Type>() {
             typeof(IEnumerator),
             typeof(Action),
             typeof(Action<LuaTable>),

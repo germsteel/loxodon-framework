@@ -6,10 +6,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using Loxodon.Log.Log4Net;
 
-namespace Loxodon.Log.Editors.Log4Net
-{
-    public class UdpLogReceiver : ILogReceiver
-    {
+namespace Loxodon.Log.Editors.Log4Net {
+    public class UdpLogReceiver : ILogReceiver {
         private bool started;
 
         private int port;
@@ -22,49 +20,39 @@ namespace Loxodon.Log.Editors.Log4Net
 
         public event MessageHandler MessageReceived;
 
-        public bool Started
-        {
+        public bool Started {
             get { return this.started; }
             protected set { this.started = value; }
         }
 
-        public int Port
-        {
+        public int Port {
             get { return this.port; }
         }
 
-        public UdpLogReceiver(int port)
-        {
+        public UdpLogReceiver(int port) {
             this.port = port;
 
         }
 
-        public IPEndPoint LocalEndPoint
-        {
+        public IPEndPoint LocalEndPoint {
             get { return (IPEndPoint)client.Client.LocalEndPoint; }
         }
 
-        public virtual void Start()
-        {
-            try
-            {
+        public virtual void Start() {
+            try {
                 client = new UdpClient(this.port);
                 client.BeginReceive(ReceiveUdpMessage, client);
                 this.Started = true;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 this.Started = false;
                 throw e;
             }
         }
 
-        public virtual void Stop()
-        {
-            try
-            {
-                if (client != null)
-                {
+        public virtual void Stop() {
+            try {
+                if (client != null) {
                     client.Close();
                     client = null;
                 }
@@ -73,27 +61,21 @@ namespace Loxodon.Log.Editors.Log4Net
             catch (Exception) { }
         }
 
-        private void ReceiveUdpMessage(IAsyncResult result)
-        {
+        private void ReceiveUdpMessage(IAsyncResult result) {
             UdpClient client = (UdpClient)result.AsyncState;
             if (client == null)
                 return;
 
-            try
-            {
+            try {
                 var remoteIPEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 Byte[] buffer = client.EndReceive(result, ref remoteIPEndPoint);
-                if (buffer != null)
-                {
+                if (buffer != null) {
                     LoggingData loggingData = (LoggingData)formatter.Deserialize(new MemoryStream(buffer));
-                    try
-                    {
-                        if (this.MessageReceived != null)
-                        {
+                    try {
+                        if (this.MessageReceived != null) {
                             TerminalInfo terminalInfo;
                             string key = remoteIPEndPoint.ToString();
-                            if (!this.terminalInfos.TryGetValue(key, out terminalInfo))
-                            {
+                            if (!this.terminalInfos.TryGetValue(key, out terminalInfo)) {
                                 terminalInfo = new TerminalInfo(loggingData.UserName, remoteIPEndPoint.Address.ToString(), remoteIPEndPoint.Port);
                                 this.terminalInfos.Add(key, terminalInfo);
                             }
@@ -101,17 +83,14 @@ namespace Loxodon.Log.Editors.Log4Net
                             this.MessageReceived(terminalInfo, loggingData);
                         }
                     }
-                    catch (Exception)
-                    {
+                    catch (Exception) {
                     }
                 }
             }
-            catch (ObjectDisposedException)
-            {
+            catch (ObjectDisposedException) {
                 return;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 UnityEngine.Debug.LogError(e);
             }
 
@@ -121,21 +100,17 @@ namespace Loxodon.Log.Editors.Log4Net
         #region IDisposable Support
         private bool disposed = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposed) {
                 this.Stop();
                 disposed = true;
             }
         }
 
-        ~UdpLogReceiver()
-        {
+        ~UdpLogReceiver() {
             Dispose(false);
         }
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }

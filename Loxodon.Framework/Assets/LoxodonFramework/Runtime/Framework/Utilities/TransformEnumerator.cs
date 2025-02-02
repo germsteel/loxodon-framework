@@ -26,25 +26,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Utilities
-{
+namespace Loxodon.Framework.Utilities {
     [Obsolete("This type will be removed in version 3.0")]
-    public class TransformEnumerator : IEnumerator
-    {
+    public class TransformEnumerator : IEnumerator {
         private IEnumerator enumerator;
         private Converter<object, object> converter;
-        public TransformEnumerator(IEnumerator enumerator, Converter<object, object> converter)
-        {
+        public TransformEnumerator(IEnumerator enumerator, Converter<object, object> converter) {
             this.enumerator = enumerator;
             this.converter = converter;
         }
 
         public object Current { get; private set; }
 
-        public bool MoveNext()
-        {
-            if (this.enumerator.MoveNext())
-            {
+        public bool MoveNext() {
+            if (this.enumerator.MoveNext()) {
                 var current = this.enumerator.Current;
                 this.Current = converter(current);
                 return true;
@@ -52,19 +47,16 @@ namespace Loxodon.Framework.Utilities
             return false;
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             this.enumerator.Reset();
         }
     }
 
     [Obsolete("This type will be removed in version 3.0")]
-    public class TransformEnumerator<TInput, TOutput> : IEnumerator<TOutput>
-    {
+    public class TransformEnumerator<TInput, TOutput> : IEnumerator<TOutput> {
         private IEnumerator<TInput> enumerator;
         private Converter<TInput, TOutput> converter;
-        public TransformEnumerator(IEnumerator<TInput> enumerator, Converter<TInput, TOutput> converter)
-        {
+        public TransformEnumerator(IEnumerator<TInput> enumerator, Converter<TInput, TOutput> converter) {
             this.enumerator = enumerator;
             this.converter = converter;
         }
@@ -73,10 +65,8 @@ namespace Loxodon.Framework.Utilities
 
         object IEnumerator.Current { get { return this.Current; } }
 
-        public bool MoveNext()
-        {
-            if (this.enumerator.MoveNext())
-            {
+        public bool MoveNext() {
+            if (this.enumerator.MoveNext()) {
                 var current = this.enumerator.Current;
                 this.Current = converter(current);
                 return true;
@@ -84,18 +74,15 @@ namespace Loxodon.Framework.Utilities
             return false;
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             this.enumerator.Reset();
         }
 
         #region IDisposable Support
         private bool disposedValue = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
                 this.Reset();
                 this.enumerator = null;
                 this.converter = null;
@@ -103,13 +90,11 @@ namespace Loxodon.Framework.Utilities
             }
         }
 
-        ~TransformEnumerator()
-        {
+        ~TransformEnumerator() {
             Dispose(false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }

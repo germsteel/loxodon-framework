@@ -46,15 +46,13 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-log4net" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-log4net": "2.0.1"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -129,23 +127,18 @@ Log4NetConfig.xml
 
 Read Log4Net configuration file and create LogFactory.
 
-    public class Log4NetManager : MonoBehaviour
-    {
-        void Awake()
-        {
+    public class Log4NetManager : MonoBehaviour {
+        void Awake() {
             InitializeLog();
             DontDestroyOnLoad(this.gameObject);
         }
 
-        protected void InitializeLog()
-        {
+        protected void InitializeLog() {
             /* Initialize the log4net */
             string configFilename = "Log4NetConfig";
             TextAsset configText = Resources.Load<TextAsset>(configFilename);
-            if (configText != null)
-            {
-                using (MemoryStream memStream = new MemoryStream(configText.bytes))
-                {
+            if (configText != null) {
+                using (MemoryStream memStream = new MemoryStream(configText.bytes)) {
                     log4net.Config.XmlConfigurator.Configure(memStream);
                 }
             }
@@ -154,19 +147,16 @@ Read Log4Net configuration file and create LogFactory.
             LogManager.Registry(new Log4NetFactory());
         }
 
-        void OnDestroy()
-        {
+        void OnDestroy() {
             log4net.LogManager.Shutdown();
         }
     }
 
 Usage example.
 
-    public class Log4NetExample : MonoBehaviour
-    {
+    public class Log4NetExample : MonoBehaviour {
         private ILog log;
-        void Start()
-        {
+        void Start() {
             log = LogManager.GetLogger(typeof(Log4NetExample));
 
             log.Debug("This is a debug test.");

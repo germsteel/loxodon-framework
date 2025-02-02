@@ -24,10 +24,8 @@
 
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Views
-{
-    public interface IManageable : IWindow
-    {
+namespace Loxodon.Framework.Views {
+    public interface IManageable : IWindow {
         /// <summary>
         /// 
         /// </summary>

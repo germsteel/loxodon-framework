@@ -24,10 +24,8 @@
 
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface IMessageDecoder<TMessage>
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface IMessageDecoder<TMessage> {
         Task<TMessage> Decode(BinaryReader reader);
 
     }

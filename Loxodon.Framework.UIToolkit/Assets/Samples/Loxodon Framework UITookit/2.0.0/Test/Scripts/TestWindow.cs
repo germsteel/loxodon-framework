@@ -31,12 +31,9 @@ using PointerType = UnityEngine.UIElements.PointerType;
 using Loxodon.Framework.ViewModels;
 using System;
 
-namespace Loxodon.Framework.Examples
-{
-    public class TestWindow : UIToolkitWindow
-    {
-        protected override void OnCreate(IBundle bundle)
-        {
+namespace Loxodon.Framework.Examples {
+    public class TestWindow : UIToolkitWindow {
+        protected override void OnCreate(IBundle bundle) {
             //VisualTree.Query(null, "elem").ForEach(e => { e.RegisterCallback<PointerDownEvent>(OnFingerDown); });
             //VisualTree.Query(null, "elem").ForEach(e => { e.RegisterCallback<PointerUpEvent>(OnFingerUp); });
             //VisualTree.Query(null, "elem").ForEach(e => { e.RegisterCallback<MouseDownEvent>(OnMouseDownEvent); });
@@ -55,10 +52,8 @@ namespace Loxodon.Framework.Examples
 
         }
 
-        private void OnFingerDown(PointerDownEvent evt)
-        {
-            if (evt.pointerType == PointerType.touch && evt.currentTarget == evt.target)
-            {
+        private void OnFingerDown(PointerDownEvent evt) {
+            if (evt.pointerType == PointerType.touch && evt.currentTarget == evt.target) {
                 var ve = evt.target as VisualElement;
                 OnDown(ve);
 
@@ -67,35 +62,28 @@ namespace Loxodon.Framework.Examples
             }
         }
 
-        private void OnMouseDownEvent(MouseDownEvent evt)
-        {
-            if (evt.currentTarget == evt.target)
-            {
+        private void OnMouseDownEvent(MouseDownEvent evt) {
+            if (evt.currentTarget == evt.target) {
                 var ve = evt.target as VisualElement;
                 OnDown(ve);
             }
         }
 
-        private void OnFingerUp(PointerUpEvent evt)
-        {
-            if (evt.pointerType == PointerType.touch && evt.currentTarget == evt.target)
-            {
+        private void OnFingerUp(PointerUpEvent evt) {
+            if (evt.pointerType == PointerType.touch && evt.currentTarget == evt.target) {
                 var ve = evt.target as VisualElement;
                 OnUp(ve);
             }
         }
 
-        private void OnMouseUpEvent(MouseUpEvent evt)
-        {
-            if (evt.currentTarget == evt.target)
-            {
+        private void OnMouseUpEvent(MouseUpEvent evt) {
+            if (evt.currentTarget == evt.target) {
                 var ve = evt.target as VisualElement;
                 OnUp(ve);
             }
         }
 
-        private void OnDown(VisualElement ve)
-        {
+        private void OnDown(VisualElement ve) {
             if (m_State != GameState.WaitUserAnswer)
                 return;
 
@@ -105,28 +93,22 @@ namespace Loxodon.Framework.Examples
             root.Q("runtime-panel-container").RemoveFromClassList("success");
         }
 
-        private void OnUp(VisualElement ve)
-        {
+        private void OnUp(VisualElement ve) {
             if (m_State != GameState.WaitUserAnswer)
                 return;
 
             ve.RemoveFromClassList("active");
             var root = this.RootVisualElement;
-            if (m_SequenceIndex < 3)
-            {
+            if (m_SequenceIndex < 3) {
                 var classes = ve.GetClasses();
-                foreach (var c in classes)
-                {
-                    if (c.StartsWith("elem_"))
-                    {
+                foreach (var c in classes) {
+                    if (c.StartsWith("elem_")) {
                         var idStr = c.Substring(5, 1);
                         var id = int.Parse(idStr);
-                        if (m_Sequence[m_SequenceIndex + 1] == id)
-                        {
+                        if (m_Sequence[m_SequenceIndex + 1] == id) {
                             m_SequenceIndex++;
                         }
-                        else
-                        {
+                        else {
                             root.Q("runtime-panel-container").AddToClassList("error");
                         }
                     }
@@ -134,16 +116,14 @@ namespace Loxodon.Framework.Examples
                 }
             }
 
-            if (m_SequenceIndex == 3)
-            {
+            if (m_SequenceIndex == 3) {
                 root.Q("runtime-panel-container").RemoveFromClassList("error");
                 root.Q("runtime-panel-container").AddToClassList("success");
             }
 
         }
 
-        enum GameState
-        {
+        enum GameState {
             ShowSequence,
             WaitUserAnswer
         }
@@ -227,18 +207,15 @@ namespace Loxodon.Framework.Examples
         //}
     }
 
-    public class TestWindowViewMode : ViewModelBase
-    {
+    public class TestWindowViewMode : ViewModelBase {
         private string name;
-        public string Name
-        {
+        public string Name {
             get { return this.name; }
             set { this.Set<string>(ref name, value); }
         }
 
 
-        public void OnClick()
-        {
+        public void OnClick() {
             Debug.LogFormat("Button OnClick");
         }
     }

@@ -33,11 +33,9 @@ using System.Threading.Tasks;
 using Loxodon.Log;
 using Loxodon.Framework.Execution;
 
-namespace Loxodon.Framework.Asynchronous
-{
+namespace Loxodon.Framework.Asynchronous {
     [Obsolete("This type will be removed in version 3.0")]
-    public class AsyncTask : IAsyncTask
-    {
+    public class AsyncTask : IAsyncTask {
         private static readonly ILog log = LogManager.GetLogger(typeof(AsyncTask));
 
         private Action action;
@@ -62,23 +60,19 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="task"></param>
         /// <param name="runOnMainThread"></param>
-        public AsyncTask(Action task, bool runOnMainThread = false)
-        {
+        public AsyncTask(Action task, bool runOnMainThread = false) {
             if (task == null)
                 throw new ArgumentNullException("task");
 
             this.result = new AsyncResult();
-            if (runOnMainThread)
-            {
-                this.action = WrapAction(() =>
-                {
+            if (runOnMainThread) {
+                this.action = WrapAction(() => {
                     Executors.RunOnMainThread(task, true);
                     this.result.SetResult();
                 });
             }
             else {
-                this.action = WrapAction(() =>
-                {
+                this.action = WrapAction(() => {
                     task();
                     this.result.SetResult();
                 });
@@ -90,23 +84,19 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="task"></param>
         /// <param name="runOnMainThread"></param>
-        public AsyncTask(Action<IPromise> task, bool runOnMainThread = false, bool cancelable = false)
-        {
+        public AsyncTask(Action<IPromise> task, bool runOnMainThread = false, bool cancelable = false) {
             if (task == null)
                 throw new ArgumentNullException("task");
 
             this.result = new AsyncResult(!runOnMainThread && cancelable);
-            if (runOnMainThread)
-            {
-                this.action = WrapAction(() =>
-                {
+            if (runOnMainThread) {
+                this.action = WrapAction(() => {
                     Executors.RunOnMainThread(() => task(result), true);
                     this.result.Synchronized().WaitForResult();
                 });
             }
             else {
-                this.action = WrapAction(() =>
-                {
+                this.action = WrapAction(() => {
                     task(result);
                     this.result.Synchronized().WaitForResult();
                 });
@@ -117,82 +107,65 @@ namespace Loxodon.Framework.Asynchronous
         /// run on main thread
         /// </summary>
         /// <param name="task"></param>
-        public AsyncTask(IEnumerator task, bool cancelable = false)
-        {
+        public AsyncTask(IEnumerator task, bool cancelable = false) {
             if (task == null)
                 throw new ArgumentNullException("task");
 
             this.result = new AsyncResult(cancelable);
-            this.action = WrapAction(() =>
-            {
+            this.action = WrapAction(() => {
                 Executors.RunOnCoroutine(task, result);
                 this.result.Synchronized().WaitForResult();
             });
         }
 
-        public virtual object Result
-        {
+        public virtual object Result {
             get { return this.result.Result; }
         }
 
-        public virtual Exception Exception
-        {
+        public virtual Exception Exception {
             get { return this.result.Exception; }
         }
 
-        public virtual bool IsDone
-        {
+        public virtual bool IsDone {
             get { return this.result.IsDone; }
         }
 
-        public virtual bool IsCancelled
-        {
+        public virtual bool IsCancelled {
             get { return this.result.IsCancelled; }
         }
 
-        protected virtual Action WrapAction(Action action)
-        {
-            Action wrapAction = () =>
-            {
-                try
-                {
-                    try
-                    {
+        protected virtual Action WrapAction(Action action) {
+            Action wrapAction = () => {
+                try {
+                    try {
                         if (preCallbackOnWorkerThread != null)
                             preCallbackOnWorkerThread();
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("{0}", e);
                     }
 
-                    if (this.result.IsCancellationRequested)
-                    {
+                    if (this.result.IsCancellationRequested) {
                         this.result.SetCancelled();
                         return;
                     }
 
                     action();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     this.result.SetException(e);
                 }
-                finally
-                {
-                    try
-                    {
-                        if (this.Exception != null)
-                        {
+                finally {
+                    try {
+                        if (this.Exception != null) {
                             if (this.errorCallbackOnMainThread != null)
                                 Executors.RunOnMainThread(() => this.errorCallbackOnMainThread(this.Exception), true);
 
                             if (this.errorCallbackOnWorkerThread != null)
                                 this.errorCallbackOnWorkerThread(this.Exception);
                         }
-                        else
-                        {
+                        else {
                             if (this.postCallbackOnMainThread != null)
                                 Executors.RunOnMainThread(this.postCallbackOnMainThread, true);
 
@@ -200,22 +173,19 @@ namespace Loxodon.Framework.Asynchronous
                                 this.postCallbackOnWorkerThread();
                         }
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("{0}", e);
                     }
 
-                    try
-                    {
+                    try {
                         if (this.finishCallbackOnMainThread != null)
                             Executors.RunOnMainThread(this.finishCallbackOnMainThread, true);
 
                         if (this.finishCallbackOnWorkerThread != null)
                             this.finishCallbackOnWorkerThread();
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("{0}", e);
                     }
@@ -226,28 +196,23 @@ namespace Loxodon.Framework.Asynchronous
             return wrapAction;
         }
 
-        public virtual bool Cancel()
-        {
+        public virtual bool Cancel() {
             return this.result.Cancel();
         }
 
-        public virtual ICallbackable Callbackable()
-        {
+        public virtual ICallbackable Callbackable() {
             return result.Callbackable();
         }
 
-        public virtual ISynchronizable Synchronized()
-        {
+        public virtual ISynchronizable Synchronized() {
             return result.Synchronized();
         }
 
-        public virtual object WaitForDone()
-        {
+        public virtual object WaitForDone() {
             return Executors.WaitWhile(() => !IsDone);
         }
 
-        public IAsyncTask OnPreExecute(Action callback, bool runOnMainThread = true)
-        {
+        public IAsyncTask OnPreExecute(Action callback, bool runOnMainThread = true) {
             if (runOnMainThread)
                 this.preCallbackOnMainThread += callback;
             else
@@ -255,8 +220,7 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask OnPostExecute(Action callback, bool runOnMainThread = true)
-        {
+        public IAsyncTask OnPostExecute(Action callback, bool runOnMainThread = true) {
             if (runOnMainThread)
                 this.postCallbackOnMainThread += callback;
             else
@@ -264,8 +228,7 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask OnError(Action<Exception> callback, bool runOnMainThread = true)
-        {
+        public IAsyncTask OnError(Action<Exception> callback, bool runOnMainThread = true) {
             if (runOnMainThread)
                 this.errorCallbackOnMainThread += callback;
             else
@@ -273,8 +236,7 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask OnFinish(Action callback, bool runOnMainThread = true)
-        {
+        public IAsyncTask OnFinish(Action callback, bool runOnMainThread = true) {
             if (runOnMainThread)
                 this.finishCallbackOnMainThread += callback;
             else
@@ -282,13 +244,11 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask Start(int delay)
-        {
+        public IAsyncTask Start(int delay) {
             if (delay <= 0)
                 return this.Start();
 
-            Executors.RunAsyncNoReturn(() =>
-            {
+            Executors.RunAsyncNoReturn(() => {
 #if NETFX_CORE
                 Task.Delay(delay).Wait();
 #else
@@ -302,31 +262,26 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask Start()
-        {
-            if (this.IsDone)
-            {
+        public IAsyncTask Start() {
+            if (this.IsDone) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The task has been done!");
 
                 return this;
             }
 
-            if (Interlocked.CompareExchange(ref this.running, 1, 0) == 1)
-            {
+            if (Interlocked.CompareExchange(ref this.running, 1, 0) == 1) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The task is running!");
 
                 return this;
             }
 
-            try
-            {
+            try {
                 if (this.preCallbackOnMainThread != null)
                     Executors.RunOnMainThread(this.preCallbackOnMainThread, true);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
@@ -338,8 +293,7 @@ namespace Loxodon.Framework.Asynchronous
     }
 
     [Obsolete("This type will be removed in version 3.0")]
-    public class AsyncTask<TResult> : IAsyncTask<TResult>
-    {
+    public class AsyncTask<TResult> : IAsyncTask<TResult> {
         private static readonly ILog log = LogManager.GetLogger(typeof(AsyncTask<TResult>));
 
         private Action action;
@@ -364,17 +318,14 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="task"></param>
         /// <param name="runOnMainThread"></param>
-        public AsyncTask(Func<TResult> task, bool runOnMainThread = false)
-        {
+        public AsyncTask(Func<TResult> task, bool runOnMainThread = false) {
             if (task == null)
                 throw new ArgumentNullException();
 
             this.result = new AsyncResult<TResult>();
 
-            if (runOnMainThread)
-            {
-                this.action = WrapAction(() =>
-                {
+            if (runOnMainThread) {
+                this.action = WrapAction(() => {
                     return Executors.RunOnMainThread(task);
                 });
             }
@@ -388,24 +339,20 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="task"></param>
         /// <param name="runOnMainThread"></param>
-        public AsyncTask(Action<IPromise<TResult>> task, bool runOnMainThread = false, bool cancelable = false)
-        {
+        public AsyncTask(Action<IPromise<TResult>> task, bool runOnMainThread = false, bool cancelable = false) {
             if (task == null)
                 throw new ArgumentNullException();
 
             this.result = new AsyncResult<TResult>(!runOnMainThread && cancelable);
 
-            if (runOnMainThread)
-            {
-                this.action = WrapAction(() =>
-                {
+            if (runOnMainThread) {
+                this.action = WrapAction(() => {
                     Executors.RunOnMainThread(() => task(this.result));
                     return this.result.Synchronized().WaitForResult();
                 });
             }
             else {
-                this.action = WrapAction(() =>
-                {
+                this.action = WrapAction(() => {
                     task(this.result);
                     return this.result.Synchronized().WaitForResult();
                 });
@@ -416,63 +363,50 @@ namespace Loxodon.Framework.Asynchronous
         /// 
         /// </summary>
         /// <param name="task"></param>
-        public AsyncTask(Func<IPromise<TResult>, IEnumerator> task, bool cancelable = false)
-        {
+        public AsyncTask(Func<IPromise<TResult>, IEnumerator> task, bool cancelable = false) {
             if (task == null)
                 throw new ArgumentNullException();
 
             this.result = new AsyncResult<TResult>(cancelable);
-            this.action = WrapAction(() =>
-            {
+            this.action = WrapAction(() => {
                 Executors.RunOnCoroutine(task(this.result), this.result);
                 return this.result.Synchronized().WaitForResult();
             });
         }
 
-        public virtual TResult Result
-        {
+        public virtual TResult Result {
             get { return this.result.Result; }
         }
 
-        object Asynchronous.IAsyncResult.Result
-        {
+        object Asynchronous.IAsyncResult.Result {
             get { return this.result.Result; }
         }
 
-        public virtual Exception Exception
-        {
+        public virtual Exception Exception {
             get { return this.result.Exception; }
         }
 
-        public virtual bool IsDone
-        {
+        public virtual bool IsDone {
             get { return this.result.IsDone; }
         }
 
-        public virtual bool IsCancelled
-        {
+        public virtual bool IsCancelled {
             get { return this.result.IsCancelled; }
         }
 
-        protected virtual Action WrapAction(Func<TResult> action)
-        {
-            Action wrapAction = () =>
-            {
-                try
-                {
-                    try
-                    {
+        protected virtual Action WrapAction(Func<TResult> action) {
+            Action wrapAction = () => {
+                try {
+                    try {
                         if (this.preCallbackOnWorkerThread != null)
                             this.preCallbackOnWorkerThread();
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("{0}", e);
                     }
 
-                    if (this.result.IsCancellationRequested)
-                    {
+                    if (this.result.IsCancellationRequested) {
                         this.result.SetCancelled();
                         return;
                     }
@@ -480,16 +414,12 @@ namespace Loxodon.Framework.Asynchronous
                     TResult obj = action();
                     this.result.SetResult(obj);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     this.result.SetException(e);
                 }
-                finally
-                {
-                    try
-                    {
-                        if (this.Exception != null)
-                        {
+                finally {
+                    try {
+                        if (this.Exception != null) {
                             if (this.errorCallbackOnMainThread != null)
                                 Executors.RunOnMainThread(() => this.errorCallbackOnMainThread(this.Exception), true);
 
@@ -497,8 +427,7 @@ namespace Loxodon.Framework.Asynchronous
                                 this.errorCallbackOnWorkerThread(this.Exception);
 
                         }
-                        else
-                        {
+                        else {
                             if (this.postCallbackOnMainThread != null)
                                 Executors.RunOnMainThread(() => this.postCallbackOnMainThread(this.Result), true);
 
@@ -506,22 +435,19 @@ namespace Loxodon.Framework.Asynchronous
                                 this.postCallbackOnWorkerThread(this.Result);
                         }
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("{0}", e);
                     }
 
-                    try
-                    {
+                    try {
                         if (this.finishCallbackOnMainThread != null)
                             Executors.RunOnMainThread(this.finishCallbackOnMainThread, true);
 
                         if (this.finishCallbackOnWorkerThread != null)
                             this.finishCallbackOnWorkerThread();
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("{0}", e);
                     }
@@ -532,38 +458,31 @@ namespace Loxodon.Framework.Asynchronous
             return wrapAction;
         }
 
-        public virtual bool Cancel()
-        {
+        public virtual bool Cancel() {
             return this.result.Cancel();
         }
 
-        public virtual ICallbackable<TResult> Callbackable()
-        {
+        public virtual ICallbackable<TResult> Callbackable() {
             return result.Callbackable();
         }
 
-        public virtual ISynchronizable<TResult> Synchronized()
-        {
+        public virtual ISynchronizable<TResult> Synchronized() {
             return result.Synchronized();
         }
 
-        ICallbackable IAsyncResult.Callbackable()
-        {
+        ICallbackable IAsyncResult.Callbackable() {
             return (result as IAsyncResult).Callbackable();
         }
 
-        ISynchronizable IAsyncResult.Synchronized()
-        {
+        ISynchronizable IAsyncResult.Synchronized() {
             return (result as IAsyncResult).Synchronized();
         }
 
-        public virtual object WaitForDone()
-        {
+        public virtual object WaitForDone() {
             return Executors.WaitWhile(() => !IsDone);
         }
 
-        public IAsyncTask<TResult> OnPreExecute(Action callback, bool runOnMainThread = true)
-        {
+        public IAsyncTask<TResult> OnPreExecute(Action callback, bool runOnMainThread = true) {
             if (runOnMainThread)
                 this.preCallbackOnMainThread += callback;
             else
@@ -571,8 +490,7 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask<TResult> OnPostExecute(Action<TResult> callback, bool runOnMainThread = true)
-        {
+        public IAsyncTask<TResult> OnPostExecute(Action<TResult> callback, bool runOnMainThread = true) {
             if (runOnMainThread)
                 this.postCallbackOnMainThread += callback;
             else
@@ -580,8 +498,7 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask<TResult> OnError(Action<Exception> callback, bool runOnMainThread = true)
-        {
+        public IAsyncTask<TResult> OnError(Action<Exception> callback, bool runOnMainThread = true) {
             if (runOnMainThread)
                 this.errorCallbackOnMainThread += callback;
             else
@@ -589,8 +506,7 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask<TResult> OnFinish(Action callback, bool runOnMainThread = true)
-        {
+        public IAsyncTask<TResult> OnFinish(Action callback, bool runOnMainThread = true) {
             if (runOnMainThread)
                 this.finishCallbackOnMainThread += callback;
             else
@@ -598,13 +514,11 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask<TResult> Start(int delay)
-        {
+        public IAsyncTask<TResult> Start(int delay) {
             if (delay <= 0)
                 return this.Start();
 
-            Executors.RunAsyncNoReturn(() =>
-            {
+            Executors.RunAsyncNoReturn(() => {
 #if NETFX_CORE
                 Task.Delay(delay).Wait();
 #else
@@ -619,29 +533,24 @@ namespace Loxodon.Framework.Asynchronous
             return this;
         }
 
-        public IAsyncTask<TResult> Start()
-        {
-            if (this.IsDone)
-            {
+        public IAsyncTask<TResult> Start() {
+            if (this.IsDone) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The task has been done!");
                 return this;
             }
 
-            if (Interlocked.CompareExchange(ref this.running, 1, 0) == 1)
-            {
+            if (Interlocked.CompareExchange(ref this.running, 1, 0) == 1) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The task is running!");
                 return this;
             }
 
-            try
-            {
+            try {
                 if (this.preCallbackOnMainThread != null)
                     Executors.RunOnMainThread(this.preCallbackOnMainThread, true);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }

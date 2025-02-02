@@ -34,15 +34,13 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-addressable" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-ilruntime": "2.2.7"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [

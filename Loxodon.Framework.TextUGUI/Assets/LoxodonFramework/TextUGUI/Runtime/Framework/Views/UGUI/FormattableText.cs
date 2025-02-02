@@ -27,12 +27,10 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Views.UGUI
-{
+namespace Loxodon.Framework.Views.UGUI {
     [RequireComponent(typeof(CanvasRenderer))]
     [AddComponentMenu("UI/Legacy/FormattableText", 100)]
-    public class FormattableText : Text
-    {
+    public class FormattableText : Text {
         internal static StringBuilder BUFFER = new StringBuilder();
 
         [SerializeField]
@@ -41,45 +39,38 @@ namespace Loxodon.Framework.Views.UGUI
         [SerializeField]
         protected int m_ParameterCount = 1;
         protected internal Parameters m_Parameters;
-        public string Format
-        {
+        public string Format {
             get { return this.m_Format; }
             set { this.m_Format = value; }
         }
 
-        public int ParameterCount
-        {
+        public int ParameterCount {
             get { return this.m_ParameterCount; }
             set { this.m_ParameterCount = value; }
         }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             Initialize();
         }
 
-        public override void SetAllDirty()
-        {
+        public override void SetAllDirty() {
             base.SetAllDirty();
             Initialize();
         }
 
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
             if (m_Parameters != null)
                 m_Parameters.OnParameterChanged();
             else
                 SetText(BUFFER.Clear().Append(m_Format));
         }
 
-        public void SetText(StringBuilder builder)
-        {
+        public void SetText(StringBuilder builder) {
             this.text = builder.ToString();
         }
 
-        public ArrayParameters<T> AsArray<T>()
-        {
+        public ArrayParameters<T> AsArray<T>() {
             if (m_Parameters == null)
                 m_Parameters = new ArrayParameters<T>(this, this.ParameterCount);
 
@@ -89,8 +80,7 @@ namespace Loxodon.Framework.Views.UGUI
             throw new NotSupportedException($"The current parameter type has been set to \"{m_Parameters.GetType()}\" and cannot be converted to other types.");
         }
 
-        public GenericParameters<P1> AsParameters<P1>()
-        {
+        public GenericParameters<P1> AsParameters<P1>() {
             if (m_Parameters == null)
                 m_Parameters = new GenericParameters<P1>() { Text = this };
 
@@ -100,8 +90,7 @@ namespace Loxodon.Framework.Views.UGUI
             throw new NotSupportedException($"The current parameter type has been set to \"{m_Parameters.GetType()}\" and cannot be converted to other types.");
         }
 
-        public GenericParameters<P1, P2> AsParameters<P1, P2>()
-        {
+        public GenericParameters<P1, P2> AsParameters<P1, P2>() {
             if (m_Parameters == null)
                 m_Parameters = new GenericParameters<P1, P2>() { Text = this };
 
@@ -111,8 +100,7 @@ namespace Loxodon.Framework.Views.UGUI
             throw new NotSupportedException($"The current parameter type has been set to \"{m_Parameters.GetType()}\" and cannot be converted to other types.");
         }
 
-        public GenericParameters<P1, P2, P3> AsParameters<P1, P2, P3>()
-        {
+        public GenericParameters<P1, P2, P3> AsParameters<P1, P2, P3>() {
             if (m_Parameters == null)
                 m_Parameters = new GenericParameters<P1, P2, P3>() { Text = this };
 
@@ -122,8 +110,7 @@ namespace Loxodon.Framework.Views.UGUI
             throw new NotSupportedException($"The current parameter type has been set to \"{m_Parameters.GetType()}\" and cannot be converted to other types.");
         }
 
-        public GenericParameters<P1, P2, P3, P4> AsParameters<P1, P2, P3, P4>()
-        {
+        public GenericParameters<P1, P2, P3, P4> AsParameters<P1, P2, P3, P4>() {
             if (m_Parameters == null)
                 m_Parameters = new GenericParameters<P1, P2, P3, P4>() { Text = this };
 

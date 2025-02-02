@@ -29,11 +29,9 @@ using UnityEngine.EventSystems;
 using Loxodon.Framework.Views.Animations;
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     [RequireComponent(typeof(RectTransform), typeof(CanvasGroup))]
-    public class UIView : UIBehaviour, IUIView
-    {
+    public class UIView : UIBehaviour, IUIView {
         private static readonly ILog log = LogManager.GetLogger(typeof(UIView));
 
         private IAnimation enterAnimation;
@@ -47,23 +45,19 @@ namespace Loxodon.Framework.Views
         [NonSerialized]
         private IAttributes attributes = new Attributes();
 
-        public event EventHandler OnDisabled
-        {
+        public event EventHandler OnDisabled {
             add { lock (_lock) { this.onDisabled += value; } }
             remove { lock (_lock) { this.onDisabled -= value; } }
         }
 
-        public event EventHandler OnEnabled
-        {
+        public event EventHandler OnEnabled {
             add { lock (_lock) { this.onEnabled += value; } }
             remove { lock (_lock) { this.onEnabled -= value; } }
         }
 
-        public virtual string Name
-        {
+        public virtual string Name {
             get { return !this.IsDestroyed() && this.gameObject != null ? this.gameObject.name : null; }
-            set
-            {
+            set {
                 if (this.IsDestroyed() || this.gameObject == null)
                     return;
 
@@ -71,25 +65,20 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual Transform Parent
-        {
+        public virtual Transform Parent {
             get { return !this.IsDestroyed() && this.transform != null ? this.transform.parent : null; }
         }
 
-        public virtual GameObject Owner
-        {
+        public virtual GameObject Owner {
             get { return this.IsDestroyed() ? null : this.gameObject; }
         }
 
-        public virtual Transform Transform
-        {
+        public virtual Transform Transform {
             get { return this.IsDestroyed() ? null : this.transform; }
         }
 
-        public virtual RectTransform RectTransform
-        {
-            get
-            {
+        public virtual RectTransform RectTransform {
+            get {
                 if (this.IsDestroyed())
                     return null;
 
@@ -97,11 +86,9 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual bool Visibility
-        {
+        public virtual bool Visibility {
             get { return !this.IsDestroyed() && this.gameObject != null ? this.gameObject.activeSelf : false; }
-            set
-            {
+            set {
                 if (this.IsDestroyed() || this.gameObject == null)
                     return;
 
@@ -112,70 +99,57 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual IAnimation EnterAnimation
-        {
+        public virtual IAnimation EnterAnimation {
             get { return this.enterAnimation; }
             set { this.enterAnimation = value; }
         }
 
-        public virtual IAnimation ExitAnimation
-        {
+        public virtual IAnimation ExitAnimation {
             get { return this.exitAnimation; }
             set { this.exitAnimation = value; }
         }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             this.OnVisibilityChanged();
             this.RaiseOnEnabled();
         }
 
-        protected override void OnDisable()
-        {
+        protected override void OnDisable() {
             this.OnVisibilityChanged();
             base.OnDisable();
             this.RaiseOnDisabled();
         }
 
-        protected void RaiseOnEnabled()
-        {
-            try
-            {
+        protected void RaiseOnEnabled() {
+            try {
                 if (this.onEnabled != null)
                     this.onEnabled(this, EventArgs.Empty);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
         }
 
-        protected void RaiseOnDisabled()
-        {
-            try
-            {
+        protected void RaiseOnDisabled() {
+            try {
                 if (this.onDisabled != null)
                     this.onDisabled(this, EventArgs.Empty);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
         }
 
-        public virtual float Alpha
-        {
+        public virtual float Alpha {
             get { return !this.IsDestroyed() && this.gameObject != null ? this.CanvasGroup.alpha : 0f; }
             set { if (!this.IsDestroyed() && this.gameObject != null) this.CanvasGroup.alpha = value; }
         }
 
-        public virtual bool Interactable
-        {
-            get
-            {
+        public virtual bool Interactable {
+            get {
                 if (this.IsDestroyed() || this.gameObject == null)
                     return false;
 
@@ -183,8 +157,7 @@ namespace Loxodon.Framework.Views
                     return this.CanvasGroup.blocksRaycasts;
                 return this.CanvasGroup.interactable;
             }
-            set
-            {
+            set {
                 if (this.IsDestroyed() || this.gameObject == null)
                     return;
 
@@ -195,10 +168,8 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual CanvasGroup CanvasGroup
-        {
-            get
-            {
+        public virtual CanvasGroup CanvasGroup {
+            get {
                 if (this.IsDestroyed())
                     return null;
 
@@ -208,8 +179,7 @@ namespace Loxodon.Framework.Views
 
         public virtual IAttributes ExtraAttributes { get { return this.attributes; } }
 
-        protected virtual void OnVisibilityChanged()
-        {
+        protected virtual void OnVisibilityChanged() {
         }
     }
 }

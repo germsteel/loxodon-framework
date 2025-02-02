@@ -33,13 +33,10 @@ using System.Threading.Tasks;
 using UnityEngine.Networking;
 #endif
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class AsyncAndAwaitExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class AsyncAndAwaitExample : MonoBehaviour {
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        async void Start()
-        {
+        async void Start() {
             await new WaitForSeconds(2f);
             Debug.Log("WaitForSeconds  End");
 
@@ -64,17 +61,13 @@ namespace Loxodon.Framework.Tutorials
             Debug.Log("DoTask End");
         }
 
-        IAsyncResult<int> Calculate()
-        {
-            return Executors.RunAsync<int>(() =>
-            {
+        IAsyncResult<int> Calculate() {
+            return Executors.RunAsync<int>(() => {
                 Debug.LogFormat("Calculate Task ThreadId:{0}", Thread.CurrentThread.ManagedThreadId);
                 int total = 0;
-                for (int i = 0; i < 20; i++)
-                {
+                for (int i = 0; i < 20; i++) {
                     total += i;
-                    try
-                    {
+                    try {
                         Thread.Sleep(100);
                     }
                     catch (Exception) { }
@@ -83,12 +76,10 @@ namespace Loxodon.Framework.Tutorials
             });
         }
 
-        IEnumerator DoTask(int n)
-        {
+        IEnumerator DoTask(int n) {
             yield return new WaitForSeconds(1f);
 
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 yield return null;
             }
         }

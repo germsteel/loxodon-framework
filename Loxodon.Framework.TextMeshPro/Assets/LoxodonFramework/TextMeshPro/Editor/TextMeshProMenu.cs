@@ -29,10 +29,8 @@ using UnityEditor.Presets;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views.TextMeshPro.Editor
-{
-    public static class TextMeshProMenu
-    {
+namespace Loxodon.Framework.Views.TextMeshPro.Editor {
+    public static class TextMeshProMenu {
         private static TMP_DefaultControls.Resources s_StandardResources;
 
         private const string kStandardSpritePath = "UI/Skin/UISprite.psd";
@@ -47,8 +45,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
         /// </summary>
         /// <param name="command"></param>
         [MenuItem("GameObject/UI/FormattableTextMeshProUGUI - TextMeshPro", false, 2001)]
-        static void AddFormattingText(MenuCommand menuCommand)
-        {
+        static void AddFormattingText(MenuCommand menuCommand) {
             GameObject go = TMP_DefaultControls.CreateText(GetStandardResources());
             TextMeshProUGUI text = go.GetComponent<TextMeshProUGUI>();
             if (text != null)
@@ -61,20 +58,17 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             // Get reference to potential Presets for <TextMeshProUGUI> component
             Preset[] presets = Preset.GetDefaultPresetsForObject(textComponent);
 
-            if (presets == null || presets.Length == 0)
-            {
+            if (presets == null || presets.Length == 0) {
                 textComponent.fontSize = TMP_Settings.defaultFontSize;
                 textComponent.color = Color.white;
                 textComponent.text = "";
             }
 
-            if (TMP_Settings.autoSizeTextContainer)
-            {
+            if (TMP_Settings.autoSizeTextContainer) {
                 Vector2 size = textComponent.GetPreferredValues(TMP_Math.FLOAT_MAX, TMP_Math.FLOAT_MAX);
                 textComponent.rectTransform.sizeDelta = size;
             }
-            else
-            {
+            else {
                 textComponent.rectTransform.sizeDelta = TMP_Settings.defaultTextMeshProUITextContainerSize;
             }
             //}
@@ -93,8 +87,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
         /// </summary>
         /// <param name="command"></param>
         [MenuItem("GameObject/UI/TemplateTextMeshProUGUI - TextMeshPro", false, 2001)]
-        static void AddTemplateText(MenuCommand menuCommand)
-        {
+        static void AddTemplateText(MenuCommand menuCommand) {
             GameObject go = TMP_DefaultControls.CreateText(GetStandardResources());
             TextMeshProUGUI text = go.GetComponent<TextMeshProUGUI>();
             if (text != null)
@@ -107,20 +100,17 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             // Get reference to potential Presets for <TextMeshProUGUI> component
             Preset[] presets = Preset.GetDefaultPresetsForObject(textComponent);
 
-            if (presets == null || presets.Length == 0)
-            {
+            if (presets == null || presets.Length == 0) {
                 textComponent.fontSize = TMP_Settings.defaultFontSize;
                 textComponent.color = Color.white;
                 textComponent.text = "";
             }
 
-            if (TMP_Settings.autoSizeTextContainer)
-            {
+            if (TMP_Settings.autoSizeTextContainer) {
                 Vector2 size = textComponent.GetPreferredValues(TMP_Math.FLOAT_MAX, TMP_Math.FLOAT_MAX);
                 textComponent.rectTransform.sizeDelta = size;
             }
-            else
-            {
+            else {
                 textComponent.rectTransform.sizeDelta = TMP_Settings.defaultTextMeshProUITextContainerSize;
             }
             //}
@@ -134,10 +124,8 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        private static TMP_DefaultControls.Resources GetStandardResources()
-        {
-            if (s_StandardResources.standard == null)
-            {
+        private static TMP_DefaultControls.Resources GetStandardResources() {
+            if (s_StandardResources.standard == null) {
                 s_StandardResources.standard = AssetDatabase.GetBuiltinExtraResource<Sprite>(kStandardSpritePath);
                 s_StandardResources.background = AssetDatabase.GetBuiltinExtraResource<Sprite>(kBackgroundSpritePath);
                 s_StandardResources.inputField = AssetDatabase.GetBuiltinExtraResource<Sprite>(kInputFieldBackgroundPath);
@@ -149,8 +137,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             return s_StandardResources;
         }
 
-        private static void SetPositionVisibleinSceneView(RectTransform canvasRTransform, RectTransform itemTransform)
-        {
+        private static void SetPositionVisibleinSceneView(RectTransform canvasRTransform, RectTransform itemTransform) {
             // Find the best scene view
             SceneView sceneView = SceneView.lastActiveSceneView;
 
@@ -166,8 +153,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             Vector3 position = Vector3.zero;
             Vector2 localPlanePosition;
 
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRTransform, new Vector2(camera.pixelWidth / 2, camera.pixelHeight / 2), camera, out localPlanePosition))
-            {
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRTransform, new Vector2(camera.pixelWidth / 2, camera.pixelHeight / 2), camera, out localPlanePosition)) {
                 // Adjust for canvas pivot
                 localPlanePosition.x = localPlanePosition.x + canvasRTransform.sizeDelta.x * canvasRTransform.pivot.x;
                 localPlanePosition.y = localPlanePosition.y + canvasRTransform.sizeDelta.y * canvasRTransform.pivot.y;
@@ -196,12 +182,10 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             itemTransform.localScale = Vector3.one;
         }
 
-        private static void PlaceUIElementRoot(GameObject element, MenuCommand menuCommand)
-        {
+        private static void PlaceUIElementRoot(GameObject element, MenuCommand menuCommand) {
             GameObject parent = menuCommand.context as GameObject;
             bool explicitParentChoice = true;
-            if (parent == null)
-            {
+            if (parent == null) {
                 parent = TMPro_CreateObjectMenu.GetOrCreateCanvasGameObject();
                 explicitParentChoice = false;
 
@@ -212,8 +196,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
                     parent = prefabStage.prefabContentsRoot;
             }
 
-            if (parent.GetComponentsInParent<Canvas>(true).Length == 0)
-            {
+            if (parent.GetComponentsInParent<Canvas>(true).Length == 0) {
                 // Create canvas under context GameObject,
                 // and make that be the parent which UI element is added under.
                 GameObject canvas = TMPro_CreateObjectMenu.CreateNewUI();
@@ -236,23 +219,20 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             Selection.activeGameObject = element;
         }
 
-        private static void SetParentAndAlign(GameObject child, GameObject parent)
-        {
+        private static void SetParentAndAlign(GameObject child, GameObject parent) {
             if (parent == null)
                 return;
 
             Undo.SetTransformParent(child.transform, parent.transform, "");
 
             RectTransform rectTransform = child.transform as RectTransform;
-            if (rectTransform)
-            {
+            if (rectTransform) {
                 rectTransform.anchoredPosition = Vector2.zero;
                 Vector3 localPosition = rectTransform.localPosition;
                 localPosition.z = 0;
                 rectTransform.localPosition = localPosition;
             }
-            else
-            {
+            else {
                 child.transform.localPosition = Vector3.zero;
             }
             child.transform.localRotation = Quaternion.identity;
@@ -261,8 +241,7 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
             SetLayerRecursively(child, parent.layer);
         }
 
-        private static void SetLayerRecursively(GameObject go, int layer)
-        {
+        private static void SetLayerRecursively(GameObject go, int layer) {
             go.layer = layer;
             Transform t = go.transform;
             for (int i = 0; i < t.childCount; i++)

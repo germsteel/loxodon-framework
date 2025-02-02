@@ -4,14 +4,12 @@ using Loxodon.Framework.ILRuntimes;
 using System;
 using UnityEngine;
 
-public class DatabindingLauncher : MonoBehaviour
-{
+public class DatabindingLauncher : MonoBehaviour {
     public ILRuntime.Runtime.Enviorment.AppDomain appdomain;
 
     public GameObject window;
 
-    async void Start()
-    {
+    async void Start() {
         appdomain = ILRuntimeEnvironment.AppDomain;
 
         await ILRuntimeEnvironment.LoadAssembly(new Uri(Application.streamingAssetsPath + "/netstandard2.0/Loxodon.Framework.ILScript.dll"), new Uri(Application.streamingAssetsPath + "/netstandard2.0/Loxodon.Framework.ILScript.pdb"));
@@ -20,8 +18,7 @@ public class DatabindingLauncher : MonoBehaviour
         OnHotFixLoaded();
     }
 
-    void OnHotFixLoaded()
-    {
+    void OnHotFixLoaded() {
         //
         // 示例项目位置：Assets\Samples\Loxodon Framework ILRuntime\2.0.0\Examples\ILScriptExamples~
         // 打开此文件夹编译项目，编译后的DLL会自动导出到 StreamAssets\netstandard2.0 目录下
@@ -29,8 +26,7 @@ public class DatabindingLauncher : MonoBehaviour
         appdomain.Invoke("Loxodon.Framework.ILScriptExamples.DatabindingExample", "Run", null, window);
     }
 
-    protected Type GetType(object source)
-    {
+    protected Type GetType(object source) {
         ILTypeInstance typeInstance = source as ILTypeInstance;
         if (typeInstance != null)
             return typeInstance.Type.ReflectionType;

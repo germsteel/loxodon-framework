@@ -24,10 +24,8 @@
 
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public interface ISheetReader
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public interface ISheetReader {
         string Name { get; }
 
         int StartLine { get; }

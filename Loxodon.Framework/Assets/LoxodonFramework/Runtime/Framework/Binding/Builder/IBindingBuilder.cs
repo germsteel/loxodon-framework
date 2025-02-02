@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Builder
-{
-    public interface IBindingBuilder
-    {
+namespace Loxodon.Framework.Binding.Builder {
+    public interface IBindingBuilder {
         void Build();
     }
 }

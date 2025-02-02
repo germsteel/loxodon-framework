@@ -35,32 +35,25 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class TextMeshAlertDialogViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class TextMeshAlertDialogViewModel : ViewModelBase {
         public readonly InteractionRequest<DialogNotification> AlertDialogRequest = new InteractionRequest<DialogNotification>();
         public readonly AsyncInteractionRequest<DialogNotification> AsyncAlertDialogRequest = new AsyncInteractionRequest<DialogNotification>();
         public readonly InteractionRequest<ToastNotification> ToastRequest = new InteractionRequest<ToastNotification>();
 
-        public TextMeshAlertDialogViewModel()
-        {
-            this.OpenAlertDialog = new SimpleCommand(() =>
-            {
+        public TextMeshAlertDialogViewModel() {
+            this.OpenAlertDialog = new SimpleCommand(() => {
                 this.OpenAlertDialog.Enabled = false;
 
                 DialogNotification notification = new DialogNotification("TextMeshPro AlertDialog Example", "This is a dialog test.", "Yes", "No", true);
 
-                Action<DialogNotification> callback = n =>
-                {
+                Action<DialogNotification> callback = n => {
                     this.OpenAlertDialog.Enabled = true;
 
-                    if (n.DialogResult == AlertDialog.BUTTON_POSITIVE)
-                    {
+                    if (n.DialogResult == AlertDialog.BUTTON_POSITIVE) {
                         Debug.LogFormat("Click: Yes");
                     }
-                    else if (n.DialogResult == AlertDialog.BUTTON_NEGATIVE)
-                    {
+                    else if (n.DialogResult == AlertDialog.BUTTON_NEGATIVE) {
                         Debug.LogFormat("Click: No");
                     }
                 };
@@ -68,24 +61,20 @@ namespace Loxodon.Framework.Tutorials
                 this.AlertDialogRequest.Raise(notification, callback);
             });
 
-            this.AsyncOpenAlertDialog = new SimpleCommand(async () =>
-            {
+            this.AsyncOpenAlertDialog = new SimpleCommand(async () => {
                 this.AsyncOpenAlertDialog.Enabled = false;
                 DialogNotification notification = new DialogNotification("TextMeshPro AlertDialog Example", "This is a dialog test.", "Yes", "No", true);
                 await this.AsyncAlertDialogRequest.Raise(notification);
                 this.AsyncOpenAlertDialog.Enabled = true;
-                if (notification.DialogResult == AlertDialog.BUTTON_POSITIVE)
-                {
+                if (notification.DialogResult == AlertDialog.BUTTON_POSITIVE) {
                     Debug.LogFormat("Click: Yes");
                 }
-                else if (notification.DialogResult == AlertDialog.BUTTON_NEGATIVE)
-                {
+                else if (notification.DialogResult == AlertDialog.BUTTON_NEGATIVE) {
                     Debug.LogFormat("Click: No");
                 }
             });
 
-            this.ShowToast = new SimpleCommand(() =>
-            {
+            this.ShowToast = new SimpleCommand(() => {
                 ToastNotification notification = new ToastNotification("This is a toast test.", 2f);
                 this.ToastRequest.Raise(notification);
             });
@@ -96,8 +85,7 @@ namespace Loxodon.Framework.Tutorials
         public SimpleCommand ShowToast { get; }
     }
 
-    public class TextMeshAlertDialogExample : WindowView
-    {
+    public class TextMeshAlertDialogExample : WindowView {
         public Button openAlert;
         public Button asyncOpenAlert;
         public Button showToast;
@@ -105,8 +93,7 @@ namespace Loxodon.Framework.Tutorials
         private ToastInteractionAction toastInteractionAction;
         private AsyncDialogInteractionAction dialogInteractionAction;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
@@ -119,8 +106,7 @@ namespace Loxodon.Framework.Tutorials
             Toast.ViewName = "UI/TextMeshToast";
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             this.toastInteractionAction = new ToastInteractionAction(this);
             this.dialogInteractionAction = new AsyncDialogInteractionAction("UI/TextMeshAlertDialog");
 
@@ -146,16 +132,14 @@ namespace Loxodon.Framework.Tutorials
             bindingSet.Build();
         }
 
-        private void OnOpenAlert(object sender, InteractionEventArgs args)
-        {
+        private void OnOpenAlert(object sender, InteractionEventArgs args) {
             DialogNotification notification = args.Context as DialogNotification;
             var callback = args.Callback;
 
             if (notification == null)
                 return;
 
-            AlertDialog.ShowMessage(notification.Message, notification.Title, notification.ConfirmButtonText, null, notification.CancelButtonText, notification.CanceledOnTouchOutside, (result) =>
-            {
+            AlertDialog.ShowMessage(notification.Message, notification.Title, notification.ConfirmButtonText, null, notification.CancelButtonText, notification.CanceledOnTouchOutside, (result) => {
                 notification.DialogResult = result;
                 callback?.Invoke();
             });

@@ -33,15 +33,13 @@ Requires Unity 2021.3 or higher.
 ### 通过修改 Packages/manifest.json 文件安装插件(推荐)
 
 在Unity项目的Packages目录中找到manifest.json 文件，增加第三方仓库 "https://package.openupm.com"或者"https://registry.npmjs.org"到配置文件中，然后增加"com.vovgou.loxodon-framework-uitoolkit" 到dependencies节点下，Unity会自动下载插件，使用这种方式安装也相当方便，且省去了安装nodejs和openm-cli客户端的麻烦。
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-uitoolkit": "2.4.0"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -70,11 +68,9 @@ Requires Unity 2021.3 or higher.
 
 **注意：点击事件请绑定到clickable属性上，控件的值请绑定到value属性。**
 
-    public class Window1 : UIToolkitWindow
-    {
+    public class Window1 : UIToolkitWindow {
         private IUIViewLocator locator;
-        protected override void OnCreate(IBundle bundle)
-        {            
+        protected override void OnCreate(IBundle bundle) {            
             this.locator = Context.GetApplicationContext().GetService<IUIViewLocator>();
 
 			WindowViewMode viewModel = new WindowViewMode();
@@ -94,17 +90,14 @@ Requires Unity 2021.3 or higher.
             this.Q<Button>("close").clicked += () => this.Dismiss();
         }
 
-        protected void OnOpenDialogWindow(object sender, InteractionEventArgs args)
-        {
+        protected void OnOpenDialogWindow(object sender, InteractionEventArgs args) {
             var callback = args.Callback;
-            AlertDialog.ShowMessage("测试", "标题", "OK", r =>
-            {
+            AlertDialog.ShowMessage("测试", "标题", "OK", r => {
                 callback?.Invoke();
             });
         }
 
-        protected void OnOpenWindow(object sender, InteractionEventArgs args)
-        {
+        protected void OnOpenWindow(object sender, InteractionEventArgs args) {
             IWindow window = locator.LoadWindow<IWindow>(this.WindowManager, "UI/Window2");
             window.Create();
             window.Show();
@@ -112,8 +105,7 @@ Requires Unity 2021.3 or higher.
     }
 
 
-    public class WindowViewMode : ViewModelBase
-    {
+    public class WindowViewMode : ViewModelBase {
 		private string name;
 		private bool toggle = true;
         private SimpleCommand dialogCommand;
@@ -121,58 +113,47 @@ Requires Unity 2021.3 or higher.
         private InteractionRequest openDialogRequest;
         private InteractionRequest openWindowRequest;
 
-        public WindowViewMode()
-        {
+        public WindowViewMode() {
             this.openDialogRequest = new InteractionRequest(this);
             this.openWindowRequest = new InteractionRequest(this);
-            this.dialogCommand = new SimpleCommand(() =>
-            {
+            this.dialogCommand = new SimpleCommand(() => {
                 this.dialogCommand.Enabled = false;
-                this.openDialogRequest.Raise(() =>
-                {
+                this.openDialogRequest.Raise(() => {
                     this.dialogCommand.Enabled = true;
                 });
             });
-            this.windowCommand = new SimpleCommand(() =>
-            {
+            this.windowCommand = new SimpleCommand(() => {
                 this.openWindowRequest.Raise();
             });
         }
 
-		public string Name
-        {
+		public string Name {
             get { return this.name; }
             set { this.Set<string>(ref name, value); }
         }
 
-		public bool Toggle
-        {
+		public bool Toggle {
             get { return this.toggle; }
             set { this.Set<bool>(ref toggle, value); }
         }
 
-        public IInteractionRequest OpenDialogRequest
-        {
+        public IInteractionRequest OpenDialogRequest {
             get { return this.openDialogRequest; }
         }
 
-        public IInteractionRequest OpenWindowRequest
-        {
+        public IInteractionRequest OpenWindowRequest {
             get { return this.openWindowRequest; }
         }
 
-        public ICommand DialogClick
-        {
+        public ICommand DialogClick {
             get { return this.dialogCommand; }
         }
 
-        public ICommand WindowClick
-        {
+        public ICommand WindowClick {
             get { return this.windowCommand; }
         }
 
-        public void OnClick()
-        {
+        public void OnClick() {
             Debug.LogFormat("Button OnClick");
         }
     }

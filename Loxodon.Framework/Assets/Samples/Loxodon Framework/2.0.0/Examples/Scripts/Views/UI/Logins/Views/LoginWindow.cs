@@ -30,10 +30,8 @@ using Loxodon.Framework.Views.InteractionActions;
 using Loxodon.Log;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Examples
-{
-    public class LoginWindow : Window
-    {
+namespace Loxodon.Framework.Examples {
+    public class LoginWindow : Window {
         //private static readonly ILog log = LogManager.GetLogger(typeof(LoginWindow));
 
         public InputField username;
@@ -45,8 +43,7 @@ namespace Loxodon.Framework.Examples
 
         private ToastInteractionAction toastAction;
 
-        protected override void OnCreate(IBundle bundle)
-        {
+        protected override void OnCreate(IBundle bundle) {
             this.toastAction = new ToastInteractionAction(this);
             BindingSet<LoginWindow, LoginViewModel> bindingSet = this.CreateBindingSet<LoginWindow, LoginViewModel>();
             bindingSet.Bind().For(v => v.OnInteractionFinished).To(vm => vm.InteractionFinished);
@@ -62,8 +59,7 @@ namespace Loxodon.Framework.Examples
             bindingSet.Build();
         }
 
-        public virtual void OnInteractionFinished(object sender, InteractionEventArgs args)
-        {
+        public virtual void OnInteractionFinished(object sender, InteractionEventArgs args) {
             this.Dismiss();
         }
 

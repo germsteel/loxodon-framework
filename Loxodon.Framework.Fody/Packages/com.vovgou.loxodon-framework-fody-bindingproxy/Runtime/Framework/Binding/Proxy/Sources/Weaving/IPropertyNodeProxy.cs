@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
-{
-    public interface IPropertyNodeProxy
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving {
+    public interface IPropertyNodeProxy {
         void OnPropertyChanged();
     }
 }

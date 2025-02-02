@@ -30,24 +30,19 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public class JsonCrystalInfoRepository : ICrystalInfoRepository
-    {
+namespace Loxodon.Framework.Examples.Repositories {
+    public class JsonCrystalInfoRepository : ICrystalInfoRepository {
         private Dictionary<int, CrystalInfo> crystals = new Dictionary<int, CrystalInfo>();
         private bool loaded = false;
 
-        private void LoadAll()
-        {
+        private void LoadAll() {
             var text = Resources.Load<TextAsset>("Json/crystalinfo");
             if (text == null || text.text.Length <= 0)
                 return;
 
-            using (StringReader reader = new StringReader(text.text))
-            {
+            using (StringReader reader = new StringReader(text.text)) {
                 string line;
-                while ((line = reader.ReadLine()) != null)
-                {
+                while ((line = reader.ReadLine()) != null) {
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
 
@@ -61,8 +56,7 @@ namespace Loxodon.Framework.Examples.Repositories
             this.loaded = true;
         }
 
-        public CrystalInfo GetById(int id)
-        {
+        public CrystalInfo GetById(int id) {
             if (!loaded)
                 this.LoadAll();
 
@@ -71,8 +65,7 @@ namespace Loxodon.Framework.Examples.Repositories
             return info;
         }
 
-        public CrystalInfo GetBySign(string sign, int level)
-        {
+        public CrystalInfo GetBySign(string sign, int level) {
             if (!loaded)
                 this.LoadAll();
             return crystals.Values.Where(e => e.Sign.Equals(sign) && e.Level == level).First();

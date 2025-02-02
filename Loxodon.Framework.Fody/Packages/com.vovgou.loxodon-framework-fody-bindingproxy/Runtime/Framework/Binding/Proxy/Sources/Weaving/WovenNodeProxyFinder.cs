@@ -27,15 +27,12 @@ using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
-{
-    public class WovenNodeProxyFinder : IWovenNodeProxyFinder
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving {
+    public class WovenNodeProxyFinder : IWovenNodeProxyFinder {
         private ConcurrentDictionary<string, ISourceProxy> proxies;
         private Type type;
         private object source;
-        public WovenNodeProxyFinder(object source)
-        {
+        public WovenNodeProxyFinder(object source) {
             this.proxies = new ConcurrentDictionary<string, ISourceProxy>();
             this.source = source;
             this.type = source.GetType();
@@ -43,29 +40,23 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
                 sourceNotify.PropertyChanged += OnPropertyChanged;
         }
 
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
             var name = e.PropertyName;
-            if (string.IsNullOrEmpty(name))
-            {
-                foreach (var kv in proxies)
-                {
+            if (string.IsNullOrEmpty(name)) {
+                foreach (var kv in proxies) {
                     if (kv.Value is IPropertyNodeProxy propertyNodeProxy)
                         propertyNodeProxy.OnPropertyChanged();
                 }
             }
-            else
-            {
+            else {
                 ISourceProxy proxy;
                 if (proxies.TryGetValue(name, out proxy) && proxy is IPropertyNodeProxy propertyNodeProxy)
                     propertyNodeProxy.OnPropertyChanged();
             }
         }
 
-        public ISourceProxy GetSourceProxy(string name)
-        {
-            lock (proxies)
-            {
+        public ISourceProxy GetSourceProxy(string name) {
+            lock (proxies) {
                 ISourceProxy proxy = null;
                 if (proxies.TryGetValue(name, out proxy))
                     return proxy;
@@ -77,8 +68,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
             }
         }
 
-        private ISourceProxy CreateSourceProxy(string name)
-        {
+        private ISourceProxy CreateSourceProxy(string name) {
             var memberInfo = type.FindFirstMemberInfo(name);
             if (memberInfo == null)
                 return null;

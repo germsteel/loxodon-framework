@@ -35,10 +35,8 @@ using Loxodon.Framework.Views.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials.OSA
-{
-    public class ListViewExampleViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Tutorials.OSA {
+    public class ListViewExampleViewModel : ViewModelBase {
         private int id = 0;
         private ObservableList<ItemViewModel> items;
         private ItemViewModel selectedItem;
@@ -46,8 +44,7 @@ namespace Loxodon.Framework.Tutorials.OSA
         private SimpleCommand<ItemViewModel> itemClickCommand;
         //private InteractionRequest<ItemViewModel> itemEditRequest;
         private AsyncInteractionRequest<VisibilityNotification> itemEditRequest;
-        public ListViewExampleViewModel()
-        {
+        public ListViewExampleViewModel() {
             //itemEditRequest = new InteractionRequest<ItemViewModel>(this);
             itemEditRequest = new AsyncInteractionRequest<VisibilityNotification>(this);
             itemClickCommand = new SimpleCommand<ItemViewModel>(OnItemClick);
@@ -55,19 +52,16 @@ namespace Loxodon.Framework.Tutorials.OSA
             this.CreateItems(3);
         }
 
-        public IInteractionRequest ItemEditRequest
-        {
+        public IInteractionRequest ItemEditRequest {
             get { return itemEditRequest; }
         }
 
-        public ObservableList<ItemViewModel> Items
-        {
+        public ObservableList<ItemViewModel> Items {
             get { return this.items; }
             set { this.Set(ref items, value); }
         }
 
-        public ItemViewModel SelectedItem
-        {
+        public ItemViewModel SelectedItem {
             get { return this.selectedItem; }
             set { Set(ref selectedItem, value); }
         }
@@ -76,24 +70,20 @@ namespace Loxodon.Framework.Tutorials.OSA
 
         public SimpleCommand<ItemViewModel> ItemClickCommand { get { return this.itemClickCommand; } }
 
-        private void OnItemClick(ItemViewModel item)
-        {
+        private void OnItemClick(ItemViewModel item) {
             Debug.LogFormat("click item:{0}", item.Title);
 
             //this.itemEditRequest.Raise(item);
             _ = this.itemEditRequest.Raise(new VisibilityNotification(true, item));
         }
 
-        private void OnItemSelect(ItemViewModel item)
-        {
+        private void OnItemSelect(ItemViewModel item) {
             item.Selected = !item.Selected;
             if (item.Selected)
                 this.SelectedItem = item;
 
-            if (items != null && item.Selected)
-            {
-                foreach (var i in items)
-                {
+            if (items != null && item.Selected) {
+                foreach (var i in items) {
                     if (i == item)
                         continue;
                     i.Selected = false;
@@ -101,68 +91,54 @@ namespace Loxodon.Framework.Tutorials.OSA
             }
         }
 
-        public void AddItem()
-        {
+        public void AddItem() {
             items.Add(CreateItem());
         }
 
-        public void ChangeItem()
-        {
-            if (items != null && items.Count > 0)
-            {
+        public void ChangeItem() {
+            if (items != null && items.Count > 0) {
                 var model = items[0];
                 model.Color = DemosUtil.GetRandomColor();
             }
         }
 
-        public void MoveItem()
-        {
-            if (items != null && items.Count > 1)
-            {
+        public void MoveItem() {
+            if (items != null && items.Count > 1) {
                 items.Move(0, items.Count - 1);
             }
         }
 
-        public void ResetItem()
-        {
+        public void ResetItem() {
             items.Clear();
         }
 
-        public void RefreshItems(float sign)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                if (sign == -1)
-                {
+        public void RefreshItems(float sign) {
+            for (int i = 0; i < 2; i++) {
+                if (sign == -1) {
                     //Add Item at the bottom
                     items.Add(CreateItem());
                 }
-                else
-                {
+                else {
                     //Add Item at the top
                     items.Insert(i, CreateItem());
                 }
             }
         }
 
-        private void CreateItems(int count)
-        {
+        private void CreateItems(int count) {
             this.items = new ObservableList<ItemViewModel>();
             for (int i = 0; i < count; i++)
                 items.Add(CreateItem());
         }
 
-        private ItemViewModel CreateItem()
-        {
-            return new ItemViewModel()
-            {
+        private ItemViewModel CreateItem() {
+            return new ItemViewModel() {
                 Title = "Item #" + (id++)
             };
         }
     }
 
-    public class ListViewExample : MonoBehaviour
-    {
+    public class ListViewExample : MonoBehaviour {
         public Button addButton;
         public Button changeButton;
         public Button moveButton;
@@ -172,15 +148,13 @@ namespace Loxodon.Framework.Tutorials.OSA
         public ItemEditView itemEditView;
         private AsyncViewInteractionAction editViewInteractionAction;
 
-        protected void Awake()
-        {
+        protected void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
         }
 
-        private void Start()
-        {
+        private void Start() {
             editViewInteractionAction = new AsyncViewInteractionAction(itemEditView);
 
             var bindingSet = this.CreateBindingSet<ListViewExample, ListViewExampleViewModel>();

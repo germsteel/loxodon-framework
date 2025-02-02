@@ -24,17 +24,13 @@
 
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Asynchronous
-{
-    public static class TaskYieldInstructionExtensions
-    {
-        public static TaskYieldInstruction AsCoroutine(this Task task)
-        {
+namespace Loxodon.Framework.Asynchronous {
+    public static class TaskYieldInstructionExtensions {
+        public static TaskYieldInstruction AsCoroutine(this Task task) {
             return new TaskYieldInstruction(task);
         }
 
-        public static TaskYieldInstruction<T> AsCoroutine<T>(this Task<T> task)
-        {
+        public static TaskYieldInstruction<T> AsCoroutine<T>(this Task<T> task) {
             return new TaskYieldInstruction<T>(task);
         }
     }

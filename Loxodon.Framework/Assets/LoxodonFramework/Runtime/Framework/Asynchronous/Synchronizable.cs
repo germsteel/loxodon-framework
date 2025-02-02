@@ -27,10 +27,8 @@ using System.Threading;
 
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Asynchronous
-{
-    public interface ISynchronizable
-    {
+namespace Loxodon.Framework.Asynchronous {
+    public interface ISynchronizable {
         /// <summary>
         ///  Wait for done,will block the current thread.
         /// </summary>
@@ -56,8 +54,7 @@ namespace Loxodon.Framework.Asynchronous
         object WaitForResult(TimeSpan timeout);
     }
 
-    public interface ISynchronizable<TResult> : ISynchronizable
-    {
+    public interface ISynchronizable<TResult> : ISynchronizable {
         /// <summary>
         /// Wait for the result,will block the current thread.
         /// </summary>
@@ -77,14 +74,12 @@ namespace Loxodon.Framework.Asynchronous
         new TResult WaitForResult(TimeSpan timeout);
     }
 
-    internal class Synchronizable : ISynchronizable
-    {
+    internal class Synchronizable : ISynchronizable {
         //private static readonly ILog log = LogManager.GetLogger(typeof(Synchronizable));
 
         private IAsyncResult result;
         private object _lock;
-        public Synchronizable(IAsyncResult result, object _lock)
-        {
+        public Synchronizable(IAsyncResult result, object _lock) {
             this.result = result;
             this._lock = _lock;
         }
@@ -93,13 +88,11 @@ namespace Loxodon.Framework.Asynchronous
         /// Wait for done,will block the current thread.
         /// </summary>
         /// <returns></returns>
-        public bool WaitForDone()
-        {
+        public bool WaitForDone() {
             if (result.IsDone)
                 return result.IsDone;
 
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!result.IsDone)
                     Monitor.Wait(_lock);
             }
@@ -114,20 +107,16 @@ namespace Loxodon.Framework.Asynchronous
         /// <exception cref="TimeoutException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns></returns>
-        public object WaitForResult(int millisecondsTimeout = 0)
-        {
-            if (result.IsDone)
-            {
+        public object WaitForResult(int millisecondsTimeout = 0) {
+            if (result.IsDone) {
                 if (result.Exception != null)
                     throw result.Exception;
 
                 return result.Result;
             }
 
-            lock (_lock)
-            {
-                if (!result.IsDone)
-                {
+            lock (_lock) {
+                if (!result.IsDone) {
                     if (millisecondsTimeout > 0)
                         Monitor.Wait(_lock, millisecondsTimeout);
                     else
@@ -151,20 +140,16 @@ namespace Loxodon.Framework.Asynchronous
         /// <exception cref="TimeoutException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns></returns>
-        public object WaitForResult(TimeSpan timeout)
-        {
-            if (result.IsDone)
-            {
+        public object WaitForResult(TimeSpan timeout) {
+            if (result.IsDone) {
                 if (result.Exception != null)
                     throw result.Exception;
 
                 return result.Result;
             }
 
-            lock (_lock)
-            {
-                if (!result.IsDone)
-                {
+            lock (_lock) {
+                if (!result.IsDone) {
                     Monitor.Wait(_lock, timeout);
                 }
             }
@@ -179,14 +164,12 @@ namespace Loxodon.Framework.Asynchronous
         }
     }
 
-    internal class Synchronizable<TResult> : ISynchronizable<TResult>
-    {
+    internal class Synchronizable<TResult> : ISynchronizable<TResult> {
         //private static readonly ILog log = LogManager.GetLogger(typeof(Synchronizable<TResult>));
 
         private IAsyncResult<TResult> result;
         private object _lock;
-        public Synchronizable(IAsyncResult<TResult> result, object _lock)
-        {
+        public Synchronizable(IAsyncResult<TResult> result, object _lock) {
             this.result = result;
             this._lock = _lock;
         }
@@ -195,13 +178,11 @@ namespace Loxodon.Framework.Asynchronous
         /// Wait for done,will block the current thread.
         /// </summary>
         /// <returns></returns>
-        public bool WaitForDone()
-        {
+        public bool WaitForDone() {
             if (result.IsDone)
                 return result.IsDone;
 
-            lock (_lock)
-            {
+            lock (_lock) {
                 if (!result.IsDone)
                     Monitor.Wait(_lock);
             }
@@ -216,20 +197,16 @@ namespace Loxodon.Framework.Asynchronous
         /// <exception cref="TimeoutException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns></returns>
-        public TResult WaitForResult(int millisecondsTimeout = 0)
-        {
-            if (result.IsDone)
-            {
+        public TResult WaitForResult(int millisecondsTimeout = 0) {
+            if (result.IsDone) {
                 if (result.Exception != null)
                     throw result.Exception;
 
                 return result.Result;
             }
 
-            lock (_lock)
-            {
-                if (!result.IsDone)
-                {
+            lock (_lock) {
+                if (!result.IsDone) {
                     if (millisecondsTimeout > 0)
                         Monitor.Wait(_lock, millisecondsTimeout);
                     else
@@ -253,20 +230,16 @@ namespace Loxodon.Framework.Asynchronous
         /// <exception cref="TimeoutException"></exception>
         /// <exception cref="Exception"></exception>
         /// <returns></returns>
-        public TResult WaitForResult(TimeSpan timeout)
-        {
-            if (result.IsDone)
-            {
+        public TResult WaitForResult(TimeSpan timeout) {
+            if (result.IsDone) {
                 if (result.Exception != null)
                     throw result.Exception;
 
                 return result.Result;
             }
 
-            lock (_lock)
-            {
-                if (!result.IsDone)
-                {
+            lock (_lock) {
+                if (!result.IsDone) {
                     Monitor.Wait(_lock, timeout);
                 }
             }
@@ -280,13 +253,11 @@ namespace Loxodon.Framework.Asynchronous
             return result.Result;
         }
 
-        object ISynchronizable.WaitForResult(int millisecondsTimeout)
-        {
+        object ISynchronizable.WaitForResult(int millisecondsTimeout) {
             return WaitForResult(millisecondsTimeout);
         }
 
-        object ISynchronizable.WaitForResult(TimeSpan timeout)
-        {
+        object ISynchronizable.WaitForResult(TimeSpan timeout) {
             return WaitForResult(timeout);
         }
     }

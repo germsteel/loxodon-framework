@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Log
-{
-    public enum Level
-    {
+namespace Loxodon.Log {
+    public enum Level {
         ALL = 0,
         DEBUG,
         INFO,

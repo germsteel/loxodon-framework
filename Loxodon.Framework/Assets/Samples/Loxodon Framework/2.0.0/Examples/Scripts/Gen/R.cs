@@ -2,8 +2,7 @@ using Loxodon.Framework.Localizations;
 using System;
 using UnityEngine;
 
-public static partial class R
-{
+public static partial class R {
     public readonly static V<string> startup_progressbar_tip_loading = new V<string>("startup.progressbar.tip.loading"); 
 
     public readonly static V<string> startup_progressbar_tip_unziping = new V<string>("startup.progressbar.tip.unziping"); 

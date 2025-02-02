@@ -31,30 +31,24 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public class ExcelExportWizard : ScriptableWizard
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public class ExcelExportWizard : ScriptableWizard {
         protected const float HORIZONTAL_GAP = 5;
         protected const float VERTICAL_GAP = 5;
 
         private const string PATH = "Assets/LoxodonFramework/Editor/AppData/Data/ExcelExportSetting.json";
 
         [MenuItem("Tools/Loxodon/Excel Export Wizard")]
-        static void CreateWizard()
-        {
+        static void CreateWizard() {
             ExcelExportWizard wizard = DisplayWizard<ExcelExportWizard>("Excel Export Wizard", "", "Export");
             wizard.minSize = new Vector2(800, 500);
             wizard.isValid = true;
         }
 
         private static GUIStyle titleStyle;
-        public static GUIStyle TitleGUIStyle
-        {
-            get
-            {
-                if (titleStyle == null)
-                {
+        public static GUIStyle TitleGUIStyle {
+            get {
+                if (titleStyle == null) {
                     titleStyle = new GUIStyle("HeaderLabel");
                     titleStyle.fontSize = 18;
                     titleStyle.normal.textColor = Color.Lerp(Color.white, Color.gray, 0.5f);
@@ -94,8 +88,7 @@ namespace Loxodon.Framework.Data.Editors
         private List<Type> processorTypes;
         private string[] processorTypeNames;
 
-        private void OnEnable()
-        {
+        private void OnEnable() {
             this.Load();
 
             if (entries == null)
@@ -116,17 +109,14 @@ namespace Loxodon.Framework.Data.Editors
             this.CreateProcessor();
         }
 
-        private void OnDisable()
-        {
+        private void OnDisable() {
             this.Save();
         }
 
-        protected override bool DrawWizardGUI()
-        {
+        protected override bool DrawWizardGUI() {
             //base.DrawWizardGUI();
 
-            if (GUILayout.Button("Excel Export", TitleGUIStyle))
-            {
+            if (GUILayout.Button("Excel Export", TitleGUIStyle)) {
                 Application.OpenURL("https://github.com/vovgou/loxodon-framework/wiki");
             }
 
@@ -142,15 +132,12 @@ namespace Loxodon.Framework.Data.Editors
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             GUILayout.BeginVertical();
 
-            switch (toolbarIndex)
-            {
-                case 0:
-                    {
+            switch (toolbarIndex) {
+                case 0: {
                         this.fileList.DoLayoutList();
                         break;
                     }
-                case 1:
-                    {
+                case 1: {
                         EditorGUI.indentLevel += 1;
 
                         EditorGUI.BeginChangeCheck();
@@ -164,8 +151,7 @@ namespace Loxodon.Framework.Data.Editors
                         SerializedProperty property = this.serializedObject.GetIterator();
 
                         bool expanded = true;
-                        while (property.NextVisible(expanded))
-                        {
+                        while (property.NextVisible(expanded)) {
                             expanded = false;
                             if (propertyToExclude.Contains(property.name))
                                 continue;
@@ -184,8 +170,7 @@ namespace Loxodon.Framework.Data.Editors
             return true;
         }
 
-        protected virtual void DrawElement(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        protected virtual void DrawElement(Rect rect, int index, bool isActive, bool isFocused) {
             if (index < 0 || index >= fileList.count)
                 return;
 
@@ -203,8 +188,7 @@ namespace Loxodon.Framework.Data.Editors
             EditorGUI.BeginChangeCheck();
             EditorGUI.Foldout(foldoutRect, foldout, GUIContent.none);
 
-            if (foldout)
-            {
+            if (foldout) {
                 EditorGUI.LabelField(entryRect, entry.Filename);
 
                 float labelWidth = 100f;
@@ -212,48 +196,40 @@ namespace Loxodon.Framework.Data.Editors
                 Rect sheetRect = new Rect(sheetLabelRect.xMax + HORIZONTAL_GAP, y + height + VERTICAL_GAP + 1, labelWidth, height);
 
                 EditorGUI.LabelField(sheetLabelRect, "Sheets:");
-                foreach (var sheet in entry.Sheets)
-                {
+                foreach (var sheet in entry.Sheets) {
                     sheet.IsValid = EditorGUI.ToggleLeft(sheetRect, sheet.Name, sheet.IsValid);
                     sheetRect.x += labelWidth + HORIZONTAL_GAP;
                 }
             }
-            else
-            {
+            else {
                 EditorGUI.LabelField(entryRect, entry.Filename);
             }
         }
 
-        protected virtual float ElementHeight(int index)
-        {
+        protected virtual float ElementHeight(int index) {
             if (this.fileList.index == index)
                 return this.expandedElementHeight;
 
             return fileList.elementHeight;
         }
 
-        protected virtual void DrawHeader(Rect rect)
-        {
+        protected virtual void DrawHeader(Rect rect) {
             GUI.Label(rect, "Files");
         }
 
-        protected virtual void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        protected virtual void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused) {
             ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, isActive, false, true);
         }
 
-        protected virtual void OnAdd(ReorderableList list)
-        {
+        protected virtual void OnAdd(ReorderableList list) {
             string path = EditorUtility.OpenFolderPanel("Browse Folder", this.latestInputPath, string.Empty);
             if (string.IsNullOrEmpty(path))
                 return;
 
             this.latestInputPath = path;
-            this.processor.ImportFiles(this.latestInputPath, (message, progress) =>
-            {
+            this.processor.ImportFiles(this.latestInputPath, (message, progress) => {
                 EditorUtility.DisplayProgressBar("Import", message, progress);
-            }, entries =>
-             {
+            }, entries => {
                  this.entries.AddRange(entries);
                  if (fileList.count > 0 && fileList.index < 0)
                      fileList.index = 0;
@@ -261,24 +237,20 @@ namespace Loxodon.Framework.Data.Editors
              });
         }
 
-        protected virtual void OnRemove(ReorderableList list)
-        {
-            if (EditorUtility.DisplayDialog("Confirm delete", "Are you sure you want to delete the item?", "Yes", "Cancel"))
-            {
+        protected virtual void OnRemove(ReorderableList list) {
+            if (EditorUtility.DisplayDialog("Confirm delete", "Are you sure you want to delete the item?", "Yes", "Cancel")) {
                 Remove(list.index);
             }
         }
 
-        private void Remove(int index)
-        {
+        private void Remove(int index) {
             if (index < 0 || index >= fileList.count)
                 return;
 
             fileList.list.RemoveAt(index);
         }
 
-        private void OnWizardOtherButton()
-        {
+        private void OnWizardOtherButton() {
             this.Save();
 
             if (this.entries == null || this.entries.Count <= 0)
@@ -289,27 +261,22 @@ namespace Loxodon.Framework.Data.Editors
                 return;
 
             this.latestOutputPath = path;
-            this.processor.ExportFiles(this.latestOutputPath, this.entries, (message, progress) =>
-              {
+            this.processor.ExportFiles(this.latestOutputPath, this.entries, (message, progress) => {
                   EditorUtility.DisplayProgressBar("Export", message, progress);
-              }, () =>
-              {
+              }, () => {
                   EditorUtility.ClearProgressBar();
                   EditorUtility.OpenWithDefaultApp(this.latestOutputPath);
               });
 
         }
 
-        protected void CreateProcessor()
-        {
-            try
-            {
+        protected void CreateProcessor() {
+            try {
                 Type type = processorTypes[processorTypeIndex];
                 this.processorTypeName = type.Name;
                 this.processor = (IExportProcessor)ScriptableObject.CreateInstance(type);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 Type type = typeof(ExportProcessor);
                 this.processorTypeName = type.Name;
                 this.processorTypeIndex = Array.IndexOf(this.processorTypeNames, this.processorTypeName);
@@ -322,20 +289,16 @@ namespace Loxodon.Framework.Data.Editors
             this.serializedObject = new SerializedObject((UnityEngine.Object)processor);
         }
 
-        protected void LoadTypes()
-        {
+        protected void LoadTypes() {
             List<Type> processorTypes = new List<Type>();
             List<Type> generatorTypes = new List<Type>();
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) {
                 var name = assembly.FullName;
                 if (Regex.IsMatch(name, "^((Unity\\.)|(UnityEngine)|(UnityEditor)|(mscorlib)|(System\\.)|(Mono\\.)|(nunit\\.)|(Microsoft\\.)|(SyntaxTree\\.))"))
                     continue;
 
-                foreach (var type in assembly.GetTypes())
-                {
-                    if (typeof(IExportProcessor).IsAssignableFrom(type) && !type.IsAbstract)
-                    {
+                foreach (var type in assembly.GetTypes()) {
+                    if (typeof(IExportProcessor).IsAssignableFrom(type) && !type.IsAbstract) {
                         if (!processorTypes.Contains(type))
                             processorTypes.Add(type);
                         continue;
@@ -352,28 +315,22 @@ namespace Loxodon.Framework.Data.Editors
                 processorTypeIndex = 0;
         }
 
-        private void Load()
-        {
-            try
-            {
+        private void Load() {
+            try {
                 if (!File.Exists(PATH))
                     return;
 
                 string json = File.ReadAllText(PATH);
                 JsonUtility.FromJsonOverwrite(json, this);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Debug.LogWarningFormat("Loads {0} failure. Error:{1}", PATH, e);
             }
         }
 
-        private void Save()
-        {
-            try
-            {
-                if (!File.Exists(PATH))
-                {
+        private void Save() {
+            try {
+                if (!File.Exists(PATH)) {
                     FileInfo info = new FileInfo(PATH);
                     if (!info.Directory.Exists)
                         info.Directory.Create();
@@ -387,8 +344,7 @@ namespace Loxodon.Framework.Data.Editors
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Debug.LogWarningFormat("Write {0} failure. Error:{1}", PATH, e);
             }
         }
@@ -396,8 +352,7 @@ namespace Loxodon.Framework.Data.Editors
     }
 
     [Serializable]
-    class Dictionary
-    {
+    class Dictionary {
         [SerializeField]
         [HideInInspector]
         private List<string> keys = new List<string>();
@@ -405,10 +360,8 @@ namespace Loxodon.Framework.Data.Editors
         [HideInInspector]
         private List<string> values = new List<string>();
 
-        public void Set(string key, string value)
-        {
-            if (!keys.Contains(key))
-            {
+        public void Set(string key, string value) {
+            if (!keys.Contains(key)) {
                 keys.Add(key);
                 values.Add("");
             }
@@ -417,8 +370,7 @@ namespace Loxodon.Framework.Data.Editors
             values[index] = value;
         }
 
-        public string Get(string key)
-        {
+        public string Get(string key) {
             if (!keys.Contains(key))
                 return null;
 

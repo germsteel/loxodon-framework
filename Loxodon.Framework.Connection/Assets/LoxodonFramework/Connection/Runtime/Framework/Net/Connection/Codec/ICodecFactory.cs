@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface ICodecFactory<TMessage>
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface ICodecFactory<TMessage> {
         IMessageEncoder<TMessage> CreateEncoder();
 
         IMessageDecoder<TMessage> CreateDecoder();

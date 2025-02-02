@@ -80,13 +80,11 @@ async & await函数定义在AsyncTask模块中，只要在lua文件中通过requ
 
 如上示例中的M.start函数，执行start()将会返回一个AsyncTask的lua对象，请看下面的C#调用代码。
 
-    public class LuaBehaviour : MonoBehaviour, ILuaExtendable
-    {
+    public class LuaBehaviour : MonoBehaviour, ILuaExtendable {
         protected LuaTable metatable;
         protected Func<MonoBehaviour, ILuaTask> onStart;
 
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             ...
             
             metatable = (LuaTable)result[0];
@@ -94,10 +92,8 @@ async & await函数定义在AsyncTask模块中，只要在lua文件中通过requ
             onStart = metatable.Get<Func<MonoBehaviour, ILuaTask>>("start");
         }
 
-        protected virtual async void Start()
-        {
-            if (onStart != null)
-            {
+        protected virtual async void Start() {
+            if (onStart != null) {
                 //start是async包装的异步函数则会返回ILuaTask对象，否则返回null
                 ILuaTask task = onStart(this);
                 if (task != null)
@@ -111,8 +107,7 @@ async & await函数定义在AsyncTask模块中，只要在lua文件中通过requ
 为配合async和await的使用，使用try函数包装了lua的xpcall函数，以方便在lua函数中捕获异常。
 
 try函数的输入参数一个lua表，起结构如下，t[0]是主函数，t.catch是catch函数，t.finally是finally函数
-
-	{
+ {
 		function()	
 			--这是主函数
 		end,
@@ -219,8 +214,7 @@ LuaBehaviour对象挂载Lua脚本支持两种方式，TextAsset方式和Filename
 
 比如添加如下代码，则可以在编辑界面看到如图中所示的界面
 
-    public class ExampleCryptographFactory : EncryptorFactory
-    {
+    public class ExampleCryptographFactory : EncryptorFactory {
         [Multiline(2)]
         [SerializeField]
         private string privateKey;
@@ -229,8 +223,7 @@ LuaBehaviour对象挂载Lua脚本支持两种方式，TextAsset方式和Filename
         [SerializeField]
         private string publicKey;
 
-        public override IEncryptor Create()
-        {
+        public override IEncryptor Create() {
             throw new NotImplementedException();
         }
     }

@@ -24,8 +24,7 @@
 
 using System;
 
-namespace Loxodon.Log
-{
+namespace Loxodon.Log {
     /// <summary>
 	/// The ILog interface is use by application to log messages into
 	/// the Loxodon.Log framework.
@@ -44,8 +43,7 @@ namespace Loxodon.Log
 	/// </code>
 	/// </example>
 	/// <author>Clark</author>
-	public interface ILog
-    {
+	public interface ILog {
 
         void Debug(object message);
 

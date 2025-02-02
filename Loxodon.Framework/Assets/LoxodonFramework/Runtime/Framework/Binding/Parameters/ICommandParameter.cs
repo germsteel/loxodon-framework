@@ -24,17 +24,14 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Parameters
-{
-    public interface ICommandParameter
-    {
+namespace Loxodon.Framework.Binding.Parameters {
+    public interface ICommandParameter {
         object GetValue();
 
         Type GetValueType();
     }
 
-    public interface ICommandParameter<T> : ICommandParameter
-    {
+    public interface ICommandParameter<T> : ICommandParameter {
         new T GetValue();
     }
 }

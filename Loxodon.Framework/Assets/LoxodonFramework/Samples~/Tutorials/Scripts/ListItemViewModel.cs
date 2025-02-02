@@ -25,10 +25,8 @@
 using Loxodon.Framework.Commands;
 using Loxodon.Framework.ViewModels;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ListItemViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ListItemViewModel : ViewModelBase {
         private string title;
         private string icon;
         private float price;
@@ -36,41 +34,34 @@ namespace Loxodon.Framework.Tutorials
         private ICommand clickCommand;
         private ICommand selectCommand;
 
-        public ListItemViewModel(ICommand selectCommand, ICommand clickCommand)
-        {
+        public ListItemViewModel(ICommand selectCommand, ICommand clickCommand) {
             this.selectCommand = selectCommand;
             this.clickCommand = clickCommand;
         }
 
-        public ICommand ClickCommand
-        {
+        public ICommand ClickCommand {
             get { return this.clickCommand; }
         }
 
-        public ICommand SelectCommand
-        {
+        public ICommand SelectCommand {
             get { return this.selectCommand; }
         }
 
-        public string Title
-        {
+        public string Title {
             get { return this.title; }
             set { this.Set(ref title, value); }
         }
-        public string Icon
-        {
+        public string Icon {
             get { return this.icon; }
             set { this.Set(ref icon, value); }
         }
 
-        public float Price
-        {
+        public float Price {
             get { return this.price; }
             set { this.Set(ref price, value); }
         }
 
-        public bool IsSelected
-        {
+        public bool IsSelected {
             get { return this.selected; }
             set { this.Set(ref selected, value); }
         }

@@ -31,16 +31,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using XLua;
 
-namespace Loxodon.Framework.Binding.Lua
-{
+namespace Loxodon.Framework.Binding.Lua {
     [LuaCallCSharp]
-    public static class LuaBehaviourBindingExtension
-    {
+    public static class LuaBehaviourBindingExtension {
         private static IBinder binder;
-        public static IBinder Binder
-        {
-            get
-            {
+        public static IBinder Binder {
+            get {
                 if (binder == null)
                     binder = Context.GetApplicationContext().GetService<IBinder>();
 
@@ -51,8 +47,7 @@ namespace Loxodon.Framework.Binding.Lua
             }
         }
 
-        public static IBindingContext BindingContext(this Behaviour behaviour)
-        {
+        public static IBindingContext BindingContext(this Behaviour behaviour) {
             if (behaviour == null || behaviour.gameObject == null)
                 return null;
 
@@ -61,52 +56,43 @@ namespace Loxodon.Framework.Binding.Lua
                 bindingContextLifecycle = behaviour.gameObject.AddComponent<BindingContextLifecycle>();
 
             IBindingContext bindingContext = bindingContextLifecycle.BindingContext;
-            if (bindingContext == null)
-            {
+            if (bindingContext == null) {
                 bindingContext = new BindingContext(behaviour,Binder);
                 bindingContextLifecycle.BindingContext = bindingContext;
             }
             return bindingContext;
         }
 
-        public static LuaBindingSet CreateBindingSet(this Behaviour behaviour)
-        {
+        public static LuaBindingSet CreateBindingSet(this Behaviour behaviour) {
             IBindingContext context = behaviour.BindingContext();
             return new LuaBindingSet(context, behaviour);
         }
 
-        public static void SetDataContext(this Behaviour behaviour, object dataContext)
-        {
+        public static void SetDataContext(this Behaviour behaviour, object dataContext) {
             behaviour.BindingContext().DataContext = dataContext;
         }
 
-        public static void AddBinding(this Behaviour behaviour, BindingDescription bindingDescription)
-        {
+        public static void AddBinding(this Behaviour behaviour, BindingDescription bindingDescription) {
             behaviour.BindingContext().Add(behaviour, bindingDescription);
         }
 
-        public static void AddBindings(this Behaviour behaviour, IEnumerable<BindingDescription> bindingDescriptions)
-        {
+        public static void AddBindings(this Behaviour behaviour, IEnumerable<BindingDescription> bindingDescriptions) {
             behaviour.BindingContext().Add(behaviour, bindingDescriptions);
         }
 
-        public static void AddBinding(this Behaviour behaviour, object target, BindingDescription bindingDescription, object key = null)
-        {
+        public static void AddBinding(this Behaviour behaviour, object target, BindingDescription bindingDescription, object key = null) {
             behaviour.BindingContext().Add(target, bindingDescription, key);
         }
 
-        public static void AddBindings(this Behaviour behaviour, object target, IEnumerable<BindingDescription> bindingDescriptions, object key = null)
-        {
+        public static void AddBindings(this Behaviour behaviour, object target, IEnumerable<BindingDescription> bindingDescriptions, object key = null) {
             behaviour.BindingContext().Add(target, bindingDescriptions, key);
         }
 
-        public static void ClearBindings(this Behaviour behaviour, object key)
-        {
+        public static void ClearBindings(this Behaviour behaviour, object key) {
             behaviour.BindingContext().Clear(key);
         }
 
-        public static void ClearAllBindings(this Behaviour behaviour)
-        {
+        public static void ClearAllBindings(this Behaviour behaviour) {
             behaviour.BindingContext().Clear();
         }
     }

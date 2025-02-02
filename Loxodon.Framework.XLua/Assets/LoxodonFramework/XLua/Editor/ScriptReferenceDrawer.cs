@@ -29,15 +29,12 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Loxodon.Framework.Editors
-{
+namespace Loxodon.Framework.Editors {
     [CustomPropertyDrawer(typeof(ScriptReference))]
-    public class ScriptReferenceDrawer : PropertyDrawer
-    {
+    public class ScriptReferenceDrawer : PropertyDrawer {
         private const float HORIZONTAL_GAP = 5;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             EditorGUI.BeginProperty(position, label, property);
             var objectProperty = property.FindPropertyRelative("cachedAsset");
             var typeProperty = property.FindPropertyRelative("type");
@@ -59,10 +56,8 @@ namespace Loxodon.Framework.Editors
             ScriptReferenceType typeValue = (ScriptReferenceType)typeProperty.enumValueIndex;
             EditorGUI.BeginChangeCheck();
             ScriptReferenceType newTypeValue = (ScriptReferenceType)EditorGUI.EnumPopup(typeRect, typeValue);
-            if (EditorGUI.EndChangeCheck() && typeValue != newTypeValue)
-            {
-                if (ValidateSetting(asset, newTypeValue))
-                {
+            if (EditorGUI.EndChangeCheck() && typeValue != newTypeValue) {
+                if (ValidateSetting(asset, newTypeValue)) {
                     typeProperty.enumValueIndex = (int)newTypeValue;
                     UpdateProperty(filenameProperty, textProperty, newTypeValue, asset);
                 }
@@ -73,25 +68,20 @@ namespace Loxodon.Framework.Editors
 
             EditorGUI.BeginChangeCheck();
             Object newAsset = null;
-            switch (newTypeValue)
-            {
-                case ScriptReferenceType.Filename:
-                    {
-                        if (asset != null)
-                        {
+            switch (newTypeValue) {
+                case ScriptReferenceType.Filename: {
+                        if (asset != null) {
                             var name = asset.name;
                             asset.name = filenameProperty.stringValue;
                             newAsset = EditorGUI.ObjectField(valueRect, GUIContent.none, asset, typeof(Object), false);
                             asset.name = name;
                         }
-                        else
-                        {
+                        else {
                             newAsset = EditorGUI.ObjectField(valueRect, GUIContent.none, asset, typeof(Object), false);
                         }
                         break;
                     }
-                case ScriptReferenceType.TextAsset:
-                    {
+                case ScriptReferenceType.TextAsset: {
                         if (asset is TextAsset)
                             newAsset = EditorGUI.ObjectField(valueRect, GUIContent.none, asset, typeof(TextAsset), false);
                         else
@@ -99,10 +89,8 @@ namespace Loxodon.Framework.Editors
                         break;
                     }
             }
-            if (EditorGUI.EndChangeCheck())
-            {
-                if (ValidateAsset(newAsset) && ValidateSetting(newAsset, newTypeValue))
-                {
+            if (EditorGUI.EndChangeCheck()) {
+                if (ValidateAsset(newAsset) && ValidateSetting(newAsset, newTypeValue)) {
                     objectProperty.objectReferenceValue = newAsset;
                     UpdateProperty(filenameProperty, textProperty, newTypeValue, newAsset);
                 }
@@ -112,13 +100,11 @@ namespace Loxodon.Framework.Editors
             EditorGUI.EndProperty();
         }
 
-        protected virtual bool ValidateAsset(Object asset)
-        {
+        protected virtual bool ValidateAsset(Object asset) {
             if (asset == null)
                 return true;
 
-            if (!(asset is TextAsset || asset is DefaultAsset))
-            {
+            if (!(asset is TextAsset || asset is DefaultAsset)) {
                 Debug.LogWarningFormat("Invalid asset for ScriptReference");
                 return false;
             }
@@ -127,29 +113,25 @@ namespace Loxodon.Framework.Editors
             if (string.IsNullOrEmpty(path))
                 return false;
 
-            if (asset is DefaultAsset && Directory.Exists(path))
-            {
+            if (asset is DefaultAsset && Directory.Exists(path)) {
                 Debug.LogWarningFormat("Invalid asset for ScriptReference path = '{0}'.", path);
                 return false;
             }
 
-            if (path.EndsWith(".cs"))
-            {
+            if (path.EndsWith(".cs")) {
                 Debug.LogWarningFormat("Invalid asset for ScriptReference path = '{0}'.", path);
                 return false;
             }
             return true;
         }
 
-        protected virtual bool ValidateSetting(Object asset, ScriptReferenceType type)
-        {
+        protected virtual bool ValidateSetting(Object asset, ScriptReferenceType type) {
             if (asset == null || type == ScriptReferenceType.TextAsset)
                 return true;
 
             string path = AssetDatabase.GetAssetPath(asset);
             LuaSettings luaSettings = LuaSettings.GetOrCreateSettings();
-            foreach (string root in luaSettings.SrcRoots)
-            {
+            foreach (string root in luaSettings.SrcRoots) {
                 if (path.StartsWith(root))
                     return true;
             }
@@ -157,21 +139,17 @@ namespace Loxodon.Framework.Editors
             if (path.IndexOf("Resources") >= 0)
                 return true;
 
-            if (EditorUtility.DisplayDialog("Notice", string.Format("The file \"{0}\" is not in the source code folder of lua. Do you want to add a source code folder?", asset.name), "Yes", "Cancel"))
-            {
+            if (EditorUtility.DisplayDialog("Notice", string.Format("The file \"{0}\" is not in the source code folder of lua. Do you want to add a source code folder?", asset.name), "Yes", "Cancel")) {
                 SettingsService.OpenProjectSettings("Project/LuaSettingsProvider");
                 return false;
             }
-            else
-            {
+            else {
                 return true;
             }
         }
 
-        public virtual void UpdateProperty(SerializedProperty filenameProperty, SerializedProperty textProperty, ScriptReferenceType type, Object asset)
-        {
-            switch (type)
-            {
+        public virtual void UpdateProperty(SerializedProperty filenameProperty, SerializedProperty textProperty, ScriptReferenceType type, Object asset) {
+            switch (type) {
                 case ScriptReferenceType.TextAsset:
                     if (asset != null && asset is TextAsset)
                         textProperty.objectReferenceValue = (TextAsset)asset;
@@ -189,8 +167,7 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        protected virtual string GetFilename(Object asset)
-        {
+        protected virtual string GetFilename(Object asset) {
             if (asset == null)
                 return null;
 
@@ -204,10 +181,8 @@ namespace Loxodon.Framework.Editors
                 path = path.Substring(0, dotIndex);
 
             LuaSettings luaSettings = LuaSettings.GetOrCreateSettings();
-            foreach (string root in luaSettings.SrcRoots)
-            {
-                if (path.StartsWith(root))
-                {
+            foreach (string root in luaSettings.SrcRoots) {
+                if (path.StartsWith(root)) {
                     path = path.Replace(root + "/", "").Replace("/", ".");
                     return path;
                 }

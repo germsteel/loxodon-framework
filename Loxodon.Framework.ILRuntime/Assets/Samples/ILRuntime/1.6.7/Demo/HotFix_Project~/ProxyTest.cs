@@ -6,14 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HotFix_Project
-{
-    public class ProxyTest
-    {
-        public static void Run()
-        {
-            Account account = new Account()
-            {
+namespace HotFix_Project {
+    public class ProxyTest {
+        public static void Run() {
+            Account account = new Account() {
                 ID = 1,
                 Username = "test",
                 Password = "test",
@@ -21,29 +17,24 @@ namespace HotFix_Project
                 Birthday = new DateTime(2000, 3, 3)
             };
 
-            User user = new User()
-            {
+            User user = new User() {
                 FirstName = "Tom"
             };
 
-            try
-            {
+            try {
                 IProxyType userProxyType = ProxyFactory.Default.Get(typeof(User));
                 UnityEngine.Debug.LogFormat("user.FirstName:{0}", userProxyType.GetProperty("FirstName").GetValue(user));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 UnityEngine.Debug.LogFormat("user exception:{0}", e);
             }
 
-            try
-            {
+            try {
                 IProxyType accountProxyType = ProxyFactory.Default.Get(typeof(Account));
                 UnityEngine.Debug.LogFormat("account.Username:{0}", accountProxyType.GetProperty("Username").GetValue(account));
 
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 UnityEngine.Debug.LogFormat("account exception:{0}", e);
             }
 

@@ -24,13 +24,11 @@
 
 using System;
 
-namespace Loxodon.Framework.Interactivity
-{
+namespace Loxodon.Framework.Interactivity {
     /// <summary>
     /// Represents a request from user interaction.
     /// </summary>
-    public interface IInteractionRequest
-    {
+    public interface IInteractionRequest {
         /// <summary>
         /// Fired when the interaction is needed.
         /// </summary>

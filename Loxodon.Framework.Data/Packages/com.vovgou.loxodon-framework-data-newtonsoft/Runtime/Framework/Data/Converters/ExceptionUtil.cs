@@ -26,30 +26,23 @@ using Newtonsoft.Json;
 using System;
 using System.Text;
 
-namespace Loxodon.Framework.Data.Converters
-{
-    public static class ExceptionUtil
-    {
-        public static JsonSerializationException Create(JsonReader reader, string message)
-        {
+namespace Loxodon.Framework.Data.Converters {
+    public static class ExceptionUtil {
+        public static JsonSerializationException Create(JsonReader reader, string message) {
             return Create(reader, message, null);
         }
 
-        public static JsonSerializationException Create(JsonReader reader, string message, Exception ex)
-        {
+        public static JsonSerializationException Create(JsonReader reader, string message, Exception ex) {
             return Create(reader as IJsonLineInfo, reader.Path, message, ex);
         }
 
-        public static JsonSerializationException Create(IJsonLineInfo lineInfo, string path, string message, Exception ex)
-        {
+        public static JsonSerializationException Create(IJsonLineInfo lineInfo, string path, string message, Exception ex) {
             return new JsonSerializationException(FormatMessage(lineInfo, path, message), ex);
         }
 
-        internal static string FormatMessage(IJsonLineInfo lineInfo, string path, string message)
-        {
+        internal static string FormatMessage(IJsonLineInfo lineInfo, string path, string message) {
             StringBuilder buf = new StringBuilder();
-            if (!message.EndsWith(Environment.NewLine, StringComparison.Ordinal))
-            {
+            if (!message.EndsWith(Environment.NewLine, StringComparison.Ordinal)) {
                 buf.Append(message.Trim());
                 if (!message.EndsWith("."))
                     buf.Append(".");

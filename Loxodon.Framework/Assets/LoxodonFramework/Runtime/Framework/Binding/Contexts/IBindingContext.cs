@@ -25,10 +25,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Binding.Contexts
-{
-    public interface IBindingContext : IDisposable
-    {
+namespace Loxodon.Framework.Binding.Contexts {
+    public interface IBindingContext : IDisposable {
         event EventHandler DataContextChanged;
 
         object Owner { get; }

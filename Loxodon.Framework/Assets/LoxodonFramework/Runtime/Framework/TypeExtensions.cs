@@ -28,14 +28,11 @@ using System.Reflection;
 using Loxodon.Log;
 using Loxodon.Framework.Observables;
 
-namespace Loxodon.Framework
-{
-    public static class TypeExtensions
-    {
+namespace Loxodon.Framework {
+    public static class TypeExtensions {
         //private static readonly ILog log = LogManager.GetLogger(typeof(TypeExtensions));
 
-        public static bool IsSubclassOfGenericTypeDefinition(this Type type, Type genericTypeDefinition)
-        {
+        public static bool IsSubclassOfGenericTypeDefinition(this Type type, Type genericTypeDefinition) {
 #if NETFX_CORE
             if (!genericTypeDefinition.GetTypeInfo().IsGenericTypeDefinition)
 #else
@@ -55,14 +52,12 @@ namespace Loxodon.Framework
 #else
             Type baseType = type.BaseType;
 #endif
-            if (baseType != null && baseType != typeof(object))
-            {
+            if (baseType != null && baseType != typeof(object)) {
                 if (IsSubclassOfGenericTypeDefinition(baseType, genericTypeDefinition))
                     return true;
             }
 
-            foreach (Type t in type.GetInterfaces())
-            {
+            foreach (Type t in type.GetInterfaces()) {
                 if (IsSubclassOfGenericTypeDefinition(t, genericTypeDefinition))
                     return true;
             }
@@ -70,8 +65,7 @@ namespace Loxodon.Framework
             return false;
         }
 
-        public static object CreateDefault(this Type type)
-        {
+        public static object CreateDefault(this Type type) {
             if (type == null)
                 return null;
 
@@ -90,15 +84,13 @@ namespace Loxodon.Framework
             return Activator.CreateInstance(type);
         }
 
-        public static bool IsStatic(this MemberInfo info)
-        {
+        public static bool IsStatic(this MemberInfo info) {
             var fieldInfo = info as FieldInfo;
             if (fieldInfo != null)
                 return fieldInfo.IsStatic;
 
             var propertyInfo = info as PropertyInfo;
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 var method = propertyInfo.GetGetMethod();
                 if (method != null)
                     return method.IsStatic;
@@ -113,8 +105,7 @@ namespace Loxodon.Framework
                 return methodInfo.IsStatic;
 
             var eventInfo = info as EventInfo;
-            if (eventInfo != null)
-            {
+            if (eventInfo != null) {
                 var method = eventInfo.GetAddMethod();
                 if (method != null)
                     return method.IsStatic;
@@ -127,34 +118,27 @@ namespace Loxodon.Framework
             return false;
         }
 
-        public static object ToSafe(this Type type, object value)
-        {
+        public static object ToSafe(this Type type, object value) {
             if (value == null)
                 return type.CreateDefault();
 
             var safeValue = value;
-            try
-            {
-                if (!type.IsInstanceOfType(value))
-                {
-                    if (value is IObservableProperty)
-                    {
+            try {
+                if (!type.IsInstanceOfType(value)) {
+                    if (value is IObservableProperty) {
                         safeValue = (value as IObservableProperty).Value;
-                        if (!type.IsInstanceOfType(safeValue))
-                        {
+                        if (!type.IsInstanceOfType(safeValue)) {
                             safeValue = ChangeType(safeValue, type);
                         }
                     }
-                    else if (type == typeof(string))
-                    {
+                    else if (type == typeof(string)) {
                         safeValue = value.ToString();
                     }
 #if NETFX_CORE
                     else if (type.GetTypeInfo().IsEnum)
 #else
                     else if (type.IsEnum)
-#endif
-                    {
+#endif {
                         var s = value as string;
                         safeValue = s != null ? Enum.Parse(type, s, true) : Enum.ToObject(type, value);
                     }
@@ -162,13 +146,11 @@ namespace Loxodon.Framework
                     else if (type.GetTypeInfo().IsValueType)
 #else
                     else if (type.IsValueType)
-#endif
-                    {
+#endif {
                         var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
                         safeValue = underlyingType == typeof(bool) ? ConvertToBoolean(value) : ChangeType(value, underlyingType);
                     }
-                    else
-                    {
+                    else {
                         safeValue = ChangeType(value, type);
                     }
                 }
@@ -178,8 +160,7 @@ namespace Loxodon.Framework
             return safeValue;
         }
 
-        private static bool ConvertToBoolean(object result)
-        {
+        private static bool ConvertToBoolean(object result) {
             if (result == null)
                 return false;
 
@@ -195,8 +176,7 @@ namespace Loxodon.Framework
             if (resultType.GetTypeInfo().IsValueType)
 #else
             if (resultType.IsValueType)
-#endif
-            {
+#endif {
                 var underlyingType = Nullable.GetUnderlyingType(resultType) ?? resultType;
                 return !result.Equals(underlyingType.CreateDefault());
             }
@@ -204,14 +184,11 @@ namespace Loxodon.Framework
             return true;
         }
 
-        private static object ChangeType(object value, Type type)
-        {
-            try
-            {
+        private static object ChangeType(object value, Type type) {
+            try {
                 return Convert.ChangeType(value, type);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return value;
             }
         }

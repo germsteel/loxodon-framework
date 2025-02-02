@@ -25,12 +25,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     public delegate void UILayout(RectTransform transform);
 
-    public interface IUIViewGroup : IUIView
-    {
+    public interface IUIViewGroup : IUIView {
         List<IUIView> Views { get; }
 
         IUIView GetView(string name);

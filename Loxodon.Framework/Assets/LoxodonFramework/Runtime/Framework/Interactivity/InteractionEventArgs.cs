@@ -24,13 +24,11 @@
 
 using System;
 
-namespace Loxodon.Framework.Interactivity
-{
+namespace Loxodon.Framework.Interactivity {
     /// <summary>
     /// Event args for the <see cref="IInteractionRequest.Raised"/> event.
     /// </summary>
-    public class InteractionEventArgs : EventArgs
-    {
+    public class InteractionEventArgs : EventArgs {
         private object context;
 
         private Action callback;
@@ -40,8 +38,7 @@ namespace Loxodon.Framework.Interactivity
         /// </summary>
         /// <param name="context"></param>
         /// <param name="callback"></param>
-        public InteractionEventArgs(object context, Action callback)
-        {
+        public InteractionEventArgs(object context, Action callback) {
             this.context = context;
             this.callback = callback;
         }

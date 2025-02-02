@@ -26,10 +26,8 @@ using System;
 
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Execution
-{
-    public interface IScheduledExecutor:IDisposable
-    {
+namespace Loxodon.Framework.Execution {
+    public interface IScheduledExecutor:IDisposable {
         /// <summary>
         /// Start the service.
         /// </summary>

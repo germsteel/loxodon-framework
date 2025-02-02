@@ -25,27 +25,21 @@
 using System;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Configurations
-{
-    public class CompositeConfiguration : ConfigurationBase
-    {
+namespace Loxodon.Framework.Configurations {
+    public class CompositeConfiguration : ConfigurationBase {
         private readonly List<IConfiguration> configurations = new List<IConfiguration>();
 
         private readonly IConfiguration memoryConfiguration;
 
-        public CompositeConfiguration() : this(null)
-        {
+        public CompositeConfiguration() : this(null) {
         }
 
-        public CompositeConfiguration(List<IConfiguration> configurations)
-        {
+        public CompositeConfiguration(List<IConfiguration> configurations) {
             this.memoryConfiguration = new MemoryConfiguration();
             this.configurations.Add(memoryConfiguration);
 
-            if (configurations != null && configurations.Count > 0)
-            {
-                for (int i = 0; i < configurations.Count; i++)
-                {
+            if (configurations != null && configurations.Count > 0) {
+                for (int i = 0; i < configurations.Count; i++) {
                     var config = configurations[i];
                     if (config == null)
                         continue;
@@ -61,13 +55,11 @@ namespace Loxodon.Framework.Configurations
         /// <param name="key">the key to be checked</param>
         /// <exception cref="ArgumentException">if the source configuration cannot be determined</exception>
         /// <returns>the source configuration of this key</returns>
-        public IConfiguration GetFirstConfiguration(string key)
-        {
+        public IConfiguration GetFirstConfiguration(string key) {
             if (key == null)
                 throw new ArgumentException("Key must not be null!");
 
-            for (int i = 0; i < configurations.Count; i++)
-            {
+            for (int i = 0; i < configurations.Count; i++) {
                 IConfiguration config = configurations[i];
                 if (config != null && config.ContainsKey(key))
                     return config;
@@ -80,8 +72,7 @@ namespace Loxodon.Framework.Configurations
         /// </summary>
         /// <param name="index">The index of the configuration to retrieve</param>
         /// <returns>the configuration at this index</returns>
-        public IConfiguration GetConfiguration(int index)
-        {
+        public IConfiguration GetConfiguration(int index) {
             if (index < 0 || index >= configurations.Count)
                 return null;
 
@@ -92,8 +83,7 @@ namespace Loxodon.Framework.Configurations
         /// Returns the memory configuration. In this configuration changes are stored.
         /// </summary>
         /// <returns>the in memory configuration</returns>
-        public IConfiguration GetMemoryConfiguration()
-        {
+        public IConfiguration GetMemoryConfiguration() {
             return memoryConfiguration;
         }
 
@@ -101,33 +91,25 @@ namespace Loxodon.Framework.Configurations
         /// Add a new configuration, the new configuration has a higher priority.
         /// </summary>
         /// <param name="configuration"></param>
-        public void AddConfiguration(IConfiguration configuration)
-        {
-            if (!configurations.Contains(configuration))
-            {
+        public void AddConfiguration(IConfiguration configuration) {
+            if (!configurations.Contains(configuration)) {
                 configurations.Insert(1, configuration);
             }
         }
 
-        public void RemoveConfiguration(IConfiguration configuration)
-        {
-            if (!configuration.Equals(memoryConfiguration))
-            {
+        public void RemoveConfiguration(IConfiguration configuration) {
+            if (!configuration.Equals(memoryConfiguration)) {
                 configurations.Remove(configuration);
             }
         }
 
-        public int GetNumberOfConfigurations()
-        {
+        public int GetNumberOfConfigurations() {
             return configurations.Count;
         }
 
-        public override bool IsEmpty
-        {
-            get
-            {
-                for (int i = 0; i < configurations.Count; i++)
-                {
+        public override bool IsEmpty {
+            get {
+                for (int i = 0; i < configurations.Count; i++) {
                     IConfiguration config = configurations[i];
                     if (config != null && !config.IsEmpty)
                         return false;
@@ -136,10 +118,8 @@ namespace Loxodon.Framework.Configurations
             }
         }
 
-        public override bool ContainsKey(string key)
-        {
-            for (int i = 0; i < configurations.Count; i++)
-            {
+        public override bool ContainsKey(string key) {
+            for (int i = 0; i < configurations.Count; i++) {
                 IConfiguration config = configurations[i];
                 if (config != null && config.ContainsKey(key))
                     return true;
@@ -147,18 +127,15 @@ namespace Loxodon.Framework.Configurations
             return false;
         }
 
-        public override IEnumerator<string> GetKeys()
-        {
+        public override IEnumerator<string> GetKeys() {
             List<string> keys = new List<string>();
-            for (int i = 0; i < configurations.Count; i++)
-            {
+            for (int i = 0; i < configurations.Count; i++) {
                 IConfiguration config = configurations[i];
                 if (config == null)
                     continue;
 
                 IEnumerator<string> j = config.GetKeys();
-                while (j.MoveNext())
-                {
+                while (j.MoveNext()) {
                     string key = j.Current;
                     if (!keys.Contains(key))
                         keys.Add(key);
@@ -167,10 +144,8 @@ namespace Loxodon.Framework.Configurations
             return keys.GetEnumerator();
         }
 
-        public override object GetProperty(string key)
-        {
-            for (int i = 0; i < configurations.Count; i++)
-            {
+        public override object GetProperty(string key) {
+            for (int i = 0; i < configurations.Count; i++) {
                 IConfiguration config = configurations[i];
                 if (config != null && config.ContainsKey(key))
                     return config.GetProperty(key);
@@ -178,26 +153,21 @@ namespace Loxodon.Framework.Configurations
             return null;
         }
 
-        public override void AddProperty(string key, object value)
-        {
+        public override void AddProperty(string key, object value) {
             memoryConfiguration.AddProperty(key, value);
         }
 
-        public override void SetProperty(string key, object value)
-        {
+        public override void SetProperty(string key, object value) {
             memoryConfiguration.SetProperty(key, value);
         }
 
-        public override void RemoveProperty(string key)
-        {
+        public override void RemoveProperty(string key) {
             memoryConfiguration.RemoveProperty(key);
         }
 
-        public override void Clear()
-        {
+        public override void Clear() {
             memoryConfiguration.Clear();
-            for (int i = configurations.Count - 1; i > 0; i--)
-            {
+            for (int i = configurations.Count - 1; i > 0; i--) {
                 configurations.RemoveAt(i);
             }
         }

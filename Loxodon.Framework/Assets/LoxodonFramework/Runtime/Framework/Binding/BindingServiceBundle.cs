@@ -32,16 +32,12 @@ using Loxodon.Framework.Binding.Proxy.Sources.Text;
 using Loxodon.Framework.Binding.Proxy.Targets;
 using Loxodon.Framework.Services;
 
-namespace Loxodon.Framework.Binding
-{
-    public class BindingServiceBundle : AbstractServiceBundle
-    {
-        public BindingServiceBundle(IServiceContainer container) : base(container)
-        {
+namespace Loxodon.Framework.Binding {
+    public class BindingServiceBundle : AbstractServiceBundle {
+        public BindingServiceBundle(IServiceContainer container) : base(container) {
         }
 
-        protected override void OnStart(IServiceContainer container)
-        {
+        protected override void OnStart(IServiceContainer container) {
             PathParser pathParser = new PathParser();
             ExpressionPathFinder expressionPathFinder = new ExpressionPathFinder();
             ConverterRegistry converterRegistry = new ConverterRegistry();
@@ -81,8 +77,7 @@ namespace Loxodon.Framework.Binding
             container.Register<ITargetProxyFactoryRegister>(targetFactory);
         }
 
-        protected override void OnStop(IServiceContainer container)
-        {
+        protected override void OnStop(IServiceContainer container) {
             container.Unregister<IBinder>();
             container.Unregister<IBindingFactory>();
             container.Unregister<IConverterRegistry>();

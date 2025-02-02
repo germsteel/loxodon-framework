@@ -25,12 +25,9 @@
 using Loxodon.Framework.Net.Connection;
 using System.Text;
 
-namespace Loxodon.Framework.Examples.Messages
-{
-    public class Request : IRequest
-    {
-        public Request()
-        {
+namespace Loxodon.Framework.Examples.Messages {
+    public class Request : IRequest {
+        public Request() {
             this.Type = MessageType.Request;
         }
         
@@ -42,8 +39,7 @@ namespace Loxodon.Framework.Examples.Messages
 
         public byte[] Content { get; set; }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return string.Format("{0} CMD:{1} SEQ:{2} Content:{3}", Type, CommandID, Sequence, Encoding.UTF8.GetString(Content));
         }
     }

@@ -13,8 +13,7 @@ public delegate void TestDelegateMethod(int a);
 public delegate string TestDelegateFunction(int a);
 
 
-public class DelegateDemo : MonoBehaviour
-{
+public class DelegateDemo : MonoBehaviour {
     public static TestDelegateMethod TestMethodDelegate;
     public static TestDelegateFunction TestFunctionDelegate;
     public static System.Action<string> TestActionDelegate;
@@ -25,13 +24,11 @@ public class DelegateDemo : MonoBehaviour
     System.IO.MemoryStream fs;
     System.IO.MemoryStream p;
 
-    void Start()
-    {
+    void Start() {
         StartCoroutine(LoadHotFixAssembly());
     }
 
-    IEnumerator LoadHotFixAssembly()
-    {
+    IEnumerator LoadHotFixAssembly() {
         //首先实例化ILRuntime的AppDomain，AppDomain是一个应用程序域，每个AppDomain都是一个独立的沙盒
         appdomain = new ILRuntime.Runtime.Enviorment.AppDomain();
         //正常项目中应该是自行从其他地方下载dll，或者打包在AssetBundle中读取，平时开发以及为了演示方便直接从StreammingAssets中读取，
@@ -65,12 +62,10 @@ public class DelegateDemo : MonoBehaviour
         byte[] pdb = www.bytes;
         fs = new MemoryStream(dll);
         p = new MemoryStream(pdb);
-        try
-        {
+        try {
             appdomain.LoadAssembly(fs, p, new ILRuntime.Mono.Cecil.Pdb.PdbReaderProvider());
         }
-        catch
-        {
+        catch {
             Debug.LogError("加载热更DLL失败，请确保已经通过VS打开Assets/Samples/ILRuntime/1.6/Demo/HotFix_Project/HotFix_Project.sln编译过热更DLL");
         }
 
@@ -78,8 +73,7 @@ public class DelegateDemo : MonoBehaviour
         OnHotFixLoaded();
     }
 
-    void InitializeILRuntime()
-    {
+    void InitializeILRuntime() {
 #if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
         //由于Unity的Profiler接口只允许在主线程使用，为了避免出异常，需要告诉ILRuntime主线程的线程ID才能正确将函数运行耗时报告给Profiler
         appdomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -95,36 +89,29 @@ public class DelegateDemo : MonoBehaviour
         //ILRuntime内部是用Action和Func这两个系统内置的委托类型来创建实例的，所以其他的委托类型都需要写转换器
         //将Action或者Func转换成目标委托类型
 
-        appdomain.DelegateManager.RegisterDelegateConvertor<TestDelegateMethod>((action) =>
-        {
+        appdomain.DelegateManager.RegisterDelegateConvertor<TestDelegateMethod>((action) => {
             //转换器的目的是把Action或者Func转换成正确的类型，这里则是把Action<int>转换成TestDelegateMethod
-            return new TestDelegateMethod((a) =>
-            {
+            return new TestDelegateMethod((a) => {
                 //调用委托实例
                 ((System.Action<int>)action)(a);
             });
         });
         //对于TestDelegateFunction同理，只是是将Func<int, string>转换成TestDelegateFunction
-        appdomain.DelegateManager.RegisterDelegateConvertor<TestDelegateFunction>((action) =>
-        {
-            return new TestDelegateFunction((a) =>
-            {
+        appdomain.DelegateManager.RegisterDelegateConvertor<TestDelegateFunction>((action) => {
+            return new TestDelegateFunction((a) => {
                 return ((System.Func<int, string>)action)(a);
             });
         });
 
         //下面再举一个这个Demo中没有用到，但是UGUI经常遇到的一个委托，例如UnityAction<float>
-        appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<float>>((action) =>
-        {
-            return new UnityEngine.Events.UnityAction<float>((a) =>
-            {
+        appdomain.DelegateManager.RegisterDelegateConvertor<UnityEngine.Events.UnityAction<float>>((action) => {
+            return new UnityEngine.Events.UnityAction<float>((a) => {
                 ((System.Action<float>)action)(a);
             });
         });
     }
 
-    void OnHotFixLoaded()
-    {
+    void OnHotFixLoaded() {
         Debug.Log("完全在热更DLL内部使用的委托，直接可用，不需要做任何处理");
         
         Debug.Log("如果需要跨域调用委托（将热更DLL里面的委托实例传到Unity主工程用）, 就需要注册适配器");
@@ -143,13 +130,11 @@ public class DelegateDemo : MonoBehaviour
 
     }
 
-    void Update()
-    {
+    void Update() {
 
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         if (fs != null)
             fs.Close();
         if (p != null)

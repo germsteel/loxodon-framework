@@ -28,29 +28,23 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public class LiteDBExportProcessor : ExportProcessor
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public class LiteDBExportProcessor : ExportProcessor {
         [SerializeField]
         protected string liteDbFilename = "data.db";
 
-        protected override void DoExportSheet(FileInfo file, ISheet sheet, ISheetReader reader, string outputRoot)
-        {
-            reader.Headers.ForEach(c =>
-            {
+        protected override void DoExportSheet(FileInfo file, ISheet sheet, ISheetReader reader, string outputRoot) {
+            reader.Headers.ForEach(c => {
                 if (c.ColumnName.Equals("id"))
                     c.ColumnName = "_id";
             });
 
             string dbFullname = Path.Combine(outputRoot, liteDbFilename);
             string tableName = sheet.SheetName;
-            using (var db = new LiteDatabase(dbFullname))
-            {
+            using (var db = new LiteDatabase(dbFullname)) {
                 var liteCollection = db.GetCollection(tableName);
                 liteCollection.DeleteAll();
-                foreach (ColumnInfo columnInfo in reader.Headers)
-                {
+                foreach (ColumnInfo columnInfo in reader.Headers) {
                     if (columnInfo.IndexType != IndexType.None)
                         liteCollection.EnsureIndex(columnInfo.ColumnName, columnInfo.IndexType == IndexType.Unique ? true : false);
                 }
@@ -61,12 +55,10 @@ namespace Loxodon.Framework.Data.Editors
             Debug.LogFormat("File:{0} Sheet:{1} OK……", GetRelativePath(file.FullName), sheet.SheetName);
         }
 
-        protected virtual List<BsonDocument> Parse(ISheetReader reader)
-        {
+        protected virtual List<BsonDocument> Parse(ISheetReader reader) {
             BsonMapper mapper = BsonMapper.Global;
             List<BsonDocument> list = new List<BsonDocument>();
-            for (int i = reader.StartLine; i <= reader.TotalCount; i++)
-            {
+            for (int i = reader.StartLine; i <= reader.TotalCount; i++) {
                 var data = reader.ReadLine(i);
                 if (data == null)
                     continue;

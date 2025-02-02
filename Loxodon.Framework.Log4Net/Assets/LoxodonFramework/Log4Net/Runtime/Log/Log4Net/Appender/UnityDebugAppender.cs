@@ -1,14 +1,11 @@
 ﻿
-namespace Loxodon.Log.Log4Net.Appender
-{
+namespace Loxodon.Log.Log4Net.Appender {
     using UnityEngine;
     using log4net.Core;
     using log4net.Appender;
 
-    public class UnityDebugAppender: AppenderSkeleton
-    {
-        protected override void Append(LoggingEvent loggingEvent)
-        {
+    public class UnityDebugAppender: AppenderSkeleton {
+        protected override void Append(LoggingEvent loggingEvent) {
             Level level = loggingEvent.Level;
             if (Level.Fatal.Equals(level) || Level.Error.Equals(level))
                 Debug.LogError(RenderLoggingEvent(loggingEvent));

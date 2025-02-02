@@ -25,10 +25,8 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Loxodon.Framework.Views.Animations
-{
-    public class AlphaAnimation : UIAnimation
-    {
+namespace Loxodon.Framework.Views.Animations {
+    public class AlphaAnimation : UIAnimation {
         [Range(0f, 1f)]
         public float from = 1f;
         [Range(0f, 1f)]
@@ -38,11 +36,9 @@ namespace Loxodon.Framework.Views.Animations
 
         private IUIView view;
 
-        void OnEnable()
-        {
+        void OnEnable() {
             this.view = this.GetComponent<IUIView>();
-            switch (this.AnimationType)
-            {
+            switch (this.AnimationType) {
                 case AnimationType.EnterAnimation:
                     this.view.EnterAnimation = this;
                     break;
@@ -59,14 +55,12 @@ namespace Loxodon.Framework.Views.Animations
                     break;
             }
 
-            if (this.AnimationType == AnimationType.ActivationAnimation || this.AnimationType == AnimationType.EnterAnimation)
-            {
+            if (this.AnimationType == AnimationType.ActivationAnimation || this.AnimationType == AnimationType.EnterAnimation) {
                 this.view.CanvasGroup.alpha = from;
             }
         }
 
-        public override IAnimation Play()
-        {
+        public override IAnimation Play() {
             ////use the DoTween
             //this.view.CanvasGroup.DOFade (this.to, this.duration).OnStart (this.OnStart).OnComplete (this.OnEnd).Play ();		
 
@@ -74,33 +68,26 @@ namespace Loxodon.Framework.Views.Animations
             return this;
         }
 
-        IEnumerator DoPlay()
-        {
+        IEnumerator DoPlay() {
             this.OnStart();
 
             var delta = (to - from) / duration;
             var alpha = from;
             this.view.Alpha = alpha;
-            if (delta > 0f)
-            {
-                while (alpha < to)
-                {
+            if (delta > 0f) {
+                while (alpha < to) {
                     alpha += delta * Time.deltaTime;
-                    if (alpha > to)
-                    {
+                    if (alpha > to) {
                         alpha = to;
                     }
                     this.view.Alpha = alpha;
                     yield return null;
                 }
             }
-            else
-            {
-                while (alpha > to)
-                {
+            else {
+                while (alpha > to) {
                     alpha += delta * Time.deltaTime;
-                    if (alpha < to)
-                    {
+                    if (alpha < to) {
                         alpha = to;
                     }
                     this.view.Alpha = alpha;

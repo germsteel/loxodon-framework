@@ -2,16 +2,12 @@
 using Loxodon.Framework.Binding.Proxy.Targets;
 using Loxodon.Framework.Services;
 
-namespace Loxodon.Framework.Binding
-{
-    public class ILRuntimeBindingServiceBundle : BindingServiceBundle
-    {
-        public ILRuntimeBindingServiceBundle(IServiceContainer container) : base(container)
-        {
+namespace Loxodon.Framework.Binding {
+    public class ILRuntimeBindingServiceBundle : BindingServiceBundle {
+        public ILRuntimeBindingServiceBundle(IServiceContainer container) : base(container) {
         }
 
-        protected override void OnStart(IServiceContainer container)
-        {
+        protected override void OnStart(IServiceContainer container) {
             base.OnStart(container);
 
             /* Support ILruntime */

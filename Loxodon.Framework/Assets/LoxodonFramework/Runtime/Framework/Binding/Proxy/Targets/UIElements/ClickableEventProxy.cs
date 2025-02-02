@@ -32,10 +32,8 @@ using System.Reflection;
 using System.Threading;
 using UnityEngine.UIElements;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class ClickableEventProxy : EventTargetProxyBase
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class ClickableEventProxy : EventTargetProxyBase {
         private static readonly ILog log = LogManager.GetLogger(typeof(ClickableEventProxy));
 
         private bool disposed = false;
@@ -46,18 +44,15 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         protected readonly Clickable clickable;
         protected SendOrPostCallback updateTargetEnableAction;
 
-        public ClickableEventProxy(object target, Clickable clickable) : base(target)
-        {
+        public ClickableEventProxy(object target, Clickable clickable) : base(target) {
             this.clickable = clickable;
             this.BindEvent();
         }
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWay; } }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
+        protected override void Dispose(bool disposing) {
+            if (!disposed) {
                 UnbindCommand(this.command);
                 this.UnbindEvent();
                 disposed = true;
@@ -67,18 +62,15 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public override Type Type { get { return typeof(Clickable); } }
 
-        protected virtual void BindEvent()
-        {
+        protected virtual void BindEvent() {
             this.clickable.clicked += OnEvent;
         }
 
-        protected virtual void UnbindEvent()
-        {
+        protected virtual void UnbindEvent() {
             this.clickable.clicked -= OnEvent;
         }
 
-        protected virtual bool IsValid(Delegate handler)
-        {
+        protected virtual bool IsValid(Delegate handler) {
             if (handler is Action)
                 return true;
 #if NETFX_CORE
@@ -96,8 +88,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return false;
         }
 
-        protected virtual bool IsValid(IProxyInvoker invoker)
-        {
+        protected virtual bool IsValid(IProxyInvoker invoker) {
             IProxyMethodInfo info = invoker.ProxyMethodInfo;
             if (!info.ReturnType.Equals(typeof(void)))
                 return false;
@@ -108,50 +99,40 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return true;
         }
 
-        protected virtual void OnEvent()
-        {
-            try
-            {
-                if (this.command != null)
-                {
+        protected virtual void OnEvent() {
+            try {
+                if (this.command != null) {
                     this.command.Execute(null);
                     return;
                 }
 
-                if (this.invoker != null)
-                {
+                if (this.invoker != null) {
                     this.invoker.Invoke();
                     return;
                 }
 
-                if (this.handler != null)
-                {
-                    if (this.handler is Action)
-                    {
+                if (this.handler != null) {
+                    if (this.handler is Action) {
                         (this.handler as Action)();
                     }
-                    else
-                    {
+                    else {
                         this.handler.DynamicInvoke();
                     }
                     return;
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsErrorEnabled)
                     log.ErrorFormat("{0}", e);
             }
         }
 
-        public override void SetValue(object value)
-        {
+        public override void SetValue(object value) {
             var target = this.Target;
             if (target == null)
                 return;
 
-            if (this.command != null)
-            {
+            if (this.command != null) {
                 UnbindCommand(this.command);
                 this.command = null;
             }
@@ -167,8 +148,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
             //Bind Command
             ICommand command = value as ICommand;
-            if (command != null)
-            {
+            if (command != null) {
                 this.command = command;
                 BindCommand(this.command);
                 UpdateTargetEnable();
@@ -177,10 +157,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
             //Bind Method
             IProxyInvoker proxyInvoker = value as IProxyInvoker;
-            if (proxyInvoker != null)
-            {
-                if (this.IsValid(proxyInvoker))
-                {
+            if (proxyInvoker != null) {
+                if (this.IsValid(proxyInvoker)) {
                     this.invoker = proxyInvoker;
                     return;
                 }
@@ -190,10 +168,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
             //Bind Delegate
             Delegate handler = value as Delegate;
-            if (handler != null)
-            {
-                if (this.IsValid(handler))
-                {
+            if (handler != null) {
+                if (this.IsValid(handler)) {
                     this.handler = handler;
                     return;
                 }
@@ -203,26 +179,22 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
             //Bind Script Function
             IInvoker invoker = value as IInvoker;
-            if (invoker != null)
-            {
+            if (invoker != null) {
                 this.invoker = invoker;
             }
         }
 
-        public override void SetValue<TValue>(TValue value)
-        {
+        public override void SetValue<TValue>(TValue value) {
             this.SetValue((object)value);
         }
 
-        protected virtual void OnCanExecuteChanged(object sender, EventArgs e)
-        {
+        protected virtual void OnCanExecuteChanged(object sender, EventArgs e) {
             if (updateTargetEnableAction == null)
                 updateTargetEnableAction = UpdateTargetEnable;
             UISynchronizationContext.Post(updateTargetEnableAction, null);
         }
 
-        protected virtual void UpdateTargetEnable(object state = null)
-        {
+        protected virtual void UpdateTargetEnable(object state = null) {
             var target = this.Target;
             if (target == null || !(target is VisualElement))
                 return;
@@ -231,16 +203,14 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             ((VisualElement)target).SetEnabled(value);
         }
 
-        protected virtual void BindCommand(ICommand command)
-        {
+        protected virtual void BindCommand(ICommand command) {
             if (command == null)
                 return;
 
             command.CanExecuteChanged += OnCanExecuteChanged;
         }
 
-        protected virtual void UnbindCommand(ICommand command)
-        {
+        protected virtual void UnbindCommand(ICommand command) {
             if (command == null)
                 return;
 

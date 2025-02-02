@@ -24,17 +24,13 @@
 
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Interactivity
-{
-    public abstract class AsyncInteractionActionBase<TNotification> : IInteractionAction
-    {
-        public void OnRequest(object sender, InteractionEventArgs args)
-        {
+namespace Loxodon.Framework.Interactivity {
+    public abstract class AsyncInteractionActionBase<TNotification> : IInteractionAction {
+        public void OnRequest(object sender, InteractionEventArgs args) {
             AsyncInteractionEventArgs asyncArgs = args as AsyncInteractionEventArgs;
             TaskCompletionSource<object> source = asyncArgs.Source;
             TNotification notification = (TNotification)asyncArgs.Context;
-            this.Action(notification).ContinueWith((t) =>
-            {
+            this.Action(notification).ContinueWith((t) => {
                 if (t.IsFaulted)
                     source.TrySetException(t.Exception);
                 else if (t.IsCanceled)
@@ -47,14 +43,11 @@ namespace Loxodon.Framework.Interactivity
         public abstract Task Action(TNotification notification);
     }
 
-    public abstract class AsyncInteractionActionBase : IInteractionAction
-    {
-        public void OnRequest(object sender, InteractionEventArgs args)
-        {
+    public abstract class AsyncInteractionActionBase : IInteractionAction {
+        public void OnRequest(object sender, InteractionEventArgs args) {
             AsyncInteractionEventArgs asyncArgs = args as AsyncInteractionEventArgs;
             TaskCompletionSource<object> source = asyncArgs.Source;
-            this.Action().ContinueWith((t) =>
-            {
+            this.Action().ContinueWith((t) => {
                 if (t.IsFaulted)
                     source.TrySetException(t.Exception);
                 else if (t.IsCanceled)

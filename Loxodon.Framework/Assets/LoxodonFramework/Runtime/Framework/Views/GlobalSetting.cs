@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Views
-{
-    public class GlobalSetting
-    {
+namespace Loxodon.Framework.Views {
+    public class GlobalSetting {
         /// <summary>
         /// Whether to use the CanvasGroup.blocksRaycasts instead of the CanvasGroup.interactable to control the interactivity of the view  
         /// </summary>

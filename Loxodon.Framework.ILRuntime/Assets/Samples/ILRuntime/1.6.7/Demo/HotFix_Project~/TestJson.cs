@@ -3,18 +3,14 @@ using System.Collections.Generic;
 using LitJson;
 using UnityEngine;
 
-namespace HotFix_Project
-{
-    public class TestJson
-    {
-        enum JsonTestEnum
-        {
+namespace HotFix_Project {
+    public class TestJson {
+        enum JsonTestEnum {
             Test1,
             Test2,
             Test3,
         }
-        class JsonTestClass
-        {
+        class JsonTestClass {
             public int IntProp { get; set; }
             public string StringProp { get; set; }
             public JsonTestEnum EnumProp { get; set; }
@@ -23,15 +19,13 @@ namespace HotFix_Project
             public Dictionary<string, int> DicTest2 { get; set; }
         }
 
-        class JsonTestSubClass
-        {
+        class JsonTestSubClass {
             public long LongProp { get; set; }
             public List<JsonTestSubClass> SubClassList { get; set; }
             public JsonTestSubClass[] ArrayProp { get; set; }
         }
 
-        public static void RunTest()
-        {
+        public static void RunTest() {
             JsonTestClass cls = new JsonTestClass();
             cls.IntProp = 1;
             cls.StringProp = "2";

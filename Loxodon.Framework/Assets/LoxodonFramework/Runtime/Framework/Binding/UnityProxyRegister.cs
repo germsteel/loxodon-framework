@@ -28,13 +28,10 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Binding
-{
-    public class UnityProxyRegister
-    {
+namespace Loxodon.Framework.Binding {
+    public class UnityProxyRegister {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Initialize()
-        {
+        static void Initialize() {
             Register<Transform, Vector3>("localPosition", t => t.localPosition, (t, v) => t.localPosition = v);
             Register<Transform, Vector3>("eulerAngles", t => t.eulerAngles, (t, v) => t.eulerAngles = v);
             Register<Transform, Vector3>("localEulerAngles", t => t.localEulerAngles, (t, v) => t.localEulerAngles = v);
@@ -127,18 +124,15 @@ namespace Loxodon.Framework.Binding
 #endif
         }
 
-        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter)
-        {
+        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter) {
             var propertyInfo = typeof(T).GetProperty(name);
-            if (propertyInfo is PropertyInfo)
-            {
+            if (propertyInfo is PropertyInfo) {
                 ProxyFactory.Default.Register(new ProxyPropertyInfo<T, TValue>(name, getter, setter));
                 return;
             }
 
             var fieldInfo = typeof(T).GetField(name);
-            if (fieldInfo is FieldInfo)
-            {
+            if (fieldInfo is FieldInfo) {
                 ProxyFactory.Default.Register(new ProxyFieldInfo<T, TValue>(name, getter, setter));
                 return;
             }

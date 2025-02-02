@@ -26,20 +26,16 @@ using Loxodon.Framework.Binding;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials.OSA
-{
-    public class ItemDetailView : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials.OSA {
+    public class ItemDetailView : MonoBehaviour {
         public Text title;
         public Image color;
-        public ItemViewModel Item
-        {
+        public ItemViewModel Item {
             get { return (ItemViewModel)this.GetDataContext(); }
             set { this.SetDataContext(value); }
         }
 
-        protected void Start()
-        {
+        protected void Start() {
             var bindingSet = this.CreateBindingSet<ItemDetailView, ItemViewModel>();
             bindingSet.Bind(title).For(v => v.text).To(vm => vm.Title);
             bindingSet.Bind(title).For(v => v.color).To(vm => vm.Color);

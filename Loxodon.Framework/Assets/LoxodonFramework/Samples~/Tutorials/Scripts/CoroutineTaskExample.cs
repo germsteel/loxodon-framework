@@ -26,12 +26,9 @@ using Loxodon.Framework.Asynchronous;
 using System.Collections;
 using UnityEngine;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class CoroutineTaskExample : MonoBehaviour
-    {
-        IEnumerator Start()
-        {
+namespace Loxodon.Framework.Tutorials {
+    public class CoroutineTaskExample : MonoBehaviour {
+        IEnumerator Start() {
             Debug.LogFormat("Wait for 2 seconds");
             yield return CoroutineTask.Delay(2f).WaitForDone();
 
@@ -55,21 +52,17 @@ namespace Loxodon.Framework.Tutorials
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask()
-        {
+        protected IEnumerator DoTask() {
             int n = 10;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 Debug.LogFormat("Task:i = {0}", i);
                 yield return new WaitForSeconds(0.5f);
             }
         }
 
-        protected IEnumerator DoContinueTask()
-        {
+        protected IEnumerator DoContinueTask() {
             int n = 10;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 Debug.LogFormat("ContinueTask:i = {0}", i);
                 yield return new WaitForSeconds(0.5f);
             }

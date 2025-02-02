@@ -30,10 +30,8 @@ using XLua;
 using Loxodon.Log;
 using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
 
-namespace Loxodon.Framework
-{
-    public static class LuaEnvironment
-    {
+namespace Loxodon.Framework {
+    public static class LuaEnvironment {
         private static readonly ILog log = LogManager.GetLogger(typeof(LuaEnvironment));
 
         private static float interval = 2;
@@ -41,11 +39,9 @@ namespace Loxodon.Framework
         private static LuaEnv luaEnv;
         private static IAsyncResult result;
 
-        public static float Interval
-        {
+        public static float Interval {
             get { return interval; }
-            set
-            {
+            set {
                 if (interval <= 0)
                     return;
 
@@ -54,12 +50,9 @@ namespace Loxodon.Framework
             }
         }
 
-        public static LuaEnv LuaEnv
-        {
-            get
-            {
-                if (luaEnv == null)
-                {
+        public static LuaEnv LuaEnv {
+            get {
+                if (luaEnv == null) {
                     luaEnv = new LuaEnv();
                     if (result != null)
                         result.Cancel();
@@ -72,16 +65,13 @@ namespace Loxodon.Framework
             }
         }
 
-        public static void Dispose()
-        {
-            if (result != null)
-            {
+        public static void Dispose() {
+            if (result != null) {
                 result.Cancel();
                 result = null;
             }
 
-            if (luaEnv != null)
-            {
+            if (luaEnv != null) {
                 luaEnv.Dispose();
                 luaEnv = null;
             }
@@ -89,17 +79,13 @@ namespace Loxodon.Framework
             wait = null;
         }
 
-        private static IEnumerator DoTick()
-        {
-            while (true)
-            {
+        private static IEnumerator DoTick() {
+            while (true) {
                 yield return wait;
-                try
-                {
+                try {
                     luaEnv.Tick();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("LuaEnv.Tick Error:{0}", e);
                 }

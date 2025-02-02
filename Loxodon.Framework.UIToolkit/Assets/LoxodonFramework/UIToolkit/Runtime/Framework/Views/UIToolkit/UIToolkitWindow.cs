@@ -33,12 +33,10 @@ using UnityEngine.UIElements;
 using IAsyncResult = Loxodon.Framework.Asynchronous.IAsyncResult;
 
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     [RequireComponent(typeof(UIDocument))]
     [DisallowMultipleComponent]
-    public abstract class UIToolkitWindow : MonoBehaviour, IWindow, IManageable
-    {
+    public abstract class UIToolkitWindow : MonoBehaviour, IWindow, IManageable {
         private static readonly ILog log = LogManager.GetLogger(typeof(UIToolkitWindow));
 
         public static readonly IMessenger Messenger = Window.Messenger;
@@ -75,57 +73,47 @@ namespace Loxodon.Framework.Views
 
         public UIDocument Document { get { return this.document; } }
 
-        public event EventHandler ActivatedChanged
-        {
+        public event EventHandler ActivatedChanged {
             add { lock (_lock) { this.activatedChanged += value; } }
             remove { lock (_lock) { this.activatedChanged -= value; } }
         }
-        public event EventHandler VisibilityChanged
-        {
+        public event EventHandler VisibilityChanged {
             add { lock (_lock) { this.visibilityChanged += value; } }
             remove { lock (_lock) { this.visibilityChanged -= value; } }
         }
-        public event EventHandler OnDismissed
-        {
+        public event EventHandler OnDismissed {
             add { lock (_lock) { this.onDismissed += value; } }
             remove { lock (_lock) { this.onDismissed -= value; } }
         }
 
-        public event EventHandler<WindowStateEventArgs> StateChanged
-        {
+        public event EventHandler<WindowStateEventArgs> StateChanged {
             add { lock (_lock) { this.stateChanged += value; } }
             remove { lock (_lock) { this.stateChanged -= value; } }
         }
 
-        public virtual IAnimation EnterAnimation
-        {
+        public virtual IAnimation EnterAnimation {
             get { return this.enterAnimation; }
             set { this.enterAnimation = value; }
         }
 
-        public virtual IAnimation ExitAnimation
-        {
+        public virtual IAnimation ExitAnimation {
             get { return this.exitAnimation; }
             set { this.exitAnimation = value; }
         }
 
-        public virtual IAnimation ActivationAnimation
-        {
+        public virtual IAnimation ActivationAnimation {
             get { return this.activationAnimation; }
             set { this.activationAnimation = value; }
         }
 
-        public virtual IAnimation PassivationAnimation
-        {
+        public virtual IAnimation PassivationAnimation {
             get { return this.passivationAnimation; }
             set { this.passivationAnimation = value; }
         }
 
-        public virtual string Name
-        {
+        public virtual string Name {
             get { return !this.IsDestroyed() && this.gameObject != null ? this.gameObject.name : null; }
-            set
-            {
+            set {
                 if (this.IsDestroyed() || this.gameObject == null)
                     return;
 
@@ -133,15 +121,12 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual Transform Transform
-        {
+        public virtual Transform Transform {
             get { return this.IsDestroyed() ? null : this.transform; }
         }
 
-        public virtual bool Visibility
-        {
-            get
-            {
+        public virtual bool Visibility {
+            get {
                 if (IsDestroyed() || !this.gameObject.activeSelf)
                     return false;
 
@@ -151,8 +136,7 @@ namespace Loxodon.Framework.Views
 
                 return true;
             }
-            set
-            {
+            set {
                 if (!IsDestroyed() && this.gameObject.activeSelf == false)
                     this.gameObject.SetActive(value);
 
@@ -162,8 +146,7 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public IWindowManager WindowManager
-        {
+        public IWindowManager WindowManager {
             get { return this.windowManager ?? (this.windowManager = GameObject.FindObjectOfType<GlobalWindowManagerBase>()); }
             set { this.windowManager = value; }
         }
@@ -172,24 +155,20 @@ namespace Loxodon.Framework.Views
 
         public bool Dismissed { get { return this.dismissed; } }
 
-        protected virtual bool Interactable
-        {
-            get
-            {
+        protected virtual bool Interactable {
+            get {
                 if (this.IsDestroyed() || this.gameObject == null)
                     return false;
 
                 VisualElement root = this.RootVisualElement;
                 return root != null ? root.enabledSelf : false;
             }
-            set
-            {
+            set {
                 if (this.IsDestroyed() || this.gameObject == null)
                     return;
 
                 VisualElement root = this.RootVisualElement;
-                if (root != null && root.enabledSelf != value)
-                {
+                if (root != null && root.enabledSelf != value) {
                     root.SetEnabled(value);
                     PanelEventHandler handler = GetPanelEventHandler();
                     PanelRaycaster raycaster = GetPanelRaycaster();
@@ -199,44 +178,36 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        private PanelRaycaster GetPanelRaycaster()
-        {
+        private PanelRaycaster GetPanelRaycaster() {
             if (EventSystem.current != null)
                 return EventSystem.current.GetComponentInChildren<PanelRaycaster>();
             return null;
         }
 
-        private PanelEventHandler GetPanelEventHandler()
-        {
+        private PanelEventHandler GetPanelEventHandler() {
             if (EventSystem.current != null)
                 return EventSystem.current.GetComponentInChildren<PanelEventHandler>();
             return null;
         }
 
-        public virtual bool IsDestroyed()
-        {
+        public virtual bool IsDestroyed() {
             return this == null;
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
         }
 
-        protected virtual void OnDisable()
-        {
+        protected virtual void OnDisable() {
             this.RaiseVisibilityChanged();
         }
 
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             Initialize();
         }
 
-        public bool Activated
-        {
+        public bool Activated {
             get { return this.activated; }
-            protected set
-            {
+            protected set {
                 if (this.activated == value)
                     return;
 
@@ -246,11 +217,9 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        protected WindowState State
-        {
+        protected WindowState State {
             get { return this.state; }
-            set
-            {
+            set {
                 if (this.state.Equals(value))
                     return;
 
@@ -260,17 +229,14 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public WindowType WindowType
-        {
+        public WindowType WindowType {
             get { return this.windowType; }
             set { this.windowType = value; }
         }
 
-        public int WindowPriority
-        {
+        public int WindowPriority {
             get { return this.windowPriority; }
-            set
-            {
+            set {
                 if (value < 0)
                     this.windowPriority = 0;
                 else if (value > 10)
@@ -280,70 +246,55 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        protected void RaiseActivatedChanged()
-        {
-            try
-            {
+        protected void RaiseActivatedChanged() {
+            try {
                 this.activatedChanged?.Invoke(this, EventArgs.Empty);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.Warn("", e);
             }
         }
 
-        protected void RaiseVisibilityChanged()
-        {
-            try
-            {
+        protected void RaiseVisibilityChanged() {
+            try {
                 this.visibilityChanged?.Invoke(this, EventArgs.Empty);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.Warn("", e);
             }
         }
 
-        protected void RaiseOnDismissed()
-        {
-            try
-            {
+        protected void RaiseOnDismissed() {
+            try {
                 this.onDismissed?.Invoke(this, EventArgs.Empty);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.Warn("", e);
             }
         }
-        protected void RaiseStateChanged(WindowState oldState, WindowState newState)
-        {
-            try
-            {
+        protected void RaiseStateChanged(WindowState oldState, WindowState newState) {
+            try {
                 WindowStateEventArgs eventArgs = new WindowStateEventArgs(this, oldState, newState);
                 if (GlobalSetting.enableWindowStateBroadcast && stateBroadcast)
                     Messenger.Publish(eventArgs);
 
                 this.stateChanged?.Invoke(this, eventArgs);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
         }
 
-        protected virtual void OnActivatedChanged()
-        {
+        protected virtual void OnActivatedChanged() {
             this.Interactable = this.Activated;
         }
 
-        protected virtual void Initialize()
-        {
-            if (!initialized)
-            {
+        protected virtual void Initialize() {
+            if (!initialized) {
                 this.document = GetComponent<UIDocument>();
                 if (document.rootVisualElement == null)
                     document.visualTreeAsset = document.visualTreeAsset;
@@ -352,8 +303,7 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public void Create(IBundle bundle = null)
-        {
+        public void Create(IBundle bundle = null) {
             if (this.dismissTransition != null || this.dismissed)
                 throw new ObjectDisposedException(this.Name);
 
@@ -373,8 +323,7 @@ namespace Loxodon.Framework.Views
 
         protected abstract void OnCreate(IBundle bundle);
 
-        public ITransition Show(bool ignoreAnimation = false)
-        {
+        public ITransition Show(bool ignoreAnimation = false) {
             if (this.dismissTransition != null || this.dismissed)
                 throw new InvalidOperationException("The window has been destroyed");
 
@@ -384,8 +333,7 @@ namespace Loxodon.Framework.Views
             return this.WindowManager.Show(this).DisableAnimation(ignoreAnimation);
         }
 
-        public ITransition Hide(bool ignoreAnimation = false)
-        {
+        public ITransition Hide(bool ignoreAnimation = false) {
             if (!this.created)
                 throw new InvalidOperationException("The window has not been created.");
 
@@ -398,8 +346,7 @@ namespace Loxodon.Framework.Views
             return this.WindowManager.Hide(this).DisableAnimation(ignoreAnimation);
         }
 
-        public ITransition Dismiss(bool ignoreAnimation = false)
-        {
+        public ITransition Dismiss(bool ignoreAnimation = false) {
             if (this.dismissTransition != null)
                 return this.dismissTransition;
 
@@ -410,45 +357,36 @@ namespace Loxodon.Framework.Views
             return this.dismissTransition;
         }
 
-        public virtual IAsyncResult Activate(bool ignoreAnimation)
-        {
+        public virtual IAsyncResult Activate(bool ignoreAnimation) {
             AsyncResult result = new AsyncResult();
-            try
-            {
-                if (!this.Visibility)
-                {
+            try {
+                if (!this.Visibility) {
                     result.SetException(new InvalidOperationException("The window is not visible."));
                     return result;
                 }
 
-                if (this.Activated)
-                {
+                if (this.Activated) {
                     result.SetResult();
                     return result;
                 }
 
-                if (!ignoreAnimation && this.ActivationAnimation != null)
-                {
-                    this.ActivationAnimation.OnStart(() =>
-                    {
+                if (!ignoreAnimation && this.ActivationAnimation != null) {
+                    this.ActivationAnimation.OnStart(() => {
                         this.State = WindowState.ACTIVATION_ANIMATION_BEGIN;
-                    }).OnEnd(() =>
-                    {
+                    }).OnEnd(() => {
                         this.State = WindowState.ACTIVATION_ANIMATION_END;
                         this.Activated = true;
                         this.State = WindowState.ACTIVATED;
                         result.SetResult();
                     }).Play();
                 }
-                else
-                {
+                else {
                     this.Activated = true;
                     this.State = WindowState.ACTIVATED;
                     result.SetResult();
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 result.SetException(e);
             }
             return result;
@@ -458,19 +396,15 @@ namespace Loxodon.Framework.Views
         /// Passivate
         /// </summary>
         /// <returns></returns>
-        public virtual IAsyncResult Passivate(bool ignoreAnimation)
-        {
+        public virtual IAsyncResult Passivate(bool ignoreAnimation) {
             AsyncResult result = new AsyncResult();
-            try
-            {
-                if (!this.Visibility)
-                {
+            try {
+                if (!this.Visibility) {
                     result.SetException(new InvalidOperationException("The window is not visible."));
                     return result;
                 }
 
-                if (!this.Activated)
-                {
+                if (!this.Activated) {
                     result.SetResult();
                     return result;
                 }
@@ -478,60 +412,47 @@ namespace Loxodon.Framework.Views
                 this.Activated = false;
                 this.State = WindowState.PASSIVATED;
 
-                if (!ignoreAnimation && this.PassivationAnimation != null)
-                {
-                    this.PassivationAnimation.OnStart(() =>
-                    {
+                if (!ignoreAnimation && this.PassivationAnimation != null) {
+                    this.PassivationAnimation.OnStart(() => {
                         this.State = WindowState.PASSIVATION_ANIMATION_BEGIN;
-                    }).OnEnd(() =>
-                    {
+                    }).OnEnd(() => {
                         this.State = WindowState.PASSIVATION_ANIMATION_END;
                         result.SetResult();
                     }).Play();
                 }
-                else
-                {
+                else {
                     result.SetResult();
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 result.SetException(e);
             }
             return result;
         }
 
-        public virtual IAsyncResult DoShow(bool ignoreAnimation = false)
-        {
+        public virtual IAsyncResult DoShow(bool ignoreAnimation = false) {
             AsyncResult result = new AsyncResult();
-            Action<IPromise> action = promise =>
-            {
-                try
-                {
+            Action<IPromise> action = promise => {
+                try {
                     if (!this.created)
                         this.Create();
 
                     this.OnShow();
                     this.Visibility = true;
                     this.State = WindowState.VISIBLE;
-                    if (!ignoreAnimation && this.EnterAnimation != null)
-                    {
-                        this.EnterAnimation.OnStart(() =>
-                        {
+                    if (!ignoreAnimation && this.EnterAnimation != null) {
+                        this.EnterAnimation.OnStart(() => {
                             this.State = WindowState.ENTER_ANIMATION_BEGIN;
-                        }).OnEnd(() =>
-                        {
+                        }).OnEnd(() => {
                             this.State = WindowState.ENTER_ANIMATION_END;
                             promise.SetResult();
                         }).Play();
                     }
-                    else
-                    {
+                    else {
                         promise.SetResult();
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     promise.SetException(e);
 
                     if (log.IsWarnEnabled)
@@ -545,24 +466,17 @@ namespace Loxodon.Framework.Views
         /// <summary>
         /// Called before the start of the display animation.
         /// </summary>
-        protected virtual void OnShow()
-        {
+        protected virtual void OnShow() {
         }
 
-        public virtual IAsyncResult DoHide(bool ignoreAnimation = false)
-        {
+        public virtual IAsyncResult DoHide(bool ignoreAnimation = false) {
             AsyncResult result = new AsyncResult();
-            Action<IPromise> action = promise =>
-            {
-                try
-                {
-                    if (!ignoreAnimation && this.ExitAnimation != null)
-                    {
-                        this.ExitAnimation.OnStart(() =>
-                        {
+            Action<IPromise> action = promise => {
+                try {
+                    if (!ignoreAnimation && this.ExitAnimation != null) {
+                        this.ExitAnimation.OnStart(() => {
                             this.State = WindowState.EXIT_ANIMATION_BEGIN;
-                        }).OnEnd(() =>
-                        {
+                        }).OnEnd(() => {
                             this.State = WindowState.EXIT_ANIMATION_END;
                             this.Visibility = false;
                             this.State = WindowState.INVISIBLE;
@@ -570,16 +484,14 @@ namespace Loxodon.Framework.Views
                             promise.SetResult();
                         }).Play();
                     }
-                    else
-                    {
+                    else {
                         this.Visibility = false;
                         this.State = WindowState.INVISIBLE;
                         this.OnHide();
                         promise.SetResult();
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     promise.SetException(e);
 
                     if (log.IsWarnEnabled)
@@ -593,16 +505,12 @@ namespace Loxodon.Framework.Views
         /// <summary>
         /// Called at the end of the hidden animation.
         /// </summary>
-        protected virtual void OnHide()
-        {
+        protected virtual void OnHide() {
         }
 
-        public virtual void DoDismiss()
-        {
-            try
-            {
-                if (!this.dismissed)
-                {
+        public virtual void DoDismiss() {
+            try {
+                if (!this.dismissed) {
                     this.State = WindowState.DISMISS_BEGIN;
                     this.dismissed = true;
                     this.OnDismiss();
@@ -619,21 +527,17 @@ namespace Loxodon.Framework.Views
                     this.dismissTransition = null;
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The window named \"{0}\" failed to dismiss!Error:{1}", this.Name, e);
             }
         }
 
-        protected virtual void OnDismiss()
-        {
+        protected virtual void OnDismiss() {
         }
 
-        protected virtual void OnDestroy()
-        {
-            if (!this.Dismissed && this.dismissTransition == null)
-            {
+        protected virtual void OnDestroy() {
+            if (!this.Dismissed && this.dismissTransition == null) {
                 this.Dismiss(true);
             }
         }

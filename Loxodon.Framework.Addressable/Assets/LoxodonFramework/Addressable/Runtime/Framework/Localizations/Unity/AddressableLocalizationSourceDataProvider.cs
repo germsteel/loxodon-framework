@@ -35,8 +35,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using static UnityEngine.AddressableAssets.Addressables;
 
-namespace Loxodon.Framework.Localizations
-{
+namespace Loxodon.Framework.Localizations {
     /// <summary>
     /// Addressable data provider.
     /// It supports localized resources in ".Asset" file format.
@@ -53,8 +52,7 @@ namespace Loxodon.Framework.Localizations
     /// root/en-CA/
     /// root/en-AU/
     /// </summary>
-    public class AddressableLocalizationSourceDataProvider : IDataProvider, IDisposable
-    {
+    public class AddressableLocalizationSourceDataProvider : IDataProvider, IDisposable {
         private static readonly ILog log = LogManager.GetLogger(typeof(AddressableLocalizationSourceDataProvider));
         private List<AsyncOperationHandle<IList<LocalizationSourceAsset>>> handles;
         protected string[] filenames;
@@ -67,8 +65,7 @@ namespace Loxodon.Framework.Localizations
         /// <param name="key">The label of asset in the AssetBundle.</param>
         /// <param name="filenames">The list of file names of localized resources to be loaded</param>
         public AddressableLocalizationSourceDataProvider(object key, string[] filenames)
-            : this(new List<object>() { key }, filenames)
-        {
+            : this(new List<object>() { key }, filenames) {
         }
 
         /// <summary>
@@ -76,8 +73,7 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="keys">The label of asset in the AssetBundle.</param>
         /// <param name="filenames">The list of file names of localized resources to be loaded</param>
-        public AddressableLocalizationSourceDataProvider(IList<object> keys, string[] filenames)
-        {
+        public AddressableLocalizationSourceDataProvider(IList<object> keys, string[] filenames) {
             this.keys = keys ?? throw new ArgumentNullException("keys");
             this.filenames = filenames ?? throw new ArgumentNullException("filenames");
             this.handles = new List<AsyncOperationHandle<IList<LocalizationSourceAsset>>>();
@@ -91,24 +87,20 @@ namespace Loxodon.Framework.Localizations
         /// IDataProvider provider = new AddressableLocalizationSourceDataProvider("Assets/LoxodonFramework/Localizations/default/MainMenu.asset");
         /// </example>
         /// <param name="addresses">Addresses used to load asset at runtime.</param>
-        public AddressableLocalizationSourceDataProvider(params string[] addresses)
-        {
+        public AddressableLocalizationSourceDataProvider(params string[] addresses) {
             this.addresses = addresses ?? throw new ArgumentNullException("addresses");
             this.handles = new List<AsyncOperationHandle<IList<LocalizationSourceAsset>>>();
         }
 
-        public Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
-        {
+        public Task<Dictionary<string, object>> Load(CultureInfo cultureInfo) {
             if (this.keys != null)
                 return LoadByKeys(cultureInfo, keys, filenames);
             else
                 return LoadByAddress(cultureInfo, addresses);
         }
 
-        protected virtual async Task<Dictionary<string, object>> LoadByKeys(CultureInfo cultureInfo, IList<object> keys, string[] filenames)
-        {
-            try
-            {
+        protected virtual async Task<Dictionary<string, object>> LoadByKeys(CultureInfo cultureInfo, IList<object> keys, string[] filenames) {
+            try {
                 Dictionary<string, object> dict = new Dictionary<string, object>();
                 var locations = await Addressables.LoadResourceLocationsAsync(keys, Addressables.MergeMode.Union, typeof(LocalizationSourceAsset));
 
@@ -122,16 +114,14 @@ namespace Loxodon.Framework.Localizations
                 await FillData(dict, paths, cultureInfo);
                 return dict;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("An error occurred when loading localized data.Error:{0}", e);
                 throw;
             }
         }
 
-        protected virtual List<IResourceLocation> GetResourceLocations(List<IResourceLocation> list, string languageTag, string[] filenames = null)
-        {
+        protected virtual List<IResourceLocation> GetResourceLocations(List<IResourceLocation> list, string languageTag, string[] filenames = null) {
             string key = string.Format("/{0}/", languageTag);
             if (filenames != null && filenames.Length > 0)
                 return list.FindAll(l => l.InternalId.Contains(key) && filenames.Contains(Path.GetFileName(l.PrimaryKey)));
@@ -139,10 +129,8 @@ namespace Loxodon.Framework.Localizations
                 return list.FindAll(l => l.InternalId.Contains(key));
         }
 
-        protected virtual async Task<Dictionary<string, object>> LoadByAddress(CultureInfo cultureInfo, string[] addresses)
-        {
-            try
-            {
+        protected virtual async Task<Dictionary<string, object>> LoadByAddress(CultureInfo cultureInfo, string[] addresses) {
+            try {
                 Dictionary<string, object> dict = new Dictionary<string, object>();
                 List<object> keys = new List<object>();
                 foreach (string address in addresses)
@@ -159,16 +147,14 @@ namespace Loxodon.Framework.Localizations
                 await FillData(dict, paths, cultureInfo);
                 return dict;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("An error occurred when loading localized data.Error:{0}", e);
                 throw;
             }
         }
 
-        protected virtual void AddAddress(List<object> keys, string address, CultureInfo cultureInfo)
-        {
+        protected virtual void AddAddress(List<object> keys, string address, CultureInfo cultureInfo) {
             keys.Add(address);
 
             int end = address.LastIndexOf('/', address.Length - 1);
@@ -181,31 +167,25 @@ namespace Loxodon.Framework.Localizations
                 keys.Add(address.Replace(string.Format("/{0}/", languageTag), string.Format("/{0}/", cultureInfo.Name)));
         }
 
-        protected virtual async Task FillData(Dictionary<string, object> dict, IList<IResourceLocation> paths, CultureInfo cultureInfo)
-        {
-            try
-            {
+        protected virtual async Task FillData(Dictionary<string, object> dict, IList<IResourceLocation> paths, CultureInfo cultureInfo) {
+            try {
                 if (paths == null || paths.Count <= 0)
                     return;
 
                 var result = Addressables.LoadAssetsAsync<LocalizationSourceAsset>(paths, null);
                 IList<LocalizationSourceAsset> assets = await result;
                 this.handles.Add(result);
-                foreach (LocalizationSourceAsset asset in assets)
-                {
-                    try
-                    {
+                foreach (LocalizationSourceAsset asset in assets) {
+                    try {
                         MonolingualSource source = asset.Source;
                         if (source == null)
                             continue;
 
-                        foreach (KeyValuePair<string, object> kv in source.GetData())
-                        {
+                        foreach (KeyValuePair<string, object> kv in source.GetData()) {
                             dict[kv.Key] = kv.Value;
                         }
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("An error occurred when loading localized data from \"{0}\".Error:{1}", asset.name, e);
                     }
@@ -218,18 +198,15 @@ namespace Loxodon.Framework.Localizations
         #region IDisposable Support
         private bool disposedValue = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
                 foreach (var handle in handles)
                     Addressables.Release(handle);
                 disposedValue = true;
             }
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
         }
         #endregion

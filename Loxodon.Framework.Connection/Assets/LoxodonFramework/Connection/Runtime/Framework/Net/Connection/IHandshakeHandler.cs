@@ -24,10 +24,8 @@
 
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface IHandshakeHandler
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface IHandshakeHandler {
         /// <summary>
         /// Send and receive handshake messages, 
         /// return after completing the handshake.

@@ -24,10 +24,8 @@
 
 using XLua;
 
-namespace Loxodon.Framework
-{
-    public interface ILuaExtendable
-    {
+namespace Loxodon.Framework {
+    public interface ILuaExtendable {
         LuaTable GetMetatable();
     }
 }

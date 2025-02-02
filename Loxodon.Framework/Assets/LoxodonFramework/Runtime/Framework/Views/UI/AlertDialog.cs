@@ -29,10 +29,8 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
-    public class AlertDialog : UIBase, IDialog
-    {
+namespace Loxodon.Framework.Views {
+    public class AlertDialog : UIBase, IDialog {
         private static readonly ILog log = LogManager.GetLogger(typeof(AlertDialog));
 
         public const int BUTTON_POSITIVE = -1;
@@ -42,8 +40,7 @@ namespace Loxodon.Framework.Views
         private const string DEFAULT_VIEW_NAME = "UI/AlertDialog";
 
         private static string viewName;
-        public static string ViewName
-        {
+        public static string ViewName {
             get { return string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName; }
             set { viewName = value; }
         }
@@ -56,8 +53,7 @@ namespace Loxodon.Framework.Views
         /// <returns>A AlertDialog.</returns>
         public static AlertDialog ShowMessage(
             string message,
-            string title)
-        {
+            string title) {
             return ShowMessage(message, title, null, null, null, true, null);
         }
 
@@ -75,8 +71,7 @@ namespace Loxodon.Framework.Views
             string message,
             string title,
             string buttonText,
-            Action<int> afterHideCallback)
-        {
+            Action<int> afterHideCallback) {
             return ShowMessage(message, title, buttonText, null, null, false, afterHideCallback);
         }
 
@@ -99,8 +94,7 @@ namespace Loxodon.Framework.Views
             string title,
             string confirmButtonText,
             string cancelButtonText,
-            Action<int> afterHideCallback)
-        {
+            Action<int> afterHideCallback) {
             return ShowMessage(message, title, confirmButtonText, null, cancelButtonText, false, afterHideCallback);
         }
 
@@ -129,8 +123,7 @@ namespace Loxodon.Framework.Views
             string neutralButtonText,
             string cancelButtonText,
             bool canceledOnTouchOutside,
-            Action<int> afterHideCallback)
-        {
+            Action<int> afterHideCallback) {
             AlertDialogViewModel viewModel = new AlertDialogViewModel();
             viewModel.Message = message;
             viewModel.Title = title;
@@ -168,8 +161,7 @@ namespace Loxodon.Framework.Views
             string neutralButtonText,
             string cancelButtonText,
             bool canceledOnTouchOutside,
-            Action<int> afterHideCallback)
-        {
+            Action<int> afterHideCallback) {
             AlertDialogViewModel viewModel = new AlertDialogViewModel();
             viewModel.Title = title;
             viewModel.ConfirmButtonText = confirmButtonText;
@@ -180,8 +172,7 @@ namespace Loxodon.Framework.Views
 
             IUIViewLocator locator = GetUIViewLocator();
             AlertDialogWindowBase window = locator.LoadView<AlertDialogWindowBase>(ViewName);
-            if (window == null)
-            {
+            if (window == null) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("Not found the dialog window named \"{0}\".", viewName);
 
@@ -198,8 +189,7 @@ namespace Loxodon.Framework.Views
         /// </summary>
         /// <param name="viewModel">The view model of the dialog box</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(AlertDialogViewModel viewModel)
-        {
+        public static AlertDialog ShowMessage(AlertDialogViewModel viewModel) {
             return ShowMessage(ViewName, null, viewModel);
         }
 
@@ -209,8 +199,7 @@ namespace Loxodon.Framework.Views
         /// <param name="viewName">The view name of the dialog box,if it is null, use the default view name</param>
         /// <param name="viewModel">The view model of the dialog box</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(string viewName, AlertDialogViewModel viewModel)
-        {
+        public static AlertDialog ShowMessage(string viewName, AlertDialogViewModel viewModel) {
             return ShowMessage(viewName, null, viewModel);
         }
 
@@ -221,19 +210,16 @@ namespace Loxodon.Framework.Views
         /// <param name="contentViewName">The custom content view name to be shown to the user.</param>
         /// <param name="viewModel">The view model of the dialog box</param>
         /// <returns>A AlertDialog.</returns>
-        public static AlertDialog ShowMessage(string viewName, string contentViewName, AlertDialogViewModel viewModel)
-        {
+        public static AlertDialog ShowMessage(string viewName, string contentViewName, AlertDialogViewModel viewModel) {
             AlertDialogWindowBase window = null;
             IUIView contentView = null;
-            try
-            {
+            try {
                 if (string.IsNullOrEmpty(viewName))
                     viewName = ViewName;
 
                 IUIViewLocator locator = GetUIViewLocator();
                 window = locator.LoadView<AlertDialogWindowBase>(viewName);
-                if (window == null)
-                {
+                if (window == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Not found the dialog window named \"{0}\".", viewName);
 
@@ -247,8 +233,7 @@ namespace Loxodon.Framework.Views
                 dialog.Show();
                 return dialog;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (window != null)
                     window.Dismiss();
                 if (contentView != null)
@@ -263,38 +248,32 @@ namespace Loxodon.Framework.Views
         private IUIView contentView;
         private AlertDialogViewModel viewModel;
 
-        public AlertDialog(AlertDialogWindowBase window, AlertDialogViewModel viewModel) : this(window, null, viewModel)
-        {
+        public AlertDialog(AlertDialogWindowBase window, AlertDialogViewModel viewModel) : this(window, null, viewModel) {
         }
 
-        public AlertDialog(AlertDialogWindowBase window, IUIView contentView, AlertDialogViewModel viewModel)
-        {
+        public AlertDialog(AlertDialogWindowBase window, IUIView contentView, AlertDialogViewModel viewModel) {
             this.source = new TaskCompletionSource<int>();
             this.window = window;
             this.contentView = contentView;
             this.viewModel = viewModel;
 
             EventHandler handler = null;
-            handler = (sender, e) =>
-            {
+            handler = (sender, e) => {
                 this.window.OnDismissed -= handler;
                 source.SetResult(viewModel.Result);
             };
             this.window.OnDismissed += handler;
         }
 
-        public virtual object WaitForClosed()
-        {
+        public virtual object WaitForClosed() {
             return Executors.WaitWhile(() => !this.viewModel.Closed);
         }
 
-        public virtual Task<int> WaitForResult()
-        {
+        public virtual Task<int> WaitForResult() {
             return source.Task;
         }
 
-        public void Show()
-        {
+        public void Show() {
             this.window.ViewModel = this.viewModel;
             if (this.contentView != null)
                 this.window.ContentView = this.contentView;
@@ -302,8 +281,7 @@ namespace Loxodon.Framework.Views
             this.window.Show();
         }
 
-        public void Cancel()
-        {
+        public void Cancel() {
             this.window.Cancel();
         }
     }

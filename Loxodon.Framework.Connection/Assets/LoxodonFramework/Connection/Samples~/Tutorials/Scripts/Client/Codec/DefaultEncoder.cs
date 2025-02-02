@@ -29,20 +29,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using BinaryWriter = Loxodon.Framework.Net.Connection.BinaryWriter;
 
-namespace Loxodon.Framework.Examples
-{
-    public class DefaultEncoder : IMessageEncoder<IMessage>
-    {
+namespace Loxodon.Framework.Examples {
+    public class DefaultEncoder : IMessageEncoder<IMessage> {
         protected readonly SemaphoreSlim writeLock = new SemaphoreSlim(1, 1);
         protected uint sequence = 0;
-        public async Task Encode(IMessage message, BinaryWriter writer)
-        {
+        public async Task Encode(IMessage message, BinaryWriter writer) {
             await writeLock.WaitAsync();
-            try
-            {
+            try {
                 Notification notification = message as Notification;
-                if (notification != null)
-                {
+                if (notification != null) {
                     //分配Sequence，通知类型如果服务器不校验序列号也可以不要
                     notification.Sequence = ++sequence;
 
@@ -60,8 +55,7 @@ namespace Loxodon.Framework.Examples
                 }
 
                 Request request = message as Request;
-                if (request != null)
-                {
+                if (request != null) {
                     //分配Sequence，服务器返回的Response的Sequence必须与请求配对
                     request.Sequence = ++sequence;
 
@@ -80,8 +74,7 @@ namespace Loxodon.Framework.Examples
 
                 //客户端编码器不需要处理Response类型
                 Response response = message as Response;
-                if (response != null)
-                {
+                if (response != null) {
                     byte[] buffer = response.Content;
                     int count = buffer != null ? buffer.Length + 11 : 11;
                     writer.Write(count);
@@ -97,8 +90,7 @@ namespace Loxodon.Framework.Examples
 
                 throw new IOException();
             }
-            finally
-            {
+            finally {
                 writeLock.Release();
             }
         }

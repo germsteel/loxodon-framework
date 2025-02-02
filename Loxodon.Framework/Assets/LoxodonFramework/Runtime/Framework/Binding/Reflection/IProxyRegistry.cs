@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public interface IProxyRegistry
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public interface IProxyRegistry {
         void Register(IProxyFieldInfo info);
 
         void Register(IProxyPropertyInfo info);

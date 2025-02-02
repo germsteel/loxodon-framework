@@ -25,25 +25,20 @@
 using System;
 using XLua;
 
-namespace Loxodon.Framework.Binding.Parameters
-{
-    public class LuaFunctionCommandParameter : ICommandParameter
-    {
+namespace Loxodon.Framework.Binding.Parameters {
+    public class LuaFunctionCommandParameter : ICommandParameter {
         private LuaFunction function;
-        public LuaFunctionCommandParameter(LuaFunction function)
-        {
+        public LuaFunctionCommandParameter(LuaFunction function) {
             this.function = function;
         }
-        public object GetValue()
-        {
+        public object GetValue() {
             object[] results = function.Call();
             if (results == null || results.Length <= 0)
                 return null;
             return results[0];
         }
 
-        public Type GetValueType()
-        {
+        public Type GetValueType() {
             return typeof(object);
         }
     }

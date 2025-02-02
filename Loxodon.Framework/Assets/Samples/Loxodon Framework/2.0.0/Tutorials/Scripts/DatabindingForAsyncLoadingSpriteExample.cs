@@ -30,40 +30,33 @@ using Loxodon.Framework.ViewModels;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
+namespace Loxodon.Framework.Tutorials {
 
-    public class SpriteViewModel : ViewModelBase
-    {
+    public class SpriteViewModel : ViewModelBase {
         private string spriteName = "EquipImages_1";
 
-        public string SpriteName
-        {
+        public string SpriteName {
             get { return this.spriteName; }
             set { this.Set(ref spriteName, value); }
         }
 
-        public void ChangeSpriteName()
-        {
+        public void ChangeSpriteName() {
             this.SpriteName = string.Format("EquipImages_{0}", Random.Range(1, 30));
         }
     }
 
-    public class DatabindingForAsyncLoadingSpriteExample : MonoBehaviour
-    {
+    public class DatabindingForAsyncLoadingSpriteExample : MonoBehaviour {
         public Button changeSpriteButton;
 
         public AsyncSpriteLoader spriteLoader;
 
-        void Awake()
-        {
+        void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
         }
 
-        void Start()
-        {
+        void Start() {
             var viewModel = new SpriteViewModel();
 
             IBindingContext bindingContext = this.BindingContext();

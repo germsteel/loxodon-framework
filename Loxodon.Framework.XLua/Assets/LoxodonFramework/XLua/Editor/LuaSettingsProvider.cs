@@ -32,10 +32,8 @@ using UnityEngine.UIElements;
 using UnityEngine.Experimental.UIElements;
 #endif
 
-namespace Loxodon.Framework.Editors
-{
-    class LuaSettingsProvider : SettingsProvider
-    {
+namespace Loxodon.Framework.Editors {
+    class LuaSettingsProvider : SettingsProvider {
         private const float HORIZONTAL_GAP = 5;
         private const float VERTICAL_GAP = 5;
 
@@ -44,8 +42,7 @@ namespace Loxodon.Framework.Editors
 
         private Color transparentColor = new Color(1f, 1f, 1f, 0f);
 
-        public LuaSettingsProvider(string path, SettingsScope scope = SettingsScope.Project) : base(path, scope)
-        {
+        public LuaSettingsProvider(string path, SettingsScope scope = SettingsScope.Project) : base(path, scope) {
         }
 
         //public static bool IsSettingsAvailable()
@@ -53,8 +50,7 @@ namespace Loxodon.Framework.Editors
         //    return File.Exists(LuaSettings.LUA_SETTINGS_PATH);
         //}
 
-        public override void OnActivate(string searchContext, VisualElement rootElement)
-        {
+        public override void OnActivate(string searchContext, VisualElement rootElement) {
             m_LuaSettings = LuaSettings.GetSerializedSettings();
             var rootsProperty = m_LuaSettings.FindProperty("srcRoots");
 
@@ -67,38 +63,32 @@ namespace Loxodon.Framework.Editors
             m_List.drawElementBackgroundCallback = DrawElementBackground;
         }
 
-        public override void OnGUI(string searchContext)
-        {
+        public override void OnGUI(string searchContext) {
             m_LuaSettings.Update();
             m_List.DoLayoutList();
             m_LuaSettings.ApplyModifiedProperties();
         }
 
-        private void OnAddElement(Rect rect, ReorderableList list)
-        {
+        private void OnAddElement(Rect rect, ReorderableList list) {
             var roots = list.serializedProperty;
             int index = roots.arraySize > 0 ? roots.arraySize : 0;
             AddSrcRoot(roots, index);
         }
 
-        private void OnRemoveElement(ReorderableList list)
-        {
+        private void OnRemoveElement(ReorderableList list) {
             var roots = list.serializedProperty;
             AskRemoveSrcRoot(roots, list.index);
         }
 
-        private void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        private void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused) {
             ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, isActive, false, true);
         }
 
-        private void DrawHeader(Rect rect)
-        {
+        private void DrawHeader(Rect rect) {
             GUI.Label(rect, "The root folders of Lua's source code");
         }
 
-        private void DrawElement(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        private void DrawElement(Rect rect, int index, bool isActive, bool isFocused) {
             var roots = m_List.serializedProperty;
             if (index < 0 || index >= roots.arraySize)
                 return;
@@ -114,21 +104,18 @@ namespace Loxodon.Framework.Editors
             Rect rootRect = new Rect(x, y, width, height);
 
             Object obj = root.objectReferenceValue;
-            if (obj != null)
-            {
+            if (obj != null) {
                 var name = obj.name;
                 obj.name = path;
                 EditorGUI.PropertyField(rootRect, root, GUIContent.none);
                 obj.name = name;
             }
-            else
-            {
+            else {
                 EditorGUI.PropertyField(rootRect, root, GUIContent.none);
             }
         }
 
-        protected virtual void AddSrcRoot(SerializedProperty roots, int index)
-        {
+        protected virtual void AddSrcRoot(SerializedProperty roots, int index) {
             if (index < 0 || index > roots.arraySize)
                 return;
 
@@ -140,28 +127,24 @@ namespace Loxodon.Framework.Editors
             roots.serializedObject.ApplyModifiedProperties();
         }
 
-        protected virtual void AskRemoveSrcRoot(SerializedProperty roots, int index)
-        {
+        protected virtual void AskRemoveSrcRoot(SerializedProperty roots, int index) {
             if (roots == null || index < 0 || index >= roots.arraySize)
                 return;
 
             var root = roots.GetArrayElementAtIndex(index);
             Object asset = root.objectReferenceValue;
             var path = asset != null ? AssetDatabase.GetAssetPath(asset) : "";
-            if (string.IsNullOrEmpty(path))
-            {
+            if (string.IsNullOrEmpty(path)) {
                 RemoveSrcRoot(roots, index);
                 return;
             }
 
-            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the path \"{0}\"?", path), "Yes", "Cancel"))
-            {
+            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the path \"{0}\"?", path), "Yes", "Cancel")) {
                 RemoveSrcRoot(roots, index);
             }
         }
 
-        protected virtual void RemoveSrcRoot(SerializedProperty roots, int index)
-        {
+        protected virtual void RemoveSrcRoot(SerializedProperty roots, int index) {
             if (index < 0 || index >= roots.arraySize)
                 return;
 
@@ -173,8 +156,7 @@ namespace Loxodon.Framework.Editors
         }
 
         [SettingsProvider]
-        public static SettingsProvider CreateLuaSettingsProvider()
-        {
+        public static SettingsProvider CreateLuaSettingsProvider() {
             var provider = new LuaSettingsProvider("Project/LuaSettingsProvider", SettingsScope.Project);
             provider.label = "Lua Settings";
             return provider;

@@ -26,14 +26,11 @@ using Loxodon.Framework.Execution;
 using System.Threading;
 using UnityEngine;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class MainLoopExecutorExample : MonoBehaviour
-	{
+namespace Loxodon.Framework.Tutorials {
+    public class MainLoopExecutorExample : MonoBehaviour {
 		private IMainLoopExecutor executor;
 
-		void Start ()
-		{
+		void Start () {
 			this.executor = new MainLoopExecutor (); 
 
 			Debug.LogFormat ("ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
@@ -48,13 +45,11 @@ namespace Loxodon.Framework.Tutorials
 			});
 		}
 
-		void Task1 ()
-		{		
+		void Task1 () {		
 			Debug.LogFormat ("This is a task1,run on the main thread. ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
 		}
 
-		string Task2 ()
-		{
+		string Task2 () {
 			Debug.LogFormat ("This is a task2,run on the main thread. ThreadID:{0}", Thread.CurrentThread.ManagedThreadId);
 			return this.name;
 		}

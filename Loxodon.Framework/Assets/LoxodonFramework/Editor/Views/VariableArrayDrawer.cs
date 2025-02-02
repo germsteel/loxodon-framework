@@ -27,20 +27,16 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Loxodon.Framework.Editors
-{
+namespace Loxodon.Framework.Editors {
     [CustomPropertyDrawer(typeof(VariableArray))]
-    public class VariableArrayDrawer : PropertyDrawer
-    {
+    public class VariableArrayDrawer : PropertyDrawer {
         private const float HORIZONTAL_GAP = 5;
         private const float VERTICAL_GAP = 5;
 
         private ReorderableList list;
 
-        private ReorderableList GetList(SerializedProperty property)
-        {
-            if (list == null)
-            {
+        private ReorderableList GetList(SerializedProperty property) {
+            if (list == null) {
                 list = new ReorderableList(property.serializedObject, property, true, true, true, true);
                 list.elementHeight = 21;
                 list.drawElementCallback = DrawElement;
@@ -49,16 +45,14 @@ namespace Loxodon.Framework.Editors
                 list.onRemoveCallback = OnRemoveElement;
                 list.drawElementBackgroundCallback = DrawElementBackground;
             }
-            else
-            {
+            else {
                 list.serializedProperty = property;
             }
             return list;
         }
 
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             if (property.serializedObject.isEditingMultipleObjects)
                 return 40;
 
@@ -69,10 +63,8 @@ namespace Loxodon.Framework.Editors
             return height;
         }
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            if (property.serializedObject.isEditingMultipleObjects)
-            {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+            if (property.serializedObject.isEditingMultipleObjects) {
                 EditorGUI.HelpBox(position,"Components that are only on of the selected objects cannot be multi-edited", MessageType.Warning);
                 return;
             }
@@ -81,31 +73,26 @@ namespace Loxodon.Framework.Editors
             list.DoList(position);
         }
 
-        private void OnAddElement(Rect rect, ReorderableList list)
-        {
+        private void OnAddElement(Rect rect, ReorderableList list) {
             var variables = list.serializedProperty;
             int index = variables.arraySize > 0 ? variables.arraySize : 0;
             this.DrawContextMenu(variables, index);
         }
 
-        private void OnRemoveElement(ReorderableList list)
-        {
+        private void OnRemoveElement(ReorderableList list) {
             var variables = list.serializedProperty;
             AskRemoveVariable(variables, list.index);
         }
 
-        private void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        private void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused) {
             ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, isActive, false, true);
         }
 
-        private void DrawHeader(Rect rect)
-        {
+        private void DrawHeader(Rect rect) {
             GUI.Label(rect, "Variables");
         }
 
-        private void DrawElement(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        private void DrawElement(Rect rect, int index, bool isActive, bool isFocused) {
             var variables = list.serializedProperty;
             if (index < 0 || index >= variables.arraySize)
                 return;
@@ -123,32 +110,26 @@ namespace Loxodon.Framework.Editors
             var buttonLeftRect = new Rect(variableRect.xMax + HORIZONTAL_GAP, y - 1, 18, 18);
             var buttonRightRect = new Rect(buttonLeftRect.xMax, y - 1, 18, 18);
 
-            if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft))
-            {
+            if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft)) {
                 DuplicateVariable(variables, index);
             }
-            if (GUI.Button(buttonRightRect, new GUIContent("-"), EditorStyles.miniButtonRight))
-            {
+            if (GUI.Button(buttonRightRect, new GUIContent("-"), EditorStyles.miniButtonRight)) {
                 AskRemoveVariable(variables, index);
             }
         }
 
-        protected virtual void DrawContextMenu(SerializedProperty variables, int index)
-        {
+        protected virtual void DrawContextMenu(SerializedProperty variables, int index) {
             GenericMenu menu = new GenericMenu();
-            foreach (VariableType variableType in System.Enum.GetValues(typeof(VariableType)))
-            {
+            foreach (VariableType variableType in System.Enum.GetValues(typeof(VariableType))) {
                 var type = variableType;
-                menu.AddItem(new GUIContent(variableType.ToString()), false, context =>
-                {
+                menu.AddItem(new GUIContent(variableType.ToString()), false, context => {
                     AddVariable(variables, index, type);
                 }, null);
             }
             menu.ShowAsContext();
         }
 
-        protected virtual void AddVariable(SerializedProperty variables, int index, VariableType type)
-        {
+        protected virtual void AddVariable(SerializedProperty variables, int index, VariableType type) {
             if (index < 0 || index > variables.arraySize)
                 return;
 
@@ -165,8 +146,7 @@ namespace Loxodon.Framework.Editors
             GUI.FocusControl(null);
         }
 
-        protected virtual void DuplicateVariable(SerializedProperty variables, int index)
-        {
+        protected virtual void DuplicateVariable(SerializedProperty variables, int index) {
             if (index < 0 || index >= variables.arraySize)
                 return;
 
@@ -182,27 +162,23 @@ namespace Loxodon.Framework.Editors
             GUI.FocusControl(null);
         }
 
-        protected virtual void AskRemoveVariable(SerializedProperty variables, int index)
-        {
+        protected virtual void AskRemoveVariable(SerializedProperty variables, int index) {
             if (variables == null || index < 0 || index >= variables.arraySize)
                 return;
 
             var variable = variables.GetArrayElementAtIndex(index);
             var name = variable.FindPropertyRelative("name").stringValue;
-            if (string.IsNullOrEmpty(name))
-            {
+            if (string.IsNullOrEmpty(name)) {
                 RemoveVariable(variables, index);
                 return;
             }
 
-            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\"?", name), "Yes", "Cancel"))
-            {
+            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\"?", name), "Yes", "Cancel")) {
                 RemoveVariable(variables, index);
             }
         }
 
-        protected virtual void RemoveVariable(SerializedProperty variables, int index)
-        {
+        protected virtual void RemoveVariable(SerializedProperty variables, int index) {
             if (index < 0 || index >= variables.arraySize)
                 return;
 

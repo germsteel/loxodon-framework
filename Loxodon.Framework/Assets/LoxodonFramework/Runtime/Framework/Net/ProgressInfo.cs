@@ -24,18 +24,15 @@
 
 using System;
 
-namespace Loxodon.Framework.Net
-{
-    public enum UNIT
-    {
+namespace Loxodon.Framework.Net {
+    public enum UNIT {
         BYTE,
         KB,
         MB,
         GB
     }
 
-    public class ProgressInfo
-    {
+    public class ProgressInfo {
         private long totalSize = 0;
         private long completedSize = 0;
 
@@ -48,12 +45,10 @@ namespace Loxodon.Framework.Net
         private long lastTime2 = -1;
         private long lastValue2 = -1;
 
-        public ProgressInfo() : this(0, 0)
-        {
+        public ProgressInfo() : this(0, 0) {
         }
 
-        public ProgressInfo(long totalSize, long completedSize)
-        {
+        public ProgressInfo(long totalSize, long completedSize) {
             this.totalSize = totalSize;
             this.completedSize = completedSize;
 
@@ -64,38 +59,31 @@ namespace Loxodon.Framework.Net
             lastValue2 = lastValue;
         }
 
-        public long TotalSize
-        {
+        public long TotalSize {
             get { return this.totalSize; }
             set { this.totalSize = value; }
         }
-        public long CompletedSize
-        {
+        public long CompletedSize {
             get { return this.completedSize; }
-            set
-            {
+            set {
                 this.completedSize = value;
                 this.OnUpdate();
             }
         }
 
-        public int TotalCount
-        {
+        public int TotalCount {
             get { return this.totalCount; }
             set { this.totalCount = value; }
         }
-        public int CompletedCount
-        {
+        public int CompletedCount {
             get { return this.completedCount; }
             set { this.completedCount = value; }
         }
 
-        private void OnUpdate()
-        {
+        private void OnUpdate() {
             long now = DateTime.UtcNow.Ticks / 10000;
 
-            if ((now - lastTime) >= 1000)
-            {
+            if ((now - lastTime) >= 1000) {
                 lastTime2 = lastTime;
                 lastValue2 = lastValue;
 
@@ -107,10 +95,8 @@ namespace Loxodon.Framework.Net
             speed = (this.completedSize - this.lastValue2) / dt;
         }
 
-        public virtual float Value
-        {
-            get
-            {
+        public virtual float Value {
+            get {
                 if (this.totalSize <= 0)
                     return 0f;
 
@@ -118,10 +104,8 @@ namespace Loxodon.Framework.Net
             }
         }
 
-        public virtual float GetTotalSize(UNIT unit = UNIT.BYTE)
-        {
-            switch (unit)
-            {
+        public virtual float GetTotalSize(UNIT unit = UNIT.BYTE) {
+            switch (unit) {
                 case UNIT.KB:
                     return this.totalSize / 1024f;
                 case UNIT.MB:
@@ -133,10 +117,8 @@ namespace Loxodon.Framework.Net
             }
         }
 
-        public virtual float GetCompletedSize(UNIT unit = UNIT.BYTE)
-        {
-            switch (unit)
-            {
+        public virtual float GetCompletedSize(UNIT unit = UNIT.BYTE) {
+            switch (unit) {
                 case UNIT.KB:
                     return this.completedSize / 1024f;
                 case UNIT.MB:
@@ -148,10 +130,8 @@ namespace Loxodon.Framework.Net
             }
         }
 
-        public virtual float GetSpeed(UNIT unit = UNIT.BYTE)
-        {
-            switch (unit)
-            {
+        public virtual float GetSpeed(UNIT unit = UNIT.BYTE) {
+            switch (unit) {
                 case UNIT.KB:
                     return speed / 1024f;
                 case UNIT.MB:

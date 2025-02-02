@@ -24,15 +24,13 @@
 
 using System;
 
-namespace Loxodon.Framework.Asynchronous
-{
+namespace Loxodon.Framework.Asynchronous {
     /// <summary>
     /// 
     /// </summary>
     /// <typeparam name="TProgress"></typeparam>
     [Obsolete("This type will be removed in version 3.0")]
-    public interface IProgressTask<TProgress> : IProgressResult<TProgress>
-    {
+    public interface IProgressTask<TProgress> : IProgressResult<TProgress> {
         /// <summary>
         /// Triggered when a task starts.
         /// </summary>
@@ -93,8 +91,7 @@ namespace Loxodon.Framework.Asynchronous
     /// <typeparam name="TProgress"></typeparam>
     /// <typeparam name="TResult"></typeparam>
     [Obsolete("This type will be removed in version 3.0")]
-    public interface IProgressTask<TProgress, TResult> : IProgressResult<TProgress, TResult>
-    {
+    public interface IProgressTask<TProgress, TResult> : IProgressResult<TProgress, TResult> {
         /// <summary>
         /// Triggered when a task starts.
         /// </summary>

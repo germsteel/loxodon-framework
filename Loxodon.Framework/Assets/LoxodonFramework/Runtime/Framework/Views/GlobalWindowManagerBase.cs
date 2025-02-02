@@ -24,20 +24,16 @@
 
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     [DisallowMultipleComponent]
-    public abstract class GlobalWindowManagerBase : WindowManager
-    {
+    public abstract class GlobalWindowManagerBase : WindowManager {
         public static GlobalWindowManagerBase Root;
 
-        protected virtual void Start()
-        {
+        protected virtual void Start() {
             Root = this;
         }
 
-        protected override void OnDestroy()
-        {
+        protected override void OnDestroy() {
             base.OnDestroy();
             Root = null;
         }

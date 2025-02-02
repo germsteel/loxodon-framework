@@ -22,19 +22,15 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Proxy.Sources
-{
-    public abstract class TypedSourceProxyFactory<T> : ISourceProxyFactory where T : SourceDescription
-    {
-        public virtual bool IsSupported(SourceDescription description)
-        {
+namespace Loxodon.Framework.Binding.Proxy.Sources {
+    public abstract class TypedSourceProxyFactory<T> : ISourceProxyFactory where T : SourceDescription {
+        public virtual bool IsSupported(SourceDescription description) {
             if (!(description is T))
                 return false;
             return true;
         }
 
-        public ISourceProxy CreateProxy(object source, SourceDescription description)
-        {
+        public ISourceProxy CreateProxy(object source, SourceDescription description) {
             if (!IsSupported(description))
                 return null;
 

@@ -29,27 +29,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using BinaryReader = Loxodon.Framework.Net.Connection.BinaryReader;
 
-namespace Loxodon.Framework.Examples
-{
-    public class DefaultDecoder : IMessageDecoder<IMessage>
-    {
+namespace Loxodon.Framework.Examples {
+    public class DefaultDecoder : IMessageDecoder<IMessage> {
         protected readonly SemaphoreSlim readLock = new SemaphoreSlim(1, 1);
         protected ByteBuffer buffer = new ByteBuffer();
-        public async Task<IMessage> Decode(BinaryReader reader)
-        {
+        public async Task<IMessage> Decode(BinaryReader reader) {
             await readLock.WaitAsync();
-            try
-            {
+            try {
                 int count = await reader.ReadInt32();
 
                 buffer.Clear();
                 await reader.Read(buffer, count);
 
                 MessageType messageType = (MessageType)buffer.ReadByte();
-                switch (messageType)
-                {
-                    case MessageType.Notification:
-                        {
+                switch (messageType) {
+                    case MessageType.Notification: {
                             Notification notification = new Notification();
                             notification.CommandID = buffer.ReadInt32();
                             notification.Sequence = buffer.ReadUInt32();
@@ -60,8 +54,7 @@ namespace Loxodon.Framework.Examples
                             notification.Content = data;
                             return notification;
                         }
-                    case MessageType.Response:
-                        {
+                    case MessageType.Response: {
                             Response response = new Response();
                             response.Status = buffer.ReadInt32();
                             response.Sequence = buffer.ReadUInt32();
@@ -72,8 +65,7 @@ namespace Loxodon.Framework.Examples
                             response.Content = data;
                             return response;
                         }
-                    case MessageType.Request:
-                        {
+                    case MessageType.Request: {
                             //客户端解码器不需要解码Request类型
                             Request request = new Request();
                             request.CommandID = buffer.ReadInt32();
@@ -89,8 +81,7 @@ namespace Loxodon.Framework.Examples
 
                 throw new IOException();
             }
-            finally
-            {
+            finally {
                 readLock.Release();
             }
         }

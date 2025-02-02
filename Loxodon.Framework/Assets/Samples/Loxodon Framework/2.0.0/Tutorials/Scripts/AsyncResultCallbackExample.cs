@@ -26,20 +26,15 @@ using UnityEngine;
 using System.Collections;
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class AsyncResultCallbackExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class AsyncResultCallbackExample : MonoBehaviour {
 
-        void Start()
-        {
+        void Start() {
             AsyncResult result = new AsyncResult();
 
             /* Register a callback */
-            result.Callbackable().OnCallback((r) =>
-            {
-                if (r.Exception != null)
-                {
+            result.Callbackable().OnCallback((r) => {
+                if (r.Exception != null) {
                     Debug.LogFormat("The task is finished.IsDone:{0} Exception:{1}", r.IsDone, r.Exception);
                     return;
                 }
@@ -56,8 +51,7 @@ namespace Loxodon.Framework.Tutorials
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask(IPromise promise)
-        {
+        protected IEnumerator DoTask(IPromise promise) {
             yield return new WaitForSeconds(0.5f);
             promise.SetResult();
         }

@@ -24,10 +24,8 @@
 
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Views
-{
-    public interface IBundle
-    {
+namespace Loxodon.Framework.Views {
+    public interface IBundle {
         IDictionary<string, object> Data { get; }
 
         ICollection<string> Keys { get; }

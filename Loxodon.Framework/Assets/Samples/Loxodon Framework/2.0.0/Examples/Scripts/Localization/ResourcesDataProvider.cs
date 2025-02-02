@@ -33,8 +33,7 @@ using Loxodon.Framework.Localizations;
 using Loxodon.Log;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Examples
-{
+namespace Loxodon.Framework.Examples {
     /// <summary>
     /// Resources data provider.
     /// dir:
@@ -50,15 +49,13 @@ namespace Loxodon.Framework.Examples
     /// root/en-CA/
     /// root/en-AU/
     /// </summary>
-    public class ResourcesDataProvider : IDataProvider
-    {
+    public class ResourcesDataProvider : IDataProvider {
         private static readonly ILog log = LogManager.GetLogger(typeof(ResourcesDataProvider));
 
         private string root;
         private IDocumentParser parser;
 
-        public ResourcesDataProvider(string root, IDocumentParser parser)
-        {
+        public ResourcesDataProvider(string root, IDocumentParser parser) {
             if (string.IsNullOrEmpty(root))
                 throw new ArgumentNullException("root");
 
@@ -69,13 +66,11 @@ namespace Loxodon.Framework.Examples
             this.parser = parser;
         }
 
-        protected string GetDefaultPath()
-        {
+        protected string GetDefaultPath() {
             return GetPath("default");
         }
 
-        protected string GetPath(string dir)
-        {
+        protected string GetPath(string dir) {
             StringBuilder buf = new StringBuilder();
             buf.Append(this.root);
             if (!this.root.EndsWith("/"))
@@ -84,11 +79,9 @@ namespace Loxodon.Framework.Examples
             return buf.ToString();
         }
 
-        public virtual Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
-        {
+        public virtual Task<Dictionary<string, object>> Load(CultureInfo cultureInfo) {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-            try
-            {
+            try {
                 TextAsset[] defaultTexts = Resources.LoadAll<TextAsset>(GetDefaultPath()); //eg:default
                 TextAsset[] twoLetterISOTexts = Resources.LoadAll<TextAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName));//eg:zh  en
                 TextAsset[] texts = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : Resources.LoadAll<TextAsset>(GetPath(cultureInfo.Name));//eg:zh-CN  en-US
@@ -98,34 +91,26 @@ namespace Loxodon.Framework.Examples
                 FillData(dict, texts, cultureInfo);
                 return Task.FromResult(dict);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 return Task.FromException<Dictionary<string, object>>(e);
             }
         }
 
-        private void FillData(Dictionary<string, object> dict, TextAsset[] texts, CultureInfo cultureInfo)
-        {
-            try
-            {
+        private void FillData(Dictionary<string, object> dict, TextAsset[] texts, CultureInfo cultureInfo) {
+            try {
                 if (texts == null || texts.Length <= 0)
                     return;
 
-                foreach (TextAsset text in texts)
-                {
-                    try
-                    {
-                        using (MemoryStream stream = new MemoryStream(text.bytes))
-                        {
+                foreach (TextAsset text in texts) {
+                    try {
+                        using (MemoryStream stream = new MemoryStream(text.bytes)) {
                             var data = parser.Parse(stream, cultureInfo);
-                            foreach (KeyValuePair<string, object> kv in data)
-                            {
+                            foreach (KeyValuePair<string, object> kv in data) {
                                 dict[kv.Key] = kv.Value;
                             }
                         }
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("An error occurred when loading localized data from \"{0}\".Error:{1}", text.name, e);
                     }

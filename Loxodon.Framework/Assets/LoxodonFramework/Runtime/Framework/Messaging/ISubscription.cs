@@ -25,10 +25,8 @@
 using System;
 using System.Threading;
 
-namespace Loxodon.Framework.Messaging
-{
-    public interface ISubscription<T> : IDisposable
-    {
+namespace Loxodon.Framework.Messaging {
+    public interface ISubscription<T> : IDisposable {
         /// <summary>
         /// Changes the thread of message consumption.
         /// For example, sending a message to the UI thread for execution.

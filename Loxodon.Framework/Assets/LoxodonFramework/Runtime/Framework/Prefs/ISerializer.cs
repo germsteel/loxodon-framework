@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Prefs
-{
-    public interface ISerializer
-    {
+namespace Loxodon.Framework.Prefs {
+    public interface ISerializer {
         /// <summary>
         /// 
         /// </summary>

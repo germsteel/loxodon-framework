@@ -25,10 +25,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Configurations
-{
-    public interface IConfiguration
-    {
+namespace Loxodon.Framework.Configurations {
+    public interface IConfiguration {
         /// <summary>
         /// Return a decorator configuration containing every key from the current
         /// configuration that starts with the specified prefix.The prefix is

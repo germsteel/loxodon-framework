@@ -34,8 +34,7 @@ puppeteer:
 	可选插件，支持使用Newtonsoft.Json解析Json数据，支持Color、Vector2、Vector3、Vector4、Vector2Int、Vector3Int、Version等类的Json类型转换器。
 
 在Unity项目的Packages目录中找到manifest.json 文件，增加第三方仓库 "https://package.openupm.com"或者"https://registry.npmjs.org"到配置文件中，然后增加"com.vovgou.loxodon-framework-data"到dependencies节点下，然后保存文件，Unity会自动下载安装插件。
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
@@ -43,8 +42,7 @@ puppeteer:
         "com.vovgou.loxodon-framework-data-litedb": "2.4.9", //可选
         "com.vovgou.loxodon-framework-data-newtonsoft": "2.4.9" //可选
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -84,8 +82,7 @@ puppeteer:
     字典的配置支持两种方式，第一种是如上表的name字段的配置，类型是string{}，配置在一个单元格中，这种方式配置必须确保所有的元素都是相同类型；另一种是information的配置，分别配置在多个单元格中，可以单独定义子字段的类型。一般来说很短的文本内容使用第一种方式，比较长的文本内容或者子字段是不同的类型，比如对象配置，则使用第二种方式。    
 
     它们导出到Json格式是一样的，如下：
-
-      {
+ {
         "name":{"zh-CN":"克拉克","en-US":"Clark"},
         "information":{"zh-CN":"我是一个程序员","en-US":"I'm a programmer"}
       }
@@ -116,9 +113,7 @@ puppeteer:
 - **导出的Json**
 
 	导出的Json格式如下，Excel中的每行对应到Json文件中每一行，以换行符分割。
-
-		{ "id":1,"username":"clark","name":{ "zh-CN":"克拉克","en-US":"Clark" },"emails":[ "clark1@gmail.com","clark2@gmail.com" ],"information":{ "zh-CN":"我是一个程序员","en-US":"I'm a programmer" },"address":{ "province":"北京","street":"东直门内大街","postcode":"100000" },"status":"OK" }
-		{ "id":2,"username":"tom","name":{ "zh-CN":"汤姆","en-US":"Tom" },"emails":[ "tom1@gmail.com","tom2@gmail.com" ],"information":{ "zh-CN":"我是一个程序员","en-US":"I'm a programmer" },"address":{ "province":"北京","street":"东直门内大街","postcode":"100000" },"status":"LOCKED" }
+ { "id":1,"username":"clark","name":{ "zh-CN":"克拉克","en-US":"Clark" },"emails":[ "clark1@gmail.com","clark2@gmail.com" ],"information":{ "zh-CN":"我是一个程序员","en-US":"I'm a programmer" },"address":{ "province":"北京","street":"东直门内大街","postcode":"100000" },"status":"OK" } { "id":2,"username":"tom","name":{ "zh-CN":"汤姆","en-US":"Tom" },"emails":[ "tom1@gmail.com","tom2@gmail.com" ],"information":{ "zh-CN":"我是一个程序员","en-US":"I'm a programmer" },"address":{ "province":"北京","street":"东直门内大街","postcode":"100000" },"status":"LOCKED" }
 
 - **导出的LiteDB数据**
 
@@ -131,10 +126,8 @@ puppeteer:
 如下代码，自定义一个了Json格式的表单导出处理器。
 
 
-    public class CustomExportProcessor : ExportProcessor
-    {
-        protected override bool Filter(FileInfo file, ISheet sheet)
-        {
+    public class CustomExportProcessor : ExportProcessor {
+        protected override bool Filter(FileInfo file, ISheet sheet) {
             //自定义Sheet表单过滤方法，只导出第一个Sheet
             var workbook = sheet.Workbook;
             if (workbook.GetSheetIndex(sheet) != 0)
@@ -142,8 +135,7 @@ puppeteer:
             return true;
         }
 
-        protected override void DoExportSheet(FileInfo file, ISheet sheet, ISheetReader reader, string outputRoot)
-        {
+        protected override void DoExportSheet(FileInfo file, ISheet sheet, ISheetReader reader, string outputRoot) {
             string filename = string.Format("{0}.json", sheet.SheetName).ToLower();
             string fullname = Path.Combine(outputRoot, filename);
             StringBuilder text = Parse(reader);
@@ -151,11 +143,9 @@ puppeteer:
             Debug.LogFormat("File:{0} Sheet:{1} OK……", GetRelativePath(file.FullName), sheet.SheetName);
         }
 
-        protected StringBuilder Parse(ISheetReader reader)
-        {
+        protected StringBuilder Parse(ISheetReader reader) {
             StringBuilder buf = new StringBuilder();
-            for (int i = reader.StartLine; i <= reader.TotalCount; i++)
-            {
+            for (int i = reader.StartLine; i <= reader.TotalCount; i++) {
                 var data = reader.ReadLine(i);
                 if (data == null)
                     continue;
@@ -188,8 +178,7 @@ puppeteer:
 
 从Json文件加载数据，可以使用各种开源的Json解析库，请自行选择安装即可，下面的示例使用的是Newtonsoft.Json解析库。
 
-    public class UserInfo
-    {
+    public class UserInfo {
         [JsonProperty("id")]
         public int Id { get; set; }
 
@@ -212,29 +201,24 @@ puppeteer:
         public Status Status { get; set; }
     }
 
-    public interface IUserInfoRepository
-    {
+    public interface IUserInfoRepository {
         UserInfo GetById(int id);
 
         UserInfo GetByUsername(string username);
     }
 
-    public class JsonUserInfoRepository : IUserInfoRepository
-    {
+    public class JsonUserInfoRepository : IUserInfoRepository {
         private Dictionary<int, UserInfo> idAndUserInfoMapping = new Dictionary<int, UserInfo>();
         private Dictionary<string, UserInfo> usernameAndUserInfoMapping = new Dictionary<string, UserInfo>();
         private bool loaded = false;
-        private void LoadAll()
-        {
+        private void LoadAll() {
             var text = Resources.Load<TextAsset>("Json/userinfo");
             if (text == null || text.text.Length <= 0)
                 return;
 
-            using (StringReader reader = new StringReader(text.text))
-            {
+            using (StringReader reader = new StringReader(text.text)) {
                 string line;
-                while ((line = reader.ReadLine()) != null)
-                {
+                while ((line = reader.ReadLine()) != null) {
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
 
@@ -249,8 +233,7 @@ puppeteer:
             this.loaded = true;
         }
 
-        public virtual UserInfo GetById(int id)
-        {
+        public virtual UserInfo GetById(int id) {
             if (!loaded)
                 this.LoadAll();
 
@@ -259,8 +242,7 @@ puppeteer:
             return userInfo;
         }
 
-        public virtual UserInfo GetByUsername(string username)
-        {
+        public virtual UserInfo GetByUsername(string username) {
             if (!loaded)
                 this.LoadAll();
 
@@ -274,8 +256,7 @@ puppeteer:
 
 从LiteDB数据库中加载数据，使用方式请查看下面的示例。更多的内容请查看[LiteDB官方文档](https://github.com/mbdavid/LiteDB)
 
-    public class UserInfo
-    {
+    public class UserInfo {
         public int Id { get; set; }
 
         public string Username { get; set; }
@@ -291,26 +272,21 @@ puppeteer:
         public Status Status { get; set; }
     }
 
-    public interface IUserInfoRepository
-    {
+    public interface IUserInfoRepository {
         UserInfo GetById(int id);
 
         UserInfo GetByUsername(string username);
     }
 
-    public class LiteDBUserInfoRepository : LiteDBRepository<UserInfo>, IUserInfoRepository
-    {
-        public LiteDBUserInfoRepository(ILiteDatabase database) : base(database)
-        {
+    public class LiteDBUserInfoRepository : LiteDBRepository<UserInfo>, IUserInfoRepository {
+        public LiteDBUserInfoRepository(ILiteDatabase database) : base(database) {
         }
 
-        public UserInfo GetById(int id)
-        {
+        public UserInfo GetById(int id) {
             return GetCollection().FindById(id);
         }
 
-        public UserInfo GetByUsername(string username)
-        {
+        public UserInfo GetByUsername(string username) {
             return GetCollection().FindOne(c => c.Username.Equals(username));
         }
     }

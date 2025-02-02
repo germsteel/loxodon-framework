@@ -26,10 +26,8 @@ using Loxodon.Framework.Binding;
 using Loxodon.Framework.Views;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ListItemEditView : UIView
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ListItemEditView : UIView {
         public Text title;
         public Text price;
         public Slider priceSlider;
@@ -38,14 +36,12 @@ namespace Loxodon.Framework.Tutorials
         public Button submit;
         public Button cancel;
 
-        public ListItemEditViewModel ViewModel
-        {
+        public ListItemEditViewModel ViewModel {
             get { return (ListItemEditViewModel)this.GetDataContext(); }
             set { this.SetDataContext(value); }
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             var bindingSet = this.CreateBindingSet<ListItemEditView, ListItemEditViewModel>();
             bindingSet.Bind(title).For(v => v.text).To(vm => vm.Title);
             bindingSet.Bind(price).For(v => v.text).ToExpression(vm => string.Format("${0:0.00}", vm.Price)).OneWay();
@@ -58,16 +54,14 @@ namespace Loxodon.Framework.Tutorials
             this.submit.onClick.AddListener(Submit);
         }
 
-        private void Cancel()
-        {            
+        private void Cancel() {            
             this.ViewModel.Cancelled = true;
             this.gameObject.SetActive(false);
             //this.Visibility = false;
             this.SetDataContext(null);
         }
 
-        private void Submit()
-        {            
+        private void Submit() {            
             this.ViewModel.Cancelled = false;
             this.gameObject.SetActive(false);
             //this.Visibility = false;           

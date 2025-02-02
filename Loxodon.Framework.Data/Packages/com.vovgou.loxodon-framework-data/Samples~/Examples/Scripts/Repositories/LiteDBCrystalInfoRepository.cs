@@ -26,21 +26,16 @@
 using LiteDB;
 using Loxodon.Framework.Examples.Domains;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public class LiteDBCrystalInfoRepository : LiteDBRepository<CrystalInfo>, ICrystalInfoRepository
-    {
-        public LiteDBCrystalInfoRepository(ILiteDatabase database) : base(database)
-        {
+namespace Loxodon.Framework.Examples.Repositories {
+    public class LiteDBCrystalInfoRepository : LiteDBRepository<CrystalInfo>, ICrystalInfoRepository {
+        public LiteDBCrystalInfoRepository(ILiteDatabase database) : base(database) {
         }
 
-        public CrystalInfo GetById(int id)
-        {
+        public CrystalInfo GetById(int id) {
             return GetCollection().FindById(id);
         }
 
-        public CrystalInfo GetBySign(string sign, int level)
-        {
+        public CrystalInfo GetBySign(string sign, int level) {
             return GetCollection().FindOne(c => c.Sign.Equals(sign) && c.Level == level);
         }
     }

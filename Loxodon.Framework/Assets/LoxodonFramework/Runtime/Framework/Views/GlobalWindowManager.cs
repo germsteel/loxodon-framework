@@ -24,10 +24,8 @@
 
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     [RequireComponent(typeof(RectTransform), typeof(Canvas))]
-    public class GlobalWindowManager : GlobalWindowManagerBase
-    {
+    public class GlobalWindowManager : GlobalWindowManagerBase {
     }
 }

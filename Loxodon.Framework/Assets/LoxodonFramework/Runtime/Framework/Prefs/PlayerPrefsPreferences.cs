@@ -28,26 +28,22 @@ using System.Text;
 
 using UnityEngine;
 
-namespace Loxodon.Framework.Prefs
-{
+namespace Loxodon.Framework.Prefs {
     /// <summary>
     /// 
     /// </summary>
-    public class PlayerPrefsPreferencesFactory : AbstractFactory
-    {
+    public class PlayerPrefsPreferencesFactory : AbstractFactory {
         /// <summary>
         /// 
         /// </summary>
-        public PlayerPrefsPreferencesFactory() : this(null, null)
-        {
+        public PlayerPrefsPreferencesFactory() : this(null, null) {
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="serializer"></param>
-        public PlayerPrefsPreferencesFactory(ISerializer serializer) : this(serializer, null)
-        {
+        public PlayerPrefsPreferencesFactory(ISerializer serializer) : this(serializer, null) {
         }
 
         /// <summary>
@@ -55,8 +51,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="serializer"></param>
         /// <param name="encryptor"></param>
-        public PlayerPrefsPreferencesFactory(ISerializer serializer, IEncryptor encryptor) : base(serializer, encryptor)
-        {
+        public PlayerPrefsPreferencesFactory(ISerializer serializer, IEncryptor encryptor) : base(serializer, encryptor) {
         }
 
         /// <summary>
@@ -64,8 +59,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public override Preferences Create(string name)
-        {
+        public override Preferences Create(string name) {
             return new PlayerPrefsPreferences(name, this.Serializer, this.Encryptor);
         }
     }
@@ -73,8 +67,7 @@ namespace Loxodon.Framework.Prefs
     /// <summary>
     /// 
     /// </summary>
-    public class PlayerPrefsPreferences : Preferences
-    {
+    public class PlayerPrefsPreferences : Preferences {
         /// <summary>
         /// Default key
         /// </summary>
@@ -100,8 +93,7 @@ namespace Loxodon.Framework.Prefs
         /// <param name="name"></param>
         /// <param name="serializer"></param>
         /// <param name="encryptor"></param>
-        public PlayerPrefsPreferences(string name, ISerializer serializer, IEncryptor encryptor) : base(name)
-        {
+        public PlayerPrefsPreferences(string name, ISerializer serializer, IEncryptor encryptor) : base(name) {
             this.serializer = serializer;
             this.encryptor = encryptor;
             this.Load();
@@ -110,8 +102,7 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        protected override void Load()
-        {
+        protected override void Load() {
             LoadKeys();
         }
 
@@ -120,8 +111,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        protected string Key(string key)
-        {
+        protected string Key(string key) {
             StringBuilder buf = new StringBuilder(this.Name);
             buf.Append(".").Append(key);
             return buf.ToString();
@@ -130,8 +120,7 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        protected virtual void LoadKeys()
-        {
+        protected virtual void LoadKeys() {
             if (!PlayerPrefs.HasKey(Key(KEYS)))
                 return;
 
@@ -140,8 +129,7 @@ namespace Loxodon.Framework.Prefs
                 return;
 
             string[] keyValues = value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string key in keyValues)
-            {
+            foreach (string key in keyValues) {
                 if (string.IsNullOrEmpty(key))
                     continue;
 
@@ -152,10 +140,8 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        protected virtual void SaveKeys()
-        {
-            if (this.keys == null || this.keys.Count <= 0)
-            {
+        protected virtual void SaveKeys() {
+            if (this.keys == null || this.keys.Count <= 0) {
                 PlayerPrefs.DeleteKey(Key(KEYS));
                 return;
             }
@@ -163,8 +149,7 @@ namespace Loxodon.Framework.Prefs
             string[] values = keys.ToArray();
 
             StringBuilder buf = new StringBuilder();
-            for (int i = 0; i < values.Length; i++)
-            {
+            for (int i = 0; i < values.Length; i++) {
                 if (string.IsNullOrEmpty(values[i]))
                     continue;
 
@@ -176,8 +161,7 @@ namespace Loxodon.Framework.Prefs
             PlayerPrefs.SetString(Key(KEYS), buf.ToString());
         }
 
-        public override object GetObject(string key, Type type, object defaultValue)
-        {
+        public override object GetObject(string key, Type type, object defaultValue) {
             if (!PlayerPrefs.HasKey(Key(key)))
                 return defaultValue;
 
@@ -185,8 +169,7 @@ namespace Loxodon.Framework.Prefs
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (this.encryptor != null)
-            {
+            if (this.encryptor != null) {
                 byte[] data = Convert.FromBase64String(str);
                 data = this.encryptor.Decode(data);
                 str = Encoding.UTF8.GetString(data);
@@ -195,11 +178,9 @@ namespace Loxodon.Framework.Prefs
             return serializer.Deserialize(str, type);
         }
 
-        public override void SetObject(string key, object value)
-        {
+        public override void SetObject(string key, object value) {
             string str = value == null ? "" : serializer.Serialize(value);
-            if (this.encryptor != null)
-            {
+            if (this.encryptor != null) {
                 byte[] data = Encoding.UTF8.GetBytes(str);
                 data = this.encryptor.Encode(data);
                 str = Convert.ToBase64String(data);
@@ -207,8 +188,7 @@ namespace Loxodon.Framework.Prefs
 
             PlayerPrefs.SetString(Key(key), str);
 
-            if (!this.keys.Contains(key))
-            {
+            if (!this.keys.Contains(key)) {
                 this.keys.Add(key);
                 this.SaveKeys();
             }
@@ -221,8 +201,7 @@ namespace Loxodon.Framework.Prefs
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public override T GetObject<T>(string key, T defaultValue)
-        {
+        public override T GetObject<T>(string key, T defaultValue) {
             if (!PlayerPrefs.HasKey(Key(key)))
                 return defaultValue;
 
@@ -230,8 +209,7 @@ namespace Loxodon.Framework.Prefs
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (this.encryptor != null)
-            {
+            if (this.encryptor != null) {
                 byte[] data = Convert.FromBase64String(str);
                 data = this.encryptor.Decode(data);
                 str = Encoding.UTF8.GetString(data);
@@ -246,11 +224,9 @@ namespace Loxodon.Framework.Prefs
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public override void SetObject<T>(string key, T value)
-        {
+        public override void SetObject<T>(string key, T value) {
             string str = value == null ? "" : serializer.Serialize(value);
-            if (this.encryptor != null)
-            {
+            if (this.encryptor != null) {
                 byte[] data = Encoding.UTF8.GetBytes(str);
                 data = this.encryptor.Encode(data);
                 str = Convert.ToBase64String(data);
@@ -258,15 +234,13 @@ namespace Loxodon.Framework.Prefs
 
             PlayerPrefs.SetString(Key(key), str);
 
-            if (!this.keys.Contains(key))
-            {
+            if (!this.keys.Contains(key)) {
                 this.keys.Add(key);
                 this.SaveKeys();
             }
         }
 
-        public override object[] GetArray(string key, Type type, object[] defaultValue)
-        {
+        public override object[] GetArray(string key, Type type, object[] defaultValue) {
             if (!PlayerPrefs.HasKey(Key(key)))
                 return defaultValue;
 
@@ -274,8 +248,7 @@ namespace Loxodon.Framework.Prefs
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (this.encryptor != null)
-            {
+            if (this.encryptor != null) {
                 byte[] data = Convert.FromBase64String(str);
                 data = this.encryptor.Decode(data);
                 str = Encoding.UTF8.GetString(data);
@@ -283,26 +256,21 @@ namespace Loxodon.Framework.Prefs
 
             string[] items = str.Split(ARRAY_SEPARATOR);
             List<object> list = new List<object>();
-            for (int i = 0; i < items.Length; i++)
-            {
+            for (int i = 0; i < items.Length; i++) {
                 string item = items[i];
                 if (string.IsNullOrEmpty(item))
                     list.Add(null);
-                else
-                {
+                else {
                     list.Add(serializer.Deserialize(items[i], type));
                 }
             }
             return list.ToArray();
         }
 
-        public override void SetArray(string key, object[] values)
-        {
+        public override void SetArray(string key, object[] values) {
             StringBuilder buf = new StringBuilder();
-            if (values != null && values.Length > 0)
-            {
-                for (int i = 0; i < values.Length; i++)
-                {
+            if (values != null && values.Length > 0) {
+                for (int i = 0; i < values.Length; i++) {
                     var value = values[i];
                     buf.Append(serializer.Serialize(value));
                     if (i < values.Length - 1)
@@ -310,8 +278,7 @@ namespace Loxodon.Framework.Prefs
                 }
             }
             string str = buf.ToString();
-            if (this.encryptor != null)
-            {
+            if (this.encryptor != null) {
                 byte[] data = Encoding.UTF8.GetBytes(str);
                 data = this.encryptor.Encode(data);
                 str = Convert.ToBase64String(data);
@@ -319,15 +286,13 @@ namespace Loxodon.Framework.Prefs
 
             PlayerPrefs.SetString(Key(key), str);
 
-            if (!this.keys.Contains(key))
-            {
+            if (!this.keys.Contains(key)) {
                 this.keys.Add(key);
                 this.SaveKeys();
             }
         }
 
-        public override T[] GetArray<T>(string key, T[] defaultValue)
-        {
+        public override T[] GetArray<T>(string key, T[] defaultValue) {
             if (!PlayerPrefs.HasKey(Key(key)))
                 return defaultValue;
 
@@ -335,8 +300,7 @@ namespace Loxodon.Framework.Prefs
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (this.encryptor != null)
-            {
+            if (this.encryptor != null) {
                 byte[] data = Convert.FromBase64String(str);
                 data = this.encryptor.Decode(data);
                 str = Encoding.UTF8.GetString(data);
@@ -344,26 +308,21 @@ namespace Loxodon.Framework.Prefs
 
             string[] items = str.Split(ARRAY_SEPARATOR);
             List<T> list = new List<T>();
-            for (int i = 0; i < items.Length; i++)
-            {
+            for (int i = 0; i < items.Length; i++) {
                 string item = items[i];
                 if (string.IsNullOrEmpty(item))
                     list.Add(default(T));
-                else
-                {
+                else {
                     list.Add((T)serializer.Deserialize(items[i], typeof(T)));
                 }
             }
             return list.ToArray();
         }
 
-        public override void SetArray<T>(string key, T[] values)
-        {
+        public override void SetArray<T>(string key, T[] values) {
             StringBuilder buf = new StringBuilder();
-            if (values != null && values.Length > 0)
-            {
-                for (int i = 0; i < values.Length; i++)
-                {
+            if (values != null && values.Length > 0) {
+                for (int i = 0; i < values.Length; i++) {
                     var value = values[i];
                     buf.Append(serializer.Serialize(value));
                     if (i < values.Length - 1)
@@ -371,8 +330,7 @@ namespace Loxodon.Framework.Prefs
                 }
             }
             string str = buf.ToString();
-            if (this.encryptor != null)
-            {
+            if (this.encryptor != null) {
                 byte[] data = Encoding.UTF8.GetBytes(str);
                 data = this.encryptor.Encode(data);
                 str = Convert.ToBase64String(data);
@@ -380,8 +338,7 @@ namespace Loxodon.Framework.Prefs
 
             PlayerPrefs.SetString(Key(key), str);
 
-            if (!this.keys.Contains(key))
-            {
+            if (!this.keys.Contains(key)) {
                 this.keys.Add(key);
                 this.SaveKeys();
             }
@@ -392,8 +349,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public override bool ContainsKey(string key)
-        {
+        public override bool ContainsKey(string key) {
             return PlayerPrefs.HasKey(Key(key));
         }
 
@@ -401,11 +357,9 @@ namespace Loxodon.Framework.Prefs
         /// 
         /// </summary>
         /// <param name="key"></param>
-        public override void Remove(string key)
-        {
+        public override void Remove(string key) {
             PlayerPrefs.DeleteKey(Key(key));
-            if (this.keys.Contains(key))
-            {
+            if (this.keys.Contains(key)) {
                 this.keys.Remove(key);
                 this.SaveKeys();
             }
@@ -414,10 +368,8 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        public override void RemoveAll()
-        {
-            foreach (string key in keys)
-            {
+        public override void RemoveAll() {
+            foreach (string key in keys) {
                 PlayerPrefs.DeleteKey(Key(key));
             }
             PlayerPrefs.DeleteKey(Key(KEYS));
@@ -427,16 +379,14 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        public override void Save()
-        {
+        public override void Save() {
             PlayerPrefs.Save();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public override void Delete()
-        {
+        public override void Delete() {
             RemoveAll();
             PlayerPrefs.Save();
         }

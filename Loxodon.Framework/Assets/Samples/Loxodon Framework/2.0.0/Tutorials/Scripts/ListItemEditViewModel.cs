@@ -25,47 +25,39 @@
 using Loxodon.Framework.ViewModels;
 using UnityEngine;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ListItemEditViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ListItemEditViewModel : ViewModelBase {
         private string title;
         private string icon;
         private float price;
         private bool cancelled;
 
-        public ListItemEditViewModel(ListItemViewModel vm)
-        {
+        public ListItemEditViewModel(ListItemViewModel vm) {
             this.title = vm.Title;
             this.icon = vm.Icon;
             this.price = vm.Price;
         }
 
-        public string Title
-        {
+        public string Title {
             get { return this.title; }
             set { this.Set(ref title, value); }
         }
-        public string Icon
-        {
+        public string Icon {
             get { return this.icon; }
             set { this.Set(ref icon, value); }
         }
 
-        public float Price
-        {
+        public float Price {
             get { return this.price; }
             set { this.Set(ref price, value); }
         }
 
-        public bool Cancelled
-        {
+        public bool Cancelled {
             get { return this.cancelled; }
             set { this.Set(ref this.cancelled, value); }
         }
 
-        public void OnChangeIcon()
-        {
+        public void OnChangeIcon() {
             int iconIndex = Random.Range(1, 30);
             this.Icon = string.Format("EquipImages_{0}", iconIndex);
         }

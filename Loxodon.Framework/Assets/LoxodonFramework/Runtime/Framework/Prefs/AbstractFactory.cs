@@ -24,28 +24,24 @@
 
 using System;
 
-namespace Loxodon.Framework.Prefs
-{
+namespace Loxodon.Framework.Prefs {
     /// <summary>
     /// 
     /// </summary>
-    public abstract class AbstractFactory : IFactory
-    {
+    public abstract class AbstractFactory : IFactory {
         private IEncryptor encryptor;
         private ISerializer serializer;
         /// <summary>
         /// 
         /// </summary>
-        public AbstractFactory() : this(null, null)
-        {
+        public AbstractFactory() : this(null, null) {
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="serializer"></param>
-        public AbstractFactory(ISerializer serializer) : this(serializer, null)
-        {
+        public AbstractFactory(ISerializer serializer) : this(serializer, null) {
         }
 
         /// <summary>
@@ -53,8 +49,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="serializer"></param>
         /// <param name="encryptor"></param>
-        public AbstractFactory(ISerializer serializer, IEncryptor encryptor)
-        {
+        public AbstractFactory(ISerializer serializer, IEncryptor encryptor) {
 #if UNITY_IOS
 			Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 #endif
@@ -100,8 +95,7 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        public IEncryptor Encryptor
-        {
+        public IEncryptor Encryptor {
             get { return this.encryptor; }
             protected set { this.encryptor = value; }
         }
@@ -109,8 +103,7 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        public ISerializer Serializer
-        {
+        public ISerializer Serializer {
             get { return this.serializer; }
             protected set { this.serializer = value; }
         }

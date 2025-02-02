@@ -4740,8 +4740,7 @@
             If the maximum number of size based backups is reached
             (<c>curSizeRollBackups == maxSizeRollBackups</c>) then the oldest
             file is deleted -- its index determined by the sign of countDirection.
-            If <c>countDirection</c> &lt; 0, then files
-            {<c>File.1</c>, ..., <c>File.curSizeRollBackups -1</c>}
+            If <c>countDirection</c> &lt; 0, then files {<c>File.1</c>, ..., <c>File.curSizeRollBackups -1</c>}
             are renamed to {<c>File.2</c>, ...,
             <c>File.curSizeRollBackups</c>}. Moreover, <c>File</c> is
             renamed <c>File.1</c> and closed.
@@ -4769,8 +4768,7 @@
             If the maximum number of size based backups is reached
             (<c>curSizeRollBackups == maxSizeRollBackups</c>) then the oldest
             file is deleted -- its index determined by the sign of countDirection.
-            If <c>countDirection</c> &lt; 0, then files
-            {<c>File.1</c>, ..., <c>File.curSizeRollBackups -1</c>}
+            If <c>countDirection</c> &lt; 0, then files {<c>File.1</c>, ..., <c>File.curSizeRollBackups -1</c>}
             are renamed to {<c>File.2</c>, ...,
             <c>File.curSizeRollBackups</c>}. 
             </para>
@@ -5863,19 +5861,16 @@
              byte[] buffer;
              string loggingEvent;
              
-             try 
-             {
+             try  {
                  udpClient = new UdpClient(8080);
                  
-                 while(true) 
-                 {
+                 while(true)  {
                      buffer = udpClient.Receive(ref remoteEndPoint);
                      loggingEvent = System.Text.Encoding.Unicode.GetString(buffer);
                      Console.WriteLine(loggingEvent);
                  }
              } 
-             catch(Exception e) 
-             {
+             catch(Exception e)  {
                  Console.WriteLine(e.ToString());
              }
              </code>
@@ -12342,8 +12337,7 @@
             If you are worried about speed, then you should write:
             </para>
             <code lang="C#">
-            if (log.IsDebugEnabled())
-            { 
+            if (log.IsDebugEnabled()) { 
              log.Debug("This is entry number: " + i );
             }
             </code>
@@ -14012,8 +14006,7 @@
             log.Info("Application Start");
             log.Debug("This is a debug message");
             
-            if (log.IsDebugEnabled)
-            {
+            if (log.IsDebugEnabled) {
             	log.Debug("This is another debug message");
             }
             </code>
@@ -14812,8 +14805,7 @@
             If you are worried about speed (who isn't), then you should write:
             </para>
             <code lang="C#">
-            if (log.IsDebugEnabled)
-            { 
+            if (log.IsDebugEnabled) { 
                 log.Debug("This is entry number: " + i );
             }
             </code>
@@ -14837,8 +14829,7 @@
             Then when you come to log you can write:
             </para>
             <code lang="C#">
-            if (isDebugEnabled)
-            { 
+            if (isDebugEnabled) { 
                 log.Debug("This is entry number: " + i );
             }
             </code>
@@ -17738,8 +17729,7 @@
             </example>
             <example>Example of how to push a message into the context stack
             <code lang="C#">
-            using(LogicalThreadContext.Stacks["LDC"].Push("my context message"))
-            {
+            using(LogicalThreadContext.Stacks["LDC"].Push("my context message")) {
             	log.Info("This log message has a LogicalThreadContext Stack message that includes 'my context message'");
             
             } // at the end of the using block the message is automatically popped 
@@ -17816,8 +17806,7 @@
             log.Info("Application Start");
             log.Debug("This is a debug message");
             
-            if (log.IsDebugEnabled)
-            {
+            if (log.IsDebugEnabled) {
             	log.Debug("This is another debug message");
             }
             </code>
@@ -18553,8 +18542,7 @@
             </remarks>
             <example>How to push a message into the context
             <code lang="C#">
-            using(NDC.Push("my context message"))
-            {
+            using(NDC.Push("my context message")) {
             	... all log calls will have 'my context message' included ...
             
             } // at the end of the using block the message is automatically removed 
@@ -18699,8 +18687,7 @@
             </remarks>
             <example>Simple example of using the <c>Push</c> method with the <c>using</c> keyword.
             <code lang="C#">
-            using(log4net.NDC.Push("NDC_Message"))
-            {
+            using(log4net.NDC.Push("NDC_Message")) {
             	log.Warn("This should have an NDC message");
             }
             </code>
@@ -22067,8 +22054,7 @@
             </example>
             <example>Example of how to push a message into the context stack
             <code lang="C#">
-            using(ThreadContext.Stacks["NDC"].Push("my context message"))
-            {
+            using(ThreadContext.Stacks["NDC"].Push("my context message")) {
             	log.Info("This log message has a ThreadContext Stack message that includes 'my context message'");
             
             } // at the end of the using block the message is automatically popped 
@@ -24644,8 +24630,7 @@
             <para>
             Writes the <see cref="T:System.Collections.IDictionary"/> to a writer in the form:
             </para>
-            <code>
-            {key1=value1, key2=value2, key3=value3}
+            <code> {key1=value1, key2=value2, key3=value3}
             </code>
             <para>
             If the <see cref="T:log4net.Repository.ILoggerRepository"/> specified
@@ -24665,8 +24650,7 @@
             <para>
             Writes the <see cref="T:System.Collections.IDictionaryEnumerator"/> to a writer in the form:
             </para>
-            <code>
-            {key1=value1, key2=value2, key3=value3}
+            <code> {key1=value1, key2=value2, key3=value3}
             </code>
             <para>
             If the <see cref="T:log4net.Repository.ILoggerRepository"/> specified
@@ -27345,8 +27329,7 @@
             </remarks>
             <example>Simple example of using the <c>Push</c> method with the <c>using</c> keyword.
             <code lang="C#">
-            using(log4net.ThreadContext.Stacks["NDC"].Push("Stack_Message"))
-            {
+            using(log4net.ThreadContext.Stacks["NDC"].Push("Stack_Message")) {
             	log.Warn("This should have an ThreadContext Stack message");
             }
             </code>

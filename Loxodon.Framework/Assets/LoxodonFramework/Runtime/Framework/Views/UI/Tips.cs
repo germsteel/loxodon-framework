@@ -28,20 +28,16 @@ using Loxodon.Framework.ViewModels;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
-    public class Tips : UIBase
-    {
-        public static Tips Create(UIView view, IUIViewGroup viewGroup = null)
-        {
+namespace Loxodon.Framework.Views {
+    public class Tips : UIBase {
+        public static Tips Create(UIView view, IUIViewGroup viewGroup = null) {
             if (viewGroup == null)
                 viewGroup = GetCurrentViewGroup();
 
             view.Visibility = false;
             return new Tips(view, viewGroup);
         }
-        public static Tips Create(string viewName, IUIViewGroup viewGroup = null)
-        {
+        public static Tips Create(string viewName, IUIViewGroup viewGroup = null) {
             IUIViewLocator locator = GetUIViewLocator();
             UIView view = locator.LoadView<UIView>(viewName);
             if (view == null)
@@ -54,8 +50,7 @@ namespace Loxodon.Framework.Views
             return new Tips(view, viewGroup);
         }
 
-        public static async Task<Tips> CreateAsync(string viewName, IUIViewGroup viewGroup = null)
-        {
+        public static async Task<Tips> CreateAsync(string viewName, IUIViewGroup viewGroup = null) {
             IUIViewLocator locator = GetUIViewLocator();
             UIView view = await locator.LoadViewAsync<UIView>(viewName);
             if (view == null)
@@ -71,16 +66,14 @@ namespace Loxodon.Framework.Views
         private readonly IUIViewGroup viewGroup;
         private readonly UIView view;
 
-        protected Tips(UIView view, IUIViewGroup viewGroup)
-        {
+        protected Tips(UIView view, IUIViewGroup viewGroup) {
             this.view = view;
             this.viewGroup = viewGroup;
         }
 
         public UIView View { get { return this.view; } }
 
-        public void Show(IViewModel viewModel, UILayout layout = null)
-        {
+        public void Show(IViewModel viewModel, UILayout layout = null) {
             this.viewGroup.AddView(this.view, layout);
             this.view.SetDataContext(viewModel);
             this.view.Visibility = true;
@@ -89,48 +82,39 @@ namespace Loxodon.Framework.Views
                 this.view.EnterAnimation.Play();
         }
 
-        public void Hide()
-        {
+        public void Hide() {
             if (this.view == null || this.view.Owner == null)
                 return;
 
             if (!this.view.Visibility)
                 return;
 
-            if (this.view.ExitAnimation != null)
-            {
-                this.view.ExitAnimation.OnEnd(() =>
-                {
+            if (this.view.ExitAnimation != null) {
+                this.view.ExitAnimation.OnEnd(() => {
                     this.view.Visibility = false;
                 }).Play();
             }
-            else
-            {
+            else {
                 this.view.Visibility = false;
             }
         }
 
-        public void Dismiss()
-        {
+        public void Dismiss() {
             if (this.view == null || this.view.Owner == null)
                 return;
 
-            if (!this.view.Visibility)
-            {
+            if (!this.view.Visibility) {
                 Object.Destroy(this.view.Owner);
                 return;
             }
 
-            if (this.view.ExitAnimation != null)
-            {
-                this.view.ExitAnimation.OnEnd(() =>
-                {
+            if (this.view.ExitAnimation != null) {
+                this.view.ExitAnimation.OnEnd(() => {
                     this.view.Visibility = false;
                     Object.Destroy(this.view.Owner);
                 }).Play();
             }
-            else
-            {
+            else {
                 this.view.Visibility = false;
                 Object.Destroy(this.view.Owner);
             }

@@ -28,30 +28,24 @@ using System;
 using Loxodon.Framework.Utilities;
 using System.Threading;
 
-namespace Loxodon.Framework.Messaging
-{
-    public abstract class SubjectBase
-    {
+namespace Loxodon.Framework.Messaging {
+    public abstract class SubjectBase {
         public abstract void Publish(object message);
     }
 
-    public class Subject<T> : SubjectBase
-    {
+    public class Subject<T> : SubjectBase {
         private readonly ConcurrentDictionary<string, WeakReference<Subscription>> subscriptions = new ConcurrentDictionary<string, WeakReference<Subscription>>();
         public bool IsEmpty() { return subscriptions.Count <= 0; }
 
-        public override void Publish(object message)
-        {
+        public override void Publish(object message) {
             this.Publish((T)message);
         }
 
-        public void Publish(T message)
-        {
+        public void Publish(T message) {
             if (subscriptions.Count <= 0)
                 return;
 
-            foreach (var kv in subscriptions)
-            {
+            foreach (var kv in subscriptions) {
                 Subscription subscription;
                 kv.Value.TryGetTarget(out subscription);
                 if (subscription != null)
@@ -61,24 +55,20 @@ namespace Loxodon.Framework.Messaging
             }
         }
 
-        public ISubscription<T> Subscribe(Action<T> action)
-        {
+        public ISubscription<T> Subscribe(Action<T> action) {
             return new Subscription(this, action);
         }
 
-        void Add(Subscription subscription)
-        {
+        void Add(Subscription subscription) {
             var reference = new WeakReference<Subscription>(subscription, false);
             this.subscriptions.TryAdd(subscription.Key, reference);
         }
 
-        void Remove(Subscription subscription)
-        {
+        void Remove(Subscription subscription) {
             this.subscriptions.TryRemove(subscription.Key, out _);
         }
 
-        class Subscription : ISubscription<T>
-        {
+        class Subscription : ISubscription<T> {
             private static readonly ILog log = LogManager.GetLogger(typeof(Subscription));
 
             private Subject<T> subject;
@@ -86,25 +76,21 @@ namespace Loxodon.Framework.Messaging
             private SynchronizationContext context;
             public string Key { get; private set; }
 
-            public Subscription(Subject<T> subject, Action<T> action)
-            {
+            public Subscription(Subject<T> subject, Action<T> action) {
                 this.subject = subject;
                 this.action = action;
                 this.Key = Guid.NewGuid().ToString();
                 this.subject.Add(this);
             }
 
-            public void Publish(T message)
-            {
-                try
-                {
+            public void Publish(T message) {
+                try {
                     if (this.context != null)
                         context.Post(state => action?.Invoke((T)state), message);
                     else
                         action?.Invoke(message);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
 #if DEBUG
                     throw;
 #else
@@ -114,8 +100,7 @@ namespace Loxodon.Framework.Messaging
                 }
             }
 
-            public ISubscription<T> ObserveOn(SynchronizationContext context)
-            {
+            public ISubscription<T> ObserveOn(SynchronizationContext context) {
                 this.context = context ?? throw new ArgumentNullException("context");
                 return this;
             }
@@ -123,10 +108,8 @@ namespace Loxodon.Framework.Messaging
             #region IDisposable Support
             private int disposed = 0;
 
-            protected virtual void Dispose(bool disposing)
-            {
-                try
-                {
+            protected virtual void Dispose(bool disposing) {
+                try {
 #if UNITY_WEBGL
                     if (this.disposed==1)
                         return;
@@ -139,8 +122,7 @@ namespace Loxodon.Framework.Messaging
                     action = null;
                     subject = null;
 #else
-                    if (Interlocked.CompareExchange(ref this.disposed, 1, 0) == 0)
-                    {
+                    if (Interlocked.CompareExchange(ref this.disposed, 1, 0) == 0) {
                         if (subject != null)
                             subject.Remove(this);
 
@@ -153,13 +135,11 @@ namespace Loxodon.Framework.Messaging
                 catch (Exception) { }
             }
 
-            ~Subscription()
-            {
+            ~Subscription() {
                 Dispose(false);
             }
 
-            public void Dispose()
-            {
+            public void Dispose() {
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }

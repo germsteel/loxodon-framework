@@ -26,10 +26,8 @@ using System;
 
 using Loxodon.Framework.Observables;
 
-namespace Loxodon.Framework.Examples
-{
-	public class Account : ObservableObject
-	{
+namespace Loxodon.Framework.Examples {
+	public class Account : ObservableObject {
 		private string username;
 		private string password;
 

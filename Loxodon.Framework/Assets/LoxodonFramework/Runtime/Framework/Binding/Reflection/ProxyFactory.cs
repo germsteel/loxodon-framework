@@ -26,10 +26,8 @@ using System;
 using System.Collections.Concurrent;
 using UnityEngine;
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public class ProxyFactory
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public class ProxyFactory {
         public static readonly ProxyFactory Default = new ProxyFactory();
 
         private readonly object _lock = new object();
@@ -38,15 +36,13 @@ namespace Loxodon.Framework.Binding.Reflection
         //For compatibility with the "Configurable Enter Play Mode" feature
 #if UNITY_2019_3_OR_NEWER //&& UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-        static void OnInitialize()
-        {
+        static void OnInitialize() {
             Default.types.Clear();
         }
 #endif
         internal ConcurrentDictionary<Type, ProxyType> Types { get { return types; } }
 
-        internal virtual ProxyType GetType(Type type, bool create = true)
-        {
+        internal virtual ProxyType GetType(Type type, bool create = true) {
             ProxyType ret;
             if (this.types.TryGetValue(type, out ret) && ret != null)
                 return ret;
@@ -54,13 +50,11 @@ namespace Loxodon.Framework.Binding.Reflection
             return create ? this.types.GetOrAdd(type, (t) => new ProxyType(t, this)) : null;
         }
 
-        public IProxyType Get(Type type)
-        {
+        public IProxyType Get(Type type) {
             return GetType(type, true);
         }
 
-        public void Register(IProxyMemberInfo proxyMemberInfo)
-        {
+        public void Register(IProxyMemberInfo proxyMemberInfo) {
             if (proxyMemberInfo == null)
                 return;
 
@@ -68,8 +62,7 @@ namespace Loxodon.Framework.Binding.Reflection
             proxyType.Register(proxyMemberInfo);
         }
 
-        public void Unregister(IProxyMemberInfo proxyMemberInfo)
-        {
+        public void Unregister(IProxyMemberInfo proxyMemberInfo) {
             if (proxyMemberInfo == null)
                 return;
 

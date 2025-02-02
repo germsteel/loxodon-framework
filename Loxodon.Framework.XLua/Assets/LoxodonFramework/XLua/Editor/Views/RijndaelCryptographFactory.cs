@@ -27,11 +27,9 @@ using System.Text;
 using Loxodon.Framework.Security.Cryptography;
 using UnityEngine;
 
-namespace Loxodon.Framework.XLua.Editors
-{
+namespace Loxodon.Framework.XLua.Editors {
     [Serializable]
-    public class RijndaelCryptographFactory : EncryptorFactory
-    {
+    public class RijndaelCryptographFactory : EncryptorFactory {
         [SerializeField]
         private Algorithm algorithm = Algorithm.AES128_CBC_PKCS7;
 
@@ -43,29 +41,24 @@ namespace Loxodon.Framework.XLua.Editors
         [SerializeField]
         private string key = "E4YZgiGQ0aqe5LEJ";
 
-        public Algorithm Algorithm
-        {
+        public Algorithm Algorithm {
             get { return this.algorithm; }
             set { this.algorithm = value; }
         }
 
-        public string IV
-        {
+        public string IV {
             get { return this.iv; }
             set { this.iv = value; }
         }
 
-        public string Key
-        {
+        public string Key {
             get { return this.key; }
             set { this.key = value; }
         }
 
-        public override IEncryptor Create()
-        {
+        public override IEncryptor Create() {
             int keySize = 128;
-            switch (this.Algorithm)
-            {
+            switch (this.Algorithm) {
                 case Algorithm.AES128_CBC_PKCS7:
                     keySize = 128;
                     break;
@@ -80,8 +73,7 @@ namespace Loxodon.Framework.XLua.Editors
         }
     }
 
-    public enum Algorithm
-    {
+    public enum Algorithm {
         AES128_CBC_PKCS7,
         AES192_CBC_PKCS7,
         AES256_CBC_PKCS7

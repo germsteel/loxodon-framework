@@ -28,49 +28,39 @@ using System.Collections.Generic;
 using System.Linq;
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Utilities
-{
+namespace Loxodon.Framework.Utilities {
     [Serializable]
-    public class WeakValueDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary where TValue : class
-    {
+    public class WeakValueDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary where TValue : class {
         private static readonly ILog log = LogManager.GetLogger(typeof(WeakValueDictionary<TKey, TValue>));
         private const int MIN_CLEANUP_INTERVAL = 500;
         private int cleanupFlag = 0;
         protected Dictionary<TKey, WeakReference<TValue>> dictionary;
 
-        public WeakValueDictionary()
-        {
+        public WeakValueDictionary() {
             this.dictionary = new Dictionary<TKey, WeakReference<TValue>>();
         }
-        public WeakValueDictionary(IDictionary<TKey, TValue> dictionary)
-        {
+        public WeakValueDictionary(IDictionary<TKey, TValue> dictionary) {
             this.dictionary = new Dictionary<TKey, WeakReference<TValue>>();
             foreach (var kv in dictionary)
                 this.dictionary.Add(kv.Key, new WeakReference<TValue>(kv.Value));
         }
-        public WeakValueDictionary(IEqualityComparer<TKey> comparer)
-        {
+        public WeakValueDictionary(IEqualityComparer<TKey> comparer) {
             this.dictionary = new Dictionary<TKey, WeakReference<TValue>>(comparer);
         }
-        public WeakValueDictionary(int capacity)
-        {
+        public WeakValueDictionary(int capacity) {
             this.dictionary = new Dictionary<TKey, WeakReference<TValue>>(capacity);
         }
-        public WeakValueDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
-        {
+        public WeakValueDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer) {
             this.dictionary = new Dictionary<TKey, WeakReference<TValue>>(comparer);
             foreach (var kv in dictionary)
                 this.dictionary.Add(kv.Key, new WeakReference<TValue>(kv.Value));
         }
-        public WeakValueDictionary(int capacity, IEqualityComparer<TKey> comparer)
-        {
+        public WeakValueDictionary(int capacity, IEqualityComparer<TKey> comparer) {
             this.dictionary = new Dictionary<TKey, WeakReference<TValue>>(capacity, comparer);
         }
 
-        public TValue this[TKey key]
-        {
-            get
-            {
+        public TValue this[TKey key] {
+            get {
                 CleanupCheck();
 
                 if (!dictionary.ContainsKey(key))
@@ -84,15 +74,13 @@ namespace Loxodon.Framework.Utilities
 
         public ICollection<TValue> Values { get { return new ValueCollection(this.dictionary); } }
 
-        public void Add(TKey key, TValue value)
-        {
+        public void Add(TKey key, TValue value) {
             CleanupCheck();
 
             Insert(key, value, true);
         }
 
-        public bool Remove(TKey key)
-        {
+        public bool Remove(TKey key) {
             CleanupCheck();
 
             if (key == null)
@@ -101,8 +89,7 @@ namespace Loxodon.Framework.Utilities
             return this.dictionary.Remove(key);
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
-        {
+        public bool TryGetValue(TKey key, out TValue value) {
             CleanupCheck();
 
             WeakReference<TValue> item;
@@ -113,8 +100,7 @@ namespace Loxodon.Framework.Utilities
             return value != null;
         }
 
-        public bool ContainsKey(TKey key)
-        {
+        public bool ContainsKey(TKey key) {
             CleanupCheck();
 
             WeakReference<TValue> item;
@@ -123,18 +109,15 @@ namespace Loxodon.Framework.Utilities
             return false;
         }
 
-        public void Add(KeyValuePair<TKey, TValue> item)
-        {
+        public void Add(KeyValuePair<TKey, TValue> item) {
             Insert(item.Key, item.Value, true);
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             dictionary.Clear();
         }
 
-        public bool Contains(KeyValuePair<TKey, TValue> item)
-        {
+        public bool Contains(KeyValuePair<TKey, TValue> item) {
             WeakReference<TValue> value;
             if (!this.dictionary.TryGetValue(item.Key, out value))
                 return false;
@@ -144,8 +127,7 @@ namespace Loxodon.Framework.Utilities
             return false;
         }
 
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-        {
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
             //if (array == null)
             //    throw new ArgumentNullException("array");
 
@@ -165,47 +147,38 @@ namespace Loxodon.Framework.Utilities
             throw new NotSupportedException();
         }
 
-        public int Count
-        {
-            get
-            {
+        public int Count {
+            get {
                 throw new NotSupportedException();
             }
         }
 
-        public bool IsReadOnly
-        {
+        public bool IsReadOnly {
             get { return ((IDictionary)this.dictionary).IsReadOnly; }
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item)
-        {
+        public bool Remove(KeyValuePair<TKey, TValue> item) {
             return Remove(item.Key);
         }
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
             var e = this.dictionary.GetEnumerator();
-            while (e.MoveNext())
-            {
+            while (e.MoveNext()) {
                 var kv = e.Current;
                 if (kv.Value.IsAlive)
                     yield return new KeyValuePair<TKey, TValue>(kv.Key, kv.Value.Target);
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return (this as IDictionary<TKey, TValue>).GetEnumerator();
         }
 
-        public void AddRange(IDictionary<TKey, TValue> items)
-        {
+        public void AddRange(IDictionary<TKey, TValue> items) {
             if (items == null)
                 throw new ArgumentNullException("items");
 
-            if (items.Count > 0)
-            {
+            if (items.Count > 0) {
                 if (this.dictionary.Count > 0 && items.Keys.Any((k) => this.ContainsKey(k)))
                     throw new ArgumentException("An item with the same key has already been added.");
 
@@ -214,13 +187,11 @@ namespace Loxodon.Framework.Utilities
             }
         }
 
-        private void Insert(TKey key, TValue value, bool add)
-        {
+        private void Insert(TKey key, TValue value, bool add) {
             if (key == null)
                 throw new ArgumentNullException("key");
 
-            if (add)
-            {
+            if (add) {
                 WeakReference<TValue> item;
                 if (dictionary.TryGetValue(key, out item) && item.IsAlive)
                     throw new ArgumentException("An item with the same key has already been added.");
@@ -229,10 +200,8 @@ namespace Loxodon.Framework.Utilities
             dictionary[key] = new WeakReference<TValue>(value);
         }
 
-        object IDictionary.this[object key]
-        {
-            get
-            {
+        object IDictionary.this[object key] {
+            get {
                 if (!(key is TKey))
                     return null;
                 if (!dictionary.ContainsKey((TKey)key))
@@ -246,35 +215,29 @@ namespace Loxodon.Framework.Utilities
 
         ICollection IDictionary.Values { get { return new ValueCollection(this.dictionary); } }
 
-        bool IDictionary.Contains(object key)
-        {
+        bool IDictionary.Contains(object key) {
             if (!(key is TKey))
                 return false;
             return (this as IDictionary<TKey, TValue>).ContainsKey((TKey)key);
         }
 
-        void IDictionary.Add(object key, object value)
-        {
+        void IDictionary.Add(object key, object value) {
             this.Add((TKey)key, (TValue)value);
         }
 
-        IDictionaryEnumerator IDictionary.GetEnumerator()
-        {
+        IDictionaryEnumerator IDictionary.GetEnumerator() {
             throw new NotSupportedException();
         }
 
-        void IDictionary.Remove(object key)
-        {
+        void IDictionary.Remove(object key) {
             this.Remove((TKey)key);
         }
 
-        bool IDictionary.IsFixedSize
-        {
+        bool IDictionary.IsFixedSize {
             get { return ((IDictionary)this.dictionary).IsFixedSize; }
         }
 
-        void ICollection.CopyTo(Array array, int index)
-        {
+        void ICollection.CopyTo(Array array, int index) {
             //if (array == null)
             //    throw new ArgumentNullException("array");
 
@@ -294,18 +257,15 @@ namespace Loxodon.Framework.Utilities
             throw new NotSupportedException();
         }
 
-        object ICollection.SyncRoot
-        {
+        object ICollection.SyncRoot {
             get { return ((IDictionary)this.dictionary).SyncRoot; }
         }
 
-        bool ICollection.IsSynchronized
-        {
+        bool ICollection.IsSynchronized {
             get { return ((IDictionary)this.dictionary).IsSynchronized; }
         }
 
-        protected virtual void CleanupCheck()
-        {
+        protected virtual void CleanupCheck() {
             this.cleanupFlag++;
             if (this.cleanupFlag < MIN_CLEANUP_INTERVAL + this.dictionary.Count)
                 return;
@@ -317,16 +277,12 @@ namespace Loxodon.Framework.Utilities
         /// <summary>
         /// Removes the left-over weak references for entries in the dictionary whose value has already been reclaimed by the garbage collector. 
         /// </summary>
-        protected virtual void Cleanup()
-        {
-            try
-            {
-                lock ((this.dictionary as IDictionary).SyncRoot)
-                {
+        protected virtual void Cleanup() {
+            try {
+                lock ((this.dictionary as IDictionary).SyncRoot) {
                     List<TKey> keys = new List<TKey>();
                     var e = this.dictionary.GetEnumerator();
-                    while (e.MoveNext())
-                    {
+                    while (e.MoveNext()) {
                         var kv = e.Current;
                         if (!kv.Value.IsAlive)
                             keys.Add(kv.Key);
@@ -336,115 +292,94 @@ namespace Loxodon.Framework.Utilities
                         this.dictionary.Remove(keys[i]);
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("Removes the left-over weak references for entries in the dictionary whose value has already been reclaimed by the garbage collector.Error:{0}", e);
             }
         }
 
         [Serializable]
-        protected class KeyCollection : ICollection<TKey>, ICollection
-        {
+        protected class KeyCollection : ICollection<TKey>, ICollection {
             private Dictionary<TKey, WeakReference<TValue>> dictionary;
 
-            public KeyCollection(Dictionary<TKey, WeakReference<TValue>> dictionary)
-            {
+            public KeyCollection(Dictionary<TKey, WeakReference<TValue>> dictionary) {
                 if (dictionary == null)
                     throw new ArgumentNullException("dictionary");
                 this.dictionary = dictionary;
             }
 
-            public IEnumerator GetEnumerator()
-            {
+            public IEnumerator GetEnumerator() {
                 return (this as IEnumerable<TKey>).GetEnumerator();
             }
 
-            public void CopyTo(TKey[] array, int index)
-            {
+            public void CopyTo(TKey[] array, int index) {
                 throw new NotSupportedException();
             }
 
-            public int Count
-            {
-                get
-                {
+            public int Count {
+                get {
                     throw new NotSupportedException();
                 }
             }
 
-            bool ICollection<TKey>.IsReadOnly
-            {
+            bool ICollection<TKey>.IsReadOnly {
                 get { return true; }
             }
 
-            bool ICollection.IsSynchronized
-            {
+            bool ICollection.IsSynchronized {
                 get { return false; }
             }
 
-            Object ICollection.SyncRoot
-            {
+            Object ICollection.SyncRoot {
                 get { return ((ICollection)dictionary).SyncRoot; }
             }
 
-            void ICollection<TKey>.Add(TKey item)
-            {
+            void ICollection<TKey>.Add(TKey item) {
                 throw new NotSupportedException();
             }
 
-            bool ICollection<TKey>.Remove(TKey item)
-            {
+            bool ICollection<TKey>.Remove(TKey item) {
                 throw new NotSupportedException();
             }
 
-            void ICollection<TKey>.Clear()
-            {
+            void ICollection<TKey>.Clear() {
                 throw new NotSupportedException();
             }
 
-            bool ICollection<TKey>.Contains(TKey item)
-            {
+            bool ICollection<TKey>.Contains(TKey item) {
                 throw new NotSupportedException();
             }
 
-            IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator()
-            {
+            IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator() {
                 var e = this.dictionary.GetEnumerator();
-                while (e.MoveNext())
-                {
+                while (e.MoveNext()) {
                     var kv = e.Current;
                     if (kv.Value.IsAlive)
                         yield return kv.Key;
                 }
             }
 
-            public void CopyTo(Array array, int index)
-            {
+            public void CopyTo(Array array, int index) {
                 throw new NotSupportedException();
             }
         }
 
 
         [Serializable]
-        protected class ValueCollection : ICollection<TValue>, ICollection
-        {
+        protected class ValueCollection : ICollection<TValue>, ICollection {
             private Dictionary<TKey, WeakReference<TValue>> dictionary;
 
-            public ValueCollection(Dictionary<TKey, WeakReference<TValue>> dictionary)
-            {
+            public ValueCollection(Dictionary<TKey, WeakReference<TValue>> dictionary) {
                 if (dictionary == null)
                     throw new ArgumentNullException("dictionary");
                 this.dictionary = dictionary;
             }
 
-            public IEnumerator GetEnumerator()
-            {
+            public IEnumerator GetEnumerator() {
                 return (this as IEnumerable<TValue>).GetEnumerator();
             }
 
-            public void CopyTo(TValue[] array, int index)
-            {
+            public void CopyTo(TValue[] array, int index) {
                 //if (array == null)
                 //    throw new ArgumentNullException("array");
 
@@ -464,62 +399,50 @@ namespace Loxodon.Framework.Utilities
                 throw new NotSupportedException();
             }
 
-            public int Count
-            {
-                get
-                {
+            public int Count {
+                get {
                     throw new NotSupportedException();
                 }
             }
 
-            bool ICollection<TValue>.IsReadOnly
-            {
+            bool ICollection<TValue>.IsReadOnly {
                 get { return true; }
             }
 
-            bool ICollection.IsSynchronized
-            {
+            bool ICollection.IsSynchronized {
                 get { return false; }
             }
 
-            Object ICollection.SyncRoot
-            {
+            Object ICollection.SyncRoot {
                 get { return ((ICollection)dictionary).SyncRoot; }
             }
 
-            void ICollection<TValue>.Add(TValue item)
-            {
+            void ICollection<TValue>.Add(TValue item) {
                 throw new NotSupportedException();
             }
 
-            bool ICollection<TValue>.Remove(TValue item)
-            {
+            bool ICollection<TValue>.Remove(TValue item) {
                 throw new NotSupportedException();
             }
 
-            void ICollection<TValue>.Clear()
-            {
+            void ICollection<TValue>.Clear() {
                 throw new NotSupportedException();
             }
 
-            bool ICollection<TValue>.Contains(TValue item)
-            {
+            bool ICollection<TValue>.Contains(TValue item) {
                 throw new NotSupportedException();
             }
 
-            IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
-            {
+            IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() {
                 var e = this.dictionary.GetEnumerator();
-                while (e.MoveNext())
-                {
+                while (e.MoveNext()) {
                     var kv = e.Current;
                     if (kv.Value.IsAlive)
                         yield return kv.Value.Target;
                 }
             }
 
-            public void CopyTo(Array array, int index)
-            {
+            public void CopyTo(Array array, int index) {
                 //if (array == null)
                 //    throw new ArgumentNullException("array");
 
@@ -540,13 +463,11 @@ namespace Loxodon.Framework.Utilities
             }
         }
 
-        protected class WeakReference<T> : WeakReference
-        {
+        protected class WeakReference<T> : WeakReference {
             public WeakReference(T target) : base(target) { }
             public WeakReference(T target, bool trackResurrection) : base(target, trackResurrection) { }
 
-            public new T Target
-            {
+            public new T Target {
                 get { return (T)base.Target; }
                 set { base.Target = value; }
             }

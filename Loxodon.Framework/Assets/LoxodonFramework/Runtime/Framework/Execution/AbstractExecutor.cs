@@ -22,12 +22,9 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Execution
-{
-    public abstract class AbstractExecutor
-    {
-        static AbstractExecutor()
-        {
+namespace Loxodon.Framework.Execution {
+    public abstract class AbstractExecutor {
+        static AbstractExecutor() {
             Executors.Create();
         }
     }

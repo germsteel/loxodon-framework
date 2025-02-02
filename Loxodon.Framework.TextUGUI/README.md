@@ -40,14 +40,12 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-textugui" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
-
-    {
+ {
       "dependencies": {
         ...
         "com.vovgou.loxodon-framework-textugui": "2.6.5"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -68,11 +66,9 @@ This plugin enhances the AppendFormat<>() function of StringBuilder. It provides
 	using System.Text;
 	using UnityEngine;
 	using Loxodon.Framework.TextFormatting;//make sure to first import the required namespace
-	public class Example : MonoBehaviour
-	{
+	public class Example : MonoBehaviour {
 	    StringBuilder builder = new StringBuilder();
-	    void Update()
-	    {
+	    void Update() {
 	        builder.Clear();
 	        builder.AppendFormat<DateTime,int>("Now:{0:yyyy-MM-dd HH:mm:ss} Frame:{0:D6}", DateTime.Now,Time.frameCount);
 	        builder.AppendFormat<float>("{0:f2}", Time.realtimeSinceStartup);       
@@ -88,14 +84,12 @@ This control extends UnityEngine.UI.Text, providing support for string formattin
 
 Usage 1: Utilize the FormattableText.AsParameters<DateTime, int>() method to obtain a parameter set of GenericParameters<DateTime, int>, then bind it to the view model.
 
-	public class TemplateTextAndFormattableTextExample : MonoBehaviour
-    {
+	public class TemplateTextAndFormattableTextExample : MonoBehaviour {
         public FormattableText paramBinding1;
         
         private ExampleViewModel viewModel;
 
-        private void Start()
-        {
+        private void Start() {
             ApplicationContext context = Context.GetApplicationContext();
             IServiceContainer container = context.GetContainer();
             BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -119,14 +113,12 @@ Usage 1: Utilize the FormattableText.AsParameters<DateTime, int>() method to obt
 
 Usage 2: In the script FormattableTextExample, define a variable of type GenericParameters<DateTime, int> as a parameter set. In the UnityEditor, drag and drop the FormattableText onto the property paramBinding1 in the script shown below. Subsequently, bind it to the view model.
 
-	public class FormattableTextExample : MonoBehaviour
-	{
+	public class FormattableTextExample : MonoBehaviour {
 	    public GenericParameters<DateTime,int> paramBinding1;
 
 	    private ExampleViewModel viewModel;
 
-	    private void Start()
-	    {
+	    private void Start() {
 	        ApplicationContext context = Context.GetApplicationContext();
 	        IServiceContainer container = context.GetContainer();
 	        BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -161,14 +153,12 @@ Here, FrameCount and Hero are properties bound to the Data object, while Health,
 
 Similar to the previous case, garbage collection (GC) occurs only when calling StringBuilder.ToString(). (It is recommended to install Loxodon.Framework.TextMeshPro and use TemplateTextMeshProUGUI instead of TemplateText for a completely GC-free experience.)
 
-	public class TemplateTextAndFormattableTextExample : MonoBehaviour
-    {
+	public class TemplateTextAndFormattableTextExample : MonoBehaviour {
         public TemplateText template;
 
         private ExampleViewModel viewModel;
 
-        private void Start()
-        {
+        private void Start() {
             ApplicationContext context = Context.GetApplicationContext();
             IServiceContainer container = context.GetContainer();
             BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -189,78 +179,66 @@ Similar to the previous case, garbage collection (GC) occurs only when calling S
         }
 	}
 
-	public class ExampleViewModel : ObservableObject
-    {
+	public class ExampleViewModel : ObservableObject {
         private DateTime time;
         private TimeSpan timeSpan;
         private string template;
         private int frameCount;
         private Hero hero;
-        public DateTime Time
-        {
+        public DateTime Time {
             get { return this.time; }
             set { this.Set(ref time, value); }
         }
 
-        public TimeSpan TimeSpan
-        {
+        public TimeSpan TimeSpan {
             get { return this.timeSpan; }
             set { this.Set(ref timeSpan, value); }
         }
 
-        public int FrameCount
-        {
+        public int FrameCount {
             get { return this.frameCount; }
             set { this.Set(ref frameCount, value); }
         }
 
-        public string Template
-        {
+        public string Template {
             get { return this.template; }
             set { this.Set(ref template, value); }
         }
 
-        public Hero Hero
-        {
+        public Hero Hero {
             get { return this.hero; }
             set { this.Set(ref hero, value); }
         }
     }
 
-    public class Hero : ObservableObject
-    {
+    public class Hero : ObservableObject {
         private float attackSpeed = 95.5f;
         private float moveSpeed = 2.4f;
         private int health = 100;
         private int attackDamage = 20;
         private int armor = 30;
 
-        public float AttackSpeed
-        {
+        public float AttackSpeed {
             get { return this.attackSpeed; }
             set { this.Set(ref attackSpeed, value); }
         }
 
-        public float MoveSpeed
-        {
+        public float MoveSpeed {
             get { return this.moveSpeed; }
             set { this.Set(ref moveSpeed, value); }
         }
 
-        public int Health
-        {
+        public int Health {
             get { return this.health; }
             set { this.Set(ref health, value); }
         }
 
-        public int AttackDamage
-        {
+        public int AttackDamage {
             get { return this.attackDamage; }
             set { this.Set(ref attackDamage, value); }
         }
 
-        public int Armor
-        {
+        public int Armor {
             get { return this.armor; }
             set { this.Set(ref armor, value); }
         }

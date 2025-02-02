@@ -30,20 +30,16 @@ using UnityEngine;
 using System.Reflection;
 #endif
 
-namespace Loxodon.Framework.Prefs
-{
-    public class JsonTypeEncoder : ITypeEncoder
-    {
+namespace Loxodon.Framework.Prefs {
+    public class JsonTypeEncoder : ITypeEncoder {
         private int priority = -1000;
 
-        public int Priority
-        {
+        public int Priority {
             get { return this.priority; }
             set { this.priority = value; }
         }
 
-        public bool IsSupport(Type type)
-        {
+        public bool IsSupport(Type type) {
             if (typeof(IList).IsAssignableFrom(type) || typeof(IDictionary).IsAssignableFrom(type) || typeof(Rect).Equals(type))
                 return false;
 
@@ -57,26 +53,20 @@ namespace Loxodon.Framework.Prefs
             return true;
         }
 
-        public string Encode(object value)
-        {
-            try
-            {
+        public string Encode(object value) {
+            try {
                 return JsonUtility.ToJson(value);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new NotSupportedException("", e);
             }
         }
 
-        public object Decode(Type type, string value)
-        {
-            try
-            {
+        public object Decode(Type type, string value) {
+            try {
                 return JsonUtility.FromJson(value, type);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new NotSupportedException("", e);
             }
         }

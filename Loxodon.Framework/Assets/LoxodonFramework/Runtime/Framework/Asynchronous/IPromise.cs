@@ -24,13 +24,11 @@
 
 using System;
 
-namespace Loxodon.Framework.Asynchronous
-{
+namespace Loxodon.Framework.Asynchronous {
     /// <summary>
     /// 
     /// </summary>
-    public interface IPromise
-    {
+    public interface IPromise {
         /// <summary>
         /// The execution result
         /// </summary>
@@ -84,8 +82,7 @@ namespace Loxodon.Framework.Asynchronous
     /// 
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public interface IPromise<TResult> : IPromise
-    {
+    public interface IPromise<TResult> : IPromise {
         /// <summary>
         /// The execution result
         /// </summary>

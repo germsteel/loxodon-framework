@@ -26,36 +26,30 @@ using TMPro;
 using UnityEngine;
 using static Loxodon.Framework.Views.TextMeshPro.IFormattableText;
 
-namespace Loxodon.Framework.Views.TextMeshPro
-{
+namespace Loxodon.Framework.Views.TextMeshPro {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RectTransform))]
     [RequireComponent(typeof(CanvasRenderer))]
     [AddComponentMenu("UI/TemplateTextMeshProUGUI - TemplateText (UI)", 11)]
     [ExecuteAlways]
-    public class TemplateTextMeshProUGUI : TextMeshProUGUI
-    {
+    public class TemplateTextMeshProUGUI : TextMeshProUGUI {
         [SerializeField]
         [TextArea(5, 10)]
         private string m_Template;
         private object data;
         private TextTemplateBinding templateBinding;
 
-        protected TextTemplateBinding Binding
-        {
-            get
-            {
+        protected TextTemplateBinding Binding {
+            get {
                 if (templateBinding == null)
                     templateBinding = new TextTemplateBinding(SetText);
                 return templateBinding;
             }
         }
 
-        public string Template
-        {
+        public string Template {
             get { return this.m_Template; }
-            set
-            {
+            set {
                 if (string.Equals(this.m_Template, value))
                     return;
 
@@ -63,11 +57,9 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 Binding.Template = this.m_Template;
             }
         }
-        public object Data
-        {
+        public object Data {
             get { return this.data; }
-            set
-            {
+            set {
                 if (Equals(this.data, value))
                     return;
 
@@ -76,28 +68,23 @@ namespace Loxodon.Framework.Views.TextMeshPro
             }
         }
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             Initialize();
         }
 
-        public override void SetAllDirty()
-        {
+        public override void SetAllDirty() {
             base.SetAllDirty();
             Initialize();
         }
 
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
             if (this.data == null)
                 SetText(BUFFER.Clear().Append(m_Template));
         }
 
-        protected override void OnDestroy()
-        {
-            if (templateBinding != null)
-            {
+        protected override void OnDestroy() {
+            if (templateBinding != null) {
                 templateBinding.Dispose();
                 templateBinding = null;
             }

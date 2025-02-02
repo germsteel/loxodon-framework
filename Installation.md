@@ -22,15 +22,13 @@ Modify the Packages/manifest.json file in your project, add the third-party repo
 The framework and all plugins have also been published to the npm repository. Users can install them using the npm repository at [https://registry.npmjs.org/](https://registry.npmjs.org/).You only need to change the URL in the configuration below from 'https://package.openupm.com' to 'https://registry.npmjs.org/'.
 
 **Installing the framework in this way does not require nodejs and openm-cli.**
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework": "2.6.3",
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [

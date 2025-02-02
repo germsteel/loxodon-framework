@@ -24,28 +24,23 @@
 
 using System;
 
-namespace Loxodon.Framework.Prefs
-{
-    public class PrimitiveTypeEncoder : ITypeEncoder
-    {
+namespace Loxodon.Framework.Prefs {
+    public class PrimitiveTypeEncoder : ITypeEncoder {
         private int priority = 1000;
 
-        public int Priority
-        {
+        public int Priority {
             get { return this.priority; }
             set { this.priority = value; }
         }
 
-        public bool IsSupport(Type type)
-        {
+        public bool IsSupport(Type type) {
 #if NETFX_CORE
             TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
 #else
             TypeCode typeCode = Type.GetTypeCode(type);
 #endif
 
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.String:
                 case TypeCode.Boolean:
                 case TypeCode.SByte:
@@ -67,11 +62,9 @@ namespace Loxodon.Framework.Prefs
             return false;
         }
 
-        public string Encode(object value)
-        {
+        public string Encode(object value) {
             TypeCode typeCode = Convert.GetTypeCode(value);
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.String:
                 case TypeCode.Boolean:
                 case TypeCode.SByte:
@@ -93,16 +86,14 @@ namespace Loxodon.Framework.Prefs
             throw new NotSupportedException();
         }
 
-        public object Decode(Type type, string input)
-        {
+        public object Decode(Type type, string input) {
 #if NETFX_CORE
             TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
 #else
             TypeCode typeCode = Type.GetTypeCode(type);
 #endif
 
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.String:
                     return input;
                 case TypeCode.Boolean:

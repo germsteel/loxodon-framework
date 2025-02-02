@@ -27,14 +27,11 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Loxodon.Framework
-{
-    public static class WeakDelegateExtensions
-    {
+namespace Loxodon.Framework {
+    public static class WeakDelegateExtensions {
         private static readonly ILog log = LogManager.GetLogger(typeof(WeakDelegateExtensions));
 
-        public static Action AsWeak(this Action action)
-        {
+        public static Action AsWeak(this Action action) {
             if (!IsCanWeaken(action))
                 return action;
 
@@ -46,11 +43,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = action.Method;
 #endif
-            return () =>
-            {
+            return () => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
                     return;
@@ -60,8 +55,7 @@ namespace Loxodon.Framework
             };
         }
 
-        public static Action<T> AsWeak<T>(this Action<T> action)
-        {
+        public static Action<T> AsWeak<T>(this Action<T> action) {
             if (!IsCanWeaken(action))
                 return action;
 
@@ -72,11 +66,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = action.Method;
 #endif
-            return (t) =>
-            {
+            return (t) => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
                     return;
@@ -86,8 +78,7 @@ namespace Loxodon.Framework
             };
         }
 
-        public static Action<T1, T2> AsWeak<T1, T2>(this Action<T1, T2> action)
-        {
+        public static Action<T1, T2> AsWeak<T1, T2>(this Action<T1, T2> action) {
             if (!IsCanWeaken(action))
                 return action;
 
@@ -98,11 +89,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = action.Method;
 #endif
-            return (t1, t2) =>
-            {
+            return (t1, t2) => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
                     return;
@@ -112,8 +101,7 @@ namespace Loxodon.Framework
             };
         }
 
-        public static Action<T1, T2, T3> AsWeak<T1, T2, T3>(this Action<T1, T2, T3> action)
-        {
+        public static Action<T1, T2, T3> AsWeak<T1, T2, T3>(this Action<T1, T2, T3> action) {
             if (!IsCanWeaken(action))
                 return action;
 
@@ -124,11 +112,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = action.Method;
 #endif
-            return (t1, t2, t3) =>
-            {
+            return (t1, t2, t3) => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
                     return;
@@ -138,8 +124,7 @@ namespace Loxodon.Framework
             };
         }
 
-        public static Action<T1, T2, T3, T4> AsWeak<T1, T2, T3, T4>(this Action<T1, T2, T3, T4> action)
-        {
+        public static Action<T1, T2, T3, T4> AsWeak<T1, T2, T3, T4>(this Action<T1, T2, T3, T4> action) {
             if (!IsCanWeaken(action))
                 return action;
 
@@ -150,11 +135,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = action.Method;
 #endif
-            return (t1, t2, t3, t4) =>
-            {
+            return (t1, t2, t3, t4) => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
                     return;
@@ -164,8 +147,7 @@ namespace Loxodon.Framework
             };
         }
 
-        public static Func<TResult> AsWeak<TResult>(this Func<TResult> func)
-        {
+        public static Func<TResult> AsWeak<TResult>(this Func<TResult> func) {
             if (!IsCanWeaken(func))
                 return func;
 
@@ -176,11 +158,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = func.Method;
 #endif
-            return () =>
-            {
+            return () => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
 
@@ -191,8 +171,7 @@ namespace Loxodon.Framework
             };
         }
 
-        public static Func<T, TResult> AsWeak<T, TResult>(this Func<T, TResult> func)
-        {
+        public static Func<T, TResult> AsWeak<T, TResult>(this Func<T, TResult> func) {
             if (!IsCanWeaken(func))
                 return func;
 
@@ -203,11 +182,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = func.Method;
 #endif
-            return (t) =>
-            {
+            return (t) => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
 
@@ -218,8 +195,7 @@ namespace Loxodon.Framework
             };
         }
 
-        public static Func<T1, T2, TResult> AsWeak<T1, T2, TResult>(this Func<T1, T2, TResult> func)
-        {
+        public static Func<T1, T2, TResult> AsWeak<T1, T2, TResult>(this Func<T1, T2, TResult> func) {
             if (!IsCanWeaken(func))
                 return func;
 
@@ -230,11 +206,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = func.Method;
 #endif
-            return (t1, t2) =>
-            {
+            return (t1, t2) => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
 
@@ -246,8 +220,7 @@ namespace Loxodon.Framework
         }
 
 
-        public static Func<T1, T2, T3, TResult> AsWeak<T1, T2, T3, TResult>(this Func<T1, T2, T3, TResult> func)
-        {
+        public static Func<T1, T2, T3, TResult> AsWeak<T1, T2, T3, TResult>(this Func<T1, T2, T3, TResult> func) {
             if (!IsCanWeaken(func))
                 return func;
 
@@ -258,11 +231,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = func.Method;
 #endif
-            return (t1, t2, t3) =>
-            {
+            return (t1, t2, t3) => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
 
@@ -273,8 +244,7 @@ namespace Loxodon.Framework
             };
         }
 
-        public static Func<T1, T2, T3, T4, TResult> AsWeak<T1, T2, T3, T4, TResult>(this Func<T1, T2, T3, T4, TResult> func)
-        {
+        public static Func<T1, T2, T3, T4, TResult> AsWeak<T1, T2, T3, T4, TResult>(this Func<T1, T2, T3, T4, TResult> func) {
             if (!IsCanWeaken(func))
                 return func;
 
@@ -285,11 +255,9 @@ namespace Loxodon.Framework
 #else
             MethodInfo method = func.Method;
 #endif
-            return (t1, t2, t3, t4) =>
-            {
+            return (t1, t2, t3, t4) => {
                 object target = targetRef.Target;
-                if (target == null)
-                {
+                if (target == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("You are trying to invoke a weak reference delegate({0}.{1}), and the target object has been destroyed.", type, method);
 
@@ -300,8 +268,7 @@ namespace Loxodon.Framework
             };
         }
 
-        private static bool IsCanWeaken(Delegate del)
-        {
+        private static bool IsCanWeaken(Delegate del) {
 #if NETFX_CORE
             if (del == null || del.GetMethodInfo().IsStatic || del.Target == null || IsClosure(del))
 #else
@@ -312,8 +279,7 @@ namespace Loxodon.Framework
             return true;
         }
 
-        private static bool IsClosure(Delegate del)
-        {
+        private static bool IsClosure(Delegate del) {
 #if NETFX_CORE
             if (del == null || del.GetMethodInfo().IsStatic || del.Target == null)
                 return false;

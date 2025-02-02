@@ -8,11 +8,9 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Loxodon.Log.Editors.Log4Net
-{
+namespace Loxodon.Log.Editors.Log4Net {
     [Serializable]
-    public class ConsoleVM
-    {
+    public class ConsoleVM {
         private static readonly LoggingContainer EMPTY_PAGE = new LoggingContainer(null, 0);
 
         private const string LEVEL_MASK_KEY = "Loxodon::LOG::LOG4NET::LEVEL";
@@ -39,14 +37,11 @@ namespace Loxodon.Log.Editors.Log4Net
         [NonSerialized]
         private ILogReceiver receiver;
 
-        public ConsoleVM()
-        {
+        public ConsoleVM() {
         }
 
-        public void OnEnable()
-        {
-            try
-            {
+        public void OnEnable() {
+            try {
                 this.levelMask = EditorPrefs.GetInt(LEVEL_MASK_KEY, 31);
                 this.columnMask = EditorPrefs.GetInt(COLUMN_MASK_KEY, 7);
                 this.collapse = EditorPrefs.GetBool(COLLAPSE_SHOW_KEY, false);
@@ -58,25 +53,20 @@ namespace Loxodon.Log.Editors.Log4Net
                     this.Start();
 
             }
-            catch (Exception)
-            {
+            catch (Exception) {
             }
         }
 
-        public void OnDisable()
-        {
+        public void OnDisable() {
         }
 
-        public int MaxCapacity
-        {
+        public int MaxCapacity {
             get { return this.maxCapacity; }
             set { this.maxCapacity = value; }
         }
 
-        public bool IsLevelShow(Level level)
-        {
-            switch (level)
-            {
+        public bool IsLevelShow(Level level) {
+            switch (level) {
                 case Level.DEBUG:
                     return (levelMask & 1) > 0;
                 case Level.INFO:
@@ -92,10 +82,8 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public void SetLevelShow(Level level, bool show)
-        {
-            switch (level)
-            {
+        public void SetLevelShow(Level level, bool show) {
+            switch (level) {
                 case Level.DEBUG:
                     if (show)
                         levelMask |= 1;
@@ -133,10 +121,8 @@ namespace Loxodon.Log.Editors.Log4Net
             EditorPrefs.SetInt(LEVEL_MASK_KEY, this.levelMask);
         }
 
-        public bool IsColumnShow(Columns column)
-        {
-            switch (column)
-            {
+        public bool IsColumnShow(Columns column) {
+            switch (column) {
                 case Columns.TimeStamp:
                     return (columnMask & 1) > 0;
                 case Columns.Thread:
@@ -148,10 +134,8 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public void SetColumnShow(Columns column, bool show)
-        {
-            switch (column)
-            {
+        public void SetColumnShow(Columns column, bool show) {
+            switch (column) {
                 case Columns.TimeStamp:
                     if (show)
                         columnMask |= 1;
@@ -176,11 +160,9 @@ namespace Loxodon.Log.Editors.Log4Net
             EditorPrefs.SetInt(COLUMN_MASK_KEY, this.columnMask);
         }
 
-        public bool Collapse
-        {
+        public bool Collapse {
             get { return this.collapse; }
-            set
-            {
+            set {
                 if (this.collapse == value)
                     return;
 
@@ -189,22 +171,18 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public string FilterText
-        {
+        public string FilterText {
             get { return this.filterText; }
             set { this.filterText = value; }
         }
 
-        public TerminalInfo CurrentTerminalInfo
-        {
+        public TerminalInfo CurrentTerminalInfo {
             get { return currentIndex >= 0 && currentIndex < this.terminalInfos.Count ? this.terminalInfos[currentIndex] : null; }
         }
 
-        public bool PlayState
-        {
+        public bool PlayState {
             get { return this.playState; }
-            set
-            {
+            set {
                 if (this.playState == value)
                     return;
                 this.playState = value;
@@ -212,16 +190,13 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public bool Started
-        {
+        public bool Started {
             get { return this.receiver == null ? false : this.receiver.Started; }
         }
 
-        public int Port
-        {
+        public int Port {
             get { return this.port; }
-            set
-            {
+            set {
                 if (this.port == value)
                     return;
 
@@ -230,36 +205,28 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public int CurrentIndex
-        {
+        public int CurrentIndex {
             get { return this.currentIndex; }
             set { this.currentIndex = value; }
         }
 
-        public List<TerminalInfo> TerminalInfos
-        {
+        public List<TerminalInfo> TerminalInfos {
             get { return this.terminalInfos; }
         }
 
-        public IPAddress GetLocalIPAddress()
-        {
+        public IPAddress GetLocalIPAddress() {
             string name = Dns.GetHostName();
-            foreach (IPAddress ipa in Dns.GetHostAddresses(name))
-            {
+            foreach (IPAddress ipa in Dns.GetHostAddresses(name)) {
                 if (ipa.AddressFamily == AddressFamily.InterNetwork)
                     return ipa;
             }
             return IPAddress.Loopback;
         }
 
-        public virtual void Start()
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    if (receiver != null)
-                    {
+        public virtual void Start() {
+            try {
+                lock (_lock) {
+                    if (receiver != null) {
                         receiver.MessageReceived -= OnMesageReceived;
                         receiver.Stop();
                         receiver = null;
@@ -270,8 +237,7 @@ namespace Loxodon.Log.Editors.Log4Net
                     receiver.Start();
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 this.playState = false;
                 if (receiver != null)
                     receiver.MessageReceived -= OnMesageReceived;
@@ -280,37 +246,28 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public virtual void Stop()
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    if (receiver != null)
-                    {
+        public virtual void Stop() {
+            try {
+                lock (_lock) {
+                    if (receiver != null) {
                         receiver.MessageReceived -= OnMesageReceived;
                         receiver.Stop();
                     }
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
             }
         }
 
-        private void OnMesageReceived(TerminalInfo terminalInfo, LoggingData loggingData)
-        {
+        private void OnMesageReceived(TerminalInfo terminalInfo, LoggingData loggingData) {
             this.AddLoggingData(terminalInfo, loggingData);
         }
 
-        void AddLoggingData(TerminalInfo terminalInfo, LoggingData loggingData)
-        {
-            lock (_lock)
-            {
+        void AddLoggingData(TerminalInfo terminalInfo, LoggingData loggingData) {
+            lock (_lock) {
                 LoggingContainer container = null;
                 int index = this.terminalInfos.IndexOf(terminalInfo);
-                if (index < 0)
-                {
+                if (index < 0) {
                     this.terminalInfos.Add(terminalInfo);
                     container = new LoggingContainer(terminalInfo, this.maxCapacity);
                     this.containers.Add(container);
@@ -325,10 +282,8 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public void ClearLoggingData()
-        {
-            lock (_lock)
-            {
+        public void ClearLoggingData() {
+            lock (_lock) {
                 if (this.currentIndex < 0 || this.currentIndex >= this.terminalInfos.Count)
                     return;
 
@@ -340,8 +295,7 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public void SaveLoggingData()
-        {
+        public void SaveLoggingData() {
             LoggingContainer container = this.GetCurrentContainer();
             var list = container.GetLoggingList();
 
@@ -358,10 +312,8 @@ namespace Loxodon.Log.Editors.Log4Net
             this.lastSaveDir = dir.FullName;
 
             StringBuilder buf = new StringBuilder();
-            foreach (LoggingEntry entry in list)
-            {
-                foreach (LoggingData data in entry.LoggingDatas)
-                {
+            foreach (LoggingEntry entry in list) {
+                foreach (LoggingData data in entry.LoggingDatas) {
                     buf.AppendFormat("{0:yyyy-MM-dd HH:mm:ss.fff}", data.TimeStamp);
                     buf.AppendFormat(" Thread[{0}]", data.ThreadName);
                     buf.AppendFormat(" {0}", data.Level.ToString());
@@ -369,10 +321,8 @@ namespace Loxodon.Log.Editors.Log4Net
                     buf.AppendFormat(" - {0}", data.Message);
                     buf.Append("\r\n");
 
-                    if (data.LocationInfo != null && data.LocationInfo.StackFrames != null)
-                    {
-                        foreach (var frame in data.LocationInfo.StackFrames)
-                        {
+                    if (data.LocationInfo != null && data.LocationInfo.StackFrames != null) {
+                        foreach (var frame in data.LocationInfo.StackFrames) {
                             buf.Append(frame.FullInfo.Replace(Directory.GetCurrentDirectory().ToString() + @"\", "")).Append("\r\n");
                         }
                     }
@@ -384,10 +334,8 @@ namespace Loxodon.Log.Editors.Log4Net
             File.WriteAllText(location, buf.ToString());
         }
 
-        public LoggingContainer GetCurrentContainer()
-        {
-            lock (_lock)
-            {
+        public LoggingContainer GetCurrentContainer() {
+            lock (_lock) {
                 if (this.currentIndex < 0 || this.currentIndex >= this.terminalInfos.Count)
                     return EMPTY_PAGE;
 
@@ -397,34 +345,28 @@ namespace Loxodon.Log.Editors.Log4Net
     }
 
     [Serializable]
-    public class LoggingContainer
-    {
+    public class LoggingContainer {
         private TerminalInfo terminalInfo;
         private int capacity = 10000;
         private List<LoggingEntry> loggings = new List<LoggingEntry>();
         private int[] counters = new int[5];
 
-        public LoggingContainer(TerminalInfo terminalInfo, int capacity)
-        {
+        public LoggingContainer(TerminalInfo terminalInfo, int capacity) {
             this.terminalInfo = terminalInfo;
             this.capacity = capacity;
         }
 
-        public TerminalInfo TerminalInfo
-        {
+        public TerminalInfo TerminalInfo {
             get { return this.terminalInfo; }
         }
 
-        public int Capacity
-        {
+        public int Capacity {
             get { return this.capacity; }
             set { this.capacity = value; }
         }
 
-        public int GetCount(Level level)
-        {
-            switch (level)
-            {
+        public int GetCount(Level level) {
+            switch (level) {
                 case Level.DEBUG:
                     return counters[0];
                 case Level.INFO:
@@ -440,10 +382,8 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        private void UpdateCount(Level level, int value)
-        {
-            switch (level)
-            {
+        private void UpdateCount(Level level, int value) {
+            switch (level) {
                 case Level.DEBUG:
                     counters[0] += value;
                     break;
@@ -464,13 +404,10 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public void Add(LoggingData loggingData)
-        {
-            lock (this.loggings)
-            {
+        public void Add(LoggingData loggingData) {
+            lock (this.loggings) {
                 LoggingEntry last = loggings.Count > 0 ? loggings[loggings.Count - 1] : null;
-                if (last != null && last.IsMatch(loggingData))
-                {
+                if (last != null && last.IsMatch(loggingData)) {
                     last.Add(loggingData);
                     this.UpdateCount(last.Level, 1);
                 }
@@ -480,8 +417,7 @@ namespace Loxodon.Log.Editors.Log4Net
                     this.UpdateCount(logging.Level, 1);
                 }
 
-                if (loggings.Count > this.capacity)
-                {
+                if (loggings.Count > this.capacity) {
                     LoggingEntry oldest = loggings[0];
                     this.UpdateCount(oldest.Level, -1);
                     if (oldest.Count <= 1)
@@ -492,103 +428,83 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        public void Clear()
-        {
-            lock (loggings)
-            {
+        public void Clear() {
+            lock (loggings) {
                 this.counters = new int[5];
                 this.loggings.Clear();
             }
         }
 
-        public List<LoggingEntry> GetLoggingList()
-        {
-            lock (loggings)
-            {
+        public List<LoggingEntry> GetLoggingList() {
+            lock (loggings) {
                 return new List<LoggingEntry>(this.loggings);
             }
         }
     }
 
     [Serializable]
-    public class LoggingEntry
-    {
+    public class LoggingEntry {
         private List<LoggingData> loggingDatas = new List<LoggingData>();
 
-        public LoggingEntry(LoggingData loggingData)
-        {
+        public LoggingEntry(LoggingData loggingData) {
             loggingDatas.Add(loggingData);
         }
 
-        public List<LoggingData> LoggingDatas
-        {
+        public List<LoggingData> LoggingDatas {
             get { return this.loggingDatas; }
         }
 
-        public LoggingData LoggingData
-        {
+        public LoggingData LoggingData {
             get { return this.loggingDatas[0]; }
         }
 
-        public Level Level
-        {
+        public Level Level {
             get { return loggingDatas[0].Level; }
         }
 
-        public string Message
-        {
+        public string Message {
             get { return loggingDatas[0].Message; }
         }
 
-        public DateTime TimeStamp
-        {
+        public DateTime TimeStamp {
             get { return loggingDatas[0].TimeStamp; }
         }
 
-        public string ThreadName
-        {
+        public string ThreadName {
             get { return loggingDatas[0].ThreadName; }
         }
 
-        public string LoggerName
-        {
+        public string LoggerName {
             get { return loggingDatas[0].LoggerName; }
         }
 
-        public string UserName
-        {
+        public string UserName {
             get { return loggingDatas[0].UserName; }
         }
 
-        public Log.Log4Net.LocationInfo LocationInfo
-        {
+        public Log.Log4Net.LocationInfo LocationInfo {
             get { return loggingDatas[0].LocationInfo; }
         }
 
-        public int Count
-        {
+        public int Count {
             get { return this.loggingDatas.Count; }
         }
 
-        public bool IsMatch(LoggingData loggindData)
-        {
+        public bool IsMatch(LoggingData loggindData) {
             return loggindData.Level == this.LoggingData.Level && string.Equals(this.LoggingData.Message, loggindData.Message);
         }
 
-        public void Add(LoggingData loggingData)
-        {
+        public void Add(LoggingData loggingData) {
             this.loggingDatas.Add(loggingData);
         }
 
-        public void RemoveAt(int index)
-        {
+        public void RemoveAt(int index) {
             this.loggingDatas.RemoveAt(index);
         }
     }
 
     [Serializable]
-    public enum Columns
-    {
+    public enum Columns {
         TimeStamp = 0,
         Thread = 1,
         Logger = 2

@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.ObjectPool
-{
-    public interface IPooledObject
-    {
+namespace Loxodon.Framework.ObjectPool {
+    public interface IPooledObject {
         /// <summary>
         /// Return the object to the pool.
         /// </summary>

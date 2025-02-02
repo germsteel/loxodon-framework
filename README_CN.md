@@ -9,6 +9,86 @@
 
 [(English)](README.md)
 
+## 框架概述
+
+Loxodon Framework是一个基于MVVM(Model-View-ViewModel)架构的Unity游戏开发框架。它提供了一套完整的工具链和功能模块，帮助开发者构建高质量的游戏项目。
+
+### 核心架构
+
+1. **MVVM模式**
+   - 视图(View): UI界面展示
+   - 模型(Model): 数据和业务逻辑
+   - 视图模型(ViewModel): 视图和模型之间的桥梁
+   - 清晰的职责分离,提高代码可维护性
+
+2. **数据绑定系统**
+   - 支持双向数据绑定
+   - 自动UI更新机制
+   - 高性能设计,避免GC
+   
+3. **模块化设计**
+   - 核心功能和扩展功能分离
+   - 高度可扩展的插件系统
+   - 接口驱动设计
+
+### 主要功能模块
+
+1. **UI框架**
+   - 支持UGUI、UIToolkit、FairyGUI
+   - 完善的窗口管理系统
+   - 多语言本地化支持
+   
+2. **数据绑定系统**
+   - 高性能设计(避免装箱拆箱)
+   - 支持多种绑定模式(OneTime/OneWay/TwoWay)
+   - 支持表达式绑定
+   - 支持集合绑定
+   
+3. **框架扩展**
+   - XLua/ILRuntime热更新支持
+   - 资源管理(Bundle/Addressable)
+   - 网络连接组件
+   - 数据存储方案
+   
+4. **开发工具**
+   - 日志系统(NLog/Log4Net)
+   - 代码混淆工具
+   - 性能优化工具
+
+### 框架优势
+
+1. **架构优势**
+   - 遵循MVVM设计模式,架构清晰
+   - 组件化设计,高度可扩展
+   - 接口驱动,易于定制和替换
+   
+2. **性能优势** 
+   - 优化的数据绑定系统
+   - 最小化GC开销
+   - 高效的UI更新机制
+   
+3. **开发效率**
+   - 完善的工具链支持
+   - 丰富的文档和示例
+   - 活跃的社区支持
+
+4. **功能完备**
+   - 支持多种UI框架
+   - 内置热更新方案
+   - 提供完整的游戏开发解决方案
+
+### 使用建议
+
+1. **适用场景**
+   - 中大型游戏项目
+   - 需要清晰架构的项目
+   - 团队协作开发
+   
+2. **注意事项**
+   - 存在一定学习曲线
+   - 小型项目可能过重
+   - 需要管理多个依赖
+
 **MVVM and Databinding for Unity3d（C# & XLua & ILRuntime）**
 
 *开发者 Clark*
@@ -215,44 +295,37 @@ WebGL
 创建一个进度条的视图和视图模型，并将视图中的UI控件和视图模型绑定，修改视图模型ProgressBarViewModel中的属性，视图UI界面将会自动改变。
 
 ![](docs/images/progress.png)
-
-    public class ProgressBarViewModel : ViewModelBase
-    {
+```csharp
+    public class ProgressBarViewModel : ViewModelBase {
         private string tip;
         private bool enabled;
         private float value;
-        public ProgressBarViewModel()
-        {
+        public ProgressBarViewModel() {
         }
 
-        public string Tip
-        {
+        public string Tip {
             get { return this.tip; }
             set { this.Set<string>(ref this.tip, value, nameof(Tip)); }
         }
 
-        public bool Enabled
-        {
+        public bool Enabled {
             get { return this.enabled; }
             set { this.Set<bool>(ref this.enabled, value, nameof(Enabled)); }
         }
 
-        public float Value
-        {
+        public float Value {
             get { return this.value; }
             set { this.Set<float>(ref this.value, value, nameof(Value)); }
         }
     }
 
-    public class ProgressBarView : UIView
-    {
+    public class ProgressBarView : UIView {
         public GameObject progressBar;
         public Text progressTip;
         public Text progressText;
         public Slider progressSlider;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             var bindingSet = this.CreateBindingSet<ProgressBar, ProgressBarViewModel>();
 
             bindingSet.Bind(this.progressBar).For(v => v.activeSelf).To(vm => vm.Enabled).OneWay();
@@ -266,13 +339,12 @@ WebGL
     }
 
 
-    IEnumerator Unzip(ProgressBarViewModel progressBar)
-    {
+
+    IEnumerator Unzip(ProgressBarViewModel progressBar) {
         progressBar.Tip = "Unziping";
         progressBar.Enabled = true;//Display the progress bar
 
-        for(int i=0;i<30;i++)
-        {            
+        for(int i=0;i<30;i++) {            
             //TODO:Add unzip code here.
 
             progressBar.Value = (i/(float)30);            
@@ -282,6 +354,7 @@ WebGL
         progressBar.Enabled = false;//Hide the progress bar
         progressBar.Tip = "";        
     }
+```
 
 ## 教程和示例
 
@@ -313,7 +386,4 @@ WebGL
 
   ![](docs/images/ListView.png)
 
-## 联系方式
-邮箱: [yangpc.china@gmail.com](mailto:yangpc.china@gmail.com)   
-网站: [https://vovgou.github.io/loxodon-framework/](https://vovgou.github.io/loxodon-framework/)  
-QQ群: 622321589 15034148
+

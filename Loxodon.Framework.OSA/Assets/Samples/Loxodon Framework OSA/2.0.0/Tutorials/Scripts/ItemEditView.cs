@@ -27,23 +27,19 @@ using Loxodon.Framework.Views;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials.OSA
-{
-    public class ItemEditView : UIView
-    {
+namespace Loxodon.Framework.Tutorials.OSA {
+    public class ItemEditView : UIView {
         public InputField titleInput;
         public Text title;
         public Slider colorSlider;
         public Button close;
 
-        public ItemViewModel Item
-        {
+        public ItemViewModel Item {
             get { return (ItemViewModel)this.GetDataContext(); }
             set { this.SetDataContext(value); }
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             var bindingSet = this.CreateBindingSet<ItemEditView, ItemViewModel>();
             bindingSet.Bind(titleInput).For(v => v.text,v=>v.onEndEdit).To(vm => vm.Title);
             bindingSet.Bind(title).For(v => v.color).To(vm => vm.Color);

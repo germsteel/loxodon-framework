@@ -36,10 +36,8 @@ using Loxodon.Framework.Views.InteractionActions;
 using Loxodon.Framework.Asynchronous;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Examples
-{
-    public class StartupWindow : Window
-    {
+namespace Loxodon.Framework.Examples {
+    public class StartupWindow : Window {
         private static readonly ILog log = LogManager.GetLogger(typeof(StartupWindow));
 
         public Text progressBarText;
@@ -52,8 +50,7 @@ namespace Loxodon.Framework.Examples
         private AsyncWindowInteractionAction loginWindowInteractionAction;
         private AsynSceneInteractionAction sceneInteractionAction;
 
-        protected override void OnCreate(IBundle bundle)
-        {
+        protected override void OnCreate(IBundle bundle) {
             this.viewLocator = Context.GetApplicationContext().GetService<IUIViewLocator>();
             this.loginWindowInteractionAction = new AsyncWindowInteractionAction("UI/Logins/Login", viewLocator, this.WindowManager);
             this.sceneInteractionAction = new AsynSceneInteractionAction("Prefabs/Cube");
@@ -86,8 +83,7 @@ namespace Loxodon.Framework.Examples
             this.viewModel.Unzip();
         }
 
-        protected void OnDismissRequest(object sender, InteractionEventArgs args)
-        {
+        protected void OnDismissRequest(object sender, InteractionEventArgs args) {
             this.Dismiss();
         }
 
@@ -124,22 +120,17 @@ namespace Loxodon.Framework.Examples
         //}
 
         //Load game objects in the scene using AsynSceneInteractionAction
-        class AsynSceneInteractionAction : AsyncInteractionActionBase<ProgressBar>
-        {
+        class AsynSceneInteractionAction : AsyncInteractionActionBase<ProgressBar> {
             private string path;
-            public AsynSceneInteractionAction(string path)
-            {
+            public AsynSceneInteractionAction(string path) {
                 this.path = path;
             }
-            public override async Task Action(ProgressBar progressBar)
-            {
+            public override async Task Action(ProgressBar progressBar) {
                 progressBar.Enable = true;
                 progressBar.Tip = R.startup_progressbar_tip_loading;
-                try
-                {
+                try {
                     var request = Resources.LoadAsync<GameObject>(path);
-                    while (!request.isDone)
-                    {
+                    while (!request.isDone) {
                         progressBar.Progress = request.progress;/* update progress */
                         await new WaitForSecondsRealtime(0.02f);
                     }
@@ -147,8 +138,7 @@ namespace Loxodon.Framework.Examples
                     GameObject sceneTemplate = (GameObject)request.asset;
                     GameObject.Instantiate(sceneTemplate);
                 }
-                finally
-                {
+                finally {
                     progressBar.Tip = "";
                     progressBar.Enable = false;
                 }

@@ -27,30 +27,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Loxodon.Framework.Localizations
-{
+namespace Loxodon.Framework.Localizations {
     [Serializable]
-    public abstract class LocalizationSource
-    {
+    public abstract class LocalizationSource {
     }
 
     [Serializable]
-    public class MonolingualSource : LocalizationSource
-    {
+    public class MonolingualSource : LocalizationSource {
         [SerializeField]
         private List<MonolingualEntry> entries = new List<MonolingualEntry>();
 
         public List<MonolingualEntry> Entries { get { return this.entries; } }
 
-        public Dictionary<string, object> GetData()
-        {
+        public Dictionary<string, object> GetData() {
             Dictionary<string, object> data = new Dictionary<string, object>();
 
             if (this.entries == null || this.entries.Count <= 0)
                 return data;
 
-            foreach (var entry in entries)
-            {
+            foreach (var entry in entries) {
                 var key = entry.Key;
                 var value = entry.GetValue();
 
@@ -64,8 +59,7 @@ namespace Loxodon.Framework.Localizations
     }
 
     [Serializable]
-    public class MultilingualSource : LocalizationSource
-    {
+    public class MultilingualSource : LocalizationSource {
         [SerializeField]
         private List<string> languages = new List<string>();
 
@@ -76,8 +70,7 @@ namespace Loxodon.Framework.Localizations
 
         public List<MultilingualEntry> Entries { get { return this.entries; } }
 
-        public Dictionary<string, object> GetData(string language)
-        {
+        public Dictionary<string, object> GetData(string language) {
             Dictionary<string, object> data = new Dictionary<string, object>();
 
             if (this.entries == null || this.entries.Count <= 0)
@@ -87,8 +80,7 @@ namespace Loxodon.Framework.Localizations
             if (index < 0)
                 return data;
 
-            foreach (var entry in entries)
-            {
+            foreach (var entry in entries) {
                 var key = entry.Key;
                 var value = entry.GetValue(index);
                 if (string.IsNullOrEmpty(key))
@@ -98,86 +90,74 @@ namespace Loxodon.Framework.Localizations
             return data;
         }
 
-        public bool AddLanguage(string language)
-        {
+        public bool AddLanguage(string language) {
             if (languages.Contains(language))
                 return false;
 
             languages.Add(language);
 
             int index = this.languages.Count - 1;
-            foreach (var entry in this.entries)
-            {
+            foreach (var entry in this.entries) {
                 entry.SetValue(index, null);
             }
             return true;
         }
 
-        public bool RemoveLanguage(string language)
-        {
+        public bool RemoveLanguage(string language) {
             int index = this.languages.IndexOf(language);
             if (index < 0)
                 return false;
 
             languages.RemoveAt(index);
-            foreach (var entry in this.entries)
-            {
+            foreach (var entry in this.entries) {
                 entry.RemoveValue(index);
             }
             return true;
         }
     }
 
-    public abstract class EntryBase
-    {
+    public abstract class EntryBase {
         [SerializeField]
         protected string key;
 
         [SerializeField]
         protected ValueType type;
 
-        public string Key
-        {
+        public string Key {
             get { return this.key; }
             set { this.key = value; }
         }
 
-        public ValueType Type
-        {
+        public ValueType Type {
             get { return this.type; }
             set { this.type = value; }
         }
     }
 
     [Serializable]
-    public class Value
-    {
+    public class Value {
         [SerializeField]
         public string dataValue;
 
         [SerializeField]
         public Object objectValue;
 
-        public Value()
-        {
+        public Value() {
         }
     }
 
     [Serializable]
-    public class MonolingualEntry : EntryBase
-    {
+    public class MonolingualEntry : EntryBase {
         [SerializeField]
         private Value value;
 
-        public object GetValue()
-        {
+        public object GetValue() {
             if (this.value == null)
                 return null;
 
             string val = this.value.dataValue;
             Object obj = this.value.objectValue;
-            switch (type)
-            {
+            switch (type) {
                 case ValueType.Sprite:
                 case ValueType.Texture2D:
                 case ValueType.Texture3D:
@@ -208,13 +188,11 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        public void SetValue(object value)
-        {
+        public void SetValue(object value) {
             if (this.value == null)
                 this.value = new Value();
 
-            switch (type)
-            {
+            switch (type) {
                 case ValueType.Sprite:
                 case ValueType.Texture2D:
                 case ValueType.Texture3D:
@@ -256,13 +234,11 @@ namespace Loxodon.Framework.Localizations
     }
 
     [Serializable]
-    public class MultilingualEntry : EntryBase
-    {
+    public class MultilingualEntry : EntryBase {
         [SerializeField]
         private List<Value> values;
 
-        public object GetValue(int index)
-        {
+        public object GetValue(int index) {
             if (values == null || values.Count <= 0)
                 return null;
 
@@ -274,8 +250,7 @@ namespace Loxodon.Framework.Localizations
                 return null;
 
             string data = value.dataValue;
-            switch (type)
-            {
+            switch (type) {
                 case ValueType.Sprite:
                 case ValueType.Texture2D:
                 case ValueType.Texture3D:
@@ -306,8 +281,7 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        public void SetValue(int index, object obj)
-        {
+        public void SetValue(int index, object obj) {
             if (values == null)
                 this.values = new List<Value>();
 
@@ -318,14 +292,12 @@ namespace Loxodon.Framework.Localizations
                 this.values.Add(new Value());
 
             Value value = this.values[index];
-            if (value == null)
-            {
+            if (value == null) {
                 value = new Value();
                 values[index] = value;
             }
 
-            switch (type)
-            {
+            switch (type) {
                 case ValueType.Sprite:
                 case ValueType.Texture2D:
                 case ValueType.Texture3D:
@@ -365,8 +337,7 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        public void RemoveValue(int index)
-        {
+        public void RemoveValue(int index) {
             if (values == null || values.Count <= 0)
                 return;
 
@@ -378,8 +349,7 @@ namespace Loxodon.Framework.Localizations
     }
 
     [Serializable]
-    public enum ValueType
-    {
+    public enum ValueType {
         String = 0,
         Boolean = 1,
         Int = 2,

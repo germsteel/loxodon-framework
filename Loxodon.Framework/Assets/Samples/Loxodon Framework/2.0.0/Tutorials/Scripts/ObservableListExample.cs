@@ -26,44 +26,36 @@ using System.Collections.Specialized;
 using UnityEngine;
 using Loxodon.Framework.Observables;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class Item : ObservableObject
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class Item : ObservableObject {
         private string title;
         private string iconPath;
         private string content;
 
-        public string Title
-        {
+        public string Title {
             get { return this.title; }
             set { this.Set(ref this.title, value); }
         }
 
-        public string IconPath
-        {
+        public string IconPath {
             get { return this.iconPath; }
             set { this.Set(ref this.iconPath, value); }
         }
 
-        public string Content
-        {
+        public string Content {
             get { return this.content; }
             set { this.Set(ref this.content, value); }
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return string.Format("[Item: Title={0}, IconPath={1}, Content={2}]", Title, IconPath, Content);
         }
     }
 
-    public class ObservableListExample : MonoBehaviour
-    {
+    public class ObservableListExample : MonoBehaviour {
         private ObservableList<Item> list;
 
-        protected void Start()
-        {
+        protected void Start() {
             this.list = new ObservableList<Item>();
             list.CollectionChanged += OnCollectionChanged;
 
@@ -73,38 +65,30 @@ namespace Loxodon.Framework.Tutorials
             list.Clear();
         }
 
-        protected void OnDestroy()
-        {
-            if (this.list != null)
-            {
+        protected void OnDestroy() {
+            if (this.list != null) {
                 this.list.CollectionChanged -= OnCollectionChanged;
                 this.list = null;
             }
         }
 
-        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
-        {
-            switch (eventArgs.Action)
-            {
+        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs) {
+            switch (eventArgs.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (Item item in eventArgs.NewItems)
-                    {
+                    foreach (Item item in eventArgs.NewItems) {
                         Debug.LogFormat("ADD item:{0}", item);
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (Item item in eventArgs.OldItems)
-                    {
+                    foreach (Item item in eventArgs.OldItems) {
                         Debug.LogFormat("REMOVE item:{0}", item);
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    foreach (Item item in eventArgs.OldItems)
-                    {
+                    foreach (Item item in eventArgs.OldItems) {
                         Debug.LogFormat("REPLACE before item:{0}", item);
                     }
-                    foreach (Item item in eventArgs.NewItems)
-                    {
+                    foreach (Item item in eventArgs.NewItems) {
                         Debug.LogFormat("REPLACE after item:{0}", item);
                     }
                     break;

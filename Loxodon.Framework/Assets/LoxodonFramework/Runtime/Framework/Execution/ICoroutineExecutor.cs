@@ -27,10 +27,8 @@ using System.Collections;
 
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Execution
-{
-    public interface ICoroutineExecutor
-    {
+namespace Loxodon.Framework.Execution {
+    public interface ICoroutineExecutor {
         void RunOnCoroutineNoReturn(IEnumerator routine);
 
         Asynchronous.IAsyncResult RunOnCoroutine(IEnumerator routine);

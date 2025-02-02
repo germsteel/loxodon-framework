@@ -27,34 +27,27 @@ using UnityEngine;
 using Loxodon.Framework.Views.Animations;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Views
-{
-    public class WindowView : UIView, IWindowView
-    {
+namespace Loxodon.Framework.Views {
+    public class WindowView : UIView, IWindowView {
         private IAnimation activationAnimation;
         private IAnimation passivationAnimation;
 
-        public virtual IAnimation ActivationAnimation
-        {
+        public virtual IAnimation ActivationAnimation {
             get { return this.activationAnimation; }
             set { this.activationAnimation = value; }
         }
 
-        public virtual IAnimation PassivationAnimation
-        {
+        public virtual IAnimation PassivationAnimation {
             get { return this.passivationAnimation; }
             set { this.passivationAnimation = value; }
         }
 
-        public virtual List<IUIView> Views
-        {
-            get
-            {
+        public virtual List<IUIView> Views {
+            get {
                 var transform = this.Transform;
                 List<IUIView> views = new List<IUIView>();
                 int count = transform.childCount;
-                for (int i = 0; i < count; i++)
-                {
+                for (int i = 0; i < count; i++) {
                     var child = transform.GetChild(i);
                     var view = child.GetComponent<IUIView>();
                     if (view != null)
@@ -64,13 +57,11 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual IUIView GetView(string name)
-        {
+        public virtual IUIView GetView(string name) {
             return this.Views.Find(v => v.Name.Equals(name));
         }
 
-        public virtual void AddView(IUIView view, bool worldPositionStays = false)
-        {
+        public virtual void AddView(IUIView view, bool worldPositionStays = false) {
             if (view == null)
                 return;
 
@@ -82,8 +73,7 @@ namespace Loxodon.Framework.Views
             t.SetParent(this.transform, worldPositionStays);
         }
 
-        public virtual void AddView(IUIView view, UILayout layout)
-        {
+        public virtual void AddView(IUIView view, UILayout layout) {
             if (view == null)
                 return;
 
@@ -91,8 +81,7 @@ namespace Loxodon.Framework.Views
             if (t == null)
                 return;
 
-            if (t.parent == this.transform)
-            {
+            if (t.parent == this.transform) {
                 if (layout != null)
                     layout(view.RectTransform);
                 return;
@@ -104,8 +93,7 @@ namespace Loxodon.Framework.Views
                 layout(view.RectTransform);
         }
 
-        public virtual void RemoveView(IUIView view, bool worldPositionStays = false)
-        {
+        public virtual void RemoveView(IUIView view, bool worldPositionStays = false) {
             if (view == null)
                 return;
 

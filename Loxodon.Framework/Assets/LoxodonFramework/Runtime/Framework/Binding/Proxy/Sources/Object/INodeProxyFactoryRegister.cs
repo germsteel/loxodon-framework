@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
-    public interface INodeProxyFactoryRegister
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
+    public interface INodeProxyFactoryRegister {
         void Register(INodeProxyFactory factory,int priority = 100);
 
         void Unregister(INodeProxyFactory factory);

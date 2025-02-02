@@ -33,22 +33,17 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
+namespace Loxodon.Framework.Tutorials {
 
-    public class DatabindingForLocalizationViewModel : ViewModelBase
-    {
+    public class DatabindingForLocalizationViewModel : ViewModelBase {
         private Localization localization;
 
-        public DatabindingForLocalizationViewModel(Localization localization)
-        {
+        public DatabindingForLocalizationViewModel(Localization localization) {
             this.localization = localization;
         }
 
-        public void OnValueChanged(int value)
-        {
-            switch (value)
-            {
+        public void OnValueChanged(int value) {
+            switch (value) {
                 case 0:
                     this.localization.CultureInfo = Locale.GetCultureInfoByLanguage(SystemLanguage.English);
                     break;
@@ -62,16 +57,14 @@ namespace Loxodon.Framework.Tutorials
         }
     }
 
-    public class DatabindingForLocalizationExample : MonoBehaviour
-    {
+    public class DatabindingForLocalizationExample : MonoBehaviour {
         public Dropdown dropdown;
 
         public Text text;
 
         private Localization localization;
 
-        void Awake()
-        {
+        void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
@@ -83,8 +76,7 @@ namespace Loxodon.Framework.Tutorials
             this.localization.AddDataProvider(new DefaultLocalizationSourceDataProvider("LocalizationTutorials", "LocalizationModule.asset"));
         }
 
-        void Start()
-        {
+        void Start() {
             BindingSet<DatabindingForLocalizationExample, DatabindingForLocalizationViewModel> bindingSet = this.CreateBindingSet(new DatabindingForLocalizationViewModel(this.localization));
             bindingSet.Bind(this.dropdown).For(v => v.onValueChanged).To<int>(vm => vm.OnValueChanged);
             bindingSet.Build();

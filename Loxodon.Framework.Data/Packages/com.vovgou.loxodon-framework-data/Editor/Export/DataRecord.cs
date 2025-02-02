@@ -24,9 +24,7 @@
 
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public class DataRecord : Dictionary<string,object>
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public class DataRecord : Dictionary<string,object> {
     }
 }

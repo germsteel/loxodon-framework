@@ -25,19 +25,15 @@
 using Loxodon.Framework.Messaging;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Examples
-{
-    public enum AccountEventType
-    {
+namespace Loxodon.Framework.Examples {
+    public enum AccountEventType {
         Register,
         Update,
         Deleted,
         Login
     }
-    public class AccountEventArgs
-    {
-        public AccountEventArgs(AccountEventType type, Account account)
-        {
+    public class AccountEventArgs {
+        public AccountEventArgs(AccountEventType type, Account account) {
             this.Type = type;
             this.Account = account;
         }
@@ -47,8 +43,7 @@ namespace Loxodon.Framework.Examples
         public Account Account { get; private set; }
     }
 
-    public interface IAccountService
-    {
+    public interface IAccountService {
         IMessenger Messenger { get; }
 
         Task<Account> Register(Account account);

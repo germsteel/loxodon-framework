@@ -26,10 +26,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public class IdleStateMonitor : IDisposable
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public class IdleStateMonitor : IDisposable {
         private readonly object syncLock = new object();
         private TimeSpan readerIdleTime;
         private TimeSpan writerIdleTime;
@@ -53,16 +51,13 @@ namespace Loxodon.Framework.Net.Connection
         private CancellationTokenSource cancellationTokenSource;
         private CancellationToken cancellationToken;
 
-        public IdleStateMonitor() : this(TimeSpan.FromMilliseconds(0))
-        {
+        public IdleStateMonitor() : this(TimeSpan.FromMilliseconds(0)) {
         }
 
-        public IdleStateMonitor(TimeSpan idleTime) : this(idleTime, idleTime, idleTime)
-        {
+        public IdleStateMonitor(TimeSpan idleTime) : this(idleTime, idleTime, idleTime) {
         }
 
-        public IdleStateMonitor(TimeSpan readerIdleTime, TimeSpan writerIdleTime, TimeSpan allIdleTime)
-        {
+        public IdleStateMonitor(TimeSpan readerIdleTime, TimeSpan writerIdleTime, TimeSpan allIdleTime) {
             this.readerIdleTime = readerIdleTime;
             this.writerIdleTime = writerIdleTime;
             this.allIdleTime = allIdleTime;
@@ -87,8 +82,7 @@ namespace Loxodon.Framework.Net.Connection
 
         public event EventHandler<IdleStateEventArgs> IdleStateChanged;
 
-        protected void Init()
-        {
+        protected void Init() {
             if (!(enableReaderIdle || enableWriterIdle || enableAllIdle))
                 return;
 
@@ -100,42 +94,33 @@ namespace Loxodon.Framework.Net.Connection
 
             this.cancellationTokenSource = new CancellationTokenSource();
             this.cancellationToken = cancellationTokenSource.Token;
-            Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    while (true)
-                    {
+            Task.Factory.StartNew(() => {
+                try {
+                    while (true) {
                         if (this.cancellationToken.IsCancellationRequested)
                             break;
 
                         long ticks = DateTime.Now.Ticks;
-                        if (connected)
-                        {
-                            try
-                            {
+                        if (connected) {
+                            try {
                                 IdleStateEventArgs readerIdleEventArgs = null;
                                 IdleStateEventArgs writerIdleEventArgs = null;
                                 IdleStateEventArgs allIdleEventArgs = null;
 
-                                lock (syncLock)
-                                {
-                                    if (enableReaderIdle && readerIdleCheckTime <= ticks)
-                                    {
+                                lock (syncLock) {
+                                    if (enableReaderIdle && readerIdleCheckTime <= ticks) {
                                         readerIdleEventArgs = firstReaderIdle ? IdleStateEventArgs.FirstReaderIdleStateEvent : IdleStateEventArgs.ReaderIdleStateEvent;
                                         firstReaderIdle = false;
                                         readerIdleCheckTime = ticks + readerIdleTime.Ticks;
                                     }
 
-                                    if (enableWriterIdle && writerIdleCheckTime <= ticks)
-                                    {
+                                    if (enableWriterIdle && writerIdleCheckTime <= ticks) {
                                         writerIdleEventArgs = firstWriterIdle ? IdleStateEventArgs.FirstWriterIdleStateEvent : IdleStateEventArgs.WriterIdleStateEvent;
                                         firstWriterIdle = false;
                                         writerIdleCheckTime = ticks + writerIdleTime.Ticks;
                                     }
 
-                                    if (enableAllIdle && allIdleCheckTime <= ticks)
-                                    {
+                                    if (enableAllIdle && allIdleCheckTime <= ticks) {
                                         allIdleEventArgs = firstAllIdle ? IdleStateEventArgs.FirstAllIdleStateEvent : IdleStateEventArgs.AllIdleStateEvent;
                                         firstAllIdle = false;
                                         allIdleCheckTime = ticks + allIdleTime.Ticks;
@@ -152,15 +137,12 @@ namespace Loxodon.Framework.Net.Connection
                             catch (Exception) { }
                         }
 
-                        lock (syncLock)
-                        {
-                            if (connected)
-                            {
+                        lock (syncLock) {
+                            if (connected) {
                                 if (waitTimeout.Ticks > 0)
                                     Monitor.Wait(syncLock, waitTimeout);
                             }
-                            else
-                            {
+                            else {
                                 Monitor.Wait(syncLock);
                             }
                         }
@@ -238,19 +220,15 @@ namespace Loxodon.Framework.Net.Connection
             // }, cancellationToken);
         }
 
-        public void OnConnected()
-        {
-            lock (syncLock)
-            {
+        public void OnConnected() {
+            lock (syncLock) {
                 connected = true;
                 Monitor.PulseAll(syncLock);
             }
         }
 
-        public void OnReceived()
-        {
-            lock (syncLock)
-            {
+        public void OnReceived() {
+            lock (syncLock) {
                 long ticks = DateTime.Now.Ticks;
                 if (enableReaderIdle)
                     readerIdleCheckTime = ticks + readerIdleTime.Ticks;
@@ -260,10 +238,8 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
-        public void OnSent()
-        {
-            lock (syncLock)
-            {
+        public void OnSent() {
+            lock (syncLock) {
                 long ticks = DateTime.Now.Ticks;
                 if (enableWriterIdle)
                     writerIdleCheckTime = ticks + writerIdleTime.Ticks;
@@ -273,29 +249,23 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
-        public void OnDisconnected()
-        {
-            lock (syncLock)
-            {
+        public void OnDisconnected() {
+            lock (syncLock) {
                 connected = false;
                 Monitor.PulseAll(syncLock);
             }
         }
 
-        protected void RaiseIdleStateChanged(IdleStateEventArgs eventArgs)
-        {
+        protected void RaiseIdleStateChanged(IdleStateEventArgs eventArgs) {
             IdleStateChanged?.Invoke(this, eventArgs);
         }
 
         #region IDisposable Support
         private bool disposedValue = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                lock (syncLock)
-                {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
+                lock (syncLock) {
                     connected = false;
                     this.cancellationTokenSource.Cancel();
                     Monitor.PulseAll(syncLock);
@@ -306,13 +276,11 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
-        ~IdleStateMonitor()
-        {
+        ~IdleStateMonitor() {
             Dispose(false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }

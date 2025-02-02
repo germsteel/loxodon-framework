@@ -22,16 +22,12 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Views
-{
-    public abstract class ToastViewBase : UIView
-    {
+namespace Loxodon.Framework.Views {
+    public abstract class ToastViewBase : UIView {
         protected string content;
-        public string Content 
-        {
+        public string Content  {
             get { return this.content; }
-            set 
-            {
+            set  {
                 if (string.Equals(content,value))
                     return;
 

@@ -35,15 +35,13 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-connection" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-connection": "2.0.0"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -74,16 +72,14 @@ Download Loxodon.Framework.Connection.unitypackage, import them into your projec
     IConnector<Request, Response, Notification> connector;
     ISubscription<EventArgs> eventSubscription;
     ISubscription<Notification> messageSubscription;
-    async void Start()
-    {
+    async void Start() {
         //Create TcpChannel
         var channel = new TcpChannel(new DefaultDecoder(), new DefaultEncoder(), new HandshakeHandler());
         channel.NoDelay = true;
         channel.IsBigEndian = true;
 
         //TLS encryption is optional
-        channel.Secure(true, "vovgou.com", null, (sender, certificate, chain, sslPolicyErrors) =>
-        {
+        channel.Secure(true, "vovgou.com", null, (sender, certificate, chain, sslPolicyErrors) => {
             //Verify self-signed certificates
             if (sslPolicyErrors == SslPolicyErrors.None)
                 return true;
@@ -99,20 +95,17 @@ Download Loxodon.Framework.Connection.unitypackage, import them into your projec
         connector.AutoReconnect = true;
 
         //Subscribe to events
-        eventSubscription = connector.Events().ObserveOn(SynchronizationContext.Current).Subscribe((e) =>
-        {
+        eventSubscription = connector.Events().ObserveOn(SynchronizationContext.Current).Subscribe((e) => {
             Debug.LogFormat("Received Event:{0}", e);
         });
 
         //Subscribe to notification messages
-        messageSubscription = connector.Received().Filter(message =>
-        {
+        messageSubscription = connector.Received().Filter(message => {
             //Filter messages
             if (message.CommandID > 0 && message.CommandID <= 100)
                 return true;
             return false;
-        }).ObserveOn(SynchronizationContext.Current).Subscribe(message =>
-        {
+        }).ObserveOn(SynchronizationContext.Current).Subscribe(message => {
             Debug.LogFormat("Received Notification:{0}", message);
         });
 
@@ -157,8 +150,7 @@ Download Loxodon.Framework.Connection.unitypackage, import them into your projec
       X509Certificate2 cert = new X509Certificate2(textAsset.bytes, "123456");
       
       var server = new Server(port);
-      server.Secure(true, cert, (sender, certificate, chain, sslPolicyErrors) =>
-      {
+      server.Secure(true, cert, (sender, certificate, chain, sslPolicyErrors) => {
          //The server does not verify the client's certificate and returns true
          return true;
       });

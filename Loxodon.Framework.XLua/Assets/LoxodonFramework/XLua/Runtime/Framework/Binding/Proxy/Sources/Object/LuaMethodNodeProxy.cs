@@ -25,14 +25,11 @@
 using System;
 using XLua;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
-    public class LuaMethodNodeProxy : SourceProxyBase, IObtainable
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
+    public class LuaMethodNodeProxy : SourceProxyBase, IObtainable {
         private bool disposed = false;
         private IScriptInvoker invoker;
-        public LuaMethodNodeProxy(LuaTable source, LuaFunction function) : base(source)
-        {
+        public LuaMethodNodeProxy(LuaTable source, LuaFunction function) : base(source) {
             if (source == null)
                 throw new ArgumentException("source");
 
@@ -44,24 +41,18 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         public override Type Type { get { return typeof(IScriptInvoker); } }
 
-        public object GetValue()
-        {
+        public object GetValue() {
             return this.invoker;
         }
 
-        public TValue GetValue<TValue>()
-        {
+        public TValue GetValue<TValue>() {
             return (TValue)this.invoker;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                if (disposing)
-                {
-                    if (invoker != null && invoker is IDisposable)
-                    {
+        protected override void Dispose(bool disposing) {
+            if (!disposed) {
+                if (disposing) {
+                    if (invoker != null && invoker is IDisposable) {
                         (invoker as IDisposable).Dispose();
                         invoker = null;
                     }

@@ -27,28 +27,23 @@
 using System;
 using UnityEngine;
 
-namespace Loxodon.Framework.Prefs
-{
+namespace Loxodon.Framework.Prefs {
 
-    public class ColorTypeEncoder : ITypeEncoder
-    {
+    public class ColorTypeEncoder : ITypeEncoder {
         private int priority = 997;
 
-        public int Priority
-        {
+        public int Priority {
             get { return this.priority; }
             set { this.priority = value; }
         }
 
-        public bool IsSupport(Type type)
-        {
+        public bool IsSupport(Type type) {
             if (type.Equals(typeof(Color)))
                 return true;
             return false;
         }
 
-        public object Decode(Type type, string value)
-        {
+        public object Decode(Type type, string value) {
             if (string.IsNullOrEmpty(value))
                 return null;
 
@@ -59,8 +54,7 @@ namespace Loxodon.Framework.Prefs
             throw new FormatException(string.Format("The '{0}' is illegal Color.", value));
         }
 
-        public string Encode(object value)
-        {
+        public string Encode(object value) {
             return string.Format("#{0}", ColorUtility.ToHtmlStringRGBA((Color)value));
         }
     }

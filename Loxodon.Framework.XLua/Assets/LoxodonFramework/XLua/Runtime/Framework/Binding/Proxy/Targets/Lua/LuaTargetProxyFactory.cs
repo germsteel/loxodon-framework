@@ -26,12 +26,9 @@ using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Observables;
 using XLua;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class LuaTargetProxyFactory : ITargetProxyFactory
-    {
-        public ITargetProxy CreateProxy(object target, BindingDescription description)
-        {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class LuaTargetProxyFactory : ITargetProxyFactory {
+        public ITargetProxy CreateProxy(object target, BindingDescription description) {
             if (target == null || !(target is ILuaExtendable))
                 return null;
 
@@ -40,8 +37,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 return null;
 
             var obj = metatable.Get<object>(description.TargetName);
-            if (obj != null)
-            {
+            if (obj != null) {
                 LuaFunction function = obj as LuaFunction;
                 if (function != null)
                     return new LuaMethodTargetProxy(target, function);

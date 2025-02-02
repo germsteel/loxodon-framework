@@ -28,21 +28,17 @@ using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Framework.Commands;
 using System;
 
-namespace Loxodon.Framework.Binding.Parameters
-{
-    public class ParameterWrapConverter : AbstractConverter
-    {
+namespace Loxodon.Framework.Binding.Parameters {
+    public class ParameterWrapConverter : AbstractConverter {
         private readonly ICommandParameter commandParameter;
-        public ParameterWrapConverter(ICommandParameter commandParameter)
-        {
+        public ParameterWrapConverter(ICommandParameter commandParameter) {
             if (commandParameter == null)
                 throw new ArgumentNullException("commandParameter");
 
             this.commandParameter = commandParameter;
         }
 
-        public override object Convert(object value)
-        {
+        public override object Convert(object value) {
             if (value == null)
                 return null;
 
@@ -64,25 +60,21 @@ namespace Loxodon.Framework.Binding.Parameters
             throw new NotSupportedException(string.Format("Unsupported type \"{0}\".", value.GetType()));
         }
 
-        public override object ConvertBack(object value)
-        {
+        public override object ConvertBack(object value) {
             throw new NotSupportedException();
         }
     }
 
-    public class ParameterWrapConverter<T> : AbstractConverter
-    {
+    public class ParameterWrapConverter<T> : AbstractConverter {
         private readonly ICommandParameter<T> commandParameter;
-        public ParameterWrapConverter(ICommandParameter<T> commandParameter)
-        {
+        public ParameterWrapConverter(ICommandParameter<T> commandParameter) {
             if (commandParameter == null)
                 throw new ArgumentNullException("commandParameter");
 
             this.commandParameter = commandParameter;
         }
 
-        public override object Convert(object value)
-        {
+        public override object Convert(object value) {
             if (value == null)
                 return null;
 
@@ -113,8 +105,7 @@ namespace Loxodon.Framework.Binding.Parameters
             throw new NotSupportedException(string.Format("Unsupported type \"{0}\".", value.GetType()));
         }
 
-        public override object ConvertBack(object value)
-        {
+        public override object ConvertBack(object value) {
             throw new NotSupportedException();
         }
     }

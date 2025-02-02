@@ -1,5 +1,4 @@
-void VertShader(inout appdata_full v, out Input data)
-{
+void VertShader(inout appdata_full v, out Input data) {
 	v.vertex.x += _VertexOffsetX;
 	v.vertex.y += _VertexOffsetY;
 
@@ -33,8 +32,7 @@ void VertShader(inout appdata_full v, out Input data)
 	data.viewDirEnv = mul((float3x3)_EnvMatrix, WorldSpaceViewDir(v.vertex));
 }
 
-void PixShader(Input input, inout SurfaceOutput o)
-{
+void PixShader(Input input, inout SurfaceOutput o) {
 
 #if USE_DERIVATIVE | BEVEL_ON
 	float3 delta = float3(1.0 / _TextureWidth, 1.0 / _TextureHeight, 0.0);

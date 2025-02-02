@@ -27,22 +27,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Loxodon.Framework.Configurations
-{
-    public class PropertiesConfiguration : ConfigurationBase
-    {
+namespace Loxodon.Framework.Configurations {
+    public class PropertiesConfiguration : ConfigurationBase {
         private readonly Dictionary<string, object> dict = new Dictionary<string, object>();
-        public PropertiesConfiguration(string text):base()
-        {
+        public PropertiesConfiguration(string text):base() {
             this.Load(text);
         }
 
-        protected void Load(string text)
-        {
+        protected void Load(string text) {
             StringReader reader = new StringReader(text);
             string line = null;
-            while (null != (line = reader.ReadLine()))
-            {
+            while (null != (line = reader.ReadLine())) {
                 line = line.Trim();
                 if (string.IsNullOrEmpty(line))
                     continue;
@@ -68,43 +63,36 @@ namespace Loxodon.Framework.Configurations
 
         public override bool IsEmpty { get { return dict.Count == 0; } }
 
-        public override bool ContainsKey(string key)
-        {
+        public override bool ContainsKey(string key) {
             return dict.ContainsKey(key);
         }
 
-        public override IEnumerator<string> GetKeys()
-        {
+        public override IEnumerator<string> GetKeys() {
             return dict.Keys.GetEnumerator();
         }
 
-        public override object GetProperty(string key)
-        {
+        public override object GetProperty(string key) {
             object value = null;
             dict.TryGetValue(key, out value);
             return value;
         }
 
-        public override void AddProperty(string key, object value)
-        {
+        public override void AddProperty(string key, object value) {
             if (dict.ContainsKey(key))
                 throw new AlreadyExistsException(key);
 
             dict.Add(key, value);
         }
 
-        public override void SetProperty(string key, object value)
-        {
+        public override void SetProperty(string key, object value) {
             dict[key] = value;
         }
 
-        public override void RemoveProperty(string key)
-        {
+        public override void RemoveProperty(string key) {
             dict.Remove(key);
         }
 
-        public override void Clear()
-        {
+        public override void Clear() {
             dict.Clear();
         }
     }

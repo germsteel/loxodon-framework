@@ -24,10 +24,8 @@
 
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Views
-{
-    public interface IWindowManager
-    {
+namespace Loxodon.Framework.Views {
+    public interface IWindowManager {
         bool Activated { get; set; }
 
         IWindow Current { get; }

@@ -30,34 +30,27 @@ using UnityEngine.Networking;
 using System.Collections.Generic;
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Net.Http
-{
-    public class UnityWebRequestFileDownloader : FileDownloaderBase
-    {
+namespace Loxodon.Framework.Net.Http {
+    public class UnityWebRequestFileDownloader : FileDownloaderBase {
         private static readonly ILog log = LogManager.GetLogger(typeof(UnityWebRequestFileDownloader));
 
-        public UnityWebRequestFileDownloader() : base()
-        {
+        public UnityWebRequestFileDownloader() : base() {
         }
 
-        public UnityWebRequestFileDownloader(Uri baseUri, int maxTaskCount) : base(baseUri, maxTaskCount)
-        {
+        public UnityWebRequestFileDownloader(Uri baseUri, int maxTaskCount) : base(baseUri, maxTaskCount) {
         }
 
-        public override IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(Uri path, FileInfo fileInfo)
-        {
+        public override IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(Uri path, FileInfo fileInfo) {
             return Execution.Executors.RunOnCoroutine<ProgressInfo, FileInfo>((promise) => DoDownloadFileAsync(path, fileInfo, promise));
         }
 
-        protected virtual IEnumerator DoDownloadFileAsync(Uri path, FileInfo fileInfo, IProgressPromise<ProgressInfo> promise)
-        {
+        protected virtual IEnumerator DoDownloadFileAsync(Uri path, FileInfo fileInfo, IProgressPromise<ProgressInfo> promise) {
             if (!fileInfo.Directory.Exists)
                 fileInfo.Directory.Create();
 
             ProgressInfo progressInfo = new ProgressInfo();
             progressInfo.TotalCount = 1;
-            using (UnityWebRequest www = new UnityWebRequest(this.GetAbsoluteUri(path).AbsoluteUri))
-            {
+            using (UnityWebRequest www = new UnityWebRequest(this.GetAbsoluteUri(path).AbsoluteUri)) {
                 DownloadFileHandler downloadHandler = new DownloadFileHandler(www, fileInfo);
                 www.downloadHandler = downloadHandler;
 #if UNITY_2018_1_OR_NEWER
@@ -65,10 +58,8 @@ namespace Loxodon.Framework.Net.Http
 #else
                 www.Send();
 #endif
-                while (!www.isDone)
-                {
-                    if (downloadHandler.DownloadProgress > 0)
-                    {
+                while (!www.isDone) {
+                    if (downloadHandler.DownloadProgress > 0) {
                         if (progressInfo.TotalSize <= 0)
                             progressInfo.TotalSize = downloadHandler.TotalSize;
                         progressInfo.CompletedSize = downloadHandler.DownloadedSize;
@@ -81,8 +72,7 @@ namespace Loxodon.Framework.Net.Http
                 if (www.isNetworkError)
 #else
                 if (www.isError)
-#endif
-                {
+#endif {
                     promise.SetException(www.error);
                     yield break;
                 }
@@ -94,31 +84,24 @@ namespace Loxodon.Framework.Net.Http
             }
         }
 
-        public override IProgressResult<ProgressInfo, ResourceInfo[]> DownloadFileAsync(ResourceInfo[] infos)
-        {
+        public override IProgressResult<ProgressInfo, ResourceInfo[]> DownloadFileAsync(ResourceInfo[] infos) {
             return Execution.Executors.RunOnCoroutine<ProgressInfo, ResourceInfo[]>((promise) => DoDownloadFileAsync(infos, promise));
         }
 
-        protected virtual IEnumerator DoDownloadFileAsync(ResourceInfo[] infos, IProgressPromise<ProgressInfo> promise)
-        {
+        protected virtual IEnumerator DoDownloadFileAsync(ResourceInfo[] infos, IProgressPromise<ProgressInfo> promise) {
             long totalSize = 0;
             long downloadedSize = 0;
             List<ResourceInfo> downloadList = new List<ResourceInfo>();
-            for (int i = 0; i < infos.Length; i++)
-            {
+            for (int i = 0; i < infos.Length; i++) {
                 var info = infos[i];
                 var fileInfo = info.FileInfo;
 
-                if (info.FileSize < 0)
-                {
-                    if (fileInfo.Exists)
-                    {
+                if (info.FileSize < 0) {
+                    if (fileInfo.Exists) {
                         info.FileSize = fileInfo.Length;
                     }
-                    else
-                    {
-                        using (UnityWebRequest www = UnityWebRequest.Head(this.GetAbsoluteUri(info.Path).AbsoluteUri))
-                        {
+                    else {
+                        using (UnityWebRequest www = UnityWebRequest.Head(this.GetAbsoluteUri(info.Path).AbsoluteUri)) {
 #if UNITY_2018_1_OR_NEWER
                             yield return www.SendWebRequest();
 #else
@@ -146,8 +129,7 @@ namespace Loxodon.Framework.Net.Http
             yield return null;
 
             List<KeyValuePair<ResourceInfo, UnityWebRequest>> tasks = new List<KeyValuePair<ResourceInfo, UnityWebRequest>>();
-            for (int i = 0; i < downloadList.Count; i++)
-            {
+            for (int i = 0; i < downloadList.Count; i++) {
                 ResourceInfo info = downloadList[i];
                 Uri path = info.Path;
                 FileInfo fileInfo = info.FileInfo;
@@ -164,17 +146,14 @@ namespace Loxodon.Framework.Net.Http
 #endif
                 tasks.Add(new KeyValuePair<ResourceInfo, UnityWebRequest>(info, www));
 
-                while (tasks.Count >= this.MaxTaskCount || (i == downloadList.Count - 1 && tasks.Count > 0))
-                {
+                while (tasks.Count >= this.MaxTaskCount || (i == downloadList.Count - 1 && tasks.Count > 0)) {
                     long tmpSize = 0;
-                    for (int j = tasks.Count - 1; j >= 0; j--)
-                    {
+                    for (int j = tasks.Count - 1; j >= 0; j--) {
                         var task = tasks[j];
                         ResourceInfo _info = task.Key;
                         UnityWebRequest _www = task.Value;
 
-                        if (!_www.isDone)
-                        {
+                        if (!_www.isDone) {
                             //tmpSize += (long)Math.Max(0, _www.downloadedBytes);//the UnityWebRequest.downloadedProgress has a bug in android platform
                             tmpSize += (long)Math.Max(0, ((DownloadFileHandler)_www.downloadHandler).DownloadedSize);
                             continue;
@@ -187,17 +166,14 @@ namespace Loxodon.Framework.Net.Http
                         if (_www.isNetworkError)
 #else
                         if (_www.isError)
-#endif
-                        {
+#endif {
                             promise.SetException(new Exception(_www.error));
                             if (log.IsErrorEnabled)
                                 log.ErrorFormat("Downloads file '{0}' failure from the address '{1}'.Reason:{2}", _info.FileInfo.FullName, GetAbsoluteUri(_info.Path), _www.error);
                             _www.Dispose();
 
-                            try
-                            {
-                                foreach (var kv in tasks)
-                                {
+                            try {
+                                foreach (var kv in tasks) {
                                     kv.Value.Dispose();
                                 }
                             }

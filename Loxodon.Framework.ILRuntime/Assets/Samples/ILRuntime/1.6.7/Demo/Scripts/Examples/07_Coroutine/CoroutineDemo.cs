@@ -11,11 +11,9 @@ using ILRuntime.Runtime.Enviorment;
 //下面这行为了取消使用WWW的警告，Unity2018以后推荐使用UnityWebRequest，处于兼容性考虑Demo依然使用WWW
 #pragma warning disable CS0618
 
-public class CoroutineDemo : MonoBehaviour
-{
+public class CoroutineDemo : MonoBehaviour {
     static CoroutineDemo instance;
-    public static CoroutineDemo Instance
-    {
+    public static CoroutineDemo Instance {
         get { return instance; }
     }
     //AppDomain是ILRuntime的入口，最好是在一个单例类中保存，整个游戏全局就一个，这里为了示例方便，每个例子里面都单独做了一个
@@ -24,14 +22,12 @@ public class CoroutineDemo : MonoBehaviour
     System.IO.MemoryStream fs;
     System.IO.MemoryStream p;
 
-    void Start()
-    {
+    void Start() {
         instance = this;
         StartCoroutine(LoadHotFixAssembly());
     }
 
-    IEnumerator LoadHotFixAssembly()
-    {
+    IEnumerator LoadHotFixAssembly() {
         //首先实例化ILRuntime的AppDomain，AppDomain是一个应用程序域，每个AppDomain都是一个独立的沙盒
         appdomain = new ILRuntime.Runtime.Enviorment.AppDomain();
         //正常项目中应该是自行从其他地方下载dll，或者打包在AssetBundle中读取，平时开发以及为了演示方便直接从StreammingAssets中读取，
@@ -64,12 +60,10 @@ public class CoroutineDemo : MonoBehaviour
         byte[] pdb = www.bytes;
         fs = new MemoryStream(dll);
         p = new MemoryStream(pdb);
-        try
-        {
+        try {
             appdomain.LoadAssembly(fs, p, new ILRuntime.Mono.Cecil.Pdb.PdbReaderProvider());
         }
-        catch
-        {
+        catch {
             Debug.LogError("加载热更DLL失败，请确保已经通过VS打开Assets/Samples/ILRuntime/1.6/Demo/HotFix_Project/HotFix_Project.sln编译过热更DLL");
         }
 
@@ -78,8 +72,7 @@ public class CoroutineDemo : MonoBehaviour
         OnHotFixLoaded();
     }
 
-    void InitializeILRuntime()
-    {
+    void InitializeILRuntime() {
 #if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
         //由于Unity的Profiler接口只允许在主线程使用，为了避免出异常，需要告诉ILRuntime主线程的线程ID才能正确将函数运行耗时报告给Profiler
         appdomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -90,18 +83,15 @@ public class CoroutineDemo : MonoBehaviour
         appdomain.DebugService.StartDebugService(56000);
     }
 
-    unsafe void OnHotFixLoaded()
-    {
+    unsafe void OnHotFixLoaded() {
         appdomain.Invoke("HotFix_Project.TestCoroutine", "RunTest", null, null);
     }
 
-    public void DoCoroutine(IEnumerator coroutine)
-    {
+    public void DoCoroutine(IEnumerator coroutine) {
         StartCoroutine(coroutine);
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         if (fs != null)
             fs.Close();
         if (p != null)

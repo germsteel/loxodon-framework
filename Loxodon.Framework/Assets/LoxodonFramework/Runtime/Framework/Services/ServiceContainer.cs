@@ -25,88 +25,73 @@
 using System;
 using System.Collections.Concurrent;
 
-namespace Loxodon.Framework.Services
-{
-    public class ServiceContainer : IServiceContainer, IDisposable
-    {
+namespace Loxodon.Framework.Services {
+    public class ServiceContainer : IServiceContainer, IDisposable {
         private readonly object _lock = new object();
         private ConcurrentDictionary<string, Entry> nameServiceMappings = new ConcurrentDictionary<string, Entry>();
         private ConcurrentDictionary<Type, Entry> typeServiceMappings = new ConcurrentDictionary<Type, Entry>();
 
-        public virtual object Resolve(Type type)
-        {
+        public virtual object Resolve(Type type) {
             Entry entry;
             if (typeServiceMappings.TryGetValue(type, out entry))
                 return entry.Factory.Create();
             return null;
         }
 
-        public virtual T Resolve<T>()
-        {
+        public virtual T Resolve<T>() {
             Entry entry;
             if (typeServiceMappings.TryGetValue(typeof(T), out entry))
                 return (T)entry.Factory.Create();
             return default(T);
         }
 
-        public virtual object Resolve(string name)
-        {
+        public virtual object Resolve(string name) {
             Entry entry;
             if (nameServiceMappings.TryGetValue(name, out entry))
                 return entry.Factory.Create();
             return null;
         }
 
-        public virtual T Resolve<T>(string name)
-        {
+        public virtual T Resolve<T>(string name) {
             Entry entry;
             if (nameServiceMappings.TryGetValue(name, out entry))
                 return (T)entry.Factory.Create();
             return default(T);
         }
 
-        public virtual void Register<T>(Func<T> factory)
-        {
+        public virtual void Register<T>(Func<T> factory) {
             this.Register0(typeof(T), new GenericFactory<T>(factory));
         }
 
-        public virtual void Register(Type type, object target)
-        {
+        public virtual void Register(Type type, object target) {
             this.Register0(type, new SingleInstanceFactory(target));
         }
 
-        public virtual void Register(string name, object target)
-        {
+        public virtual void Register(string name, object target) {
             this.Register0(name, new SingleInstanceFactory(target));
         }
 
-        public virtual void Register<T>(T target)
-        {
+        public virtual void Register<T>(T target) {
             this.Register0(typeof(T), new SingleInstanceFactory(target));
         }
 
-        public virtual void Register<T>(string name, Func<T> factory)
-        {
+        public virtual void Register<T>(string name, Func<T> factory) {
             this.Register0(name, new GenericFactory<T>(factory));
         }
 
-        public virtual void Register<T>(string name, T target)
-        {
+        public virtual void Register<T>(string name, T target) {
             this.Register0(name, new SingleInstanceFactory(target));
         }
 
-        public virtual void Unregister(Type type)
-        {
+        public virtual void Unregister(Type type) {
             this.Unregister0(type);
         }
 
-        public virtual void Unregister<T>()
-        {
+        public virtual void Unregister<T>() {
             this.Unregister0(typeof(T));
         }
 
-        public virtual void Unregister(string name)
-        {
+        public virtual void Unregister(string name) {
             this.Unregister0(name);
         }
 
@@ -128,10 +113,8 @@ namespace Loxodon.Framework.Services
         /// </summary>
         /// <param name="type"></param>
         /// <param name="factory"></param>
-        internal void Register0(Type type, IFactory factory)
-        {
-            lock (_lock)
-            {
+        internal void Register0(Type type, IFactory factory) {
+            lock (_lock) {
                 string name = type.IsGenericType ? null : type.Name;
                 Entry entry = new Entry(name, type, factory);
                 if (!typeServiceMappings.TryAdd(type, entry))
@@ -147,19 +130,15 @@ namespace Loxodon.Framework.Services
         /// </summary>
         /// <param name="name"></param>
         /// <param name="factory"></param>
-        internal void Register0(string name, IFactory factory)
-        {
-            lock (_lock)
-            {
+        internal void Register0(string name, IFactory factory) {
+            lock (_lock) {
                 if (!nameServiceMappings.TryAdd(name, new Entry(name, null, factory)))
                     throw new DuplicateRegisterServiceException(string.Format("Duplicate key {0}", name));
             }
         }
 
-        internal void Unregister0(string name)
-        {
-            lock (_lock)
-            {
+        internal void Unregister0(string name) {
+            lock (_lock) {
                 Entry entry;
                 if (!nameServiceMappings.TryRemove(name, out entry) || entry == null || entry.Type == null)
                     return;
@@ -172,10 +151,8 @@ namespace Loxodon.Framework.Services
             }
         }
 
-        internal void Unregister0(Type type)
-        {
-            lock (_lock)
-            {
+        internal void Unregister0(Type type) {
+            lock (_lock) {
                 Entry entry;
                 if (!typeServiceMappings.TryRemove(type, out entry) || entry == null || string.IsNullOrEmpty(entry.Name))
                     return;
@@ -191,12 +168,9 @@ namespace Loxodon.Framework.Services
         #region IDisposable Support
         private bool disposed = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                if (disposing)
-                {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposed) {
+                if (disposing) {
                     foreach (var kv in nameServiceMappings)
                         kv.Value.Dispose();
 
@@ -213,22 +187,18 @@ namespace Loxodon.Framework.Services
             }
         }
 
-        ~ServiceContainer()
-        {
+        ~ServiceContainer() {
             Dispose(false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
         #endregion
 
-        internal class Entry : IDisposable
-        {
-            public Entry(string name, Type type, IFactory factory)
-            {
+        internal class Entry : IDisposable {
+            public Entry(string name, Type type, IFactory factory) {
                 this.Name = name;
                 this.Type = type;
                 this.Factory = factory;
@@ -237,59 +207,47 @@ namespace Loxodon.Framework.Services
             public string Name { get; }
             public Type Type { get; }
             public IFactory Factory { get; }
-            public void Dispose()
-            {
+            public void Dispose() {
                 Factory.Dispose();
             }
         }
 
-        internal interface IFactory : IDisposable
-        {
+        internal interface IFactory : IDisposable {
             object Create();
         }
 
-        internal class GenericFactory<T> : IFactory
-        {
+        internal class GenericFactory<T> : IFactory {
             private Func<T> func;
 
-            public GenericFactory(Func<T> func)
-            {
+            public GenericFactory(Func<T> func) {
                 this.func = func;
             }
 
-            public virtual object Create()
-            {
+            public virtual object Create() {
                 return func();
             }
 
-            public void Dispose()
-            {
+            public void Dispose() {
             }
         }
 
-        internal class SingleInstanceFactory : IFactory
-        {
+        internal class SingleInstanceFactory : IFactory {
             private object target;
 
-            public SingleInstanceFactory(object target)
-            {
+            public SingleInstanceFactory(object target) {
                 this.target = target;
             }
 
-            public virtual object Create()
-            {
+            public virtual object Create() {
                 return target;
             }
 
             #region IDisposable Support
             private bool disposed = false;
 
-            protected virtual void Dispose(bool disposing)
-            {
-                if (!disposed)
-                {
-                    if (disposing)
-                    {
+            protected virtual void Dispose(bool disposing) {
+                if (!disposed) {
+                    if (disposing) {
                         var disposable = target as IDisposable;
                         if (disposable != null)
                             disposable.Dispose();
@@ -300,13 +258,11 @@ namespace Loxodon.Framework.Services
                 }
             }
 
-            ~SingleInstanceFactory()
-            {
+            ~SingleInstanceFactory() {
                 Dispose(false);
             }
 
-            public void Dispose()
-            {
+            public void Dispose() {
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }

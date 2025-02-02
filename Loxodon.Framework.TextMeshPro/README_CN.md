@@ -37,15 +37,13 @@
 ### 修改Packages/manifest.json文件安装
 
 通过修改manifest.json文件安装，不需要安装nodejs和openupm-cli客户端。在Unity项目根目录下找到Packages/manifest.json文件，在文件的scopedRegistries（没有可以自己添加）节点下添加第三方仓库package.openupm.com的配置，同时在dependencies节点下添加com.vovgou.loxodon-framework-textmeshpro的配置，保存后切换到Unity窗口即可完成安装。
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-textmeshpro": "2.6.5"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -74,11 +72,9 @@
 	using System.Text;
 	using UnityEngine;
 	using Loxodon.Framework.TextFormatting;//必须先引入这个包名
-	public class Example : MonoBehaviour
-	{
+	public class Example : MonoBehaviour {
 	    StringBuilder builder = new StringBuilder();
-	    void Update()
-	    {
+	    void Update() {
 	        builder.Clear();
 	        builder.AppendFormat<DateTime,int>("Now:{0:yyyy-MM-dd HH:mm:ss} Frame:{0:D6}", DateTime.Now,Time.frameCount);
 	        builder.AppendFormat<float>("{0:f2}", Time.realtimeSinceStartup);       
@@ -91,14 +87,12 @@
 
 此控件支持字符串格式化功能，支持数据绑定，FormattableTextMeshProUGUI控件的AsParameters<>()函数可以转为一个泛型参数集，支持1-4个不同参数，也可以支持一个泛型数组，通过泛型参数集和ViewModel进行绑定。使用这个插件，字符串和数组拼接是无GC的，StringBuilder也无需ToString()就可以更新TextMeshPro控件，所以可以做到完全0GC更新UI上的文本。
 
-	public class FormattableTextMeshProUGUIExample : MonoBehaviour
-    {
+	public class FormattableTextMeshProUGUIExample : MonoBehaviour {
         public FormattableTextMeshProUGUI paramBinding1;//参数绑定示例1，支持1-4个不同参数
         
         private ExampleViewModel viewModel;
 
-        private void Start()
-        {
+        private void Start() {
             ApplicationContext context = Context.GetApplicationContext();
             IServiceContainer container = context.GetContainer();
             BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -132,8 +126,7 @@
 其中FrameCount、Hero是绑定到Data的对象的属性。Health、AttackDamage、Armor是Hero对象的属性。FrameCount后面的D6是帧数这个数字类型的格式化参数。
 
 
-	public class FormattableTextMeshProUGUIExample : MonoBehaviour
-    {
+	public class FormattableTextMeshProUGUIExample : MonoBehaviour {
         public FormattableTextMeshProUGUI paramBinding1;//参数绑定示例1，支持1-4个不同参数
         public GenericParameters<DateTime, int> paramBinding2;//参数绑定的另外一种方式，支持1-4个不同参数
         public FormattableTextMeshProUGUI arrayBinding;//也可以使用 ArrayParameters<float>
@@ -141,8 +134,7 @@
 
         private ExampleViewModel viewModel;
 
-        private void Start()
-        {
+        private void Start() {
             ApplicationContext context = Context.GetApplicationContext();
             IServiceContainer container = context.GetContainer();
             BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -180,86 +172,73 @@
             this.SetDataContext(this.viewModel);
         }
 
-        void Update()
-        {
+        void Update() {
             viewModel.Time = DateTime.Now;
             viewModel.FrameCount = Time.frameCount;
             viewModel.Hero.Health = (Time.frameCount % 1000) / 10;
         }
     }
 
-    public class ExampleViewModel : ObservableObject
-    {
+    public class ExampleViewModel : ObservableObject {
         private DateTime time;
         private TimeSpan timeSpan;
         private string template;
         private int frameCount;
         private Hero hero;
-        public DateTime Time
-        {
+        public DateTime Time {
             get { return this.time; }
             set { this.Set(ref time, value); }
         }
 
-        public TimeSpan TimeSpan
-        {
+        public TimeSpan TimeSpan {
             get { return this.timeSpan; }
             set { this.Set(ref timeSpan, value); }
         }
 
-        public int FrameCount
-        {
+        public int FrameCount {
             get { return this.frameCount; }
             set { this.Set(ref frameCount, value); }
         }
 
-        public string Template
-        {
+        public string Template {
             get { return this.template; }
             set { this.Set(ref template, value); }
         }
 
-        public Hero Hero
-        {
+        public Hero Hero {
             get { return this.hero; }
             set { this.Set(ref hero, value); }
         }
     }
 
-    public class Hero : ObservableObject
-    {
+    public class Hero : ObservableObject {
         private float attackSpeed = 95.5f;
         private float moveSpeed = 2.4f;
         private int health = 100;
         private int attackDamage = 20;
         private int armor = 30;
 
-        public float AttackSpeed
-        {
+        public float AttackSpeed {
             get { return this.attackSpeed; }
             set { this.Set(ref attackSpeed, value); }
         }
 
-        public float MoveSpeed
-        {
+        public float MoveSpeed {
             get { return this.moveSpeed; }
             set { this.Set(ref moveSpeed, value); }
         }
 
-        public int Health
-        {
+        public int Health {
             get { return this.health; }
             set { this.Set(ref health, value); }
         }
 
-        public int AttackDamage
-        {
+        public int AttackDamage {
             get { return this.attackDamage; }
             set { this.Set(ref attackDamage, value); }
         }
 
-        public int Armor
-        {
+        public int Armor {
             get { return this.armor; }
             set { this.Set(ref armor, value); }
         }

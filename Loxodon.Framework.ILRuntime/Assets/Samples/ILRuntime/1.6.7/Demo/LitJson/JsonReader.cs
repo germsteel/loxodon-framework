@@ -15,10 +15,8 @@ using System.IO;
 using System.Text;
 
 
-namespace LitJson
-{
-    public enum JsonToken
-    {
+namespace LitJson {
+    public enum JsonToken {
         None,
 
         ObjectStart,
@@ -39,8 +37,7 @@ namespace LitJson
     }
 
 
-    public class JsonReader
-    {
+    public class JsonReader {
         #region Fields
         private static IDictionary<int, IDictionary<int, int[]>> parse_table;
 
@@ -96,23 +93,19 @@ namespace LitJson
 
 
         #region Constructors
-        static JsonReader ()
-        {
+        static JsonReader () {
             PopulateParseTable ();
         }
 
         public JsonReader (string json_text) :
-            this (new StringReader (json_text), true)
-        {
+            this (new StringReader (json_text), true) {
         }
 
         public JsonReader (TextReader reader) :
-            this (reader, false)
-        {
+            this (reader, false) {
         }
 
-        private JsonReader (TextReader reader, bool owned)
-        {
+        private JsonReader (TextReader reader, bool owned) {
             if (reader == null)
                 throw new ArgumentNullException ("reader");
 
@@ -138,8 +131,7 @@ namespace LitJson
 
 
         #region Static Methods
-        private static void PopulateParseTable ()
-        {
+        private static void PopulateParseTable () {
             // See section A.2. of the manual for details
             parse_table = new Dictionary<int, IDictionary<int, int[]>> ();
 
@@ -246,21 +238,18 @@ namespace LitJson
         }
 
         private static void TableAddCol (ParserToken row, int col,
-                                         params int[] symbols)
-        {
+                                         params int[] symbols) {
             parse_table[(int) row].Add (col, symbols);
         }
 
-        private static void TableAddRow (ParserToken rule)
-        {
+        private static void TableAddRow (ParserToken rule) {
             parse_table.Add ((int) rule, new Dictionary<int, int[]> ());
         }
         #endregion
 
 
         #region Private Methods
-        private void ProcessNumber (string number)
-        {
+        private void ProcessNumber (string number) {
             if (number.IndexOf ('.') != -1 ||
                 number.IndexOf ('e') != -1 ||
                 number.IndexOf ('E') != -1) {
@@ -291,8 +280,7 @@ namespace LitJson
             }
 
             ulong n_uint64;
-            if (UInt64.TryParse(number, out n_uint64))
-            {
+            if (UInt64.TryParse(number, out n_uint64)) {
                 token = JsonToken.Long;
                 token_value = n_uint64;
 
@@ -304,8 +292,7 @@ namespace LitJson
             token_value = 0;
         }
 
-        private void ProcessSymbol ()
-        {
+        private void ProcessSymbol () {
             if (current_symbol == '[')  {
                 token = JsonToken.ArrayStart;
                 parser_return = true;
@@ -363,8 +350,7 @@ namespace LitJson
             }
         }
 
-        private bool ReadToken ()
-        {
+        private bool ReadToken () {
             if (end_of_input)
                 return false;
 
@@ -383,8 +369,7 @@ namespace LitJson
         #endregion
 
 
-        public void Close ()
-        {
+        public void Close () {
             if (end_of_input)
                 return;
 
@@ -397,8 +382,7 @@ namespace LitJson
             reader = null;
         }
 
-        public bool Read ()
-        {
+        public bool Read () {
             if (end_of_input)
                 return false;
 

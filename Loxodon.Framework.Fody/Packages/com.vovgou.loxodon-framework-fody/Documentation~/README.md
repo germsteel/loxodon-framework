@@ -50,8 +50,7 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-fody" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
-
-    {
+ {
       "dependencies": {
         ...
         "com.vovgou.loxodon-framework-fody": "2.6.0",
@@ -59,8 +58,7 @@ Installing the framework in this way does not require nodejs and openm-cli.
         "com.vovgou.loxodon-framework-fody-tostring": "2.6.0",
 		"com.vovgou.loxodon-framework-fody-bindingproxy": "2.6.0"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -93,8 +91,7 @@ FodyWeavers.xml
 Create a User class in the project and add annotation "AddINotifyPropertyChangedInterface" to the class, as follows:
 
     [AddINotifyPropertyChangedInterface]
-    public class User
-    {
+    public class User {
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -104,20 +101,15 @@ Create a User class in the project and add annotation "AddINotifyPropertyChanged
 
 After the project is compiled, use the ILSpy tool to view the assembly.the code of the User class is as follows, "PropertyChanged.Fody" weaves the INotifyPropertyChanged interface and related code for User.cs
 
-	public class User : INotifyPropertyChanged
-	{
-		public string FirstName
-		{
+	public class User : INotifyPropertyChanged {
+		public string FirstName {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return FirstName;
 			}
 			[CompilerGenerated]
-			set
-			{
-				if (!string.Equals(FirstName, value, StringComparison.Ordinal))
-				{
+			set {
+				if (!string.Equals(FirstName, value, StringComparison.Ordinal)) {
 					FirstName = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
@@ -125,18 +117,14 @@ After the project is compiled, use the ILSpy tool to view the assembly.the code 
 			}
 		}
 
-		public string LastName
-		{
+		public string LastName {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return LastName;
 			}
 			[CompilerGenerated]
-			set
-			{
-				if (!string.Equals(LastName, value, StringComparison.Ordinal))
-				{
+			set {
+				if (!string.Equals(LastName, value, StringComparison.Ordinal)) {
 					LastName = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
@@ -151,8 +139,7 @@ After the project is compiled, use the ILSpy tool to view the assembly.the code 
 
 		[GeneratedCode("PropertyChanged.Fody", "3.4.1.0")]
 		[DebuggerNonUserCode]
-		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-		{
+		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs) {
 			this.PropertyChanged?.Invoke(this, eventArgs);
 		}
 	}
@@ -172,8 +159,7 @@ The code of the User class is as follows, and the [ToString] annotation is added
 
     [AddINotifyPropertyChangedInterface]
     [ToString]
-    public class User
-    {
+    public class User {
         public string FirstName { get; set; }  
 
         public string LastName { get; set; }
@@ -183,18 +169,14 @@ The code of the User class is as follows, and the [ToString] annotation is added
 
 The code after weaving the ToString method is as follows:
 
-	public string FirstName
-	{
+	public string FirstName {
 		[CompilerGenerated]
-		get
-		{
+		get {
 			return FirstName;
 		}
 		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(FirstName, value, StringComparison.Ordinal))
-			{
+		set {
+			if (!string.Equals(FirstName, value, StringComparison.Ordinal)) {
 				FirstName = value;
 				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 				<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
@@ -202,18 +184,14 @@ The code after weaving the ToString method is as follows:
 		}
 	}
 
-	public string LastName
-	{
+	public string LastName {
 		[CompilerGenerated]
-		get
-		{
+		get {
 			return LastName;
 		}
 		[CompilerGenerated]
-		set
-		{
-			if (!string.Equals(LastName, value, StringComparison.Ordinal))
-			{
+		set {
+			if (!string.Equals(LastName, value, StringComparison.Ordinal)) {
 				LastName = value;
 				<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 				<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
@@ -228,17 +206,14 @@ The code after weaving the ToString method is as follows:
 
 	[GeneratedCode("PropertyChanged.Fody", "4.0.2.0")]
 	[DebuggerNonUserCode]
-	protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-	{
+	protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs) {
 		this.PropertyChanged?.Invoke(this, eventArgs);
 	}
 
 	[GeneratedCode("Fody.ToString", "1.11.1.0")]
 	[DebuggerNonUserCode]
-	public override string ToString()
-	{
-		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3]
-		{
+	public override string ToString() {
+		return string.Format(CultureInfo.InvariantCulture, "{T: 'User', FirstName: '{0}', LastName: '{1}', FullName: '{2}'}", new object[3] {
 			FirstName ?? "null",
 			LastName ?? "null",
 			FullName ?? "null"
@@ -294,8 +269,7 @@ After the binding service BindingServiceBundle starts, register the WovenNodePro
     [GenerateFieldProxy]
     [GeneratePropertyProxy]
     [AddINotifyPropertyChangedInterface]
-    public class AccountViewModel : INotifyPropertyChanged
-    {
+    public class AccountViewModel : INotifyPropertyChanged {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -311,38 +285,31 @@ After the binding service BindingServiceBundle starts, register the WovenNodePro
         public int Age { get; set; }
 
         [GenerateMethodProxy]
-        public void OnValueChanged()
-        {
+        public void OnValueChanged() {
         }
 
         [GenerateMethodProxy]
-        public void OnValueChanged(int value)
-        {
+        public void OnValueChanged(int value) {
         }
     }
 
 
 BindingProxy.Fody will automatically weave proxy classes for public fields, properties, and methods marked with [GenerateMethodProxy] after Unity compiles, such as the FirstName property. This plugin will automatically generate a nest class named FirstNamePropertyNodeProxy in the AccountViewModel class. At the same time, the IWovenNodeProxyFinder interface will be woven into the AccountViewModel class.
 
-	public class AccountViewModel : INotifyPropertyChanged, IWovenNodeProxyFinder
-	{
+	public class AccountViewModel : INotifyPropertyChanged, IWovenNodeProxyFinder {
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class MobileFieldNodeProxy : WovenFieldNodeProxy<AccountViewModel, string>
-		{
+		private class MobileFieldNodeProxy : WovenFieldNodeProxy<AccountViewModel, string> {
 			public MobileFieldNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public override string GetValue()
-			{
+			public override string GetValue() {
 				return source.Mobile;
 			}
 	
-			public override void SetValue(string value)
-			{
+			public override void SetValue(string value) {
 				source.Mobile = value;
 			}
 		}
@@ -350,20 +317,16 @@ BindingProxy.Fody will automatically weave proxy classes for public fields, prop
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class FirstNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string>
-		{
+		private class FirstNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string> {
 			public FirstNamePropertyNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public override string GetValue()
-			{
+			public override string GetValue() {
 				return source.FirstName;
 			}
 	
-			public override void SetValue(string value)
-			{
+			public override void SetValue(string value) {
 				source.FirstName = value;
 			}
 		}
@@ -371,20 +334,16 @@ BindingProxy.Fody will automatically weave proxy classes for public fields, prop
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class LastNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string>
-		{
+		private class LastNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string> {
 			public LastNamePropertyNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public override string GetValue()
-			{
+			public override string GetValue() {
 				return source.LastName;
 			}
 	
-			public override void SetValue(string value)
-			{
+			public override void SetValue(string value) {
 				throw new MemberAccessException("AccountViewModel.LastName is read-only or inaccessible.");
 			}
 		}
@@ -392,20 +351,16 @@ BindingProxy.Fody will automatically weave proxy classes for public fields, prop
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class FullNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string>
-		{
+		private class FullNamePropertyNodeProxy : WovenPropertyNodeProxy<AccountViewModel, string> {
 			public FullNamePropertyNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public override string GetValue()
-			{
+			public override string GetValue() {
 				return source.FullName;
 			}
 	
-			public override void SetValue(string value)
-			{
+			public override void SetValue(string value) {
 				throw new MemberAccessException("AccountViewModel.FullName is read-only or inaccessible.");
 			}
 		}
@@ -413,29 +368,23 @@ BindingProxy.Fody will automatically weave proxy classes for public fields, prop
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
 		[Preserve]
-		private class OnValueChangedMethodNodeProxy : WovenMethodNodeProxy<AccountViewModel>, IInvoker<int>
-		{
+		private class OnValueChangedMethodNodeProxy : WovenMethodNodeProxy<AccountViewModel>, IInvoker<int> {
 			public OnValueChangedMethodNodeProxy(AccountViewModel source)
-				: base(source)
-			{
+				: base(source) {
 			}
 	
-			public object Invoke()
-			{
+			public object Invoke() {
 				source.OnValueChanged();
 				return null;
 			}
 	
-			public object Invoke(int value)
-			{
+			public object Invoke(int value) {
 				source.OnValueChanged(value);
 				return null;
 			}
 	
-			public override object Invoke(params object[] args)
-			{
-				switch ((args != null) ? args.Length : 0)
-				{
+			public override object Invoke(params object[] args) {
+				switch ((args != null) ? args.Length : 0) {
 				case 0:
 					return Invoke();
 				case 1:
@@ -451,18 +400,14 @@ BindingProxy.Fody will automatically weave proxy classes for public fields, prop
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		private WovenNodeProxyFinder _finder;
 	
-		public string FirstName
-		{
+		public string FirstName {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return FirstName;
 			}
 			[CompilerGenerated]
-			set
-			{
-				if (!string.Equals(FirstName, value, StringComparison.Ordinal))
-				{
+			set {
+				if (!string.Equals(FirstName, value, StringComparison.Ordinal)) {
 					FirstName = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FirstName);
@@ -470,18 +415,14 @@ BindingProxy.Fody will automatically weave proxy classes for public fields, prop
 			}
 		}
 	
-		public string LastName
-		{
+		public string LastName {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return LastName;
 			}
 			[CompilerGenerated]
-			protected set
-			{
-				if (!string.Equals(LastName, value, StringComparison.Ordinal))
-				{
+			protected set {
+				if (!string.Equals(LastName, value, StringComparison.Ordinal)) {
 					LastName = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.FullName);
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.LastName);
@@ -491,18 +432,14 @@ BindingProxy.Fody will automatically weave proxy classes for public fields, prop
 	
 		public string FullName => FirstName + " " + LastName;
 	
-		public int Age
-		{
+		public int Age {
 			[CompilerGenerated]
-			get
-			{
+			get {
 				return Age;
 			}
 			[CompilerGenerated]
-			set
-			{
-				if (Age != value)
-				{
+			set {
+				if (Age != value) {
 					Age = value;
 					<>OnPropertyChanged(<>PropertyChangedEventArgs.Age);
 				}
@@ -511,27 +448,22 @@ BindingProxy.Fody will automatically weave proxy classes for public fields, prop
 	
 		public event PropertyChangedEventHandler PropertyChanged;
 	
-		public void OnValueChanged()
-		{
+		public void OnValueChanged() {
 		}
 	
-		public void OnValueChanged(int value)
-		{
+		public void OnValueChanged(int value) {
 		}
 	
 		[GeneratedCode("PropertyChanged.Fody", "3.4.1.0")]
 		[DebuggerNonUserCode]
-		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-		{
+		protected void <>OnPropertyChanged(PropertyChangedEventArgs eventArgs) {
 			this.PropertyChanged?.Invoke(this, eventArgs);
 		}
 	
 		[GeneratedCode("BindingProxy.Fody", "1.0.0.0")]
 		[DebuggerNonUserCode]
-		ISourceProxy IWovenNodeProxyFinder.GetSourceProxy(string name)
-		{
-			if (_finder == null)
-			{
+		ISourceProxy IWovenNodeProxyFinder.GetSourceProxy(string name) {
+			if (_finder == null) {
 				_finder = new WovenNodeProxyFinder(this);
 			}
 			return _finder.GetSourceProxy(name);

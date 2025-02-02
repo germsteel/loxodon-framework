@@ -24,11 +24,9 @@
 
 using UnityEngine;
 
-namespace Loxodon.Framework.Views.Variables
-{
+namespace Loxodon.Framework.Views.Variables {
     [System.Serializable]
-    public enum VariableType
-    {
+    public enum VariableType {
         Object,
         GameObject,
         Component,
@@ -43,8 +41,7 @@ namespace Loxodon.Framework.Views.Variables
     }
 
     [System.Serializable]
-    public class Variable
-    {
+    public class Variable {
         [SerializeField]
         protected string name = "";
 
@@ -57,23 +54,18 @@ namespace Loxodon.Framework.Views.Variables
         [SerializeField]
         protected VariableType variableType;
 
-        public virtual string Name
-        {
+        public virtual string Name {
             get { return this.name; }
             set { this.name = value; }
         }
 
-        public virtual VariableType VariableType
-        {
+        public virtual VariableType VariableType {
             get { return this.variableType; }
         }
 
-        public virtual System.Type ValueType
-        {
-            get
-            {
-                switch (this.variableType)
-                {
+        public virtual System.Type ValueType {
+            get {
+                switch (this.variableType) {
                     case VariableType.Boolean:
                         return typeof(bool);
                     case VariableType.Float:
@@ -102,20 +94,16 @@ namespace Loxodon.Framework.Views.Variables
             }
         }
 
-        public virtual void SetValue<T>(T value)
-        {
+        public virtual void SetValue<T>(T value) {
             this.SetValue(value);
         }
 
-        public virtual T GetValue<T>()
-        {
+        public virtual T GetValue<T>() {
             return (T)GetValue();
         }
 
-        public virtual void SetValue(object value)
-        {
-            switch (this.variableType)
-            {
+        public virtual void SetValue(object value) {
+            switch (this.variableType) {
                 case VariableType.Boolean:
                     this.dataValue = DataConverter.GetString((bool)value);
                     break;
@@ -153,10 +141,8 @@ namespace Loxodon.Framework.Views.Variables
                     throw new System.NotSupportedException();
             }
         }
-        public virtual object GetValue()
-        {
-            switch (this.variableType)
-            {
+        public virtual object GetValue() {
+            switch (this.variableType) {
                 case VariableType.Boolean:
                     return DataConverter.ToBoolean(this.dataValue);
                 case VariableType.Float:

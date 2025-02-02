@@ -22,25 +22,20 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Services
-{
-    public abstract class AbstractServiceBundle : IServiceBundle
-    {
+namespace Loxodon.Framework.Services {
+    public abstract class AbstractServiceBundle : IServiceBundle {
         private IServiceContainer container;
-        public AbstractServiceBundle(IServiceContainer container)
-        {
+        public AbstractServiceBundle(IServiceContainer container) {
             this.container = container;
         }
 
-        public void Start()
-        {
+        public void Start() {
             this.OnStart(container);
         }
 
         protected abstract void OnStart(IServiceContainer container);
 
-        public void Stop()
-        {
+        public void Stop() {
             this.OnStop(container);
         }
 

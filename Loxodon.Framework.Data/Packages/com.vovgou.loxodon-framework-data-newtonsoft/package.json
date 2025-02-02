@@ -28,8 +28,7 @@
     "type": "git",
     "url": "https://github.com/vovgou/loxodon-framework"
   },
-  "samples": [
-    {
+  "samples": [ {
       "displayName": "Examples",
       "description": "Examples",
       "path": "Samples~/Examples"

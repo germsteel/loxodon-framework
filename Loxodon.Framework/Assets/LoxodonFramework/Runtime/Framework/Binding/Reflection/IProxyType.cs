@@ -25,10 +25,8 @@
 using System;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public interface IProxyType
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public interface IProxyType {
         Type Type { get; }
 
         IProxyMemberInfo GetMember(string name);

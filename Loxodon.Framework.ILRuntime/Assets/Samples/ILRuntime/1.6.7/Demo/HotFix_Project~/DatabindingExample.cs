@@ -14,14 +14,10 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace HotFix_Project
-{
-    public class Account : ObservableObjectBase
-    {
-        public static Account Create()
-        {
-            return new Account()
-            {
+namespace HotFix_Project {
+    public class Account : ObservableObjectBase {
+        public static Account Create() {
+            return new Account() {
                 Username = "ypc"
             };
         }
@@ -33,106 +29,86 @@ namespace HotFix_Project
         private DateTime birthday;
         private readonly ObservableProperty<string> address = new ObservableProperty<string>();
 
-        public int ID
-        {
+        public int ID {
             get { return this.id; }
             set { this.Set<int>(ref this.id, value); }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set<string>(ref this.username, value); }
         }
 
-        public string Password
-        {
+        public string Password {
             get { return this.password; }
             set { this.Set<string>(ref this.password, value); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set<string>(ref this.email, value); }
         }
 
-        public DateTime Birthday
-        {
+        public DateTime Birthday {
             get { return this.birthday; }
             set { this.Set<DateTime>(ref this.birthday, value); }
         }
 
-        public ObservableProperty<string> Address
-        {
+        public ObservableProperty<string> Address {
             get { return this.address; }
         }
 
-        public void Print()
-        {
+        public void Print() {
             UnityEngine.Debug.LogFormat("Username:{0}", username);
         }
     }
 
-    public class LoginViewModel : ViewModelBase
-    {
+    public class LoginViewModel : ViewModelBase {
         private string username;
         private string password;
         private SimpleCommand loginCommand;
         private SimpleCommand cancelCommand;
 
-        public LoginViewModel()
-        {
+        public LoginViewModel() {
             this.loginCommand = new SimpleCommand(this.Login);
-            this.cancelCommand = new SimpleCommand(() =>
-            {
+            this.cancelCommand = new SimpleCommand(() => {
                 //this.interactionFinished.Raise();/* Request to close the login window */
             });
         }
 
-        public ICommand LoginCommand
-        {
+        public ICommand LoginCommand {
             get { return this.loginCommand; }
         }
 
-        public ICommand CancelCommand
-        {
+        public ICommand CancelCommand {
             get { return this.cancelCommand; }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
-            set
-            {
-                if (this.Set<string>(ref this.username, value, "Username"))
-                {
+            set {
+                if (this.Set<string>(ref this.username, value, "Username")) {
                     //this.ValidateUsername();
                 }
             }
         }
 
-        public string Password
-        {
+        public string Password {
             get { return this.password; }
-            set
-            {
-                if (this.Set<string>(ref this.password, value, "Password"))
-                {
+            set {
+                if (this.Set<string>(ref this.password, value, "Password")) {
                     //this.ValidatePassword();
                 }
             }
         }
 
-        public void Login()
-        {
+        public void Login() {
 
         }
 
     }
 
-    public class AccountViewModel : ViewModelBase
-    {
+    public class AccountViewModel : ViewModelBase {
         private Account account;
         private User user;
         private bool remember;
@@ -143,93 +119,77 @@ namespace HotFix_Project
         private ObservableDictionary<string, string> errors = new ObservableDictionary<string, string>();
         //private Localization localization;
 
-        public AccountViewModel()
-        {
+        public AccountViewModel() {
             //ApplicationContext context = Context.GetApplicationContext();
             //localization = context.GetService<Localization>();
             this.loginRequest = new InteractionRequest<LoginViewModel>(this);
 
             var loginViewModel = new LoginViewModel();
             loginViewModel.Username = "Clark";
-            this.command = new SimpleCommand(() =>
-            {
+            this.command = new SimpleCommand(() => {
                 this.command.Enabled = false;
-                this.loginRequest.Raise(loginViewModel, vm =>
-                {
+                this.loginRequest.Raise(loginViewModel, vm => {
                     this.command.Enabled = true;
                 });
             });
 
         }
 
-        public IInteractionRequest LoginRequest
-        {
+        public IInteractionRequest LoginRequest {
             get { return this.loginRequest; }
         }
 
-        public User User
-        {
+        public User User {
             get { return this.user; }
             set { this.Set<User>(ref user, value); }
         }
 
-        public Account Account
-        {
+        public Account Account {
             get { return this.account; }
             set { this.Set<Account>(ref account, value); }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set<string>(ref this.username, value); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set<string>(ref this.email, value); }
         }
 
-        public bool Remember
-        {
+        public bool Remember {
             get { return this.remember; }
             set { this.Set<bool>(ref this.remember, value); }
         }
 
-        public ObservableDictionary<string, string> Errors
-        {
+        public ObservableDictionary<string, string> Errors {
             get { return this.errors; }
             set { this.Set<ObservableDictionary<string, string>>(ref this.errors, value); }
         }
 
-        public ICommand Click
-        {
+        public ICommand Click {
             get { return this.command; }
         }
 
         //public string Description { get { localization.GetFormattedText("databinding.tutorials.description", this.Username, vm.Username); } }
 
-        public void OnUsernameValueChanged(string value)
-        {
+        public void OnUsernameValueChanged(string value) {
             Debug.LogFormat("Username ValueChanged:{0}", value);
         }
 
-        public void OnEmailValueChanged(string value)
-        {
+        public void OnEmailValueChanged(string value) {
             Debug.LogFormat("Email ValueChanged:{0}", value);
         }
 
-        public void OnSubmit()
-        {
-            if (string.IsNullOrEmpty(this.Username) || !Regex.IsMatch(this.Username, "^[a-zA-Z0-9_-]{4,12}$"))
-            {
+        public void OnSubmit() {
+            if (string.IsNullOrEmpty(this.Username) || !Regex.IsMatch(this.Username, "^[a-zA-Z0-9_-]{4,12}$")) {
                 this.errors["errorMessage"] = "Please enter a valid username.";
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.Email) || !Regex.IsMatch(this.Email, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"))
-            {
+            if (string.IsNullOrEmpty(this.Email) || !Regex.IsMatch(this.Email, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")) {
                 this.errors["errorMessage"] = "Please enter a valid email.";
                 return;
             }
@@ -242,18 +202,15 @@ namespace HotFix_Project
         
     }
 
-    public class DatabindingExample : UIView
-    {
+    public class DatabindingExample : UIView {
 
         private Localization localization;
 
-        public static void Run(GameObject go)
-        {
+        public static void Run(GameObject go) {
             go.AddComponent<DatabindingExample>();
         }
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             ILRuntimeBindingServiceBundle bindingService = new ILRuntimeBindingServiceBundle(context.GetContainer());
             bindingService.Start();
@@ -266,11 +223,9 @@ namespace HotFix_Project
         }
 
 
-        protected override void Start()
-        {
+        protected override void Start() {
             DatabindingVariables variables = this.GetComponent<DatabindingVariables>();
-            Account account = new Account()
-            {
+            Account account = new Account() {
                 ID = 1,
                 Username = "test",
                 Password = "test",
@@ -282,14 +237,12 @@ namespace HotFix_Project
             //account.Address.ValueChanged += Address_ValueChanged;//OK
             account.Address.Value = "beijing";
 
-            User user = new User()
-            {
+            User user = new User() {
                 FirstName = "Tom"
             };
 
 
-            AccountViewModel accountViewModel = new AccountViewModel()
-            {
+            AccountViewModel accountViewModel = new AccountViewModel() {
                 Account = account,
                 User = user,
             };
@@ -334,12 +287,10 @@ namespace HotFix_Project
             //staticBindingSet.Build();
         }
 
-        private void Address_ValueChanged(object sender, EventArgs e)
-        {
+        private void Address_ValueChanged(object sender, EventArgs e) {
         }
 
-        private void OnOpenLoginWindow(object sender, InteractionEventArgs args)
-        {
+        private void OnOpenLoginWindow(object sender, InteractionEventArgs args) {
             var loginViewModel = (LoginViewModel) args.Context;
 
             UnityEngine.Debug.LogFormat("OnOpenWindow:{0}", loginViewModel.Username);

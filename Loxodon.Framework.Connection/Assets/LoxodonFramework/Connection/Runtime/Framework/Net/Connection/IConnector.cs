@@ -27,10 +27,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface IConnector<TRequest, TResponse, TNotification> : IDisposable where TRequest : IRequest where TResponse : IResponse where TNotification : INotification
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface IConnector<TRequest, TResponse, TNotification> : IDisposable where TRequest : IRequest where TResponse : IResponse where TNotification : INotification {
         /// <summary>
         /// Whether a connection has been established.
         /// </summary>

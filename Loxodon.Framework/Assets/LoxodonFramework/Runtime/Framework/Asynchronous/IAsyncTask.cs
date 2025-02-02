@@ -24,14 +24,12 @@
 
 using System;
 
-namespace Loxodon.Framework.Asynchronous
-{
+namespace Loxodon.Framework.Asynchronous {
     /// <summary>
     /// 
     /// </summary>
     [Obsolete("This type will be removed in version 3.0")]
-    public interface IAsyncTask : IAsyncResult
-    {
+    public interface IAsyncTask : IAsyncResult {
         /// <summary>
         /// Triggered when a task starts.
         /// </summary>
@@ -83,8 +81,7 @@ namespace Loxodon.Framework.Asynchronous
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
     [Obsolete("This type will be removed in version 3.0")]
-    public interface IAsyncTask<TResult> : IAsyncResult<TResult>
-    {
+    public interface IAsyncTask<TResult> : IAsyncResult<TResult> {
         /// <summary>
         /// Triggered when a task starts.
         /// </summary>

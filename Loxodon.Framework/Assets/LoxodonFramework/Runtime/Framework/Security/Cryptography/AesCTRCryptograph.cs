@@ -29,10 +29,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Loxodon.Framework.Security.Cryptography
-{
-    public class AesCTRCryptograph : IStreamDecryptor, IStreamEncryptor
-    {
+namespace Loxodon.Framework.Security.Cryptography {
+    public class AesCTRCryptograph : IStreamDecryptor, IStreamEncryptor {
         private static readonly ILog log = LogManager.GetLogger(typeof(AesCTRCryptograph));
 
         private const int IV_SIZE = 16;
@@ -46,8 +44,7 @@ namespace Loxodon.Framework.Security.Cryptography
             'A','B','C','D','E','F','G','H','I','J','K','L','M','N','Q','P','R','T','S','V','U','W','X','Y','Z'
         };
 
-        public static string GenerateIV()
-        {
+        public static string GenerateIV() {
             StringBuilder buf = new StringBuilder();
             Random rnd = new Random(DateTime.Now.Millisecond);
             for (int i = 0; i < IV_SIZE; i++)
@@ -60,8 +57,7 @@ namespace Loxodon.Framework.Security.Cryptography
         /// </summary>
         /// <param name="size">The 'size' must be 16 24 or 32.</param>
         /// <returns></returns>
-        public static string GenerateKey(int size)
-        {
+        public static string GenerateKey(int size) {
             if (size != 16 && size != 24 && size != 32)
                 throw new ArgumentNullException("The 'size' must be 16 24 or 32.");
 
@@ -78,19 +74,16 @@ namespace Loxodon.Framework.Security.Cryptography
         private byte[] key;
         private byte[] iv;
 
-        public AesCTRCryptograph() : this(DEFAULT_KEY, DEFAULT_IV)
-        {
+        public AesCTRCryptograph() : this(DEFAULT_KEY, DEFAULT_IV) {
         }
 
-        public AesCTRCryptograph(byte[] key, byte[] iv)
-        {
+        public AesCTRCryptograph(byte[] key, byte[] iv) {
             int keySize = 128;
             this.CheckIV(iv);
             this.CheckKey(keySize, key);
 
 
-            if (key == DEFAULT_KEY || iv == DEFAULT_IV)
-            {
+            if (key == DEFAULT_KEY || iv == DEFAULT_IV) {
                 if (log.IsWarnEnabled)
                     log.Warn("Note:Do not use the default Key and IV in the production environment.");
             }
@@ -102,43 +95,35 @@ namespace Loxodon.Framework.Security.Cryptography
             this.algorithmName = "AES128_CTR_NONE";
         }
 
-        protected virtual void CheckKey(int keySize, byte[] bytes)
-        {
+        protected virtual void CheckKey(int keySize, byte[] bytes) {
             if (bytes == null || bytes.Length * 8 != keySize)
                 throw new ArgumentException(string.Format("The 'Key' must be {0} byte!", keySize / 8));
         }
 
-        protected virtual void CheckIV(byte[] bytes)
-        {
+        protected virtual void CheckIV(byte[] bytes) {
             if (bytes == null || bytes.Length != IV_SIZE)
                 throw new ArgumentException("The 'IV' must be 16 byte!");
         }
 
         public virtual string AlgorithmName { get { return this.algorithmName; } }
 
-        public virtual byte[] Decrypt(byte[] buffer)
-        {
-            using (ICryptoTransform decryptor = this.algorithm.CreateDecryptor())
-            {
+        public virtual byte[] Decrypt(byte[] buffer) {
+            using (ICryptoTransform decryptor = this.algorithm.CreateDecryptor()) {
                 return decryptor.TransformFinalBlock(buffer, 0, buffer.Length);
             }
         }
 
-        public virtual Stream Decrypt(Stream input)
-        {
+        public virtual Stream Decrypt(Stream input) {
             return new AesCTRCryptoStream(input, (AesCTRCryptoTransform)this.algorithm.CreateDecryptor(), CryptoStreamMode.Read);
         }
 
-        public virtual byte[] Encrypt(byte[] buffer)
-        {
-            using (ICryptoTransform encryptor = this.algorithm.CreateEncryptor())
-            {
+        public virtual byte[] Encrypt(byte[] buffer) {
+            using (ICryptoTransform encryptor = this.algorithm.CreateEncryptor()) {
                 return encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
             }
         }
 
-        public virtual Stream Encrypt(Stream input)
-        {
+        public virtual Stream Encrypt(Stream input) {
             return new AesCTRCryptoStream(input, (AesCTRCryptoTransform)this.algorithm.CreateEncryptor(), CryptoStreamMode.Read);
         }
     }

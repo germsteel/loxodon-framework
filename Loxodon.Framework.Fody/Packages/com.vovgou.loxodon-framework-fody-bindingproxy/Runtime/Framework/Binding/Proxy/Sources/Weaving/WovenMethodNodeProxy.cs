@@ -24,31 +24,25 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
-{
+namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving {
 
-    public abstract class WovenMethodNodeProxy<T> : SourceProxyBase, IObtainable, IObtainable<IInvoker>, IInvoker
-    {
+    public abstract class WovenMethodNodeProxy<T> : SourceProxyBase, IObtainable, IObtainable<IInvoker>, IInvoker {
         protected new T source;
-        public WovenMethodNodeProxy(T source) : base(source)
-        {
+        public WovenMethodNodeProxy(T source) : base(source) {
             this.source = source;
         }
 
         public override Type Type { get { return typeof(IInvoker); } }
 
-        object IObtainable.GetValue()
-        {
+        object IObtainable.GetValue() {
             return this;
         }
 
-        TValue IObtainable.GetValue<TValue>()
-        {
+        TValue IObtainable.GetValue<TValue>() {
             return (TValue)(object)this;
         }
 
-        public IInvoker GetValue()
-        {
+        public IInvoker GetValue() {
             return this;
         }
 

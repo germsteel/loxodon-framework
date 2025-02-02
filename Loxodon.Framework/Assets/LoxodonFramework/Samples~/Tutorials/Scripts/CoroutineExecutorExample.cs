@@ -29,14 +29,11 @@ using System.Text;
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.Execution;
 
-namespace Loxodon.Framework.Tutorials
-{
-	public class CoroutineExecutorExample : MonoBehaviour
-	{
+namespace Loxodon.Framework.Tutorials {
+	public class CoroutineExecutorExample : MonoBehaviour {
 		private ICoroutineExecutor executor;
 
-		IEnumerator Start ()
-		{
+		IEnumerator Start () {
 			this.executor = new CoroutineExecutor (); 
 
 			IAsyncResult r1 = this.executor.RunOnCoroutine (Task1 ());
@@ -60,23 +57,20 @@ namespace Loxodon.Framework.Tutorials
 			Debug.LogFormat ("Task4 Result:{0}", r4.Result);
 		}
 
-		IEnumerator Task1 ()
-		{
+		IEnumerator Task1 () {
 			Debug.Log ("The task1 start");
 			yield return null;
 			Debug.Log ("The task1 end");
 		}
 
-		IEnumerator Task2 (IPromise promise)
-		{
+		IEnumerator Task2 (IPromise promise) {
 			Debug.Log ("The task2 start");
 			yield return null;
 			promise.SetResult (); /* set a result of the task */
 			Debug.Log ("The task2 end");
 		}
 
-		IEnumerator Task3 (IPromise<string> promise)
-		{
+		IEnumerator Task3 (IPromise<string> promise) {
 			Debug.Log ("The task3 start");
 			StringBuilder buf = new StringBuilder ();
 			for (int i = 0; i < 50; i++) {
@@ -93,8 +87,7 @@ namespace Loxodon.Framework.Tutorials
 			Debug.Log ("The task3 end");
 		}
 
-		IEnumerator Task4 (IProgressPromise<float,string> promise)
-		{
+		IEnumerator Task4 (IProgressPromise<float,string> promise) {
 			Debug.Log ("The task4 start");
 			int n = 10;
 			StringBuilder buf = new StringBuilder ();

@@ -22,13 +22,11 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Prefs
-{
+namespace Loxodon.Framework.Prefs {
     /// <summary>
     /// IFactory
     /// </summary>
-    public interface IFactory
-    {
+    public interface IFactory {
         /// <summary>
         /// Create an instance of the preferences.
         /// </summary>

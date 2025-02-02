@@ -2,11 +2,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Loxodon.Log.Log4Net
-{
+namespace Loxodon.Log.Log4Net {
     [Serializable]
-    public class LoggingData : ISerializationCallbackReceiver
-    {
+    public class LoggingData : ISerializationCallbackReceiver {
         private string identity;
         private string loggerName;
         private Level level;
@@ -20,8 +18,7 @@ namespace Loxodon.Log.Log4Net
         private DateTime timeStamp;
 
 
-        public LoggingData(log4net.Core.LoggingEventData data)
-        {
+        public LoggingData(log4net.Core.LoggingEventData data) {
             this.identity = data.Identity;
             this.loggerName = data.LoggerName;
             this.level = Level.DEBUG;
@@ -36,8 +33,7 @@ namespace Loxodon.Log.Log4Net
             this.userName = GetDeviceName();
         }
 
-        private Level ConvertLevel(int value)
-        {
+        private Level ConvertLevel(int value) {
             if (value <= 30000)
                 return Level.DEBUG;
             if (value <= 40000)
@@ -49,10 +45,8 @@ namespace Loxodon.Log.Log4Net
             return Level.FATAL;
         }
 
-        private string GetDeviceName()
-        {
-            try
-            {
+        private string GetDeviceName() {
+            try {
                 var deviceName = SystemInfo.deviceName;
                 if (!string.IsNullOrEmpty(deviceName) && !deviceName.Contains("unknown"))
                     return deviceName;
@@ -74,76 +68,62 @@ namespace Loxodon.Log.Log4Net
                     return deviceName;
                 return "<unknown>";
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return "<unknown>";
             }
         }
 
-        public void OnBeforeSerialize()
-        {
+        public void OnBeforeSerialize() {
             this.timeStampTicks = this.timeStamp.Ticks;
         }
 
-        public void OnAfterDeserialize()
-        {
+        public void OnAfterDeserialize() {
             this.timeStamp = new DateTime(this.timeStampTicks);
         }
 
-        public string Identity
-        {
+        public string Identity {
             get { return this.identity; }
         }
 
-        public string LoggerName
-        {
+        public string LoggerName {
             get { return this.loggerName; }
         }
 
-        public Level Level
-        {
+        public Level Level {
             get { return this.level; }
         }
 
-        public string Message
-        {
+        public string Message {
             get { return this.message; }
         }
 
-        public string ThreadName
-        {
+        public string ThreadName {
             get { return this.threadName; }
         }
 
-        public DateTime TimeStamp
-        {
+        public DateTime TimeStamp {
             get { return this.timeStamp; }
         }
 
-        public LocationInfo LocationInfo
-        {
+        public LocationInfo LocationInfo {
             get { return this.locationInfo; }
         }
 
-        public string UserName
-        {
+        public string UserName {
             get { return this.userName; }
         }
 
-        public string ExceptionString
-        {
+        public string ExceptionString {
             get { return this.exceptionString; }
         }
 
-        public string Domain
-        {
+        public string Domain {
             get { return this.domain; }
         }
     }
 
     [Serializable]
-    public class LocationInfo
-    {
+    public class LocationInfo {
         private string className;
         private string fileName;
         private int lineNumber;
@@ -151,8 +131,7 @@ namespace Loxodon.Log.Log4Net
         private string fullInfo;
         private StackFrameItem[] stackFrames;
 
-        public LocationInfo(log4net.Core.LocationInfo locationInfo)
-        {
+        public LocationInfo(log4net.Core.LocationInfo locationInfo) {
             this.className = locationInfo.ClassName;
             this.fileName = locationInfo.FileName;
             if (!int.TryParse(locationInfo.LineNumber, out this.lineNumber))
@@ -169,10 +148,8 @@ namespace Loxodon.Log.Log4Net
                 return;
 
             List<StackFrameItem> list = new List<StackFrameItem>();
-            foreach (var frame in frames)
-            {
-                try
-                {
+            foreach (var frame in frames) {
+                try {
                     if (frame == null)
                         continue;
 
@@ -188,8 +165,7 @@ namespace Loxodon.Log.Log4Net
             this.stackFrames = list.ToArray();
         }
 
-        public LocationInfo(string className, string methodName, string fileName, int lineNumber)
-        {
+        public LocationInfo(string className, string methodName, string fileName, int lineNumber) {
             this.className = className;
             this.fileName = fileName;
             this.lineNumber = lineNumber;
@@ -198,49 +174,41 @@ namespace Loxodon.Log.Log4Net
                 ':' + this.lineNumber + ')';
         }
 
-        public string ClassName
-        {
+        public string ClassName {
             get { return className; }
         }
 
-        public string FileName
-        {
+        public string FileName {
             get { return fileName; }
         }
 
-        public int LineNumber
-        {
+        public int LineNumber {
             get { return lineNumber; }
         }
 
-        public string MethodName
-        {
+        public string MethodName {
             get { return methodName; }
         }
 
-        public string FullInfo
-        {
+        public string FullInfo {
             get { return fullInfo; }
         }
 
-        public StackFrameItem[] StackFrames
-        {
+        public StackFrameItem[] StackFrames {
             get { return stackFrames; }
         }
 
     }
 
     [Serializable]
-    public class StackFrameItem
-    {
+    public class StackFrameItem {
         private int lineNumber;
         private string fileName;
         private string className;
         private string fullInfo;
         private string methodName;
 
-        public StackFrameItem(string className, string methodName, string fileName, int lineNumber)
-        {
+        public StackFrameItem(string className, string methodName, string fileName, int lineNumber) {
             this.className = className;
             this.methodName = methodName;
             this.fileName = fileName;
@@ -253,28 +221,23 @@ namespace Loxodon.Log.Log4Net
 
         }
 
-        public string ClassName
-        {
+        public string ClassName {
             get { return className; }
         }
 
-        public string FileName
-        {
+        public string FileName {
             get { return fileName; }
         }
 
-        public int LineNumber
-        {
+        public int LineNumber {
             get { return lineNumber; }
         }
 
-        public string MethodName
-        {
+        public string MethodName {
             get { return methodName; }
         }
 
-        public string FullInfo
-        {
+        public string FullInfo {
             get { return fullInfo; }
         }
     }

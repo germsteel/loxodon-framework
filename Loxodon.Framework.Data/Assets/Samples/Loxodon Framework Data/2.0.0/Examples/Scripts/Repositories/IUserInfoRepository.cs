@@ -24,10 +24,8 @@
 
 using Loxodon.Framework.Examples.Domains;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public interface IUserInfoRepository
-    {
+namespace Loxodon.Framework.Examples.Repositories {
+    public interface IUserInfoRepository {
         UserInfo GetById(int id);
 
         UserInfo GetByUsername(string username);

@@ -29,14 +29,11 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Examples
-{
-    public class MixedComponentPoolAsyncLoadExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Examples {
+    public class MixedComponentPoolAsyncLoadExample : MonoBehaviour {
         private IMixedObjectPool<PooledCube> pool;
         private Dictionary<string, List<PooledCube>> dict;
-        void Start()
-        {
+        void Start() {
             /**
              * This is an example of loading an object using an asynchronous method.
              */
@@ -45,17 +42,14 @@ namespace Loxodon.Framework.Examples
             this.dict = new Dictionary<string, List<PooledCube>>();
         }
 
-        private void OnDestroy()
-        {
-            if (this.pool != null)
-            {
+        private void OnDestroy() {
+            if (this.pool != null) {
                 this.pool.Dispose();
                 this.pool = null;
             }
         }
 
-        void OnGUI()
-        {
+        void OnGUI() {
             int x = 50;
             int y = 50;
             int width = 100;
@@ -63,44 +57,35 @@ namespace Loxodon.Framework.Examples
             int i = 0;
             int padding = 10;
 
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Add(red)"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Add(red)")) {
                 _ = Add("red", 1);
             }
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Add(green)"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Add(green)")) {
                 _ = Add("green", 1);
             }
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Add(blue)"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Add(blue)")) {
                 _ = Add("blue", 1);
             }
 
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Delete(red)"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Delete(red)")) {
                 Delete("red", 1);
             }
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Delete(green)"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Delete(green)")) {
                 Delete("green", 1);
             }
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Delete(blue)"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Delete(blue)")) {
                 Delete("blue", 1);
             }
         }
 
-        protected async Task Add(string typeName, int count)
-        {
+        protected async Task Add(string typeName, int count) {
             List<PooledCube> list;
-            if (!this.dict.TryGetValue(typeName, out list))
-            {
+            if (!this.dict.TryGetValue(typeName, out list)) {
                 list = new List<PooledCube>();
                 this.dict.Add(typeName, list);
             }
 
-            for (int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 PooledCube cube = this.pool.Allocate(typeName);
                 if (!cube.IsLoaded)
                     await cube.LoadAsync();
@@ -112,14 +97,12 @@ namespace Loxodon.Framework.Examples
             }
         }
 
-        protected void Delete(string typeName, int count)
-        {
+        protected void Delete(string typeName, int count) {
             List<PooledCube> list;
             if (!this.dict.TryGetValue(typeName, out list) || list.Count <= 0)
                 return;
 
-            for (int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 if (list.Count <= 0)
                     return;
 
@@ -133,24 +116,21 @@ namespace Loxodon.Framework.Examples
             }
         }
 
-        protected Vector3 GetPosition()
-        {
+        protected Vector3 GetPosition() {
             float x = UnityEngine.Random.Range(-10, 10);
             float y = UnityEngine.Random.Range(-5, 5);
             float z = UnityEngine.Random.Range(-10, 10);
             return new Vector3(x, y, z);
         }
 
-        public class PooledCube : MonoBehaviour, IPooledObject
-        {
+        public class PooledCube : MonoBehaviour, IPooledObject {
             public Color color;
             public IMixedObjectPool<PooledCube> pool;
             public string typeName;
             public bool IsLoaded = false;
             private GameObject child;
 
-            public async Task<GameObject> LoadAsync()
-            {
+            public async Task<GameObject> LoadAsync() {
                 if (IsLoaded)
                     return child;
 
@@ -161,23 +141,19 @@ namespace Loxodon.Framework.Examples
                 return child;
             }
 
-            public void Free()
-            {
+            public void Free() {
                 if (pool != null)
                     pool.Free(typeName, this);
             }
         }
 
-        public class CubeMixedObjectFactory : IMixedObjectFactory<PooledCube>
-        {
+        public class CubeMixedObjectFactory : IMixedObjectFactory<PooledCube> {
             private Transform parent;
-            public CubeMixedObjectFactory(Transform parent)
-            {
+            public CubeMixedObjectFactory(Transform parent) {
                 this.parent = parent;
             }
 
-            public PooledCube Create(IMixedObjectPool<PooledCube> pool, string typeName)
-            {
+            public PooledCube Create(IMixedObjectPool<PooledCube> pool, string typeName) {
                 Debug.LogFormat("Create a cube.");
                 GameObject go = new GameObject(string.Format("Cube {0}-Idle", typeName));// GameObject.Instantiate(this.template, parent);
                 go.transform.SetParent(parent);
@@ -188,8 +164,7 @@ namespace Loxodon.Framework.Examples
                 return cube;
             }
 
-            protected Color GetColor(string typeName)
-            {
+            protected Color GetColor(string typeName) {
                 if (typeName.Equals("red"))
                     return Color.red;
                 if (typeName.Equals("green"))
@@ -200,22 +175,19 @@ namespace Loxodon.Framework.Examples
                 throw new NotSupportedException("Unsupported type:" + typeName);
             }
 
-            public virtual void Reset(string typeName, PooledCube obj)
-            {
+            public virtual void Reset(string typeName, PooledCube obj) {
                 obj.gameObject.SetActive(false);
                 obj.gameObject.name = string.Format("Cube {0}-Idle", typeName);
                 obj.gameObject.transform.position = Vector3.zero;
                 obj.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
             }
 
-            public virtual void Destroy(string typeName, PooledCube obj)
-            {
+            public virtual void Destroy(string typeName, PooledCube obj) {
                 GameObject.Destroy(obj.gameObject);
                 Debug.LogFormat("Destroy a cube.");
             }
 
-            public virtual bool Validate(string typeName, PooledCube obj)
-            {
+            public virtual bool Validate(string typeName, PooledCube obj) {
                 return true;
             }
         }

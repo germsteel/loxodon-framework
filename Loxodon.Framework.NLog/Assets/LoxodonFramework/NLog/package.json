@@ -25,8 +25,7 @@
   "dependencies": {
     "com.vovgou.loxodon-framework": "2.6.4"
   },
-  "samples": [
-    {
+  "samples": [ {
       "displayName": "Tutorials",
       "description": "Tutorials",
       "path": "Samples~/Tutorials"

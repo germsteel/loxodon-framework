@@ -28,12 +28,9 @@ using Loxodon.Framework.Observables;
 using System;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class FairyTargetProxyFactory : ITargetProxyFactory
-    {
-        public ITargetProxy CreateProxy(object target, BindingDescription description)
-        {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class FairyTargetProxyFactory : ITargetProxyFactory {
+        public ITargetProxy CreateProxy(object target, BindingDescription description) {
             IProxyType type = target.GetType().AsProxy();
             IProxyMemberInfo memberInfo = type.GetMember(description.TargetName);
             if (memberInfo == null)
@@ -43,8 +40,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 throw new MissingMemberException(type.Type.FullName, description.TargetName);
 
             EventListener updateTrigger = null;
-            if (!string.IsNullOrEmpty(description.UpdateTrigger))
-            {
+            if (!string.IsNullOrEmpty(description.UpdateTrigger)) {
                 IProxyPropertyInfo updateTriggerPropertyInfo = type.GetProperty(description.UpdateTrigger);
                 IProxyFieldInfo updateTriggerFieldInfo = updateTriggerPropertyInfo == null ? type.GetField(description.UpdateTrigger) : null;
                 if (updateTriggerPropertyInfo != null)
@@ -62,13 +58,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             var propertyInfo = memberInfo as IProxyPropertyInfo;
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 if (typeof(IObservableProperty).IsAssignableFrom(propertyInfo.ValueType))
                     return null;
 
-                if (typeof(EventListener).IsAssignableFrom(propertyInfo.ValueType))
-                {
+                if (typeof(EventListener).IsAssignableFrom(propertyInfo.ValueType)) {
                     //Event Type
                     object listener = propertyInfo.GetValue(target);
                     if (listener == null)
@@ -85,13 +79,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             var fieldInfo = memberInfo as IProxyFieldInfo;
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 if (typeof(IObservableProperty).IsAssignableFrom(fieldInfo.ValueType))
                     return null;
 
-                if (typeof(EventListener).IsAssignableFrom(fieldInfo.ValueType))
-                {
+                if (typeof(EventListener).IsAssignableFrom(fieldInfo.ValueType)) {
                     //Event Type
                     object listener = fieldInfo.GetValue(target);
                     if (listener == null)

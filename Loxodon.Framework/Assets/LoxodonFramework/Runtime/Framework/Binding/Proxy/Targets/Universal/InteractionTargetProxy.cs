@@ -27,15 +27,12 @@ using System;
 using System.Threading;
 using UnityEngine;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class InteractionTargetProxy : TargetProxyBase, IObtainable
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class InteractionTargetProxy : TargetProxyBase, IObtainable {
         private readonly EventHandler<InteractionEventArgs> handler;
         private readonly IInteractionAction interactionAction;
         private SendOrPostCallback postCallback;
-        public InteractionTargetProxy(object target, IInteractionAction interactionAction) : base(target)
-        {
+        public InteractionTargetProxy(object target, IInteractionAction interactionAction) : base(target) {
             this.interactionAction = interactionAction;
             this.handler = OnRequest;
         }
@@ -44,32 +41,25 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWayToSource; } }
 
-        public object GetValue()
-        {
+        public object GetValue() {
             return handler;
         }
 
-        public TValue GetValue<TValue>()
-        {
+        public TValue GetValue<TValue>() {
             return (TValue)GetValue();
         }
 
-        private void OnRequest(object sender, InteractionEventArgs args)
-        {
+        private void OnRequest(object sender, InteractionEventArgs args) {
             var target = this.Target;
             if (target == null || (target is Behaviour behaviour && !behaviour.isActiveAndEnabled))
                 throw new InvalidOperationException("The window or view has been closed, so the operation is invalid.");
 
-            if (UISynchronizationContext.InThread)
-            {
+            if (UISynchronizationContext.InThread) {
                 this.interactionAction.OnRequest(sender, args);
             }
-            else
-            {
-                if (postCallback == null)
-                {
-                    postCallback = state =>
-                    {
+            else {
+                if (postCallback == null) {
+                    postCallback = state => {
                         PostArgs postArgs = (PostArgs)state;
                         this.interactionAction.OnRequest(postArgs.sender, postArgs.args);
                     };
@@ -78,10 +68,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
-        class PostArgs
-        {
-            public PostArgs(object sender, InteractionEventArgs args)
-            {
+        class PostArgs {
+            public PostArgs(object sender, InteractionEventArgs args) {
                 this.sender = sender;
                 this.args = args;
             }

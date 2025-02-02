@@ -35,11 +35,9 @@ using INotifyPropertyChanged = System.ComponentModel.INotifyPropertyChanged;
 using PropertyChangedEventArgs = System.ComponentModel.PropertyChangedEventArgs;
 using PropertyChangedEventHandler = System.ComponentModel.PropertyChangedEventHandler;
 
-namespace Loxodon.Framework.Observables
-{
+namespace Loxodon.Framework.Observables {
     [Serializable]
-    public class ObservableDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary, INotifyCollectionChanged, INotifyPropertyChanged
-    {
+    public class ObservableDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary, INotifyCollectionChanged, INotifyPropertyChanged {
         private static readonly PropertyChangedEventArgs CountEventArgs = new PropertyChangedEventArgs("Count");
         private static readonly PropertyChangedEventArgs IndexerEventArgs = new PropertyChangedEventArgs("Item[]");
         private static readonly PropertyChangedEventArgs KeysEventArgs = new PropertyChangedEventArgs("Keys");
@@ -52,82 +50,66 @@ namespace Loxodon.Framework.Observables
 
         protected Dictionary<TKey, TValue> dictionary;
 
-        public event PropertyChangedEventHandler PropertyChanged
-        {
+        public event PropertyChangedEventHandler PropertyChanged {
             add { lock (propertyChangedLock) { this.propertyChanged += value; } }
             remove { lock (propertyChangedLock) { this.propertyChanged -= value; } }
         }
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged
-        {
+        public event NotifyCollectionChangedEventHandler CollectionChanged {
             add { lock (collectionChangedLock) { this.collectionChanged += value; } }
             remove { lock (collectionChangedLock) { this.collectionChanged -= value; } }
         }
 
-        public ObservableDictionary()
-        {
+        public ObservableDictionary() {
             this.dictionary = new Dictionary<TKey, TValue>();
         }
-        public ObservableDictionary(IDictionary<TKey, TValue> dictionary)
-        {
+        public ObservableDictionary(IDictionary<TKey, TValue> dictionary) {
             this.dictionary = new Dictionary<TKey, TValue>(dictionary);
         }
-        public ObservableDictionary(IEqualityComparer<TKey> comparer)
-        {
+        public ObservableDictionary(IEqualityComparer<TKey> comparer) {
             this.dictionary = new Dictionary<TKey, TValue>(comparer);
         }
-        public ObservableDictionary(int capacity)
-        {
+        public ObservableDictionary(int capacity) {
             this.dictionary = new Dictionary<TKey, TValue>(capacity);
         }
-        public ObservableDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
-        {
+        public ObservableDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer) {
             this.dictionary = new Dictionary<TKey, TValue>(dictionary, comparer);
         }
-        public ObservableDictionary(int capacity, IEqualityComparer<TKey> comparer)
-        {
+        public ObservableDictionary(int capacity, IEqualityComparer<TKey> comparer) {
             this.dictionary = new Dictionary<TKey, TValue>(capacity, comparer);
         }
 
-        public TValue this[TKey key]
-        {
-            get
-            {
+        public TValue this[TKey key] {
+            get {
                 if (!dictionary.ContainsKey(key))
                     return default(TValue);
                 return dictionary[key];
             }
-            set
-            {
+            set {
                 Insert(key, value, false);
             }
         }
 
-        public ICollection<TKey> Keys
-        {
+        public ICollection<TKey> Keys {
             get { return dictionary.Keys; }
         }
 
-        public ICollection<TValue> Values
-        {
+        public ICollection<TValue> Values {
             get { return dictionary.Values; }
         }
 
-        public void Add(TKey key, TValue value)
-        {
+        public void Add(TKey key, TValue value) {
             Insert(key, value, true);
         }
 
-        public bool Remove(TKey key)
-        {
+        public bool Remove(TKey key) {
             if (key == null)
                 throw new ArgumentNullException("key");
 
             TValue value;
             dictionary.TryGetValue(key, out value);
             var removed = dictionary.Remove(key);
-            if (removed)
-            {
+            if (removed) {
                 OnPropertyChanged(NotifyCollectionChangedAction.Remove);
                 if (this.collectionChanged != null)
                     OnCollectionChanged(NotifyCollectionChangedAction.Remove, new KeyValuePair<TKey, TValue>(key, value));
@@ -136,25 +118,20 @@ namespace Loxodon.Framework.Observables
             return removed;
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
-        {
+        public bool TryGetValue(TKey key, out TValue value) {
             return dictionary.TryGetValue(key, out value);
         }
 
-        public bool ContainsKey(TKey key)
-        {
+        public bool ContainsKey(TKey key) {
             return dictionary.ContainsKey(key);
         }
 
-        public void Add(KeyValuePair<TKey, TValue> item)
-        {
+        public void Add(KeyValuePair<TKey, TValue> item) {
             Insert(item.Key, item.Value, true);
         }
 
-        public void Clear()
-        {
-            if (dictionary.Count > 0)
-            {
+        public void Clear() {
+            if (dictionary.Count > 0) {
                 dictionary.Clear();
                 OnPropertyChanged(NotifyCollectionChangedAction.Reset);
                 if (this.collectionChanged != null)
@@ -162,65 +139,52 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        public bool Contains(KeyValuePair<TKey, TValue> item)
-        {
+        public bool Contains(KeyValuePair<TKey, TValue> item) {
             return dictionary.Contains(item);
         }
 
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-        {
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
             ((IDictionary)this.dictionary).CopyTo(array, arrayIndex);
         }
 
-        public int Count
-        {
+        public int Count {
             get { return dictionary.Count; }
         }
 
-        public bool IsReadOnly
-        {
+        public bool IsReadOnly {
             get { return ((IDictionary)this.dictionary).IsReadOnly; }
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item)
-        {
+        public bool Remove(KeyValuePair<TKey, TValue> item) {
             return Remove(item.Key);
         }
 
-        public Dictionary<TKey, TValue>.Enumerator GetEnumerator()
-        {
+        public Dictionary<TKey, TValue>.Enumerator GetEnumerator() {
             return dictionary.GetEnumerator();
         }
 
-        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
-        {
+        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() {
             return dictionary.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return ((IEnumerable)dictionary).GetEnumerator();
         }
 
-        public void AddRange(IDictionary<TKey, TValue> items)
-        {
+        public void AddRange(IDictionary<TKey, TValue> items) {
             if (items == null)
                 throw new ArgumentNullException("items");
 
-            if (items.Count > 0)
-            {
-                if (this.dictionary.Count > 0)
-                {
+            if (items.Count > 0) {
+                if (this.dictionary.Count > 0) {
                     if (items.Keys.Any((k) => this.dictionary.ContainsKey(k)))
                         throw new ArgumentException("An item with the same key has already been added.");
-                    else
-                    {
+                    else {
                         foreach (var item in items)
                             ((IDictionary<TKey, TValue>)this.dictionary).Add(item);
                     }
                 }
-                else
-                {
+                else {
                     this.dictionary = new Dictionary<TKey, TValue>(items);
                 }
 
@@ -230,14 +194,12 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        private void Insert(TKey key, TValue value, bool add)
-        {
+        private void Insert(TKey key, TValue value, bool add) {
             if (key == null)
                 throw new ArgumentNullException("key");
 
             TValue item;
-            if (dictionary.TryGetValue(key, out item))
-            {
+            if (dictionary.TryGetValue(key, out item)) {
                 if (add)
                     throw new ArgumentException("An item with the same key has already been added.");
 
@@ -249,8 +211,7 @@ namespace Loxodon.Framework.Observables
                 if (this.collectionChanged != null)
                     OnCollectionChanged(NotifyCollectionChangedAction.Replace, new KeyValuePair<TKey, TValue>(key, value), new KeyValuePair<TKey, TValue>(key, item));
             }
-            else
-            {
+            else {
                 dictionary[key] = value;
                 OnPropertyChanged(NotifyCollectionChangedAction.Add);
                 if (this.collectionChanged != null)
@@ -258,29 +219,24 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        private void OnPropertyChanged(NotifyCollectionChangedAction action)
-        {
-            switch (action)
-            {
+        private void OnPropertyChanged(NotifyCollectionChangedAction action) {
+            switch (action) {
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Add:
-                case NotifyCollectionChangedAction.Remove:
-                    {
+                case NotifyCollectionChangedAction.Remove: {
                         OnPropertyChanged(CountEventArgs);
                         OnPropertyChanged(IndexerEventArgs);
                         OnPropertyChanged(KeysEventArgs);
                         OnPropertyChanged(ValuesEventArgs);
                         break;
                     }
-                case NotifyCollectionChangedAction.Replace:
-                    {
+                case NotifyCollectionChangedAction.Replace: {
                         OnPropertyChanged(IndexerEventArgs);
                         OnPropertyChanged(ValuesEventArgs);
                         break;
                     }
                 case NotifyCollectionChangedAction.Move:
-                default:
-                    {
+                default: {
                         OnPropertyChanged(CountEventArgs);
                         OnPropertyChanged(IndexerEventArgs);
                         OnPropertyChanged(KeysEventArgs);
@@ -290,89 +246,73 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs eventArgs)
-        {
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs eventArgs) {
             if (this.propertyChanged != null)
                 this.propertyChanged(this, eventArgs);
         }
 
-        private void OnCollectionChanged()
-        {
+        private void OnCollectionChanged() {
             if (this.collectionChanged != null)
                 this.collectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> changedItem)
-        {
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> changedItem) {
             if (this.collectionChanged != null)
                 this.collectionChanged(this, new NotifyCollectionChangedEventArgs(action, changedItem));
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> newItem, KeyValuePair<TKey, TValue> oldItem)
-        {
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, KeyValuePair<TKey, TValue> newItem, KeyValuePair<TKey, TValue> oldItem) {
             if (this.collectionChanged != null)
                 this.collectionChanged(this, new NotifyCollectionChangedEventArgs(action, newItem, oldItem));
         }
 
-        private void OnCollectionChanged(NotifyCollectionChangedAction action, IList newItems)
-        {
+        private void OnCollectionChanged(NotifyCollectionChangedAction action, IList newItems) {
             if (this.collectionChanged != null)
                 this.collectionChanged(this, new NotifyCollectionChangedEventArgs(action, newItems));
         }
 
-        object IDictionary.this[object key]
-        {
+        object IDictionary.this[object key] {
             get { return ((IDictionary)this.dictionary)[key]; }
             set { Insert((TKey)key, (TValue)value, false); }
         }
 
-        ICollection IDictionary.Keys
-        {
+        ICollection IDictionary.Keys {
             get { return ((IDictionary)this.dictionary).Keys; }
         }
 
-        ICollection IDictionary.Values
-        {
+        ICollection IDictionary.Values {
             get { return ((IDictionary)this.dictionary).Values; }
         }
 
-        bool IDictionary.Contains(object key)
-        {
+        bool IDictionary.Contains(object key) {
             return ((IDictionary)this.dictionary).Contains(key);
         }
 
-        void IDictionary.Add(object key, object value)
-        {
+        void IDictionary.Add(object key, object value) {
             this.Add((TKey)key, (TValue)value);
         }
 
-        IDictionaryEnumerator IDictionary.GetEnumerator()
-        {
+        IDictionaryEnumerator IDictionary.GetEnumerator() {
             return ((IDictionary)this.dictionary).GetEnumerator();
         }
 
-        void IDictionary.Remove(object key)
-        {
+        void IDictionary.Remove(object key) {
             this.Remove((TKey)key);
         }
 
-        bool IDictionary.IsFixedSize
-        {
+        bool IDictionary.IsFixedSize {
             get { return ((IDictionary)this.dictionary).IsFixedSize; }
         }
 
-        void ICollection.CopyTo(Array array, int index)
-        {
+        void ICollection.CopyTo(Array array, int index) {
             ((IDictionary)this.dictionary).CopyTo(array, index);
         }
 
-        object ICollection.SyncRoot
-        {
+        object ICollection.SyncRoot {
             get { return ((IDictionary)this.dictionary).SyncRoot; }
         }
 
-        bool ICollection.IsSynchronized
-        {
+        bool ICollection.IsSynchronized {
             get { return ((IDictionary)this.dictionary).IsSynchronized; }
         }
     }

@@ -24,10 +24,8 @@
 
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Views
-{
-    public interface IDialog
-    {
+namespace Loxodon.Framework.Views {
+    public interface IDialog {
         /// <summary>
         /// Show the dialog box.
         /// </summary>

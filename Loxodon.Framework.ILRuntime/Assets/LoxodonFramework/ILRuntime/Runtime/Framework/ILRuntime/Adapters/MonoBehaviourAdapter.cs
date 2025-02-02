@@ -5,49 +5,39 @@ using ILRuntime.Runtime.Intepreter;
 using UnityEngine;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
 
-namespace Loxodon.Framework.ILRuntimes.Adapters
-{
-    public class MonoBehaviourAdapter : CrossBindingAdaptor
-    {
+namespace Loxodon.Framework.ILRuntimes.Adapters {
+    public class MonoBehaviourAdapter : CrossBindingAdaptor {
         static CrossBindingMethodInfo mAwake_0 = new CrossBindingMethodInfo("Awake");
         static CrossBindingMethodInfo mOnEnable_1 = new CrossBindingMethodInfo("OnEnable");
         static CrossBindingMethodInfo mStart_2 = new CrossBindingMethodInfo("Start");
         static CrossBindingMethodInfo mOnDisable_3 = new CrossBindingMethodInfo("OnDisable");
         static CrossBindingMethodInfo mOnDestroy_4 = new CrossBindingMethodInfo("OnDestroy");
 
-        public override Type BaseCLRType
-        {
-            get
-            {
+        public override Type BaseCLRType {
+            get {
                 return typeof(MonoBehaviour);
             }
         }
 
-        public override Type AdaptorType
-        {
-            get
-            {
+        public override Type AdaptorType {
+            get {
                 return typeof(Adapter);
             }
         }
 
-        public override object CreateCLRInstance(AppDomain appdomain, ILTypeInstance instance)
-        {
+        public override object CreateCLRInstance(AppDomain appdomain, ILTypeInstance instance) {
             return new Adapter(appdomain, instance);
         }
 
-        public class Adapter : MonoBehaviour, CrossBindingAdaptorType, IBehaviourAdapter
-        {
+        public class Adapter : MonoBehaviour, CrossBindingAdaptorType, IBehaviourAdapter {
             ILTypeInstance instance;
             AppDomain appdomain;
 
-            public Adapter()
-            {
+            public Adapter() {
 
             }
 
-            public Adapter(AppDomain appdomain, ILTypeInstance instance)
-            {
+            public Adapter(AppDomain appdomain, ILTypeInstance instance) {
                 this.appdomain = appdomain;
                 this.instance = instance;
             }
@@ -56,8 +46,7 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
 
             public AppDomain AppDomain { get { return appdomain; } set { appdomain = value; } }
 
-            public void Awake()
-            {
+            public void Awake() {
                 if (this.instance == null)
                     return;
 
@@ -65,8 +54,7 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
                     mAwake_0.Invoke(this.instance);
             }
 
-            protected void OnEnable()
-            {
+            protected void OnEnable() {
                 if (this.instance == null)
                     return;
 
@@ -74,30 +62,25 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
                     mOnEnable_1.Invoke(this.instance);
             }
 
-            protected void Start()
-            {
+            protected void Start() {
                 if (!mStart_2.CheckShouldInvokeBase(this.instance))
                     mStart_2.Invoke(this.instance);
             }
 
-            protected void OnDisable()
-            {
+            protected void OnDisable() {
                 if (!mOnDisable_3.CheckShouldInvokeBase(this.instance))
                     mOnDisable_3.Invoke(this.instance);
             }
 
-            protected void OnDestroy()
-            {
+            protected void OnDestroy() {
                 if (!mOnDestroy_4.CheckShouldInvokeBase(this.instance))
                     mOnDestroy_4.Invoke(this.instance);
             }
 
-            public override string ToString()
-            {
+            public override string ToString() {
                 IMethod m = appdomain.ObjectType.GetMethod("ToString", 0);
                 m = instance.Type.GetVirtualMethod(m);
-                if (m == null || m is ILMethod)
-                {
+                if (m == null || m is ILMethod) {
                     return instance.ToString();
                 }
                 else

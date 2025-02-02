@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Loxodon.Framework.Obfuscation
-{
+namespace Loxodon.Framework.Obfuscation {
 
     [Serializable]
-    public struct ObfuscatedInt : IComparable, IConvertible, IComparable<int>, IEquatable<int>
-    {
+    public struct ObfuscatedInt : IComparable, IConvertible, IComparable<int>, IEquatable<int> {
         private static int sequence = (int)DateTime.Now.Ticks;
 
         private int seed;
@@ -14,51 +12,42 @@ namespace Loxodon.Framework.Obfuscation
         private int check;
 
         public ObfuscatedInt(int value)
-            : this(value, sequence++)
-        {
+            : this(value, sequence++) {
         }
 
-        public ObfuscatedInt(int value, int seed)
-        {
+        public ObfuscatedInt(int value, int seed) {
             this.seed = seed;
             this.data = 0;
             this.check = 0;
             Value = value;
         }
 
-        internal int Value
-        {
-            get
-            {
+        internal int Value {
+            get {
                 var v = data ^ seed;
                 if (((seed >> 8) ^ v) != check)
                     throw new Exception();
                 return v;
             }
-            set
-            {
+            set {
                 data = value ^ seed;
                 check = (seed >> 8) ^ value;
             }
         }
 
-        public static implicit operator ObfuscatedInt(byte data)
-        {
+        public static implicit operator ObfuscatedInt(byte data) {
             return new ObfuscatedInt(data);
         }
 
-        public static explicit operator byte(ObfuscatedInt data)
-        {
+        public static explicit operator byte(ObfuscatedInt data) {
             return Convert.ToByte(data.Value);
         }
 
-        public static implicit operator ObfuscatedInt(short data)
-        {
+        public static implicit operator ObfuscatedInt(short data) {
             return new ObfuscatedInt(data);
         }
 
-        public static explicit operator short(ObfuscatedInt data)
-        {
+        public static explicit operator short(ObfuscatedInt data) {
             return Convert.ToInt16(data.Value);
         }
 
@@ -68,8 +57,7 @@ namespace Loxodon.Framework.Obfuscation
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static implicit operator ObfuscatedInt(int data)
-        {
+        public static implicit operator ObfuscatedInt(int data) {
             return new ObfuscatedInt(data);
         }
 
@@ -81,8 +69,7 @@ namespace Loxodon.Framework.Obfuscation
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static implicit operator int(ObfuscatedInt data)
-        {
+        public static implicit operator int(ObfuscatedInt data) {
             return data.Value;
         }
 
@@ -91,8 +78,7 @@ namespace Loxodon.Framework.Obfuscation
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static explicit operator ObfuscatedInt(long data)
-        {
+        public static explicit operator ObfuscatedInt(long data) {
             return new ObfuscatedInt(Convert.ToInt32(data));
         }
 
@@ -101,8 +87,7 @@ namespace Loxodon.Framework.Obfuscation
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static implicit operator long(ObfuscatedInt data)
-        {
+        public static implicit operator long(ObfuscatedInt data) {
             return data.Value;
         }
 
@@ -111,8 +96,7 @@ namespace Loxodon.Framework.Obfuscation
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static explicit operator ObfuscatedInt(float data)
-        {
+        public static explicit operator ObfuscatedInt(float data) {
             return new ObfuscatedInt(Convert.ToInt32(data));
         }
 
@@ -121,8 +105,7 @@ namespace Loxodon.Framework.Obfuscation
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static implicit operator float(ObfuscatedInt data)
-        {
+        public static implicit operator float(ObfuscatedInt data) {
             return data.Value;
         }
 
@@ -131,8 +114,7 @@ namespace Loxodon.Framework.Obfuscation
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static explicit operator ObfuscatedInt(double data)
-        {
+        public static explicit operator ObfuscatedInt(double data) {
             return new ObfuscatedInt(Convert.ToInt32(data));
         }
 
@@ -141,92 +123,75 @@ namespace Loxodon.Framework.Obfuscation
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static implicit operator double(ObfuscatedInt data)
-        {
+        public static implicit operator double(ObfuscatedInt data) {
             return data.Value;
         }
 
         /* 重载操作符 == != > < >= <= */
-        public static bool operator ==(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static bool operator ==(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return lhs.Value == rhs.Value;
         }
 
-        public static bool operator !=(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static bool operator !=(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return lhs.Value != rhs.Value;
         }
 
-        public static bool operator >(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static bool operator >(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return lhs.Value > rhs.Value;
         }
 
-        public static bool operator <(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static bool operator <(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return lhs.Value < rhs.Value;
         }
 
-        public static bool operator >=(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static bool operator >=(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return lhs.Value >= rhs.Value;
         }
 
-        public static bool operator <=(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static bool operator <=(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return lhs.Value <= rhs.Value;
         }
 
         /* 重载操作符 ++ -- + - * / */
-        public static ObfuscatedInt operator ++(ObfuscatedInt data)
-        {
+        public static ObfuscatedInt operator ++(ObfuscatedInt data) {
             return new ObfuscatedInt(data.Value + 1);
         }
 
-        public static ObfuscatedInt operator --(ObfuscatedInt data)
-        {
+        public static ObfuscatedInt operator --(ObfuscatedInt data) {
             return new ObfuscatedInt(data.Value - 1);
         }
 
-        public static ObfuscatedInt operator +(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static ObfuscatedInt operator +(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return new ObfuscatedInt(lhs.Value + rhs.Value);
         }
 
-        public static ObfuscatedInt operator -(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static ObfuscatedInt operator -(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return new ObfuscatedInt(lhs.Value - rhs.Value);
         }
 
-        public static ObfuscatedInt operator *(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static ObfuscatedInt operator *(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return new ObfuscatedInt(lhs.Value * rhs.Value);
         }
 
-        public static ObfuscatedInt operator /(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static ObfuscatedInt operator /(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return new ObfuscatedInt(lhs.Value / rhs.Value);
         }
 
-        public static ObfuscatedInt operator %(ObfuscatedInt lhs, ObfuscatedInt rhs)
-        {
+        public static ObfuscatedInt operator %(ObfuscatedInt lhs, ObfuscatedInt rhs) {
             return new ObfuscatedInt(lhs.Value % rhs.Value);
         }
 
-        public int CompareTo(object value)
-        {
+        public int CompareTo(object value) {
             if (value == null) return 1;
 
-            if (value is int)
-            {
+            if (value is int) {
                 int i = (int)value;
                 if (Value < i) return -1;
                 if (Value > i) return 1;
                 return 0;
             }
 
-            if (value is ObfuscatedInt)
-            {
+            if (value is ObfuscatedInt) {
                 ObfuscatedInt i = (ObfuscatedInt)value;
                 if (Value < i.Value) return -1;
                 if (Value > i.Value) return 1;
@@ -236,15 +201,13 @@ namespace Loxodon.Framework.Obfuscation
             throw new ArgumentException();
         }
 
-        public int CompareTo(int value)
-        {
+        public int CompareTo(int value) {
             if (this.Value < value) return -1;
             if (this.Value > value) return 1;
             return 0;
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             if (obj is ObfuscatedInt)
                 return this.Value == ((ObfuscatedInt)obj).Value;
 
@@ -254,103 +217,83 @@ namespace Loxodon.Framework.Obfuscation
             return false;
         }
 
-        public bool Equals(int obj)
-        {
+        public bool Equals(int obj) {
             return (this.Value == obj);
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return this.Value.GetHashCode();
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return Convert.ToString(Value);
         }
 
-        public TypeCode GetTypeCode()
-        {
+        public TypeCode GetTypeCode() {
             return TypeCode.Int32;
         }
 
-        bool IConvertible.ToBoolean(IFormatProvider provider)
-        {
+        bool IConvertible.ToBoolean(IFormatProvider provider) {
             return Convert.ToBoolean(this.Value);
         }
 
-        char IConvertible.ToChar(IFormatProvider provider)
-        {
+        char IConvertible.ToChar(IFormatProvider provider) {
             return Convert.ToChar(this.Value);
         }
 
-        sbyte IConvertible.ToSByte(IFormatProvider provider)
-        {
+        sbyte IConvertible.ToSByte(IFormatProvider provider) {
             return Convert.ToSByte(this.Value);
         }
 
-        byte IConvertible.ToByte(IFormatProvider provider)
-        {
+        byte IConvertible.ToByte(IFormatProvider provider) {
             return Convert.ToByte(this.Value);
         }
 
-        short IConvertible.ToInt16(IFormatProvider provider)
-        {
+        short IConvertible.ToInt16(IFormatProvider provider) {
             return Convert.ToInt16(this.Value);
         }
 
-        ushort IConvertible.ToUInt16(IFormatProvider provider)
-        {
+        ushort IConvertible.ToUInt16(IFormatProvider provider) {
             return Convert.ToUInt16(this.Value);
         }
 
-        int IConvertible.ToInt32(IFormatProvider provider)
-        {
+        int IConvertible.ToInt32(IFormatProvider provider) {
             return this.Value;
         }
 
-        uint IConvertible.ToUInt32(IFormatProvider provider)
-        {
+        uint IConvertible.ToUInt32(IFormatProvider provider) {
             return Convert.ToUInt32(this.Value);
         }
 
-        long IConvertible.ToInt64(IFormatProvider provider)
-        {
+        long IConvertible.ToInt64(IFormatProvider provider) {
             return Convert.ToInt64(this.Value);
         }
 
-        ulong IConvertible.ToUInt64(IFormatProvider provider)
-        {
+        ulong IConvertible.ToUInt64(IFormatProvider provider) {
             return Convert.ToUInt64(this.Value);
         }
 
-        float IConvertible.ToSingle(IFormatProvider provider)
-        {
+        float IConvertible.ToSingle(IFormatProvider provider) {
             return Convert.ToSingle(this.Value);
         }
 
-        string IConvertible.ToString(IFormatProvider provider)
-        {
+        string IConvertible.ToString(IFormatProvider provider) {
             return Convert.ToString(this.Value);
         }
 
-        double IConvertible.ToDouble(IFormatProvider provider)
-        {
+        double IConvertible.ToDouble(IFormatProvider provider) {
             return Convert.ToDouble(this.Value);
         }
 
-        decimal IConvertible.ToDecimal(IFormatProvider provider)
-        {
+        decimal IConvertible.ToDecimal(IFormatProvider provider) {
             return Convert.ToDecimal(this.Value);
         }
 
-        DateTime IConvertible.ToDateTime(IFormatProvider provider)
-        {
+        DateTime IConvertible.ToDateTime(IFormatProvider provider) {
             throw new InvalidCastException(string.Format(CultureInfo.CurrentCulture, "Can't convert {0} to {1}.", "int", "DateTime"));
         }
 
-        object IConvertible.ToType(Type type, IFormatProvider provider)
-        {
+        object IConvertible.ToType(Type type, IFormatProvider provider) {
             return Convert.ChangeType(this.Value, type);
         }
     }

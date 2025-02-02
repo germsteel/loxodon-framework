@@ -25,11 +25,9 @@
 using System;
 using XLua;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
     [CSharpCallLua]
-    public interface ILuaObservableObject
-    {
+    public interface ILuaObservableObject {
         void subscribe(string key, Action action);
 
         void unsubscribe(string key, Action action);

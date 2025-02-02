@@ -32,54 +32,43 @@ using System.Xml;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Loxodon.Log.NLogger
-{
-    public class NLogFactory : ILogFactory
-    {
-        static NLogFactory()
-        {
+namespace Loxodon.Log.NLogger {
+    public class NLogFactory : ILogFactory {
+        static NLogFactory() {
             ConfigurationItemFactory configurationFactory = ConfigurationItemFactory.Default;
             configurationFactory.LayoutRendererFactory.RegisterType<PersistentDataPathLayoutRenderer>("persistent-data-path");
             configurationFactory.LayoutRendererFactory.RegisterType<TemporaryCachePathLayoutRenderer>("temporary-cache-path");
             configurationFactory.TargetFactory.RegisterType<UnityConsoleTarget>("UnityConsole");
         }
 
-        public static NLogFactory Load(XmlReader reader)
-        {
-            try
-            {
+        public static NLogFactory Load(XmlReader reader) {
+            try {
                 XmlLoggingConfiguration configuration = new XmlLoggingConfiguration(reader);
                 NLog.LogManager.Configuration = configuration;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 UnityEngine.Debug.LogErrorFormat("Failed to load NLog configuration file, default configuration will be used.exception:{0}", e);
                 InitializeDefaultConfiguration();
             }
             return new NLogFactory(NLog.LogManager.LogFactory);
         }
 
-        public static NLogFactory Load(string filename)
-        {
-            try
-            {
-                using (UnityWebRequest www = UnityWebRequest.Get(filename))
-                {
+        public static NLogFactory Load(string filename) {
+            try {
+                using (UnityWebRequest www = UnityWebRequest.Get(filename)) {
                     www.SendWebRequest();
                     while (!www.isDone) { }
                     if (www.isNetworkError || www.isHttpError)
                         throw new Exception(www.error);
 
                     string text = www.downloadHandler.text;
-                    using (XmlReader reader = XmlReader.Create(new StringReader(text)))
-                    {
+                    using (XmlReader reader = XmlReader.Create(new StringReader(text))) {
                         XmlLoggingConfiguration configuration = new XmlLoggingConfiguration(reader);
                         NLog.LogManager.Configuration = configuration;
                     }
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 UnityEngine.Debug.LogErrorFormat("Failed to load NLog configuration file from \"{0}\", default configuration will be used.exception:{1}", filename, e);
                 InitializeDefaultConfiguration();
             }
@@ -87,35 +76,29 @@ namespace Loxodon.Log.NLogger
             return new NLogFactory(NLog.LogManager.LogFactory);
         }
 
-        public static NLogFactory LoadInResources(string filename)
-        {
-            try
-            {
+        public static NLogFactory LoadInResources(string filename) {
+            try {
                 string path = filename;
                 TextAsset configText = Resources.Load<TextAsset>(path);
-                if (configText == null)
-                {
+                if (configText == null) {
                     string extension = Path.GetExtension(path);
                     if (!string.IsNullOrEmpty(extension))
                         path = path.Replace(extension, "");
                     configText = Resources.Load<TextAsset>(path);
                 }
 
-                using (XmlReader reader = XmlReader.Create(new StringReader(configText.text)))
-                {
+                using (XmlReader reader = XmlReader.Create(new StringReader(configText.text))) {
                     return Load(reader);
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 UnityEngine.Debug.LogErrorFormat("Failed to load NLog configuration file from \"{0}\", default configuration will be used.exception:{1}", filename, e);
                 InitializeDefaultConfiguration();
                 return new NLogFactory(NLog.LogManager.LogFactory);
             }
         }
 
-        private static void InitializeDefaultConfiguration()
-        {
+        private static void InitializeDefaultConfiguration() {
             LoggingConfiguration configuration = new LoggingConfiguration();
             var consoleTarget = new UnityConsoleTarget();
             consoleTarget.Layout = "${longdate} [${uppercase:${level}}] ${callsite}(${callsite-filename:includeSourcePath=False}:${callsite-linenumber}) - ${message} ${exception:format=ToString}";
@@ -126,29 +109,24 @@ namespace Loxodon.Log.NLogger
             NLog.LogManager.Configuration = configuration;
         }
 
-        public static void Shutdown()
-        {
+        public static void Shutdown() {
             NLog.LogManager.Shutdown();
         }
 
         private readonly LogFactory logFactory;
-        public NLogFactory(LogFactory logFactory)
-        {
+        public NLogFactory(LogFactory logFactory) {
             this.logFactory = logFactory;
         }
 
-        public ILog GetLogger<T>()
-        {
+        public ILog GetLogger<T>() {
             return GetLogger(typeof(T));
         }
 
-        public ILog GetLogger(Type type)
-        {
+        public ILog GetLogger(Type type) {
             return logFactory.GetLogger<NLogLogImpl>(type.FullName);
         }
 
-        public ILog GetLogger(string name)
-        {
+        public ILog GetLogger(string name) {
             return logFactory.GetLogger<NLogLogImpl>(name);
         }
     }

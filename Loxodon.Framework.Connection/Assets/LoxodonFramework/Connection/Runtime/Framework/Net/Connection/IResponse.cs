@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface IResponse : IMessage
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface IResponse : IMessage {
         uint Sequence { get; }
     }
 }

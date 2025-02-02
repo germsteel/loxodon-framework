@@ -85,15 +85,13 @@ Properties {
 
 SubShader {
 
-	Tags
-	{
+	Tags {
 		"Queue"="Transparent"
 		"IgnoreProjector"="True"
 		"RenderType"="Transparent"
 	}
 
-	Stencil
-	{
+	Stencil {
 		Ref [_Stencil]
 		Comp [_StencilComp]
 		Pass [_StencilOp] 
@@ -157,8 +155,7 @@ SubShader {
 		float4 _FaceTex_ST;
 		float4 _OutlineTex_ST;
 
-		pixel_t VertShader(vertex_t input)
-		{
+		pixel_t VertShader(vertex_t input) {
 			pixel_t output;
 
 			UNITY_INITIALIZE_OUTPUT(pixel_t, output);
@@ -232,8 +229,7 @@ SubShader {
 		}
 
 
-		fixed4 PixShader(pixel_t input) : SV_Target
-		{
+		fixed4 PixShader(pixel_t input) : SV_Target {
 			UNITY_SETUP_INSTANCE_ID(input);
 
 			float c = tex2D(_MainTex, input.atlas).a;

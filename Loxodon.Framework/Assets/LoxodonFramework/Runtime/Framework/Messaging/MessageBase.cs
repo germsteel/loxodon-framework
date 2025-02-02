@@ -24,12 +24,9 @@
 
 using System;
 
-namespace Loxodon.Framework.Messaging
-{
-    public class MessageBase : EventArgs
-    {
-        public MessageBase(object sender)
-        {
+namespace Loxodon.Framework.Messaging {
+    public class MessageBase : EventArgs {
+        public MessageBase(object sender) {
             this.Sender = sender;
         }
 

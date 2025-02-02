@@ -27,18 +27,15 @@ using UnityEngine.AddressableAssets;
 using Loxodon.Framework.Asynchronous;
 using System;
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     /// <summary>
     /// The synchronous method can only load views or windows from the Resources folder, 
     /// and the asynchronous method loads views or windows from the addressable asset system.
     /// </summary>
-    public class AddressableUIViewLocator : UIViewLocatorBase
-    {
+    public class AddressableUIViewLocator : UIViewLocatorBase {
         private GlobalWindowManager globalWindowManager;
 
-        protected virtual IWindowManager GetDefaultWindowManager()
-        {
+        protected virtual IWindowManager GetDefaultWindowManager() {
             if (globalWindowManager != null)
                 return globalWindowManager;
 
@@ -49,8 +46,7 @@ namespace Loxodon.Framework.Views
             return globalWindowManager;
         }
 
-        protected string Normalize(string name)
-        {
+        protected string Normalize(string name) {
             int index = name.IndexOf('.');
             if (index < 0)
                 return name;
@@ -58,13 +54,11 @@ namespace Loxodon.Framework.Views
             return name.Substring(0, index);
         }
 
-        public override T LoadView<T>(string name)
-        {
+        public override T LoadView<T>(string name) {
             return DoLoadView<T>(name);
         }
 
-        protected virtual T DoLoadView<T>(string name)
-        {
+        protected virtual T DoLoadView<T>(string name) {
             name = Normalize(name);
             GameObject viewTemplateGo = Resources.Load<GameObject>(name);
             if (viewTemplateGo == null)
@@ -79,27 +73,22 @@ namespace Loxodon.Framework.Views
             return view;
         }
 
-        public override IProgressResult<float, T> LoadViewAsync<T>(string name)
-        {
+        public override IProgressResult<float, T> LoadViewAsync<T>(string name) {
             ProgressResult<float, T> result = new ProgressResult<float, T>();
             DoLoad<T>(result, name);
             return result;
         }
 
-        protected virtual async void DoLoad<T>(IProgressPromise<float, T> promise, string name, IWindowManager windowManager = null)
-        {
-            try
-            {
+        protected virtual async void DoLoad<T>(IProgressPromise<float, T> promise, string name, IWindowManager windowManager = null) {
+            try {
                 promise.UpdateProgress(0f);
                 var result = Addressables.InstantiateAsync(name);
-                while (!result.IsDone)
-                {
+                while (!result.IsDone) {
                     await new WaitForSecondsRealtime(0.05f);
                     promise.UpdateProgress(result.PercentComplete);
                 }
 
-                if (result.OperationException != null)
-                {
+                if (result.OperationException != null) {
                     promise.SetException(result.OperationException);
                     return;
                 }
@@ -108,8 +97,7 @@ namespace Loxodon.Framework.Views
                 go.SetActive(false);
 
                 T view = go.GetComponent<T>();
-                if (view == null)
-                {
+                if (view == null) {
                     //GameObject.Destroy(go);
                     Addressables.ReleaseInstance(go);
                     promise.SetException(new NotFoundException(name));
@@ -121,19 +109,16 @@ namespace Loxodon.Framework.Views
                 promise.UpdateProgress(1f);
                 promise.SetResult(view);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 promise.SetException(e);
             }
         }
 
-        public override T LoadWindow<T>(string name)
-        {
+        public override T LoadWindow<T>(string name) {
             return LoadWindow<T>(null, name);
         }
 
-        public override T LoadWindow<T>(IWindowManager windowManager, string name)
-        {
+        public override T LoadWindow<T>(IWindowManager windowManager, string name) {
             if (windowManager == null)
                 windowManager = this.GetDefaultWindowManager();
 
@@ -144,13 +129,11 @@ namespace Loxodon.Framework.Views
             return target;
         }
 
-        public override IProgressResult<float, T> LoadWindowAsync<T>(string name)
-        {
+        public override IProgressResult<float, T> LoadWindowAsync<T>(string name) {
             return this.LoadWindowAsync<T>(null, name);
         }
 
-        public override IProgressResult<float, T> LoadWindowAsync<T>(IWindowManager windowManager, string name)
-        {
+        public override IProgressResult<float, T> LoadWindowAsync<T>(IWindowManager windowManager, string name) {
             if (windowManager == null)
                 windowManager = this.GetDefaultWindowManager();
 

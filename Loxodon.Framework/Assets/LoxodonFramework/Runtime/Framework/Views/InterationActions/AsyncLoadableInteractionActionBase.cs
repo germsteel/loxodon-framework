@@ -28,24 +28,19 @@ using System;
 using System.Threading.Tasks;
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Views.InteractionActions
-{
-    public abstract class AsyncLoadableInteractionActionBase<TNotification> : AsyncInteractionActionBase<TNotification>
-    {
+namespace Loxodon.Framework.Views.InteractionActions {
+    public abstract class AsyncLoadableInteractionActionBase<TNotification> : AsyncInteractionActionBase<TNotification> {
         private string viewName;
         private IUIViewLocator locator;
         private IWindowManager windowManager;
 
-        public AsyncLoadableInteractionActionBase(string viewName, IUIViewLocator locator) : this(viewName, locator, null)
-        {
+        public AsyncLoadableInteractionActionBase(string viewName, IUIViewLocator locator) : this(viewName, locator, null) {
         }
 
-        public AsyncLoadableInteractionActionBase(string viewName, IWindowManager windowManager) : this(viewName, null, windowManager)
-        {
+        public AsyncLoadableInteractionActionBase(string viewName, IWindowManager windowManager) : this(viewName, null, windowManager) {
         }
 
-        public AsyncLoadableInteractionActionBase(string viewName, IUIViewLocator locator, IWindowManager windowManager)
-        {
+        public AsyncLoadableInteractionActionBase(string viewName, IUIViewLocator locator, IWindowManager windowManager) {
             this.viewName = viewName;
             this.locator = locator;
             this.windowManager = windowManager;
@@ -53,12 +48,9 @@ namespace Loxodon.Framework.Views.InteractionActions
 
         protected string ViewName { get { return this.viewName; } }
 
-        protected IUIViewLocator Locator
-        {
-            get
-            {
-                if (locator == null)
-                {
+        protected IUIViewLocator Locator {
+            get {
+                if (locator == null) {
                     ApplicationContext context = Context.GetApplicationContext();
                     locator = context.GetService<IUIViewLocator>();
                 }
@@ -66,8 +58,7 @@ namespace Loxodon.Framework.Views.InteractionActions
             }
         }
 
-        protected async Task<T> LoadViewAsync<T>() where T : IView
-        {
+        protected async Task<T> LoadViewAsync<T>() where T : IView {
             var locator = this.Locator;
             if (locator == null)
                 throw new NotFoundException("Not found the \"IUIViewLocator\".");
@@ -78,8 +69,7 @@ namespace Loxodon.Framework.Views.InteractionActions
             return await locator.LoadViewAsync<T>(viewName);
         }
 
-        protected async Task<T> LoadWindowAsync<T>() where T : IWindow
-        {
+        protected async Task<T> LoadWindowAsync<T>() where T : IWindow {
             var locator = this.Locator;
             if (locator == null)
                 throw new NotFoundException("Not found the \"IUIViewLocator\".");

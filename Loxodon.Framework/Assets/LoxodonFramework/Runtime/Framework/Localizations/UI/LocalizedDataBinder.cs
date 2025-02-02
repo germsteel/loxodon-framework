@@ -29,8 +29,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-namespace Loxodon.Framework.Localizations
-{
+namespace Loxodon.Framework.Localizations {
     [AddComponentMenu("Loxodon/Localization/LocalizedDataBinder")]
     [DisallowMultipleComponent]
     [AllowedMembers(typeof(RectTransform), "offsetMax", "offsetMin", "pivot", "sizeDelta", "anchoredPosition", "anchorMax", "anchoredPosition3D", "rect", "anchorMin")]
@@ -41,19 +40,16 @@ namespace Loxodon.Framework.Localizations
     [AllowedMembers(typeof(TextMesh), "text", "font", "fontStyle", "fontSize", "color")]
     [AllowedMembers(typeof(AudioSource), "clip")]
     [AllowedMembers(typeof(VideoPlayer), "clip", "url")]
-    public class LocalizedDataBinder : MonoBehaviour
-    {
+    public class LocalizedDataBinder : MonoBehaviour {
         private static readonly ILog log = LogManager.GetLogger("LocalizedComponent");
 
         [SerializeField]
         protected LocalizedBindingDescriptionSet data = new LocalizedBindingDescriptionSet();
 
-        protected virtual void Start()
-        {
+        protected virtual void Start() {
             var localization = Localization.Current;
             var bindingSet = this.CreateSimpleBindingSet();
-            foreach (var description in data.descriptions)
-            {
+            foreach (var description in data.descriptions) {
                 string typeName = description.TypeName;
                 var target = this.GetComponentByName(typeName);
                 if (target == null)
@@ -62,8 +58,7 @@ namespace Loxodon.Framework.Localizations
                 string propertyName = description.PropertyName;
                 string key = description.Key;
                 BindingMode mode = description.Mode;
-                if (string.IsNullOrEmpty(key))
-                {
+                if (string.IsNullOrEmpty(key)) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("The key is null or empty.Please check the binding \"{0}\" in the GameObject \"{1}\"", description.ToString(), this.name);
 
@@ -72,8 +67,7 @@ namespace Loxodon.Framework.Localizations
 
                 var value = localization.GetValue(key);
                 var builder = bindingSet.Bind(target).For(propertyName).ToValue(value);
-                switch (mode)
-                {
+                switch (mode) {
                     case BindingMode.OneTime:
                         builder.OneTime();
                         break;
@@ -86,13 +80,11 @@ namespace Loxodon.Framework.Localizations
         }
 
 
-        protected virtual Component GetComponentByName(string typeName)
-        {
+        protected virtual Component GetComponentByName(string typeName) {
             if (string.IsNullOrEmpty(typeName))
                 return null;
 
-            foreach (AllowedMembersAttribute attribute in this.GetType().GetCustomAttributes(typeof(AllowedMembersAttribute), true))
-            {
+            foreach (AllowedMembersAttribute attribute in this.GetType().GetCustomAttributes(typeof(AllowedMembersAttribute), true)) {
                 Type type = attribute.Type;
                 if (!typeName.Equals(type.FullName))
                     continue;

@@ -27,12 +27,9 @@ using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Observables;
 using XLua;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
-    public class LuaNodeProxyFactory : INodeProxyFactory
-    {
-        public ISourceProxy Create(object source, PathToken token)
-        {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
+    public class LuaNodeProxyFactory : INodeProxyFactory {
+        public ISourceProxy Create(object source, PathToken token) {
             if (source == null || !(source is LuaTable) || token.Path.IsStatic)
                 return null;
 
@@ -45,8 +42,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return CreateProxy(table, node);
         }
 
-        protected virtual bool Contains(LuaTable table, IPathNode node)
-        {
+        protected virtual bool Contains(LuaTable table, IPathNode node) {
             var indexedNode = node as IndexedNode;
             if (indexedNode != null)
                 return table.ContainsKey(indexedNode.Value);
@@ -58,11 +54,9 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return false;
         }
 
-        protected virtual ISourceProxy CreateProxy(LuaTable table, IPathNode node)
-        {
+        protected virtual ISourceProxy CreateProxy(LuaTable table, IPathNode node) {
             var indexedNode = node as IndexedNode;
-            if (indexedNode != null)
-            {
+            if (indexedNode != null) {
                 if (indexedNode.Value is int)
                     return new LuaIntTableNodeProxy(table, (int)indexedNode.Value);
 
@@ -73,11 +67,9 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             }
 
             var memberNode = node as MemberNode;
-            if (memberNode != null)
-            {
+            if (memberNode != null) {
                 var obj = table.Get<object>(memberNode.Name);
-                if (obj != null)
-                {
+                if (obj != null) {
                     LuaFunction function = obj as LuaFunction;
                     if (function != null)
                         return new LuaMethodNodeProxy(table, function);

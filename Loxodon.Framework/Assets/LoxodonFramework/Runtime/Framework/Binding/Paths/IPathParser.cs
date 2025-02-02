@@ -24,10 +24,8 @@
 
 using System.Linq.Expressions;
 
-namespace Loxodon.Framework.Binding.Paths
-{
-    public interface IPathParser
-    {
+namespace Loxodon.Framework.Binding.Paths {
+    public interface IPathParser {
         /// <summary>
         /// Parser object instance path.eg:vm => vm.User.Username
         /// </summary>

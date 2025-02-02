@@ -24,20 +24,17 @@
 
 using XLua;
 
-namespace Loxodon.Framework.Binding
-{
+namespace Loxodon.Framework.Binding {
     [CSharpCallLua]
     delegate LuaTable GetMetatableHandler(object target);
 
     [CSharpCallLua]
     delegate LuaTable SetMetatableHandler(object target, LuaTable metatable);
 
-    public static class MetatableHelper
-    {
+    public static class MetatableHelper {
         static GetMetatableHandler getter;
         static SetMetatableHandler setter;
-        public static LuaTable GetMetatable(object target)
-        {
+        public static LuaTable GetMetatable(object target) {
             if (getter != null)
                 return getter(target);
 
@@ -47,10 +44,8 @@ namespace Loxodon.Framework.Binding
             return getter(target);
         }
 
-        public static void SetMetatable(object target, LuaTable metatable)
-        {
-            if (setter != null)
-            {
+        public static void SetMetatable(object target, LuaTable metatable) {
+            if (setter != null) {
                 setter(target, metatable);
                 return;
             }

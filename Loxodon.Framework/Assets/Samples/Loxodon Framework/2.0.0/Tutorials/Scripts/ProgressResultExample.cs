@@ -27,10 +27,8 @@ using System.Collections;
 using System.Text;
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Tutorials
-{
-	public class Progress
-	{
+namespace Loxodon.Framework.Tutorials {
+	public class Progress {
 		public int bytes;
 		public int TotalBytes;
 
@@ -38,11 +36,9 @@ namespace Loxodon.Framework.Tutorials
 	}
 
 
-	public class ProgressResultExample : MonoBehaviour
-	{
+	public class ProgressResultExample : MonoBehaviour {
 
-		protected IEnumerator Start ()
-		{
+		protected IEnumerator Start () {
 			ProgressResult<Progress,string> result = new ProgressResult<Progress,string> (true);
 
 			/* Start the task */
@@ -61,8 +57,7 @@ namespace Loxodon.Framework.Tutorials
 		/// </summary>
 		/// <returns>The task.</returns>
 		/// <param name="promise">Promise.</param>
-		protected IEnumerator DoTask (IProgressPromise<Progress,string> promise)
-		{
+		protected IEnumerator DoTask (IProgressPromise<Progress,string> promise) {
 			int n = 50;
 			Progress progress = new Progress ();
 			progress.TotalBytes = n;

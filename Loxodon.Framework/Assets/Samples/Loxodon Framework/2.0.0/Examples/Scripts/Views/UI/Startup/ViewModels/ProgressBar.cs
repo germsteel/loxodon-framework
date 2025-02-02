@@ -24,29 +24,24 @@
 
 using Loxodon.Framework.ViewModels;
 
-namespace Loxodon.Framework.Examples
-{
-    public class ProgressBar : ViewModelBase
-    {
+namespace Loxodon.Framework.Examples {
+    public class ProgressBar : ViewModelBase {
 
         private float progress;
         private string tip;
         private bool enable;
 
-        public bool Enable
-        {
+        public bool Enable {
             get { return this.enable; }
             set { this.Set(ref this.enable, value); }
         }
 
-        public float Progress
-        {
+        public float Progress {
             get { return this.progress; }
             set { this.Set(ref this.progress, value); }
         }
 
-        public string Tip
-        {
+        public string Tip {
             get { return this.tip; }
             set { this.Set(ref this.tip, value); }
         }

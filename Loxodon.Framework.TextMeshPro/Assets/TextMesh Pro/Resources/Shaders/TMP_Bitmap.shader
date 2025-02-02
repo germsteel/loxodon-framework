@@ -25,8 +25,7 @@ SubShader{
 
 	Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 	
-	Stencil
-	{
+	Stencil {
 		Ref[_Stencil]
 		Comp[_StencilComp]
 		Pass[_StencilOp]
@@ -80,8 +79,7 @@ SubShader{
 		uniform float		_MaskSoftnessX;
 		uniform float		_MaskSoftnessY;
 
-		float2 UnpackUV(float uv)
-		{
+		float2 UnpackUV(float uv) {
 			float2 output;
 			output.x = floor(uv / 4096);
 			output.y = uv - 4096 * output.x;
@@ -89,8 +87,7 @@ SubShader{
 			return output * 0.001953125;
 		}
 
-		v2f vert (appdata_t v)
-		{
+		v2f vert (appdata_t v) {
 			float4 vert = v.vertex;
 			vert.x += _VertexOffsetX;
 			vert.y += _VertexOffsetY;
@@ -117,8 +114,7 @@ SubShader{
 			return OUT;
 		}
 
-		fixed4 frag (v2f IN) : SV_Target
-		{
+		fixed4 frag (v2f IN) : SV_Target {
 			fixed4 color = tex2D(_MainTex, IN.texcoord0);
 			color = fixed4 (tex2D(_FaceTex, IN.texcoord1).rgb * IN.color.rgb, IN.color.a * color.a);
 

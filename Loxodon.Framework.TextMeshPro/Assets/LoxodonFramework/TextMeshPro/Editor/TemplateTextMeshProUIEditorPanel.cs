@@ -26,23 +26,19 @@ using TMPro.EditorUtilities;
 using UnityEditor;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views.TextMeshPro.Editor
-{
+namespace Loxodon.Framework.Views.TextMeshPro.Editor {
     [CustomEditor(typeof(TemplateTextMeshProUGUI), true), CanEditMultipleObjects]
-    public class TemplateTextMeshProUIEditorPanel : TMP_EditorPanelUI
-    {
+    public class TemplateTextMeshProUIEditorPanel : TMP_EditorPanelUI {
         static readonly GUIContent k_TemplateLabel = new GUIContent("Template", "text template");
 
         SerializedProperty m_TemplateProp;
 
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             m_TemplateProp = serializedObject.FindProperty("m_Template");
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             // Make sure Multi selection only includes TMP Text objects.
             if (IsMixSelectionTypes()) return;
 
@@ -56,20 +52,17 @@ namespace Loxodon.Framework.Views.TextMeshPro.Editor
 
             EditorGUILayout.Space();
 
-            if (serializedObject.ApplyModifiedProperties() || m_HavePropertiesChanged)
-            {
+            if (serializedObject.ApplyModifiedProperties() || m_HavePropertiesChanged) {
                 m_TextComponent.havePropertiesChanged = true;
                 m_HavePropertiesChanged = false;
                 EditorUtility.SetDirty(target);
             }
         }
 
-        protected void DrawTemplateInput()
-        {
+        protected void DrawTemplateInput() {
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(m_TemplateProp, k_TemplateLabel);
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 m_HavePropertiesChanged = true;
             }
         }

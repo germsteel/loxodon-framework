@@ -28,21 +28,17 @@ using Loxodon.Framework.Views;
 using System.Collections.Specialized;
 using UnityEngine;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ListView : UIView
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ListView : UIView {
         private ObservableList<ListItemViewModel> items;
 
         public Transform content;
 
         public GameObject itemTemplate;
 
-        public ObservableList<ListItemViewModel> Items
-        {
+        public ObservableList<ListItemViewModel> Items {
             get { return this.items; }
-            set
-            {
+            set {
                 if (this.items == value)
                     return;
 
@@ -57,16 +53,13 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
-        protected override void OnDestroy()
-        {
+        protected override void OnDestroy() {
             if (this.items != null)
                 this.items.CollectionChanged -= OnCollectionChanged;
         }
 
-        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
-        {
-            switch (eventArgs.Action)
-            {
+        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs) {
+            switch (eventArgs.Action) {
                 case NotifyCollectionChangedAction.Add:
                     this.AddItem(eventArgs.NewStartingIndex, eventArgs.NewItems[0]);
                     break;
@@ -85,23 +78,19 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
-        protected virtual void OnItemsChanged()
-        {
+        protected virtual void OnItemsChanged() {
             int count = this.content.childCount;
-            for(int i = count - 1; i >= 0; i--)
-            {
+            for(int i = count - 1; i >= 0; i--) {
                 Transform child = this.content.GetChild(i);
                 GameObject.Destroy(child.gameObject);
             }
 
-            for (int i = 0; i < this.items.Count; i++)
-            {
+            for (int i = 0; i < this.items.Count; i++) {
                 this.AddItem(i, items[i]);
             }
         }
 
-        protected virtual void AddItem(int index, object item)
-        {
+        protected virtual void AddItem(int index, object item) {
             var itemViewGo = Instantiate(this.itemTemplate);
             itemViewGo.transform.SetParent(this.content, false);
             itemViewGo.transform.SetSiblingIndex(index);
@@ -111,38 +100,31 @@ namespace Loxodon.Framework.Tutorials
             itemView.SetDataContext(item);
         }
 
-        protected virtual void RemoveItem(int index, object item)
-        {
+        protected virtual void RemoveItem(int index, object item) {
             Transform transform = this.content.GetChild(index);
             UIView itemView = transform.GetComponent<UIView>();
-            if (itemView.GetDataContext() == item)
-            {
+            if (itemView.GetDataContext() == item) {
                 itemView.gameObject.SetActive(false);
                 Destroy(itemView.gameObject);
             }
         }
 
-        protected virtual void ReplaceItem(int index, object oldItem, object item)
-        {
+        protected virtual void ReplaceItem(int index, object oldItem, object item) {
             Transform transform = this.content.GetChild(index);
             UIView itemView = transform.GetComponent<UIView>();
-            if (itemView.GetDataContext() == oldItem)
-            {
+            if (itemView.GetDataContext() == oldItem) {
                 itemView.SetDataContext(item);
             }
         }
 
-        protected virtual void MoveItem(int oldIndex, int index, object item)
-        {
+        protected virtual void MoveItem(int oldIndex, int index, object item) {
             Transform transform = this.content.GetChild(oldIndex);
             UIView itemView = transform.GetComponent<UIView>();
             itemView.transform.SetSiblingIndex(index);
         }
 
-        protected virtual void ResetItem()
-        {
-            for (int i = this.content.childCount - 1; i >= 0; i--)
-            {
+        protected virtual void ResetItem() {
+            for (int i = this.content.childCount - 1; i >= 0; i--) {
                 Transform transform = this.content.GetChild(i);
                 Destroy(transform.gameObject);
             }

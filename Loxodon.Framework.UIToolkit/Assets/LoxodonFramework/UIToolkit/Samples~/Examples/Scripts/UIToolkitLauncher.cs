@@ -32,16 +32,13 @@ using Loxodon.Log;
 using System.Globalization;
 using UnityEngine;
 
-namespace Loxodon.Framework.Examples
-{
-    public class UIToolkitLauncher : MonoBehaviour
-    {
+namespace Loxodon.Framework.Examples {
+    public class UIToolkitLauncher : MonoBehaviour {
 
         private static readonly ILog log = LogManager.GetLogger(typeof(UIToolkitLauncher));
 
         private ApplicationContext context;
-        void Awake()
-        {
+        void Awake() {
             GameObject.DontDestroyOnLoad(this.gameObject);
 
             GlobalWindowManagerBase windowManager = FindObjectOfType<GlobalWindowManagerBase>();
@@ -70,8 +67,7 @@ namespace Loxodon.Framework.Examples
             container.Register<Localization>(localization);
         }
 
-        async void Start()
-        {
+        async void Start() {
             /* Create a window container */
             WindowContainer winContainer = WindowContainer.Create("MAIN");
 
@@ -80,8 +76,7 @@ namespace Loxodon.Framework.Examples
             IUIViewLocator locator = context.GetService<IUIViewLocator>();
             Window1 window = locator.LoadWindow<Window1>(winContainer, "UI/Window1");
             window.Create();
-            ITransition transition = window.Show().OnStateChanged((w, state) =>
-            {
+            ITransition transition = window.Show().OnStateChanged((w, state) => {
                 log.DebugFormat("Window:{0} State{1}", w.Name, state);
             });
 

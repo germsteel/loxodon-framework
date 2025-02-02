@@ -27,11 +27,9 @@ using System;
 using UnityEngine;
 using XLua;
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     [LuaCallCSharp]
-    public class LuaWindow : Window, ILuaExtendable
-    {
+    public class LuaWindow : Window, ILuaExtendable {
         public ScriptReference script;
         public VariableArray variables;
 
@@ -44,13 +42,11 @@ namespace Loxodon.Framework.Views
 
         private bool initialized = false;
 
-        public virtual LuaTable GetMetatable()
-        {
+        public virtual LuaTable GetMetatable() {
             return this.metatable;
         }
 
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
             if (initialized)
                 return;
 
@@ -74,10 +70,8 @@ namespace Loxodon.Framework.Views
 
             metatable = (LuaTable)result[0];
 
-            if (variables != null && variables.Variables != null)
-            {
-                foreach (var variable in variables.Variables)
-                {
+            if (variables != null && variables.Variables != null) {
+                foreach (var variable in variables.Variables) {
                     var name = variable.Name.Trim();
                     if (string.IsNullOrEmpty(name))
                         continue;
@@ -92,8 +86,7 @@ namespace Loxodon.Framework.Views
             onDismiss = metatable.Get<Action<LuaWindow>>("onDismiss");
         }
 
-        protected override void OnCreate(IBundle bundle)
-        {
+        protected override void OnCreate(IBundle bundle) {
             if (!initialized)
                 Initialize();
 
@@ -101,24 +94,21 @@ namespace Loxodon.Framework.Views
                 onCreate(this, bundle);
         }
 
-        protected override void OnShow()
-        {
+        protected override void OnShow() {
             base.OnShow();
 
             if (onShow != null)
                 onShow(this);
         }
 
-        protected override void OnHide()
-        {
+        protected override void OnHide() {
             base.OnHide();
 
             if (onHide != null)
                 onHide(this);
         }
 
-        protected override void OnDismiss()
-        {
+        protected override void OnDismiss() {
             base.OnDismiss();
 
             if (onDismiss != null)
@@ -129,14 +119,12 @@ namespace Loxodon.Framework.Views
             onHide = null;
             onDismiss = null;
 
-            if (metatable != null)
-            {
+            if (metatable != null) {
                 metatable.Dispose();
                 metatable = null;
             }
 
-            if (scriptEnv != null)
-            {
+            if (scriptEnv != null) {
                 scriptEnv.Dispose();
                 scriptEnv = null;
             }

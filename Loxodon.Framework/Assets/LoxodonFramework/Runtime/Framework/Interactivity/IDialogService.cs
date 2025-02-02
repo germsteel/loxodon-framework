@@ -25,10 +25,8 @@
 using Loxodon.Framework.Asynchronous;
 using Loxodon.Framework.ViewModels;
 
-namespace Loxodon.Framework.Interactivity
-{
-    public interface IDialogService
-    {
+namespace Loxodon.Framework.Interactivity {
+    public interface IDialogService {
         /// <summary>
         /// Displays information to the user. 
         /// </summary>

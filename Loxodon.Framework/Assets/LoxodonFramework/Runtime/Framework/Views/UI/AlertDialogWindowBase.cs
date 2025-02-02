@@ -25,21 +25,17 @@
 using Loxodon.Framework.ViewModels;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
-    public abstract class AlertDialogWindowBase : Window
-    {
+namespace Loxodon.Framework.Views {
+    public abstract class AlertDialogWindowBase : Window {
         public GameObject Content;
 
         protected IUIView contentView;
 
         protected AlertDialogViewModel viewModel;
 
-        public virtual IUIView ContentView
-        {
+        public virtual IUIView ContentView {
             get { return this.contentView; }
-            set
-            {
+            set {
                 if (this.contentView == value)
                     return;
 
@@ -47,19 +43,16 @@ namespace Loxodon.Framework.Views
                     GameObject.Destroy(this.contentView.Owner);
 
                 this.contentView = value;
-                if (this.contentView != null && this.contentView.Owner != null && this.Content != null)
-                {
+                if (this.contentView != null && this.contentView.Owner != null && this.Content != null) {
                     this.contentView.Visibility = true;
                     this.contentView.Transform.SetParent(this.Content.transform, false);
                 }
             }
         }
 
-        public virtual AlertDialogViewModel ViewModel
-        {
+        public virtual AlertDialogViewModel ViewModel {
             get { return this.viewModel; }
-            set
-            {
+            set {
                 if (this.viewModel == value)
                     return;
 
@@ -67,8 +60,7 @@ namespace Loxodon.Framework.Views
                 this.OnChangeViewModel();
             }
         }
-        protected override void OnCreate(IBundle bundle)
-        {
+        protected override void OnCreate(IBundle bundle) {
             this.WindowType = WindowType.DIALOG;
         }
 

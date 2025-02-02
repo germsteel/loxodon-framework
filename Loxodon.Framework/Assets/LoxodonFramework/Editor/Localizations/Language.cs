@@ -24,12 +24,9 @@
 
 using System;
 using System.Collections.Generic;
-namespace Loxodon.Framework.Editors
-{
-    public class Language
-    {
-        private readonly static List<Language> languages = new List<Language>()
-        {
+namespace Loxodon.Framework.Editors {
+    public class Language {
+        private readonly static List<Language> languages = new List<Language>() {
             new Language("Afrikaans/Afrikaans [af]","Afrikaans","","af"),
             new Language("Afrikaans/South Africa [af-ZA]","Afrikaans","South Africa","af-ZA"),
             new Language("Albanian/Albania [sq-AL]","Albanian","Albania","sq-AL"),
@@ -200,11 +197,9 @@ namespace Loxodon.Framework.Editors
             new Language("Vietnamese/Vietnamese [vi]","Vietnamese","","vi")
         };
 
-        public static List<Language> GetAll(params string[] filters)
-        {
+        public static List<Language> GetAll(params string[] filters) {
             List<Language> list = new List<Language>();
-            foreach (var language in languages)
-            {
+            foreach (var language in languages) {
                 if (Array.IndexOf(filters, language.Code) >= 0)
                     continue;
                 list.Add(language);
@@ -212,18 +207,15 @@ namespace Loxodon.Framework.Editors
             return list;
         }
 
-        public static Language GetLanguage(string code)
-        {
-            foreach (var language in languages)
-            {
+        public static Language GetLanguage(string code) {
+            foreach (var language in languages) {
                 if (language.Code == code)
                     return language;
             }
             return null;
         }
 
-        public Language(string key, string name, string country, string code)
-        {
+        public Language(string key, string name, string country, string code) {
             this.Key = key;
             this.Name = name;
             this.Country = country;

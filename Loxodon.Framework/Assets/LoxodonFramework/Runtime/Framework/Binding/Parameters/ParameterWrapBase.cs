@@ -24,26 +24,21 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Parameters
-{
-    public class ParameterWrapBase
-    {
+namespace Loxodon.Framework.Binding.Parameters {
+    public class ParameterWrapBase {
         protected readonly ICommandParameter commandParameter;
-        public ParameterWrapBase(ICommandParameter commandParameter)
-        {
+        public ParameterWrapBase(ICommandParameter commandParameter) {
             if (commandParameter == null)
                 throw new ArgumentNullException("commandParameter");
 
             this.commandParameter = commandParameter;
         }
 
-        protected virtual object GetParameterValue()
-        {
+        protected virtual object GetParameterValue() {
             return commandParameter.GetValue();
         }
 
-        protected virtual Type GetParameterValueType()
-        {
+        protected virtual Type GetParameterValueType() {
             return commandParameter.GetValueType();
         }
     }

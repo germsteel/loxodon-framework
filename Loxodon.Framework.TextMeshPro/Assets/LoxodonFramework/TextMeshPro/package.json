@@ -31,8 +31,7 @@
     "com.vovgou.loxodon-framework-textformatting": "2.6.5",
     "com.unity.textmeshpro": "3.0.6"
   },
-  "samples": [
-    {
+  "samples": [ {
       "displayName": "Tutorials",
       "description": "Tutorials",
       "path": "Samples~/Tutorials"

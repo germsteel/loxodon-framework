@@ -26,16 +26,12 @@ using Loxodon.Framework.Binding.Proxy.Targets;
 using Loxodon.Framework.Services;
 using System;
 
-namespace Loxodon.Framework.Binding
-{
-    public class FairyGUIBindingServiceBundle : AbstractServiceBundle
-    {
-        public FairyGUIBindingServiceBundle(IServiceContainer container) : base(container)
-        {
+namespace Loxodon.Framework.Binding {
+    public class FairyGUIBindingServiceBundle : AbstractServiceBundle {
+        public FairyGUIBindingServiceBundle(IServiceContainer container) : base(container) {
         }
 
-        protected override void OnStart(IServiceContainer container)
-        {
+        protected override void OnStart(IServiceContainer container) {
             var targetFactory = container.Resolve<ITargetProxyFactoryRegister>();
             if (targetFactory == null)
                 throw new Exception("Data binding service is not initialized,please create a BindingServiceBundle service before using it.");
@@ -43,8 +39,7 @@ namespace Loxodon.Framework.Binding
             targetFactory.Register(new FairyTargetProxyFactory(), 20);
         }
 
-        protected override void OnStop(IServiceContainer container)
-        {
+        protected override void OnStop(IServiceContainer container) {
         }
     }
 }

@@ -24,12 +24,9 @@
 
 using UnityEngine;
 
-namespace Loxodon.Framework.ObjectPool
-{
-    public abstract class UnityMixedComponentFactoryBase<T> : IMixedObjectFactory<T> where T : Component
-    {
-        public virtual T Create(IMixedObjectPool<T> pool, string typeName)
-        {
+namespace Loxodon.Framework.ObjectPool {
+    public abstract class UnityMixedComponentFactoryBase<T> : IMixedObjectFactory<T> where T : Component {
+        public virtual T Create(IMixedObjectPool<T> pool, string typeName) {
             T target = this.Create(typeName);
             PooledUnityObject pooledObj = target.gameObject.AddComponent<PooledUnityObject>();
             pooledObj.pool = pool;
@@ -42,24 +39,20 @@ namespace Loxodon.Framework.ObjectPool
 
         public abstract void Reset(string typeName, T obj);
 
-        public virtual void Destroy(string typeName, T obj)
-        {
+        public virtual void Destroy(string typeName, T obj) {
             Object.Destroy(obj.gameObject);
         }
 
-        public virtual bool Validate(string typeName, T obj)
-        {
+        public virtual bool Validate(string typeName, T obj) {
             return true;
         }
 
-        class PooledUnityObject : MonoBehaviour, IPooledObject
-        {
+        class PooledUnityObject : MonoBehaviour, IPooledObject {
             internal IMixedObjectPool<T> pool;
             internal T target;
             internal string typeName;
 
-            public void Free()
-            {
+            public void Free() {
                 if (pool != null)
                     pool.Free(typeName, target);
             }

@@ -33,13 +33,11 @@ using Windows.Storage.Streams;
 using System.Security.Cryptography;
 #endif
 
-namespace Loxodon.Framework.Prefs
-{
+namespace Loxodon.Framework.Prefs {
     /// <summary>
     /// 
     /// </summary>
-    public class DefaultEncryptor : IEncryptor
-    {
+    public class DefaultEncryptor : IEncryptor {
         private const int IV_SIZE = 16;
         private static readonly byte[] DEFAULT_IV;
         private static readonly byte[] DEFAULT_KEY;
@@ -51,8 +49,7 @@ namespace Loxodon.Framework.Prefs
         private byte[] iv = null;
         private byte[] key = null;
 
-        static DefaultEncryptor()
-        {
+        static DefaultEncryptor() {
             DEFAULT_IV = Encoding.ASCII.GetBytes("5CyM5tcL3yDFiWlN");
             DEFAULT_KEY = Encoding.ASCII.GetBytes("W8fnmqMynlTJXPM1");
         }
@@ -60,8 +57,7 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        public DefaultEncryptor() : this(null, null)
-        {
+        public DefaultEncryptor() : this(null, null) {
         }
 
         /// <summary>
@@ -69,8 +65,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key"></param>
         /// <param name="iv"></param>
-        public DefaultEncryptor(byte[] key, byte[] iv)
-        {
+        public DefaultEncryptor(byte[] key, byte[] iv) {
             this.iv = iv != null ? iv : DEFAULT_IV;
             this.key = key != null ? key : DEFAULT_KEY;
 
@@ -81,8 +76,7 @@ namespace Loxodon.Framework.Prefs
             SymmetricKeyAlgorithmProvider provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
             cryptographicKey = provider.CreateSymmetricKey(this.key.AsBuffer());
 #else
-            cipher = new RijndaelManaged()
-            {
+            cipher = new RijndaelManaged() {
                 Mode = CipherMode.CBC,//use CBC
                 Padding = PaddingMode.PKCS7,//default PKCS7
                 KeySize = 128,//default 256
@@ -97,8 +91,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        protected bool CheckKey(byte[] bytes)
-        {
+        protected bool CheckKey(byte[] bytes) {
             if (bytes == null || (bytes.Length != 16 && bytes.Length != 24 && bytes.Length != 32))
                 throw new ArgumentException("The 'Key' must be 16byte 24byte or 32byte!");
             return true;
@@ -109,8 +102,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        protected bool CheckIV(byte[] bytes)
-        {
+        protected bool CheckIV(byte[] bytes) {
             if (bytes == null || bytes.Length != IV_SIZE)
                 throw new ArgumentException("The 'IV' must be 16byte!");
             return true;
@@ -121,8 +113,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="plainData"></param>
         /// <returns></returns>
-        public byte[] Encode(byte[] plainData)
-        {
+        public byte[] Encode(byte[] plainData) {
 #if NETFX_CORE
             IBuffer bufferEncrypt = CryptographicEngine.Encrypt(cryptographicKey, plainData.AsBuffer(), iv.AsBuffer());
             return bufferEncrypt.ToArray();
@@ -137,8 +128,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="cipherData"></param>
         /// <returns></returns>
-        public byte[] Decode(byte[] cipherData)
-        {
+        public byte[] Decode(byte[] cipherData) {
 #if NETFX_CORE
             IBuffer bufferDecrypt = CryptographicEngine.Decrypt(cryptographicKey, cipherData.AsBuffer(), iv.AsBuffer());
             return bufferDecrypt.ToArray();

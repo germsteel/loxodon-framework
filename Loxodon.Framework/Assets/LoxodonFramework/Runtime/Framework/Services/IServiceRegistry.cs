@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Services
-{
-    public interface IServiceRegistry
-    {
+namespace Loxodon.Framework.Services {
+    public interface IServiceRegistry {
         void Register(Type type, object target);
 
         void Register<T>(T target);

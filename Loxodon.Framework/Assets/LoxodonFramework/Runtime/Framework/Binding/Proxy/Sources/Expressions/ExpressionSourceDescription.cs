@@ -26,23 +26,18 @@ using System;
 using System.Reflection;
 using System.Linq.Expressions;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
-{
-    public class ExpressionSourceDescription : SourceDescription
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions {
+    public class ExpressionSourceDescription : SourceDescription {
         private LambdaExpression expression;
 
         private Type returnType;
 
-        public ExpressionSourceDescription()
-        {
+        public ExpressionSourceDescription() {
         }
 
-        public LambdaExpression Expression
-        {
+        public LambdaExpression Expression {
             get { return this.expression; }
-            set
-            {
+            set {
                 this.expression = value;
 
                 Type[] types = expression.GetType().GetGenericArguments();
@@ -62,8 +57,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
 
         public Type ReturnType { get { return this.returnType; } }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return this.expression == null ? "Expression:null" : "Expression:" + this.expression.ToString();
         }
     }

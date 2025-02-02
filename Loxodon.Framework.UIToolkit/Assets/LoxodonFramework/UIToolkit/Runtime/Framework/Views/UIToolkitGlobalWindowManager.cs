@@ -22,9 +22,7 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Views
-{
-    public class UIToolkitGlobalWindowManager : GlobalWindowManagerBase
-    {
+namespace Loxodon.Framework.Views {
+    public class UIToolkitGlobalWindowManager : GlobalWindowManagerBase {
     }
 }

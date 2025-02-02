@@ -24,9 +24,7 @@
 
 using System;
 
-namespace Loxodon.Framework.ViewModels
-{
-    public interface IViewModel : IDisposable
-    {
+namespace Loxodon.Framework.ViewModels {
+    public interface IViewModel : IDisposable {
     }
 }

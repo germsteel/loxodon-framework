@@ -26,17 +26,13 @@ using Loxodon.Log;
 using System;
 using UnityEngine.EventSystems;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public abstract class TargetProxyBase : BindingProxyBase, ITargetProxy
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public abstract class TargetProxyBase : BindingProxyBase, ITargetProxy {
         private readonly WeakReference target;
         protected TypeCode typeCode = TypeCode.Empty;
         protected readonly string targetName;
-        public TargetProxyBase(object target)
-        {
-            if (target != null)
-            {
+        public TargetProxyBase(object target) {
+            if (target != null) {
                 this.target = new WeakReference(target, false);
                 this.targetName = target.ToString();
             }
@@ -44,12 +40,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public abstract Type Type { get; }
 
-        public virtual TypeCode TypeCode
-        {
-            get
-            {
-                if (typeCode == TypeCode.Empty)
-                {
+        public virtual TypeCode TypeCode {
+            get {
+                if (typeCode == TypeCode.Empty) {
 #if NETFX_CORE
                     typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(Type);
 #else
@@ -60,30 +53,24 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
-        public virtual object Target
-        {
-            get
-            {
+        public virtual object Target {
+            get {
                 var target = this.target != null ? this.target.Target : null;
                 return IsAlive(target) ? target : null;
             }
         }
-        private bool IsAlive(object target)
-        {
-            try
-            {
+        private bool IsAlive(object target) {
+            try {
                 if (target == null)
                     return false;
 
-                if (target is UIBehaviour)
-                {
+                if (target is UIBehaviour) {
                     if (((UIBehaviour)target).IsDestroyed())
                         return false;
                     return true;
                 }
 
-                if (target is UnityEngine.Object)
-                {
+                if (target is UnityEngine.Object) {
                     //Check if the object is valid because it may have been destroyed.
                     //Unmanaged objects,the weak caches do not accurately track the validity of objects.
                     var name = ((UnityEngine.Object)target).name;
@@ -92,8 +79,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
                 return target != null;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
@@ -101,8 +87,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         public virtual BindingMode DefaultMode { get { return BindingMode.OneWay; } }
     }
 
-    public abstract class ValueTargetProxyBase : TargetProxyBase, IModifiable, IObtainable, INotifiable
-    {
+    public abstract class ValueTargetProxyBase : TargetProxyBase, IModifiable, IObtainable, INotifiable {
         private static readonly ILog log = LogManager.GetLogger(typeof(ValueTargetProxyBase));
 
         private bool disposed = false;
@@ -111,16 +96,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         protected readonly object _lock = new object();
         protected EventHandler valueChanged;
 
-        public ValueTargetProxyBase(object target) : base(target)
-        {
+        public ValueTargetProxyBase(object target) : base(target) {
         }
 
-        public event EventHandler ValueChanged
-        {
-            add
-            {
-                lock (_lock)
-                {
+        public event EventHandler ValueChanged {
+            add {
+                lock (_lock) {
                     this.valueChanged += value;
 
                     if (this.valueChanged != null && !this.subscribed)
@@ -128,10 +109,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 }
             }
 
-            remove
-            {
-                lock (_lock)
-                {
+            remove {
+                lock (_lock) {
                     this.valueChanged -= value;
 
                     if (this.valueChanged == null && this.subscribed)
@@ -140,10 +119,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
-        protected void Subscribe()
-        {
-            try
-            {
+        protected void Subscribe() {
+            try {
                 if (subscribed)
                     return;
 
@@ -154,21 +131,17 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 this.subscribed = true;
                 this.DoSubscribeForValueChange(target);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0} Subscribe Exception:{1}", this.targetName, e);
             }
         }
 
-        protected virtual void DoSubscribeForValueChange(object target)
-        {
+        protected virtual void DoSubscribeForValueChange(object target) {
         }
 
-        protected void Unsubscribe()
-        {
-            try
-            {
+        protected void Unsubscribe() {
+            try {
                 if (!subscribed)
                     return;
 
@@ -179,14 +152,12 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 this.subscribed = false;
                 this.DoUnsubscribeForValueChange(target);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0} Unsubscribe Exception:{1}", this.targetName, e);
             }
         }
-        protected virtual void DoUnsubscribeForValueChange(object target)
-        {
+        protected virtual void DoUnsubscribeForValueChange(object target) {
         }
 
         public abstract object GetValue();
@@ -197,27 +168,21 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public abstract void SetValue(object value);
 
-        protected void RaiseValueChanged()
-        {
-            try
-            {
+        protected void RaiseValueChanged() {
+            try {
                 var handler = this.valueChanged;
                 if (handler != null)
                     handler(this, EventArgs.Empty);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 log.WarnFormat("{0}", e);
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
+        protected override void Dispose(bool disposing) {
+            if (!disposed) {
                 disposed = true;
-                lock (_lock)
-                {
+                lock (_lock) {
                     this.Unsubscribe();
                 }
                 base.Dispose(disposing);
@@ -225,10 +190,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
         }
     }
 
-    public abstract class EventTargetProxyBase : TargetProxyBase, IModifiable
-    {
-        public EventTargetProxyBase(object target) : base(target)
-        {
+    public abstract class EventTargetProxyBase : TargetProxyBase, IModifiable {
+        public EventTargetProxyBase(object target) : base(target) {
         }
 
         public abstract void SetValue(object value);

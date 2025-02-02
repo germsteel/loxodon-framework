@@ -31,20 +31,15 @@ using UnityEngine.Video;
 using Object = UnityEngine.Object;
 using ValueType = Loxodon.Framework.Localizations.ValueType;
 
-namespace Loxodon.Framework.Editors
-{
-    public abstract class LocalizationSourceEditor : Editor
-    {
+namespace Loxodon.Framework.Editors {
+    public abstract class LocalizationSourceEditor : Editor {
         protected const float HORIZONTAL_GAP = 5;
         protected const float VERTICAL_GAP = 5;
 
         private static GUIStyle titleStyle;
-        public static GUIStyle TitleGUIStyle
-        {
-            get
-            {
-                if (titleStyle == null)
-                {
+        public static GUIStyle TitleGUIStyle {
+            get {
+                if (titleStyle == null) {
                     titleStyle = new GUIStyle("HeaderLabel");
                     titleStyle.fontSize = 18;
                     titleStyle.normal.textColor = Color.Lerp(Color.white, Color.gray, 0.5f);
@@ -54,13 +49,11 @@ namespace Loxodon.Framework.Editors
                 return titleStyle;
             }
         }
-        protected virtual void DrawValueField(Rect rect, SerializedProperty valueProperty, ValueType type, bool multiline = false)
-        {
+        protected virtual void DrawValueField(Rect rect, SerializedProperty valueProperty, ValueType type, bool multiline = false) {
             SerializedProperty objectValue = valueProperty.FindPropertyRelative("objectValue");
             SerializedProperty dataValue = valueProperty.FindPropertyRelative("dataValue");
 
-            switch (type)
-            {
+            switch (type) {
                 case ValueType.String:
                     string strValue = DataConverter.ToString(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
@@ -68,8 +61,7 @@ namespace Loxodon.Framework.Editors
                         strValue = EditorGUI.TextArea(rect, strValue, EditorStyles.textArea);
                     else
                         strValue = EditorGUI.TextField(rect, GUIContent.none, strValue, EditorStyles.textField);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(strValue);
                     }
                     break;
@@ -77,8 +69,7 @@ namespace Loxodon.Framework.Editors
                     bool boolValue = DataConverter.ToBoolean(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     boolValue = EditorGUI.Toggle(rect, GUIContent.none, boolValue, EditorStyles.toggle);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(boolValue);
                     }
                     break;
@@ -86,8 +77,7 @@ namespace Loxodon.Framework.Editors
                     int intValue = DataConverter.ToInt32(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     intValue = EditorGUI.IntField(rect, GUIContent.none, intValue);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(intValue);
                     }
                     break;
@@ -95,8 +85,7 @@ namespace Loxodon.Framework.Editors
                     float floatValue = DataConverter.ToSingle(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     floatValue = EditorGUI.FloatField(rect, GUIContent.none, floatValue);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(floatValue);
                     }
                     break;
@@ -104,8 +93,7 @@ namespace Loxodon.Framework.Editors
                     Color color = DataConverter.ToColor(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     color = EditorGUI.ColorField(rect, GUIContent.none, color);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(color);
                     }
                     break;
@@ -113,8 +101,7 @@ namespace Loxodon.Framework.Editors
                     Vector2 vector2 = DataConverter.ToVector2(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     vector2 = EditorGUI.Vector2Field(rect, GUIContent.none, vector2);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(vector2);
                     }
                     break;
@@ -122,8 +109,7 @@ namespace Loxodon.Framework.Editors
                     Vector3 vector3 = DataConverter.ToVector3(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     vector3 = EditorGUI.Vector3Field(rect, GUIContent.none, vector3);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(vector3);
                     }
                     break;
@@ -131,8 +117,7 @@ namespace Loxodon.Framework.Editors
                     Vector4 vector4 = DataConverter.ToVector4(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     vector4 = EditorGUI.Vector4Field(rect, GUIContent.none, vector4);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(vector4);
                     }
                     break;
@@ -152,10 +137,8 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        protected virtual Type GetObjectType(ValueType type)
-        {
-            switch (type)
-            {
+        protected virtual Type GetObjectType(ValueType type) {
+            switch (type) {
                 case ValueType.Sprite:
                     return typeof(Sprite);
                 case ValueType.Texture2D:

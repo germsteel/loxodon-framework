@@ -24,14 +24,10 @@
 
 using System;
 
-namespace Loxodon.Framework.Localizations
-{
-    public class PrimitiveTypeConverter : ITypeConverter
-    {
-        public bool Support(string typeName)
-        {
-            switch (typeName)
-            {
+namespace Loxodon.Framework.Localizations {
+    public class PrimitiveTypeConverter : ITypeConverter {
+        public bool Support(string typeName) {
+            switch (typeName) {
                 case "string":
                 case "boolean":
                 case "sbyte":
@@ -53,10 +49,8 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        public Type GetType(string typeName)
-        {
-            switch (typeName)
-            {
+        public Type GetType(string typeName) {
+            switch (typeName) {
                 case "string":
                     return typeof(string);
                 case "boolean":
@@ -92,8 +86,7 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        public object Convert(Type type, object value)
-        {
+        public object Convert(Type type, object value) {
             return System.Convert.ChangeType(value, type);
         }
     }

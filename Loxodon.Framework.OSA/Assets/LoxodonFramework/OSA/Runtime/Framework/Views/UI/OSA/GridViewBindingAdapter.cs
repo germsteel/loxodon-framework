@@ -30,17 +30,13 @@ using System.Collections;
 using System.Collections.Specialized;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views.UI
-{
+namespace Loxodon.Framework.Views.UI {
     [DefaultExecutionOrder(1000)]
-    public class GridViewBindingAdapter : GridAdapter<GridViewParams, GridCellViewHolder>, IBindingAdapter
-    {
+    public class GridViewBindingAdapter : GridAdapter<GridViewParams, GridCellViewHolder>, IBindingAdapter {
         private IList items;
-        public IList Items
-        {
+        public IList Items {
             get { return this.items; }
-            set
-            {
+            set {
                 if (this.items == value)
                     return;
 
@@ -58,21 +54,18 @@ namespace Loxodon.Framework.Views.UI
             }
         }
 
-        protected override void OnDestroy()
-        {
+        protected override void OnDestroy() {
             base.OnDestroy();
             var collection = items as INotifyCollectionChanged;
             if (collection != null)
                 collection.CollectionChanged -= OnCollectionChanged;
         }
 
-        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
-        {
+        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs) {
             if (!IsInitialized)
                 return;
 
-            switch (eventArgs.Action)
-            {
+            switch (eventArgs.Action) {
                 case NotifyCollectionChangedAction.Add:
                     if (InsertAtIndexSupported)
                         InsertItems(eventArgs.NewStartingIndex, eventArgs.NewItems.Count, Parameters.contentPanelEndEdgeStationary, Parameters.keepVelocity);
@@ -97,42 +90,36 @@ namespace Loxodon.Framework.Views.UI
             }
         }
 
-        protected virtual void OnItemsChanged()
-        {
+        protected virtual void OnItemsChanged() {
             if (!IsInitialized)
                 return;
 
             ResetItems(items != null ? items.Count : 0, Parameters.contentPanelEndEdgeStationary, Parameters.keepVelocity);
         }
 
-        protected override void OnInitialized()
-        {
+        protected override void OnInitialized() {
             base.OnInitialized();
             ResetItems(items != null ? items.Count : 0, Parameters.contentPanelEndEdgeStationary, Parameters.keepVelocity);
         }
 
-        protected override void UpdateCellViewsHolder(GridCellViewHolder viewsHolder)
-        {
+        protected override void UpdateCellViewsHolder(GridCellViewHolder viewsHolder) {
             var model = items[viewsHolder.ItemIndex];
             viewsHolder.UpdateDataContext(model);
         }
     }
 
     [Serializable]
-    public class GridViewParams : GridParams
-    {
+    public class GridViewParams : GridParams {
         public bool contentPanelEndEdgeStationary = false;
         public bool keepVelocity = false;
     }
 
-    public class GridCellViewHolder : CellViewsHolder
-    {
+    public class GridCellViewHolder : CellViewsHolder {
         private static readonly ILog log = LogManager.GetLogger(typeof(GridCellViewHolder));
         private static readonly IList EMPTY_LIST = new ArrayList(0);
         private UIView view;
         private IBindingAdapter bindingAdapter;
-        public override void CollectViews()
-        {
+        public override void CollectViews() {
             base.CollectViews();
             this.view = root.GetComponent<UIView>();
             if (this.view == null)
@@ -146,18 +133,15 @@ namespace Loxodon.Framework.Views.UI
                 log.WarnFormat("The GridView's Item named '{0}' is missing view script.", root.name);
         }
 
-        public virtual void UpdateDataContext(object dataContext)
-        {
+        public virtual void UpdateDataContext(object dataContext) {
             if (this.view != null)
                 this.view.SetDataContext(dataContext);
 
-            if (this.bindingAdapter != null)
-            {
+            if (this.bindingAdapter != null) {
                 IList list = dataContext == null ? EMPTY_LIST : dataContext as IList;
                 if (list != null)
                     this.bindingAdapter.Items = list;
-                else
-                {
+                else {
                     this.bindingAdapter.Items = EMPTY_LIST;
                     if (log.IsWarnEnabled)
                         log.Warn("The DataContext must be a list object.");

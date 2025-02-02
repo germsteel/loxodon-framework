@@ -24,15 +24,12 @@
 
 using System;
 
-namespace Loxodon.Framework.XLua.Loaders
-{
-    public abstract class PathLoaderBase : LoaderBase, IDisposable
-    {
+namespace Loxodon.Framework.XLua.Loaders {
+    public abstract class PathLoaderBase : LoaderBase, IDisposable {
         protected string prefix = "";
         protected string suffix = ".lua.txt";
 
-        public PathLoaderBase(string prefix, string suffix)
-        {
+        public PathLoaderBase(string prefix, string suffix) {
             this.prefix = prefix;
             if (!string.IsNullOrEmpty(this.prefix))
                 this.prefix = this.prefix.Replace(@"\", "/");
@@ -42,23 +39,19 @@ namespace Loxodon.Framework.XLua.Loaders
             this.suffix = suffix;
         }
 
-        protected virtual string GetFullname(string className)
-        {
+        protected virtual string GetFullname(string className) {
             return string.Format("{0}{1}{2}", prefix, className.Replace(".", "/"), suffix);
         }
 
         #region IDisposable Support
-        protected virtual void Dispose(bool disposing)
-        {
+        protected virtual void Dispose(bool disposing) {
         }
 
-        ~PathLoaderBase()
-        {
+        ~PathLoaderBase() {
             Dispose(false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }

@@ -26,10 +26,8 @@ using System;
 
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Execution
-{
-    public interface IThreadExecutor
-    {
+namespace Loxodon.Framework.Execution {
+    public interface IThreadExecutor {
         Asynchronous.IAsyncResult Execute(Action action);
 
         IAsyncResult<TResult> Execute<TResult>(Func<TResult> func);

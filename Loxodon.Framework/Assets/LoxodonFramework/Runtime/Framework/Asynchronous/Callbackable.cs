@@ -26,10 +26,8 @@ using System;
 
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Asynchronous
-{
-    public interface ICallbackable
-    {
+namespace Loxodon.Framework.Asynchronous {
+    public interface ICallbackable {
         /// <summary>
         /// Called when the task is finished.
         /// </summary>
@@ -37,8 +35,7 @@ namespace Loxodon.Framework.Asynchronous
         void OnCallback(Action<IAsyncResult> callback);
     }
 
-    public interface ICallbackable<TResult>
-    {
+    public interface ICallbackable<TResult> {
         /// <summary>
         /// Called when the task is finished.
         /// </summary>
@@ -46,8 +43,7 @@ namespace Loxodon.Framework.Asynchronous
         void OnCallback(Action<IAsyncResult<TResult>> callback);
     }
 
-    public interface IProgressCallbackable<TProgress>
-    {
+    public interface IProgressCallbackable<TProgress> {
         /// <summary>
         /// Called when the task is finished.
         /// </summary>
@@ -61,8 +57,7 @@ namespace Loxodon.Framework.Asynchronous
         void OnProgressCallback(Action<TProgress> callback);
     }
 
-    public interface IProgressCallbackable<TProgress, TResult>
-    {
+    public interface IProgressCallbackable<TProgress, TResult> {
         /// <summary>
         /// Called when the task is finished.
         /// </summary>
@@ -76,66 +71,52 @@ namespace Loxodon.Framework.Asynchronous
         void OnProgressCallback(Action<TProgress> callback);
     }
 
-    internal class Callbackable : ICallbackable
-    {
+    internal class Callbackable : ICallbackable {
         private static readonly ILog log = LogManager.GetLogger(typeof(Callbackable));
 
         private IAsyncResult result;
         private readonly object _lock = new object();
         private Action<IAsyncResult> callback;
-        public Callbackable(IAsyncResult result)
-        {
+        public Callbackable(IAsyncResult result) {
             this.result = result;
         }
 
-        public void RaiseOnCallback()
-        {
-            lock (_lock)
-            {
-                try
-                {
+        public void RaiseOnCallback() {
+            lock (_lock) {
+                try {
                     if (this.callback == null)
                         return;
 
                     var list = this.callback.GetInvocationList();
                     this.callback = null;
 
-                    foreach (Action<IAsyncResult> action in list)
-                    {
-                        try
-                        {
+                    foreach (Action<IAsyncResult> action in list) {
+                        try {
                             action(this.result);
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             if (log.IsWarnEnabled)
                                 log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                 }
             }
         }
 
-        public void OnCallback(Action<IAsyncResult> callback)
-        {
-            lock (_lock)
-            {
+        public void OnCallback(Action<IAsyncResult> callback) {
+            lock (_lock) {
                 if (callback == null)
                     return;
 
-                if (this.result.IsDone)
-                {
-                    try
-                    {
+                if (this.result.IsDone) {
+                    try {
                         callback(this.result);
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                     }
@@ -147,66 +128,52 @@ namespace Loxodon.Framework.Asynchronous
         }
     }
 
-    internal class Callbackable<TResult> : ICallbackable<TResult>
-    {
+    internal class Callbackable<TResult> : ICallbackable<TResult> {
         private static readonly ILog log = LogManager.GetLogger(typeof(Callbackable<TResult>));
 
         private IAsyncResult<TResult> result;
         private readonly object _lock = new object();
         private Action<IAsyncResult<TResult>> callback;
-        public Callbackable(IAsyncResult<TResult> result)
-        {
+        public Callbackable(IAsyncResult<TResult> result) {
             this.result = result;
         }
 
-        public void RaiseOnCallback()
-        {
-            lock (_lock)
-            {
-                try
-                {
+        public void RaiseOnCallback() {
+            lock (_lock) {
+                try {
                     if (this.callback == null)
                         return;
 
                     var list = this.callback.GetInvocationList();
                     this.callback = null;
 
-                    foreach (Action<IAsyncResult<TResult>> action in list)
-                    {
-                        try
-                        {
+                    foreach (Action<IAsyncResult<TResult>> action in list) {
+                        try {
                             action(this.result);
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             if (log.IsWarnEnabled)
                                 log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                 }
             }
         }
 
-        public void OnCallback(Action<IAsyncResult<TResult>> callback)
-        {
-            lock (_lock)
-            {
+        public void OnCallback(Action<IAsyncResult<TResult>> callback) {
+            lock (_lock) {
                 if (callback == null)
                     return;
 
-                if (this.result.IsDone)
-                {
-                    try
-                    {
+                if (this.result.IsDone) {
+                    try {
                         callback(this.result);
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                     }
@@ -218,102 +185,80 @@ namespace Loxodon.Framework.Asynchronous
         }
     }
 
-    internal class ProgressCallbackable<TProgress> : IProgressCallbackable<TProgress>
-    {
+    internal class ProgressCallbackable<TProgress> : IProgressCallbackable<TProgress> {
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgressCallbackable<TProgress>));
 
         private IProgressResult<TProgress> result;
         private readonly object _lock = new object();
         private Action<IProgressResult<TProgress>> callback;
         private Action<TProgress> progressCallback;
-        public ProgressCallbackable(IProgressResult<TProgress> result)
-        {
+        public ProgressCallbackable(IProgressResult<TProgress> result) {
             this.result = result;
         }
 
-        public void RaiseOnCallback()
-        {
-            lock (_lock)
-            {
-                try
-                {
+        public void RaiseOnCallback() {
+            lock (_lock) {
+                try {
                     if (this.callback == null)
                         return;
 
                     var list = this.callback.GetInvocationList();
                     this.callback = null;
 
-                    foreach (Action<IProgressResult<TProgress>> action in list)
-                    {
-                        try
-                        {
+                    foreach (Action<IProgressResult<TProgress>> action in list) {
+                        try {
                             action(this.result);
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             if (log.IsWarnEnabled)
                                 log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                 }
-                finally
-                {
+                finally {
                     this.progressCallback = null;
                 }
             }
         }
 
-        public void RaiseOnProgressCallback(TProgress progress)
-        {
-            lock (_lock)
-            {
-                try
-                {
+        public void RaiseOnProgressCallback(TProgress progress) {
+            lock (_lock) {
+                try {
                     if (this.progressCallback == null)
                         return;
 
                     var list = this.progressCallback.GetInvocationList();
-                    foreach (Action<TProgress> action in list)
-                    {
-                        try
-                        {
+                    foreach (Action<TProgress> action in list) {
+                        try {
                             action(progress);
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             if (log.IsWarnEnabled)
                                 log.WarnFormat("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
                 }
             }
         }
 
-        public void OnCallback(Action<IProgressResult<TProgress>> callback)
-        {
-            lock (_lock)
-            {
+        public void OnCallback(Action<IProgressResult<TProgress>> callback) {
+            lock (_lock) {
                 if (callback == null)
                     return;
 
-                if (this.result.IsDone)
-                {
-                    try
-                    {
+                if (this.result.IsDone) {
+                    try {
                         callback(this.result);
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                     }
@@ -324,21 +269,16 @@ namespace Loxodon.Framework.Asynchronous
             }
         }
 
-        public void OnProgressCallback(Action<TProgress> callback)
-        {
-            lock (_lock)
-            {
+        public void OnProgressCallback(Action<TProgress> callback) {
+            lock (_lock) {
                 if (callback == null)
                     return;
 
-                if (this.result.IsDone)
-                {
-                    try
-                    {
+                if (this.result.IsDone) {
+                    try {
                         callback(this.result.Progress);
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
                     }
@@ -350,102 +290,80 @@ namespace Loxodon.Framework.Asynchronous
         }
     }
 
-    internal class ProgressCallbackable<TProgress, TResult> : IProgressCallbackable<TProgress, TResult>
-    {
+    internal class ProgressCallbackable<TProgress, TResult> : IProgressCallbackable<TProgress, TResult> {
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgressCallbackable<TProgress,TResult>));
 
         private IProgressResult<TProgress, TResult> result;
         private readonly object _lock = new object();
         private Action<IProgressResult<TProgress, TResult>> callback;
         private Action<TProgress> progressCallback;
-        public ProgressCallbackable(IProgressResult<TProgress, TResult> result)
-        {
+        public ProgressCallbackable(IProgressResult<TProgress, TResult> result) {
             this.result = result;
         }
 
-        public void RaiseOnCallback()
-        {
-            lock (_lock)
-            {
-                try
-                {
+        public void RaiseOnCallback() {
+            lock (_lock) {
+                try {
                     if (this.callback == null)
                         return;
 
                     var list = this.callback.GetInvocationList();
                     this.callback = null;
 
-                    foreach (Action<IProgressResult<TProgress, TResult>> action in list)
-                    {
-                        try
-                        {
+                    foreach (Action<IProgressResult<TProgress, TResult>> action in list) {
+                        try {
                             action(this.result);
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             if (log.IsWarnEnabled)
                                 log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                 }
-                finally
-                {
+                finally {
                     this.progressCallback = null;
                 }
             }
         }
 
-        public void RaiseOnProgressCallback(TProgress progress)
-        {
-            lock (_lock)
-            {
-                try
-                {
+        public void RaiseOnProgressCallback(TProgress progress) {
+            lock (_lock) {
+                try {
                     if (this.progressCallback == null)
                         return;
 
                     var list = this.progressCallback.GetInvocationList();
-                    foreach (Action<TProgress> action in list)
-                    {
-                        try
-                        {
+                    foreach (Action<TProgress> action in list) {
+                        try {
                             action(progress);
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             if (log.IsWarnEnabled)
                                 log.WarnFormat("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
                 }
             }
         }
 
-        public void OnCallback(Action<IProgressResult<TProgress, TResult>> callback)
-        {
-            lock (_lock)
-            {
+        public void OnCallback(Action<IProgressResult<TProgress, TResult>> callback) {
+            lock (_lock) {
                 if (callback == null)
                     return;
 
-                if (this.result.IsDone)
-                {
-                    try
-                    {
+                if (this.result.IsDone) {
+                    try {
                         callback(this.result);
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                     }
@@ -456,21 +374,16 @@ namespace Loxodon.Framework.Asynchronous
             }
         }
 
-        public void OnProgressCallback(Action<TProgress> callback)
-        {
-            lock (_lock)
-            {
+        public void OnProgressCallback(Action<TProgress> callback) {
+            lock (_lock) {
                 if (callback == null)
                     return;
 
-                if (this.result.IsDone)
-                {
-                    try
-                    {
+                if (this.result.IsDone) {
+                    try {
                         callback(this.result.Progress);
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
                     }

@@ -30,34 +30,27 @@ using System.IO.Compression;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Loxodon.Framework.Utilities
-{
-    public class CompressionZipAccessor : FileUtil.IZipAccessor
-    {
+namespace Loxodon.Framework.Utilities {
+    public class CompressionZipAccessor : FileUtil.IZipAccessor {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void OnInitialized()
-        {
+        static void OnInitialized() {
             FileUtil.Register(new CompressionZipAccessor());
         }
 
         private object _lock = new object();
         private Dictionary<string, ZipArchive> zipArchives = new Dictionary<string, ZipArchive>();
 
-        protected string GetCompressedFileName(string url)
-        {
+        protected string GetCompressedFileName(string url) {
             url = Regex.Replace(url, @"^jar:file:///", "");
             return url.Substring(0, url.LastIndexOf("!"));
         }
 
-        protected string GetCompressedEntryName(string url)
-        {
+        protected string GetCompressedEntryName(string url) {
             return url.Substring(url.LastIndexOf("!") + 2);
         }
 
-        protected ZipArchive GetZipArchive(string path)
-        {
-            lock (_lock)
-            {
+        protected ZipArchive GetZipArchive(string path) {
+            lock (_lock) {
                 ZipArchive zip;
                 if (this.zipArchives.TryGetValue(path, out zip))
                     return zip;
@@ -70,10 +63,8 @@ namespace Loxodon.Framework.Utilities
 
         public int Priority { get { return 100; } }
 
-        public bool Exists(string path)
-        {
-            try
-            {
+        public bool Exists(string path) {
+            try {
                 var zipFilename = this.GetCompressedFileName(path);
                 string entryName = GetCompressedEntryName(path);
                 var zip = this.GetZipArchive(zipFilename);
@@ -83,14 +74,12 @@ namespace Loxodon.Framework.Utilities
                     return false;
                 return true;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
 
-        public Stream OpenRead(string path)
-        {
+        public Stream OpenRead(string path) {
             var zipFilename = this.GetCompressedFileName(path);
             string entryName = GetCompressedEntryName(path);
             var zip = this.GetZipArchive(zipFilename);
@@ -103,8 +92,7 @@ namespace Loxodon.Framework.Utilities
             return entry.Open();
         }
 
-        public bool Support(string path)
-        {
+        public bool Support(string path) {
             if (string.IsNullOrEmpty(path))
                 return false;
 

@@ -24,10 +24,8 @@
 
 using Loxodon.Framework.Examples.Domains;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public interface ICrystalInfoRepository
-    {
+namespace Loxodon.Framework.Examples.Repositories {
+    public interface ICrystalInfoRepository {
         CrystalInfo GetById(int id);
 
         CrystalInfo GetBySign(string sign, int level);

@@ -25,11 +25,9 @@
 using System;
 using XLua;
 
-namespace Loxodon.Framework.Asynchronous
-{
+namespace Loxodon.Framework.Asynchronous {
     [CSharpCallLua]
-    public interface ILuaTask
-    {
+    public interface ILuaTask {
         /// <summary>
         /// Gets the result of the asynchronous operation.
         /// </summary>
@@ -53,8 +51,7 @@ namespace Loxodon.Framework.Asynchronous
     }
 
     [CSharpCallLua]
-    public interface ILuaTask<TResult>
-    {
+    public interface ILuaTask<TResult> {
         /// <summary>
         /// Gets the result of the asynchronous operation.
         /// </summary>

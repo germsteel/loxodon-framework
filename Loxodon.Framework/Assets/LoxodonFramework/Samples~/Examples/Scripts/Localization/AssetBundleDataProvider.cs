@@ -34,8 +34,7 @@ using Loxodon.Log;
 using System.Threading.Tasks;
 using Loxodon.Framework.Localizations;
 
-namespace Loxodon.Framework.Examples
-{
+namespace Loxodon.Framework.Examples {
     /// <summary>
 	/// AssetBundle data provider.
 	/// dir:
@@ -51,15 +50,13 @@ namespace Loxodon.Framework.Examples
 	/// root/en-CA/
 	/// root/en-AU/
 	/// </summary>
-	public class AssetBundleDataProvider : IDataProvider
-    {
+	public class AssetBundleDataProvider : IDataProvider {
         private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleDataProvider));
 
         private string assetBundleUrl;
         private IDocumentParser parser;
 
-        public AssetBundleDataProvider(string assetBundleUrl, IDocumentParser parser)
-        {
+        public AssetBundleDataProvider(string assetBundleUrl, IDocumentParser parser) {
             if (string.IsNullOrEmpty(assetBundleUrl))
                 throw new ArgumentNullException("assetBundleUrl");
 
@@ -70,23 +67,19 @@ namespace Loxodon.Framework.Examples
             this.parser = parser;
         }
 
-        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
-        {
+        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo) {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-            using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
-            {
+            using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl)) {
                 await www.SendWebRequest();
 
                 DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
                 AssetBundle bundle = handler.assetBundle;
-                if (bundle == null)
-                {
+                if (bundle == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Failed to load Assetbundle from \"{0}\".", this.assetBundleUrl);
                     return dict;
                 }
-                try
-                {
+                try {
                     List<string> assetNames = new List<string>(bundle.GetAllAssetNames());
                     List<string> defaultPaths = assetNames.FindAll(p => p.Contains("/default/"));//eg:default
                     List<string> twoLetterISOpaths = assetNames.FindAll(p => p.Contains(string.Format("/{0}/", cultureInfo.TwoLetterISOLanguageName)));//eg:zh  en
@@ -96,10 +89,8 @@ namespace Loxodon.Framework.Examples
                     FillData(dict, bundle, twoLetterISOpaths, cultureInfo);
                     FillData(dict, bundle, paths, cultureInfo);
                 }
-                finally
-                {
-                    try
-                    {
+                finally {
+                    try {
                         if (bundle != null)
                             bundle.Unload(true);
                     }
@@ -109,29 +100,22 @@ namespace Loxodon.Framework.Examples
             }
         }
 
-        private void FillData(Dictionary<string, object> dict, AssetBundle bundle, List<string> paths, CultureInfo cultureInfo)
-        {
-            try
-            {
+        private void FillData(Dictionary<string, object> dict, AssetBundle bundle, List<string> paths, CultureInfo cultureInfo) {
+            try {
                 if (paths == null || paths.Count <= 0)
                     return;
 
-                foreach (string path in paths)
-                {
-                    try
-                    {
+                foreach (string path in paths) {
+                    try {
                         TextAsset text = bundle.LoadAsset<TextAsset>(path);
-                        using (MemoryStream stream = new MemoryStream(text.bytes))
-                        {
+                        using (MemoryStream stream = new MemoryStream(text.bytes)) {
                             var data = parser.Parse(stream, cultureInfo);
-                            foreach (KeyValuePair<string, object> kv in data)
-                            {
+                            foreach (KeyValuePair<string, object> kv in data) {
                                 dict[kv.Key] = kv.Value;
                             }
                         }
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("An error occurred when loading localized data from \"{0}\".Error:{1}", path, e);
                     }

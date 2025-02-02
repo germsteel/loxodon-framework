@@ -33,17 +33,14 @@ using Loxodon.Framework.Localizations;
 using Loxodon.Framework.Services;
 using Loxodon.Framework.Messaging;
 
-namespace Loxodon.Framework.Examples
-{
-    public class Launcher : MonoBehaviour
-    {
+namespace Loxodon.Framework.Examples {
+    public class Launcher : MonoBehaviour {
 
         //private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private ApplicationContext context;
         ISubscription<WindowStateEventArgs> subscription;
-        void Awake()
-        {
+        void Awake() {
             GlobalWindowManagerBase windowManager = FindObjectOfType<GlobalWindowManagerBase>();
             if (windowManager == null)
                 throw new NotFoundException("Not found the GlobalWindowManager.");
@@ -82,14 +79,12 @@ namespace Loxodon.Framework.Examples
             GlobalSetting.useBlocksRaycastsInsteadOfInteractable = true;
 
             /* Subscribe to window state change events */
-            subscription = Window.Messenger.Subscribe<WindowStateEventArgs>(e =>
-            {
+            subscription = Window.Messenger.Subscribe<WindowStateEventArgs>(e => {
                 Debug.LogFormat("The window[{0}] state changed from {1} to {2}", e.Window.Name, e.OldState, e.State);
             });
         }
 
-        IEnumerator Start()
-        {
+        IEnumerator Start() {
             /* Create a window container */
             WindowContainer winContainer = WindowContainer.Create("MAIN");
 
@@ -98,8 +93,7 @@ namespace Loxodon.Framework.Examples
             IUIViewLocator locator = context.GetService<IUIViewLocator>();
             StartupWindow window = locator.LoadWindow<StartupWindow>(winContainer, "UI/Startup/Startup");
             window.Create();
-            ITransition transition = window.Show().OnStateChanged((w, state) =>
-            {
+            ITransition transition = window.Show().OnStateChanged((w, state) => {
                 //log.DebugFormat("Window:{0} State{1}",w.Name,state);
             });
 

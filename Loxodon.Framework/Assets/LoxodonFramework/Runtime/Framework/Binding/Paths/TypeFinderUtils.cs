@@ -34,18 +34,15 @@ using System.Linq;
 
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Binding.Paths
-{
-    public class TypeFinderUtils
-    {
+namespace Loxodon.Framework.Binding.Paths {
+    public class TypeFinderUtils {
 #if NETFX_CORE
         private static readonly ILog log = LogManager.GetLogger(typeof(TypeFinderUtils));
 #endif
 
         private static List<Assembly> assemblies = new List<Assembly>();
 
-        public static Type FindType(string typeName)
-        {
+        public static Type FindType(string typeName) {
             if (string.IsNullOrEmpty(typeName))
                 return null;
 #if NETFX_CORE
@@ -55,18 +52,15 @@ namespace Loxodon.Framework.Binding.Paths
 #else
             List<Assembly> assemblies = GetAssemblies();
 #endif
-            foreach (Assembly assembly in assemblies)
-            {
+            foreach (Assembly assembly in assemblies) {
                 Type type = assembly.GetType(typeName, false, false);
                 if (type != null)
                     return type;
             }
 
             var name = string.Format(".{0}", typeName);
-            foreach (Assembly assembly in assemblies)
-            {
-                foreach (Type type in assembly.GetTypes())
-                {
+            foreach (Assembly assembly in assemblies) {
+                foreach (Type type in assembly.GetTypes()) {
                     if (type.FullName.EndsWith(name))
                         return type;
                 }
@@ -75,8 +69,7 @@ namespace Loxodon.Framework.Binding.Paths
         }
 
 #if NETFX_CORE
-        private static async Task<List<Assembly>> GetAssemblies()
-        {
+        private static async Task<List<Assembly>> GetAssemblies() {
             if (assemblies.Count > 0)
                 return assemblies;
 
@@ -84,17 +77,14 @@ namespace Loxodon.Framework.Binding.Paths
             if (files == null)
                 return assemblies;
 
-            foreach (var file in files.Where(file => file.FileType == ".dll" || file.FileType == ".exe"))
-            {
-                try
-                {
+            foreach (var file in files.Where(file => file.FileType == ".dll" || file.FileType == ".exe")) {
+                try {
                     if (Regex.IsMatch(file.Name, "^((mscorlib)|(nunit)|(ucrtbased)|(Microsoft)|(ClrCompression)|(BridgeInterface)|(System)|(UnityEngine)|(UnityPlayer)|(Loxodon.Log)|(WinRTLegacy))"))
                         continue;
 
                     assemblies.Add(Assembly.Load(new AssemblyName(file.DisplayName)));
                 }
-                catch (Exception e) 
-                {
+                catch (Exception e)  {
                      if (log.IsWarnEnabled)
                         log.Warn("Loads assembly:{0}", e);
                 }
@@ -102,14 +92,12 @@ namespace Loxodon.Framework.Binding.Paths
             return assemblies;
         }
 #else
-        private static List<Assembly> GetAssemblies()
-        {
+        private static List<Assembly> GetAssemblies() {
             if (assemblies.Count > 0)
                 return assemblies;
 
             Assembly[] listAssembly = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (Assembly assembly in listAssembly)
-            {
+            foreach (Assembly assembly in listAssembly) {
                 var name = assembly.FullName;
                 if (Regex.IsMatch(name, "^((mscorlib)|(nunit)|(System)|(UnityEngine)|(Loxodon.Log))"))
                     continue;

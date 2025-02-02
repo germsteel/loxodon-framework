@@ -79,8 +79,7 @@ function M:validatePassword()
 end
 
 M.login = async(function(self)
-		try
-		{
+		try {
 			function()
 				self.account = nil;
 				self.loginCommand.Enabled = false --by databinding, auto set button.interactable = false.

@@ -25,36 +25,29 @@
 using System;
 using Loxodon.Framework.Binding.Paths;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
     [Serializable]
-    public class ObjectSourceDescription : SourceDescription
-    {
+    public class ObjectSourceDescription : SourceDescription {
         private Path path;
 
-        public ObjectSourceDescription()
-        {
+        public ObjectSourceDescription() {
             this.IsStatic = false;
         }
 
-        public ObjectSourceDescription(Path path)
-        {
+        public ObjectSourceDescription(Path path) {
             this.Path = path;
         }
 
-        public virtual Path Path
-        {
+        public virtual Path Path {
             get { return this.path; }
-            set
-            {
+            set {
                 this.path = value;
                 if (this.path != null)
                     this.IsStatic = this.path.IsStatic;
             }
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return this.path == null ? "Path:null" : "Path:" + this.path.ToString();
         }
     }

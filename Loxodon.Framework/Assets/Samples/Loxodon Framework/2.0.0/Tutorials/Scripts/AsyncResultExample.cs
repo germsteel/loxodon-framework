@@ -26,14 +26,11 @@ using UnityEngine;
 using System.Collections;
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Tutorials
-{
+namespace Loxodon.Framework.Tutorials {
 
-	public class AsyncResultExample : MonoBehaviour
-	{
+	public class AsyncResultExample : MonoBehaviour {
 
-		protected IEnumerator Start ()
-		{
+		protected IEnumerator Start () {
 			AsyncResult result = new AsyncResult (true);
 
 			/* Start the task */
@@ -56,8 +53,7 @@ namespace Loxodon.Framework.Tutorials
 		/// </summary>
 		/// <returns>The task.</returns>
 		/// <param name="promise">Promise.</param>
-		protected IEnumerator DoTask (IPromise promise)
-		{
+		protected IEnumerator DoTask (IPromise promise) {
 			for (int i = 0; i < 20; i++) {
 				/* If the task is cancelled, then stop the task */
 				if (promise.IsCancellationRequested) {		
@@ -77,8 +73,7 @@ namespace Loxodon.Framework.Tutorials
 		/// </summary>
 		/// <returns>The cancel.</returns>
 		/// <param name="result">Result.</param>
-		protected IEnumerator DoCancel (IAsyncResult result)
-		{
+		protected IEnumerator DoCancel (IAsyncResult result) {
 			yield return new WaitForSeconds (3f);
 			result.Cancel ();
 		}

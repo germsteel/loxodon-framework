@@ -28,12 +28,9 @@ using System.Reflection;
 using System.Collections.Generic;
 #endif
 
-namespace Loxodon.Framework.Attributes
-{
-    public static class EnumExtensions
-    {
-        public static string GetRemark(this Enum e)
-        {
+namespace Loxodon.Framework.Attributes {
+    public static class EnumExtensions {
+        public static string GetRemark(this Enum e) {
             Type type = e.GetType();
             FieldInfo fieldInfo = type.GetField(e.ToString());
             if (fieldInfo == null)

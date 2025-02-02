@@ -28,13 +28,11 @@ using System.Linq;
 
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Commands
-{
+namespace Loxodon.Framework.Commands {
     /// <summary>
     /// The CompositeCommand composes one or more ICommands.
     /// </summary>
-    public class CompositeCommand : CommandBase
-    {
+    public class CompositeCommand : CommandBase {
         private static readonly ILog log = LogManager.GetLogger(typeof(CompositeCommand));
 
         private readonly List<ICommand> commands = new List<ICommand>();
@@ -44,16 +42,14 @@ namespace Loxodon.Framework.Commands
         /// <summary>
         /// Initializes a new instance of <see cref="CompositeCommand"/>.
         /// </summary>
-        public CompositeCommand() : this(false)
-        {
+        public CompositeCommand() : this(false) {
         }
 
         /// <summary>
         /// Initializes a new instance of <see cref="CompositeCommand"/>.
         /// </summary>
         /// <param name="monitorCommandActivity">Indicates when the command activity is going to be monitored.</param>
-        public CompositeCommand(bool monitorCommandActivity)
-        {
+        public CompositeCommand(bool monitorCommandActivity) {
             this.monitorCommandActivity = monitorCommandActivity;
             this.onCanExecuteChangedHandler = new EventHandler(this.OnCanExecuteChanged);
         }
@@ -67,16 +63,14 @@ namespace Loxodon.Framework.Commands
         /// <see cref="IActiveAware.IsActiveChanged"/> event.
         /// </remarks>
         /// <param name="command">The command to register.</param>
-        public virtual void RegisterCommand(ICommand command)
-        {
+        public virtual void RegisterCommand(ICommand command) {
             if (command == null)
                 throw new ArgumentNullException("command");
 
             if (command == this)
                 throw new ArgumentException("Cannot register a CompositeCommand in itself.");
 
-            lock (this.commands)
-            {
+            lock (this.commands) {
                 if (this.commands.Contains(command))
                     throw new InvalidOperationException("Cannot register the same command twice in the same CompositeCommand.");
 
@@ -86,8 +80,7 @@ namespace Loxodon.Framework.Commands
             command.CanExecuteChanged += this.onCanExecuteChangedHandler;
             this.RaiseCanExecuteChanged();
 
-            if (this.monitorCommandActivity)
-            {
+            if (this.monitorCommandActivity) {
                 var activeAwareCommand = command as IActiveAware;
                 if (activeAwareCommand != null)
                     activeAwareCommand.IsActiveChanged += this.OnIsActiveChanged;
@@ -98,13 +91,11 @@ namespace Loxodon.Framework.Commands
         /// Removes a command from the collection and removes itself from the <see cref="ICommand.CanExecuteChanged"/> event of it.
         /// </summary>
         /// <param name="command">The command to unregister.</param>
-        public virtual void UnregisterCommand(ICommand command)
-        {
+        public virtual void UnregisterCommand(ICommand command) {
             if (command == null)
                 throw new ArgumentNullException("command");
 
-            lock (this.commands)
-            {
+            lock (this.commands) {
                 if (!this.commands.Remove(command))
                     return;
             }
@@ -112,21 +103,18 @@ namespace Loxodon.Framework.Commands
             command.CanExecuteChanged -= this.onCanExecuteChangedHandler;
             this.RaiseCanExecuteChanged();
 
-            if (this.monitorCommandActivity)
-            {
+            if (this.monitorCommandActivity) {
                 var activeAwareCommand = command as IActiveAware;
                 if (activeAwareCommand != null)
                     activeAwareCommand.IsActiveChanged -= this.OnIsActiveChanged;
             }
         }
 
-        private void OnCanExecuteChanged(object sender, EventArgs e)
-        {
+        private void OnCanExecuteChanged(object sender, EventArgs e) {
             this.RaiseCanExecuteChanged();
         }
 
-        private void OnIsActiveChanged(object sender, EventArgs e)
-        {
+        private void OnIsActiveChanged(object sender, EventArgs e) {
             this.RaiseCanExecuteChanged();
         }
 
@@ -138,19 +126,16 @@ namespace Loxodon.Framework.Commands
         /// If the command does not require data to be passed, this object can be set to <see langword="null" />.
         /// </param>
         /// <returns><see langword="true" /> if all of the commands return <see langword="true" />; otherwise, <see langword="false" />.</returns>
-        public override bool CanExecute(object parameter)
-        {
+        public override bool CanExecute(object parameter) {
             ICommand[] commandList;
-            lock (this.commands)
-            {
+            lock (this.commands) {
                 commandList = this.commands.ToArray();
             }
 
             if (commandList.Length <= 0)
                 return false;
 
-            foreach (ICommand command in commandList)
-            {
+            foreach (ICommand command in commandList) {
                 if (!this.ShouldExecute(command))
                     continue;
 
@@ -167,23 +152,18 @@ namespace Loxodon.Framework.Commands
         /// <param name="parameter">Data used by the command.
         /// If the command does not require data to be passed, this object can be set to <see langword="null" />.
         /// </param>
-        public override void Execute(object parameter)
-        {
+        public override void Execute(object parameter) {
             Queue<ICommand> commands;
-            lock (this.commands)
-            {
+            lock (this.commands) {
                 commands = new Queue<ICommand>(this.commands.Where(this.ShouldExecute).ToList());
             }
 
-            while (commands.Count > 0)
-            {
-                try
-                {
+            while (commands.Count > 0) {
+                try {
                     ICommand command = commands.Dequeue();
                     command.Execute(parameter);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     if (log.IsWarnEnabled)
                         log.Warn(e);
                 }
@@ -201,8 +181,7 @@ namespace Loxodon.Framework.Commands
         /// implements the <see cref="IActiveAware"/> interface, 
         /// this method will return <see langword="false" /> if the command's <see cref="IActiveAware.IsActive"/> 
         /// property is <see langword="false" />; otherwise it always returns <see langword="true" />.</remarks>
-        protected virtual bool ShouldExecute(ICommand command)
-        {
+        protected virtual bool ShouldExecute(ICommand command) {
             if (!this.monitorCommandActivity)
                 return true;
 
@@ -218,13 +197,10 @@ namespace Loxodon.Framework.Commands
         /// </summary>
         /// <value>A list of registered commands.</value>
         /// <remarks>This returns a copy of the commands subscribed to the CompositeCommand.</remarks>
-        public IList<ICommand> RegisteredCommands
-        {
-            get
-            {
+        public IList<ICommand> RegisteredCommands {
+            get {
                 IList<ICommand> commandList;
-                lock (this.commands)
-                {
+                lock (this.commands) {
                     commandList = this.commands.ToList();
                 }
 

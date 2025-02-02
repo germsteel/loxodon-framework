@@ -32,52 +32,42 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Loxodon.Framework.Localizations
-{
-    public class AssetBundleCsvDataProvider : IDataProvider
-    {
+namespace Loxodon.Framework.Localizations {
+    public class AssetBundleCsvDataProvider : IDataProvider {
         private static readonly ILog log = LogManager.GetLogger(typeof(DefaultCsvDataProvider));
 
         private string assetBundleUrl;
         private IDocumentParser parser;
 
-        public AssetBundleCsvDataProvider(string assetBundleUrl) : this(assetBundleUrl, new CsvDocumentParser())
-        {
+        public AssetBundleCsvDataProvider(string assetBundleUrl) : this(assetBundleUrl, new CsvDocumentParser()) {
         }
 
-        public AssetBundleCsvDataProvider(string assetBundleUrl, IDocumentParser parser)
-        {
+        public AssetBundleCsvDataProvider(string assetBundleUrl, IDocumentParser parser) {
             if (string.IsNullOrEmpty(assetBundleUrl))
                 throw new ArgumentNullException("assetBundleUrl");
             this.parser = parser ?? throw new ArgumentNullException("parser");
             this.assetBundleUrl = assetBundleUrl;
         }
 
-        public async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
-        {
+        public async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo) {
             Dictionary<string, object> dict = new Dictionary<string, object>();
-            using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl))
-            {
+            using (UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(this.assetBundleUrl)) {
                 await www.SendWebRequest();
 
                 DownloadHandlerAssetBundle handler = (DownloadHandlerAssetBundle)www.downloadHandler;
                 AssetBundle bundle = handler.assetBundle;
-                if (bundle == null)
-                {
+                if (bundle == null) {
                     if (log.IsWarnEnabled)
                         log.WarnFormat("Failed to load Assetbundle from \"{0}\".", this.assetBundleUrl);
                     return dict;
                 }
 
-                try
-                {
+                try {
                     TextAsset[] texts = bundle.LoadAllAssets<TextAsset>();
                     FillData(dict, texts, cultureInfo);
                 }
-                finally
-                {
-                    try
-                    {
+                finally {
+                    try {
                         if (bundle != null)
                             bundle.Unload(true);
                     }
@@ -87,28 +77,21 @@ namespace Loxodon.Framework.Localizations
             return dict;
         }
 
-        private void FillData(Dictionary<string, object> dict, TextAsset[] texts, CultureInfo cultureInfo)
-        {
-            try
-            {
+        private void FillData(Dictionary<string, object> dict, TextAsset[] texts, CultureInfo cultureInfo) {
+            try {
                 if (texts == null || texts.Length <= 0)
                     return;
 
-                foreach (TextAsset text in texts)
-                {
-                    try
-                    {
-                        using (MemoryStream stream = new MemoryStream(text.bytes))
-                        {
+                foreach (TextAsset text in texts) {
+                    try {
+                        using (MemoryStream stream = new MemoryStream(text.bytes)) {
                             var data = parser.Parse(stream, cultureInfo);
-                            foreach (KeyValuePair<string, object> kv in data)
-                            {
+                            foreach (KeyValuePair<string, object> kv in data) {
                                 dict[kv.Key] = kv.Value;
                             }
                         }
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("An error occurred when loading localized data from \"{0}\".Error:{1}", text.name, e);
                     }

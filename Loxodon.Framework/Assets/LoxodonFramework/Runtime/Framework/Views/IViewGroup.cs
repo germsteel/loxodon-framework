@@ -25,15 +25,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     public delegate void Layout(Transform transform);
 
     /// <summary>
     /// View group
     /// </summary>
-    public interface IViewGroup : IView
-    {
+    public interface IViewGroup : IView {
         List<IView> Views { get; }
 
         IView GetView(string name);

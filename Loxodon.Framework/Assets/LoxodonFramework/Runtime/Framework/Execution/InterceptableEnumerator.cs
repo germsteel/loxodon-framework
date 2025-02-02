@@ -30,31 +30,26 @@ using UnityEngine;
 using Loxodon.Log;
 using System.Collections.Concurrent;
 
-namespace Loxodon.Framework.Execution
-{
+namespace Loxodon.Framework.Execution {
     /// <summary>
     /// Interceptable enumerator
     /// Pooled the InterceptableEnumerator and the promise related features built in to optimize GC  
     /// </summary>
-    public class InterceptableEnumerator : IEnumerator
-    {
+    public class InterceptableEnumerator : IEnumerator {
         private static readonly ILog log = LogManager.GetLogger(typeof(InterceptableEnumerator));
         private const int CAPACITY = 100;
         private static readonly ConcurrentQueue<InterceptableEnumerator> pools = new ConcurrentQueue<InterceptableEnumerator>();
 
-        public static InterceptableEnumerator Create(IEnumerator routine)
-        {
+        public static InterceptableEnumerator Create(IEnumerator routine) {
             InterceptableEnumerator enumerator;
-            if (pools.TryDequeue(out enumerator))
-            {
+            if (pools.TryDequeue(out enumerator)) {
                 enumerator.stack.Push(routine);
                 return enumerator;
             }
             return new InterceptableEnumerator(routine);
         }
 
-        private static void Free(InterceptableEnumerator enumerator)
-        {
+        private static void Free(InterceptableEnumerator enumerator) {
             if (pools.Count > CAPACITY)
                 return;
 
@@ -68,40 +63,33 @@ namespace Loxodon.Framework.Execution
         private Action<Exception> onException;
         private Action onFinally;
 
-        public InterceptableEnumerator(IEnumerator routine)
-        {
+        public InterceptableEnumerator(IEnumerator routine) {
             this.stack.Push(routine);
         }
 
         public object Current { get { return this.current; } }
 
-        public bool MoveNext()
-        {
-            try
-            {
-                if (!this.HasNext())
-                {
+        public bool MoveNext() {
+            try {
+                if (!this.HasNext()) {
                     this.OnFinally();
                     return false;
                 }
 
-                if (stack.Count <= 0)
-                {
+                if (stack.Count <= 0) {
                     this.OnFinally();
                     return false;
                 }
 
                 IEnumerator ie = stack.Peek();
                 bool hasNext = ie.MoveNext();
-                if (!hasNext)
-                {
+                if (!hasNext) {
                     this.stack.Pop();
                     return MoveNext();
                 }
 
                 this.current = ie.Current;
-                if (this.current is IEnumerator)
-                {
+                if (this.current is IEnumerator) {
                     stack.Push(this.current as IEnumerator);
                     return MoveNext();
                 }
@@ -111,23 +99,19 @@ namespace Loxodon.Framework.Execution
 
                 return true;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 this.OnException(e);
                 this.OnFinally();
                 return false;
             }
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             throw new NotSupportedException();
         }
 
-        private void OnException(Exception e)
-        {
-            try
-            {
+        private void OnException(Exception e) {
+            try {
                 if (this.onException == null)
                     return;
 
@@ -136,24 +120,20 @@ namespace Loxodon.Framework.Execution
             catch (Exception) { }
         }
 
-        private void OnFinally()
-        {
-            try
-            {
+        private void OnFinally() {
+            try {
                 if (this.onFinally == null)
                     return;
 
                 onFinally();
             }
             catch (Exception) { }
-            finally
-            {
+            finally {
                 Free(this);
             }
         }
 
-        private void Clear()
-        {
+        private void Clear() {
             this.current = null;
             this.onException = null;
             this.onFinally = null;
@@ -161,12 +141,9 @@ namespace Loxodon.Framework.Execution
             this.stack.Clear();
         }
 
-        private bool HasNext()
-        {
-            if (hasNext.Count > 0)
-            {
-                foreach (Func<bool> action in this.hasNext)
-                {
+        private bool HasNext() {
+            if (hasNext.Count > 0) {
+                foreach (Func<bool> action in this.hasNext) {
                     if (!action())
                         return false;
                 }
@@ -178,8 +155,7 @@ namespace Loxodon.Framework.Execution
         /// Register a condition code block.
         /// </summary>
         /// <param name="hasNext"></param>
-        public virtual void RegisterConditionBlock(Func<bool> hasNext)
-        {
+        public virtual void RegisterConditionBlock(Func<bool> hasNext) {
             if (hasNext != null)
                 this.hasNext.Add(hasNext);
         }
@@ -188,8 +164,7 @@ namespace Loxodon.Framework.Execution
         /// Register a code block, when an exception occurs it will be executed.
         /// </summary>
         /// <param name="onException"></param>
-        public virtual void RegisterCatchBlock(Action<Exception> onException)
-        {
+        public virtual void RegisterCatchBlock(Action<Exception> onException) {
             if (onException != null)
                 this.onException += onException;
         }
@@ -198,8 +173,7 @@ namespace Loxodon.Framework.Execution
         /// Register a code block, when the end of the operation is executed.
         /// </summary>
         /// <param name="onFinally"></param>
-        public virtual void RegisterFinallyBlock(Action onFinally)
-        {
+        public virtual void RegisterFinallyBlock(Action onFinally) {
             if (onFinally != null)
                 this.onFinally += onFinally;
         }

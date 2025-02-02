@@ -27,22 +27,18 @@ using System.IO;
 using System.Security;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public class BinaryReader : IDisposable
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public class BinaryReader : IDisposable {
         private const int DEFAULT_BUFFER_SIZE = 4192;
         private Stream input;
         private bool leaveOpen;
         private bool isBigEndian;
         private byte[] buffer;
 
-        public BinaryReader(Stream input, bool leaveOpen) : this(input, leaveOpen, true)
-        {
+        public BinaryReader(Stream input, bool leaveOpen) : this(input, leaveOpen, true) {
         }
 
-        public BinaryReader(Stream input, bool leaveOpen, bool isBigEndian)
-        {
+        public BinaryReader(Stream input, bool leaveOpen, bool isBigEndian) {
             this.input = input;
             this.leaveOpen = leaveOpen;
             this.isBigEndian = isBigEndian;
@@ -51,20 +47,17 @@ namespace Loxodon.Framework.Net.Connection
 
         public virtual Stream BaseStream { get { return this.input; } }
 
-        public virtual bool IsBigEndian
-        {
+        public virtual bool IsBigEndian {
             get { return this.isBigEndian; }
             set { this.isBigEndian = value; }
         }
 
-        public virtual async Task<byte> ReadByte()
-        {
+        public virtual async Task<byte> ReadByte() {
             await Read(buffer, 0, 1).ConfigureAwait(false);
             return buffer[0];
         }
 
-        public virtual async Task<ushort> ReadUInt16()
-        {
+        public virtual async Task<ushort> ReadUInt16() {
             await Read(buffer, 0, 2).ConfigureAwait(false);
             if (isBigEndian)
                 return (ushort)(buffer[1] | buffer[0] << 8);
@@ -72,8 +65,7 @@ namespace Loxodon.Framework.Net.Connection
                 return (ushort)(buffer[0] | buffer[1] << 8);
         }
 
-        public virtual async Task<short> ReadInt16()
-        {
+        public virtual async Task<short> ReadInt16() {
             await Read(buffer, 0, 2).ConfigureAwait(false);
             if (isBigEndian)
                 return (short)(buffer[1] | buffer[0] << 8);
@@ -81,8 +73,7 @@ namespace Loxodon.Framework.Net.Connection
                 return (short)(buffer[0] | buffer[1] << 8);
         }
 
-        public virtual async Task<uint> ReadUInt32()
-        {
+        public virtual async Task<uint> ReadUInt32() {
             await Read(buffer, 0, 4).ConfigureAwait(false);
             if (isBigEndian)
                 return (uint)(buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24);
@@ -90,8 +81,7 @@ namespace Loxodon.Framework.Net.Connection
                 return (uint)(buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24);
         }
 
-        public virtual async Task<int> ReadInt32()
-        {
+        public virtual async Task<int> ReadInt32() {
             await Read(buffer, 0, 4).ConfigureAwait(false);
             if (isBigEndian)
                 return (int)(buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24);
@@ -99,60 +89,50 @@ namespace Loxodon.Framework.Net.Connection
                 return (int)(buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24);
         }
 
-        public virtual async Task<ulong> ReadUInt64()
-        {
+        public virtual async Task<ulong> ReadUInt64() {
             await Read(buffer, 0, 8).ConfigureAwait(false);
-            if (isBigEndian)
-            {
+            if (isBigEndian) {
                 uint lo = (uint)(buffer[7] | buffer[6] << 8 | buffer[5] << 16 | buffer[4] << 24);
                 uint hi = (uint)(buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24);
                 return ((ulong)hi) << 32 | lo;
             }
-            else
-            {
+            else {
                 uint lo = (uint)(buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24);
                 uint hi = (uint)(buffer[4] | buffer[5] << 8 | buffer[6] << 16 | buffer[7] << 24);
                 return ((ulong)hi) << 32 | lo;
             }
         }
 
-        public virtual async Task<long> ReadInt64()
-        {
+        public virtual async Task<long> ReadInt64() {
             await Read(buffer, 0, 8).ConfigureAwait(false);
-            if (isBigEndian)
-            {
+            if (isBigEndian) {
                 uint lo = (uint)(buffer[7] | buffer[6] << 8 | buffer[5] << 16 | buffer[4] << 24);
                 uint hi = (uint)(buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24);
                 return ((long)hi) << 32 | lo;
             }
-            else
-            {
+            else {
                 uint lo = (uint)(buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24);
                 uint hi = (uint)(buffer[4] | buffer[5] << 8 | buffer[6] << 16 | buffer[7] << 24);
                 return ((long)hi) << 32 | lo;
             }
         }
 
-        public virtual async Task<float> ReadSingle()
-        {
+        public virtual async Task<float> ReadSingle() {
             CheckDisposed();
             uint value = await ReadUInt32().ConfigureAwait(false);
             return ToSingle(value);
         }
 
-        public virtual async Task<double> ReadDouble()
-        {
+        public virtual async Task<double> ReadDouble() {
             CheckDisposed();
             ulong value = await ReadUInt64().ConfigureAwait(false);
             return ToDouble(value);
         }
 
-        public virtual async Task<int> Read(byte[] buffer, int offset, int count)
-        {
+        public virtual async Task<int> Read(byte[] buffer, int offset, int count) {
             CheckDisposed();
             int n = 0;
-            while (n < count)
-            {
+            while (n < count) {
                 int len = await this.input.ReadAsync(buffer, offset + n, count - n).ConfigureAwait(false);
                 if (len <= 0)
                     throw new IOException("Stream is closed.");
@@ -162,16 +142,13 @@ namespace Loxodon.Framework.Net.Connection
             return n;
         }
 
-        public virtual async Task<int> Read(IByteBuffer buffer, int count)
-        {
+        public virtual async Task<int> Read(IByteBuffer buffer, int count) {
             CheckDisposed();
-            if (buffer is ByteBuffer buf)
-            {
+            if (buffer is ByteBuffer buf) {
                 buf.EnsureWritable(count);
                 int n = 0;
                 int offset = buf.ArrayOffset + buf.WriterIndex;
-                while (n < count)
-                {
+                while (n < count) {
                     int len = await this.input.ReadAsync(buf.Array, offset + n, count - n).ConfigureAwait(false);
                     if (len <= 0)
                         throw new IOException("Stream is closed.");
@@ -181,11 +158,9 @@ namespace Loxodon.Framework.Net.Connection
                 buf.WriterIndex += n;
                 return n;
             }
-            else
-            {
+            else {
                 int n = 0;
-                while (n < count)
-                {
+                while (n < count) {
                     int len = await this.input.ReadAsync(this.buffer, 0, Math.Min(this.buffer.Length, count - n)).ConfigureAwait(false);
                     if (len <= 0)
                         throw new IOException("Stream is closed.");
@@ -198,19 +173,16 @@ namespace Loxodon.Framework.Net.Connection
         }
 
         [SecuritySafeCritical]
-        protected unsafe float ToSingle(uint value)
-        {
+        protected unsafe float ToSingle(uint value) {
             return *((float*)&value);
         }
 
         [SecuritySafeCritical]
-        protected unsafe double ToDouble(ulong value)
-        {
+        protected unsafe double ToDouble(ulong value) {
             return *((double*)&value);
         }
 
-        protected void CheckDisposed()
-        {
+        protected void CheckDisposed() {
             if (disposedValue)
                 throw new ObjectDisposedException(nameof(BinaryReader));
         }
@@ -218,12 +190,9 @@ namespace Loxodon.Framework.Net.Connection
         #region IDisposable Support
         private bool disposedValue = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (!leaveOpen && input != null)
-                {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (!leaveOpen && input != null) {
                     this.input.Close();
                     this.input = null;
                 }
@@ -231,8 +200,7 @@ namespace Loxodon.Framework.Net.Connection
             }
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
         }
         #endregion

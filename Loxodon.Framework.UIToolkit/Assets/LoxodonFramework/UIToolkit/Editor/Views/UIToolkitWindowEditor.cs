@@ -28,16 +28,13 @@ using UnityEditor;
 using UnityEngine;
 using WindowType = Loxodon.Framework.Views.WindowType;
 
-namespace Loxodon.Framework.Editors
-{
+namespace Loxodon.Framework.Editors {
     [CustomEditor(typeof(UIToolkitWindow), true)]
 
-    public class UIToolkitWindowEditor : Editor
-    {
+    public class UIToolkitWindowEditor : Editor {
         [SerializeField]
         private bool foldout = true;
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             this.serializedObject.Update();
             SerializedProperty property = serializedObject.GetIterator();
             var windowTypeProperty = serializedObject.FindProperty("windowType");
@@ -48,17 +45,13 @@ namespace Loxodon.Framework.Editors
             string[] windowSettings = new string[] { "panelSettings", "sourceAsset", "styleSheet", "windowType", "windowPriority" };
 
             bool expanded = true;
-            while (property.NextVisible(expanded))
-            {
-                using (new EditorGUI.DisabledScope("m_Script" == property.propertyPath))
-                {
+            while (property.NextVisible(expanded)) {
+                using (new EditorGUI.DisabledScope("m_Script" == property.propertyPath)) {
                     if ("m_Script" == property.propertyPath)
                         continue;
 
-                    if (Array.IndexOf(windowSettings, property.propertyPath) >= 0)
-                    {
-                        if (foldout)
-                        {
+                    if (Array.IndexOf(windowSettings, property.propertyPath) >= 0) {
+                        if (foldout) {
                             if ("windowPriority" == property.propertyPath && windowType != WindowType.QUEUED_POPUP)
                                 continue;
 

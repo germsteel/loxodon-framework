@@ -25,10 +25,8 @@
 using Loxodon.Framework.Asynchronous;
 using System;
 
-namespace Loxodon.Framework.Views
-{
-    public enum ActionType
-    {
+namespace Loxodon.Framework.Views {
+    public enum ActionType {
         None,
         Hide,
         Dismiss
@@ -37,8 +35,7 @@ namespace Loxodon.Framework.Views
     /// <summary>
     /// 
     /// </summary>
-    public interface ITransition
-    {
+    public interface ITransition {
         /// <summary>
         /// Returns  "true" if this transition finished.
         /// </summary>

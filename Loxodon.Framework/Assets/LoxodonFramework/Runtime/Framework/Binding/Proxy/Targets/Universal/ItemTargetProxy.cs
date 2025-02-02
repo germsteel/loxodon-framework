@@ -25,14 +25,11 @@
 using System;
 using Loxodon.Framework.Binding.Reflection;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class ItemTargetProxy<TKey> : ValueTargetProxyBase
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class ItemTargetProxy<TKey> : ValueTargetProxyBase {
         protected readonly IProxyItemInfo itemInfo;
         protected readonly TKey key;
-        public ItemTargetProxy(object target, TKey key, IProxyItemInfo itemInfo) : base(target)
-        {
+        public ItemTargetProxy(object target, TKey key, IProxyItemInfo itemInfo) : base(target) {
             this.key = key;
             this.itemInfo = itemInfo;
         }
@@ -43,8 +40,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 
         public override BindingMode DefaultMode { get { return BindingMode.OneWay; } }
 
-        public override object GetValue()
-        {
+        public override object GetValue() {
             var target = this.Target;
             if (target == null)
                 return null;
@@ -52,8 +48,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return itemInfo.GetValue(target, key);
         }
 
-        public override TValue GetValue<TValue>()
-        {
+        public override TValue GetValue<TValue>() {
             var target = this.Target;
             if (target == null)
                 return default(TValue);
@@ -68,8 +63,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return (TValue)this.itemInfo.GetValue(target, key);
         }
 
-        public override void SetValue(object value)
-        {
+        public override void SetValue(object value) {
             var target = this.Target;
             if (target == null)
                 return;
@@ -77,15 +71,13 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             this.itemInfo.SetValue(target, key, value);
         }
 
-        public override void SetValue<TValue>(TValue value)
-        {
+        public override void SetValue<TValue>(TValue value) {
             var target = this.Target;
             if (target == null)
                 return;
 
             var proxy = itemInfo as IProxyItemInfo<TKey, TValue>;
-            if (proxy != null)
-            {
+            if (proxy != null) {
                 proxy.SetValue(target, key, value);
                 return;
             }

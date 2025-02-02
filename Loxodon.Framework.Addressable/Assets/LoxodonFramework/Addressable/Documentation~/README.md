@@ -33,15 +33,13 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-addressable" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-addressable": "2.0.1"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -80,8 +78,7 @@ Download Loxodon.Framework.unitypackage and Loxodon.Framework.Addressable.unityp
 
 
 
-    async void Start()
-    {
+    async void Start() {
         Localization localization = Localization.Current;
         localization.CultureInfo = CultureInfo.CurrentCulture;
 
@@ -105,8 +102,7 @@ Download Loxodon.Framework.unitypackage and Loxodon.Framework.Addressable.unityp
 
 ### Loads the window using the Addressable Assets System
 
-    async void Start()
-    {
+    async void Start() {
         IUIViewLocator locator = new AddressableUIViewLocator();
         IWindow window =await locator.LoadWindowAsync<ExampleWindow>("UI/Window.prefab");
         await window.Show();

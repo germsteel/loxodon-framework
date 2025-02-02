@@ -26,81 +26,66 @@ using LiteDB;
 using System;
 using UnityEngine;
 
-namespace Loxodon.Framework.Data.Mapper
-{
-    public static class MappingTypeAutomaticRegistrar
-    {
+namespace Loxodon.Framework.Data.Mapper {
+    public static class MappingTypeAutomaticRegistrar {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Init()
-        {
+        static void Init() {
             BsonMapper mapper = BsonMapper.Global;
-            mapper.RegisterType(value =>
-            {
+            mapper.RegisterType(value => {
                 if (value == null)
                     return BsonValue.Null;
                 return value.ToString();
-            }, value =>
-             {
+            }, value => {
                  if (value.IsNull)
                      return default(Vector2);
                  return VectorUtility.ParseVector2(value.AsString);
              });
 
-            mapper.RegisterType(value =>
-            {
+            mapper.RegisterType(value => {
                 if (value == null)
                     return BsonValue.Null;
                 return value.ToString();
-            }, value =>
-            {
+            }, value => {
                 if (value.IsNull)
                     return default(Vector3);
                 return VectorUtility.ParseVector3(value.AsString);
             });
 
-            mapper.RegisterType(value =>
-            {
+            mapper.RegisterType(value => {
                 if (value == null)
                     return BsonValue.Null;
                 return value.ToString();
-            }, value =>
-            {
+            }, value => {
                 if (value.IsNull)
                     return default(Vector4);
                 return VectorUtility.ParseVector4(value.AsString);
             });
 
-            mapper.RegisterType(value =>
-            {
+            mapper.RegisterType(value => {
                 if (value == null)
                     return BsonValue.Null;
                 return value.ToString();
-            }, value =>
-            {
+            }, value => {
                 if (value.IsNull)
                     return default(Vector2Int);
                 return VectorUtility.ParseVector2Int(value.AsString);
             });
 
-            mapper.RegisterType(value =>
-            {
+            mapper.RegisterType(value => {
                 if (value == null)
                     return BsonValue.Null;
                 return value.ToString();
-            }, value =>
-            {
+            }, value => {
                 if (value.IsNull)
                     return default(Vector3Int);
                 return VectorUtility.ParseVector3Int(value.AsString);
             });
 
-            mapper.RegisterType(value =>
-            {
+            mapper.RegisterType(value => {
                 if (value == null)
                     return BsonValue.Null;
                 return value.ToString();
-            }, value =>
-            {
+            }, value => {
                 if (value.IsNull)
                     return default(Color);
                 Color color;
@@ -108,13 +93,11 @@ namespace Loxodon.Framework.Data.Mapper
                 return color;
             });
 
-            mapper.RegisterType(value =>
-            {
+            mapper.RegisterType(value => {
                 if (value == null)
                     return BsonValue.Null;
                 return value.ToString();
-            }, value =>
-            {
+            }, value => {
                 if (value.IsNull)
                     return null;
                 return Version.Parse(value.AsString);

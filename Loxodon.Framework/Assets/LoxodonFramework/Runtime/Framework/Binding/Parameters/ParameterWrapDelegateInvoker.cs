@@ -27,14 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Parameters
-{
-    public class ParameterWrapDelegateInvoker : ParameterWrapBase, IInvoker
-    {
+namespace Loxodon.Framework.Binding.Parameters {
+    public class ParameterWrapDelegateInvoker : ParameterWrapBase, IInvoker {
         private readonly Delegate handler;
 
-        public ParameterWrapDelegateInvoker(Delegate handler, ICommandParameter commandParameter) : base(commandParameter)
-        {
+        public ParameterWrapDelegateInvoker(Delegate handler, ICommandParameter commandParameter) : base(commandParameter) {
             if (handler == null)
                 throw new ArgumentNullException("handler");
 
@@ -43,13 +40,11 @@ namespace Loxodon.Framework.Binding.Parameters
                 throw new ArgumentException("Bind method failed.the parameter types do not match.");
         }
 
-        public object Invoke(params object[] args)
-        {
+        public object Invoke(params object[] args) {
             return this.handler.DynamicInvoke(GetParameterValue());
         }
 
-        protected virtual bool IsValid(Delegate handler)
-        {
+        protected virtual bool IsValid(Delegate handler) {
 #if NETFX_CORE
             MethodInfo info = handler.GetMethodInfo();
 #else
@@ -66,12 +61,10 @@ namespace Loxodon.Framework.Binding.Parameters
         }
     }
 
-    public class ParameterWrapActionInvoker<T> : IInvoker
-    {
+    public class ParameterWrapActionInvoker<T> : IInvoker {
         private readonly Action<T> handler;
         private readonly ICommandParameter<T> commandParameter;
-        public ParameterWrapActionInvoker(Action<T> handler, ICommandParameter<T> commandParameter)
-        {
+        public ParameterWrapActionInvoker(Action<T> handler, ICommandParameter<T> commandParameter) {
             if (handler == null)
                 throw new ArgumentNullException("handler");
             if (commandParameter == null)
@@ -81,8 +74,7 @@ namespace Loxodon.Framework.Binding.Parameters
             this.handler = handler;
         }
 
-        public object Invoke(params object[] args)
-        {
+        public object Invoke(params object[] args) {
             this.handler(commandParameter.GetValue());
             return null;
         }

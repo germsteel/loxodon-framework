@@ -31,30 +31,25 @@ using INotifyCollectionChanged = System.Collections.Specialized.INotifyCollectio
 using NotifyCollectionChangedAction = System.Collections.Specialized.NotifyCollectionChangedAction;
 using NotifyCollectionChangedEventArgs = System.Collections.Specialized.NotifyCollectionChangedEventArgs;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
-    public abstract class ItemNodeProxy<TKey> : NotifiableSourceProxyBase, IObtainable, IModifiable, INotifiable
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
+    public abstract class ItemNodeProxy<TKey> : NotifiableSourceProxyBase, IObtainable, IModifiable, INotifiable {
         protected TKey key;
         protected IProxyItemInfo itemInfo;
         protected bool isList;
         protected Regex regex;
 
-        public ItemNodeProxy(ICollection source, TKey key, IProxyItemInfo itemInfo) : base(source)
-        {
+        public ItemNodeProxy(ICollection source, TKey key, IProxyItemInfo itemInfo) : base(source) {
             this.key = key;
             this.isList = (source is IList);
 
             this.itemInfo = itemInfo;
 
-            if (this.source != null && this.source is INotifyCollectionChanged)
-            {
+            if (this.source != null && this.source is INotifyCollectionChanged) {
                 var sourceCollection = this.source as INotifyCollectionChanged;
                 sourceCollection.CollectionChanged += OnCollectionChanged;
             }
 
-            if (!this.isList)
-            {
+            if (!this.isList) {
                 this.regex = new Regex(@"\[" + this.key + ",", RegexOptions.IgnorePatternWhitespace);
             }
         }
@@ -65,13 +60,11 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
         protected abstract void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e);
 
-        public virtual object GetValue()
-        {
+        public virtual object GetValue() {
             return this.itemInfo.GetValue(source, key);
         }
 
-        public virtual TValue GetValue<TValue>()
-        {
+        public virtual TValue GetValue<TValue>() {
             if (!typeof(TValue).IsAssignableFrom(this.itemInfo.ValueType))
                 throw new InvalidCastException();
 
@@ -82,16 +75,13 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return (TValue)this.itemInfo.GetValue(source, key);
         }
 
-        public virtual void SetValue(object value)
-        {
+        public virtual void SetValue(object value) {
             this.itemInfo.SetValue(source, key, value);
         }
 
-        public virtual void SetValue<TValue>(TValue value)
-        {
+        public virtual void SetValue<TValue>(TValue value) {
             var proxy = itemInfo as IProxyItemInfo<TKey, TValue>;
-            if (proxy != null)
-            {
+            if (proxy != null) {
                 proxy.SetValue(source, key, value);
                 return;
             }
@@ -102,12 +92,9 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
         #region IDisposable Support    
         private bool disposedValue = false;
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (this.source != null && this.source is INotifyCollectionChanged)
-                {
+        protected override void Dispose(bool disposing) {
+            if (!disposedValue) {
+                if (this.source != null && this.source is INotifyCollectionChanged) {
                     var sourceCollection = this.source as INotifyCollectionChanged;
                     sourceCollection.CollectionChanged -= OnCollectionChanged;
                 }
@@ -118,19 +105,14 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
         #endregion
     }
 
-    public class IntItemNodeProxy : ItemNodeProxy<int>
-    {
-        public IntItemNodeProxy(ICollection source, int key, IProxyItemInfo itemInfo) : base(source, key, itemInfo)
-        {
+    public class IntItemNodeProxy : ItemNodeProxy<int> {
+        public IntItemNodeProxy(ICollection source, int key, IProxyItemInfo itemInfo) : base(source, key, itemInfo) {
         }
 
-        protected override void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (isList)
-            {
+        protected override void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            if (isList) {
                 //IList or Array
-                switch (e.Action)
-                {
+                switch (e.Action) {
                     case NotifyCollectionChangedAction.Reset:
                         this.RaiseValueChanged();
                         break;
@@ -152,33 +134,25 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                         break;
                 }
             }
-            else
-            {
+            else {
                 //IDictionary
-                if (e.Action == NotifyCollectionChangedAction.Reset)
-                {
+                if (e.Action == NotifyCollectionChangedAction.Reset) {
                     this.RaiseValueChanged();
                     return;
                 }
 
-                if (e.NewItems != null && e.NewItems.Count > 0)
-                {
-                    foreach (var item in e.NewItems)
-                    {
-                        if (regex.IsMatch(item.ToString()))
-                        {
+                if (e.NewItems != null && e.NewItems.Count > 0) {
+                    foreach (var item in e.NewItems) {
+                        if (regex.IsMatch(item.ToString())) {
                             this.RaiseValueChanged();
                             return;
                         }
                     }
                 }
 
-                if (e.OldItems != null && e.OldItems.Count > 0)
-                {
-                    foreach (var item in e.OldItems)
-                    {
-                        if (regex.IsMatch(item.ToString()))
-                        {
+                if (e.OldItems != null && e.OldItems.Count > 0) {
+                    foreach (var item in e.OldItems) {
+                        if (regex.IsMatch(item.ToString())) {
                             this.RaiseValueChanged();
                             return;
                         }
@@ -190,39 +164,29 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
 
     }
 
-    public class StringItemNodeProxy : ItemNodeProxy<string>
-    {
-        public StringItemNodeProxy(ICollection source, string key, IProxyItemInfo itemInfo) : base(source, key, itemInfo)
-        {
+    public class StringItemNodeProxy : ItemNodeProxy<string> {
+        public StringItemNodeProxy(ICollection source, string key, IProxyItemInfo itemInfo) : base(source, key, itemInfo) {
         }
 
-        protected override void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
+        protected override void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
             //IDictionary
-            if (e.Action == NotifyCollectionChangedAction.Reset)
-            {
+            if (e.Action == NotifyCollectionChangedAction.Reset) {
                 this.RaiseValueChanged();
                 return;
             }
 
-            if (e.NewItems != null && e.NewItems.Count > 0)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    if (regex.IsMatch(item.ToString()))
-                    {
+            if (e.NewItems != null && e.NewItems.Count > 0) {
+                foreach (var item in e.NewItems) {
+                    if (regex.IsMatch(item.ToString())) {
                         this.RaiseValueChanged();
                         return;
                     }
                 }
             }
 
-            if (e.OldItems != null && e.OldItems.Count > 0)
-            {
-                foreach (var item in e.OldItems)
-                {
-                    if (regex.IsMatch(item.ToString()))
-                    {
+            if (e.OldItems != null && e.OldItems.Count > 0) {
+                foreach (var item in e.OldItems) {
+                    if (regex.IsMatch(item.ToString())) {
                         this.RaiseValueChanged();
                         return;
                     }

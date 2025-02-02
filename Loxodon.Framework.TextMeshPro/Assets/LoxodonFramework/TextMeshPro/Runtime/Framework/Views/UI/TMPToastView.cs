@@ -24,14 +24,11 @@
 
 using TMPro;
 
-namespace Loxodon.Framework.Views
-{
-    public class TMPToastView : ToastViewBase
-    {
+namespace Loxodon.Framework.Views {
+    public class TMPToastView : ToastViewBase {
         public TextMeshProUGUI text;
 
-        protected override void OnContentChanged()
-        {
+        protected override void OnContentChanged() {
             if (this.text != null)
                 this.text.text = this.content;
         }

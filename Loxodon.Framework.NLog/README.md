@@ -39,15 +39,13 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-nlog" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-nlog": "2.6.1"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -100,10 +98,8 @@ The NLog configuration file is as follows:
 
 Read NLog configuration file and create LogFactory.
 
-    public class NLogManager : MonoBehaviour
-    {
-        void Awake()
-        {
+    public class NLogManager : MonoBehaviour {
+        void Awake() {
             ////Load the NLog configuration file from the StreamingAssets directory
             //Loxodon.Log.LogManager.Registry(NLogFactory.Load(Application.streamingAssetsPath + "/config.xml"));
 
@@ -113,19 +109,16 @@ Read NLog configuration file and create LogFactory.
             DontDestroyOnLoad(this.gameObject);
         }
 
-        void OnDestroy()
-        {
+        void OnDestroy() {
             NLogFactory.Shutdown();
         }
     }
 
 Usage example.
 
-    public class NLogExample : MonoBehaviour
-    {
+    public class NLogExample : MonoBehaviour {
         private ILog log;
-        void Start()
-        {
+        void Start() {
             log = LogManager.GetLogger(typeof(NLogExample));
 
             log.Debug("This is a debug test.");

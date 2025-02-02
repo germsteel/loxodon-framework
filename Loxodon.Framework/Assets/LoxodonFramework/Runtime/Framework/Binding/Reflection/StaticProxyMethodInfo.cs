@@ -26,35 +26,27 @@ using Loxodon.Log;
 using System;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public class StaticProxyFuncInfo<T, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, TResult>
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public class StaticProxyFuncInfo<T, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, TResult> {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyFuncInfo<T, TResult>));
         private Func<TResult> function;
 
-        public StaticProxyFuncInfo(string methodName) : this(typeof(T).GetMethod(methodName), null)
-        {
+        public StaticProxyFuncInfo(string methodName) : this(typeof(T).GetMethod(methodName), null) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null)
-        {
+        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null) {
         }
 
-        public StaticProxyFuncInfo(MethodInfo info) : this(info, null)
-        {
+        public StaticProxyFuncInfo(MethodInfo info) : this(info, null) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Func<TResult> function) : this(typeof(T).GetMethod(methodName), function)
-        {
+        public StaticProxyFuncInfo(string methodName, Func<TResult> function) : this(typeof(T).GetMethod(methodName), function) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes, Func<TResult> function) : this(typeof(T).GetMethod(methodName, parameterTypes), function)
-        {
+        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes, Func<TResult> function) : this(typeof(T).GetMethod(methodName, parameterTypes), function) {
         }
 
-        public StaticProxyFuncInfo(MethodInfo info, Func<TResult> function) : base(info)
-        {
+        public StaticProxyFuncInfo(MethodInfo info, Func<TResult> function) : base(info) {
             if (!this.methodInfo.IsStatic)
                 throw new ArgumentException("The method isn't static!");
 
@@ -68,61 +60,49 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public override Type DeclaringType { get { return typeof(T); } }
 
-        private Func<TResult> MakeFunc(MethodInfo methodInfo)
-        {
-            try
-            {
+        private Func<TResult> MakeFunc(MethodInfo methodInfo) {
+            try {
                 return (Func<TResult>)methodInfo.CreateDelegate(typeof(Func<TResult>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public virtual TResult Invoke()
-        {
+        public virtual TResult Invoke() {
             if (this.function != null)
                 return this.function();
 
             return (TResult)this.methodInfo.Invoke(null, null);
         }
 
-        public override object Invoke(object target, params object[] args)
-        {
+        public override object Invoke(object target, params object[] args) {
             return Invoke();
         }
     }
 
-    public class StaticProxyFuncInfo<T, P1, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, TResult>
-    {
+    public class StaticProxyFuncInfo<T, P1, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, TResult> {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyFuncInfo<T, P1, TResult>));
         private Func<P1, TResult> function;
-        public StaticProxyFuncInfo(string methodName) : this(typeof(T).GetMethod(methodName), null)
-        {
+        public StaticProxyFuncInfo(string methodName) : this(typeof(T).GetMethod(methodName), null) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null)
-        {
+        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null) {
         }
 
-        public StaticProxyFuncInfo(MethodInfo info) : this(info, null)
-        {
+        public StaticProxyFuncInfo(MethodInfo info) : this(info, null) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Func<P1, TResult> function) : this(typeof(T).GetMethod(methodName), function)
-        {
+        public StaticProxyFuncInfo(string methodName, Func<P1, TResult> function) : this(typeof(T).GetMethod(methodName), function) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes, Func<P1, TResult> function) : this(typeof(T).GetMethod(methodName, parameterTypes), function)
-        {
+        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes, Func<P1, TResult> function) : this(typeof(T).GetMethod(methodName, parameterTypes), function) {
         }
 
 
-        public StaticProxyFuncInfo(MethodInfo info, Func<P1, TResult> function) : base(info)
-        {
+        public StaticProxyFuncInfo(MethodInfo info, Func<P1, TResult> function) : base(info) {
             if (!this.methodInfo.IsStatic)
                 throw new ArgumentException("The method isn't static!");
 
@@ -141,62 +121,50 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public override Type DeclaringType { get { return typeof(T); } }
 
-        private Func<P1, TResult> MakeFunc(MethodInfo methodInfo)
-        {
-            try
-            {
+        private Func<P1, TResult> MakeFunc(MethodInfo methodInfo) {
+            try {
                 return (Func<P1, TResult>)methodInfo.CreateDelegate(typeof(Func<P1, TResult>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public virtual TResult Invoke(P1 p1)
-        {
+        public virtual TResult Invoke(P1 p1) {
             if (this.function != null)
                 return this.function(p1);
 
             return (TResult)this.methodInfo.Invoke(null, new object[] { p1 });
         }
 
-        public override object Invoke(object target, params object[] args)
-        {
+        public override object Invoke(object target, params object[] args) {
             return Invoke((P1)args[0]);
         }
     }
 
-    public class StaticProxyFuncInfo<T, P1, P2, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, P2, TResult>
-    {
+    public class StaticProxyFuncInfo<T, P1, P2, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, P2, TResult> {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyFuncInfo<T, P1, P2, TResult>));
         private Func<P1, P2, TResult> function;
 
-        public StaticProxyFuncInfo(string methodName) : this(typeof(T).GetMethod(methodName), null)
-        {
+        public StaticProxyFuncInfo(string methodName) : this(typeof(T).GetMethod(methodName), null) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null)
-        {
+        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null) {
         }
 
-        public StaticProxyFuncInfo(MethodInfo info) : this(info, null)
-        {
+        public StaticProxyFuncInfo(MethodInfo info) : this(info, null) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Func<P1, P2, TResult> function) : this(typeof(T).GetMethod(methodName), function)
-        {
+        public StaticProxyFuncInfo(string methodName, Func<P1, P2, TResult> function) : this(typeof(T).GetMethod(methodName), function) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes, Func<P1, P2, TResult> function) : this(typeof(T).GetMethod(methodName, parameterTypes), function)
-        {
+        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes, Func<P1, P2, TResult> function) : this(typeof(T).GetMethod(methodName, parameterTypes), function) {
         }
 
 
-        public StaticProxyFuncInfo(MethodInfo info, Func<P1, P2, TResult> function) : base(info)
-        {
+        public StaticProxyFuncInfo(MethodInfo info, Func<P1, P2, TResult> function) : base(info) {
             if (!this.methodInfo.IsStatic)
                 throw new ArgumentException("The method isn't static!");
 
@@ -215,57 +183,45 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public override Type DeclaringType { get { return typeof(T); } }
 
-        private Func<P1, P2, TResult> MakeFunc(MethodInfo methodInfo)
-        {
-            try
-            {
+        private Func<P1, P2, TResult> MakeFunc(MethodInfo methodInfo) {
+            try {
                 return (Func<P1, P2, TResult>)methodInfo.CreateDelegate(typeof(Func<P1, P2, TResult>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public virtual TResult Invoke(P1 p1, P2 p2)
-        {
+        public virtual TResult Invoke(P1 p1, P2 p2) {
             if (this.function != null)
                 return this.function(p1, p2);
 
             return (TResult)this.methodInfo.Invoke(null, new object[] { p1, p2 });
         }
 
-        public override object Invoke(object target, params object[] args)
-        {
+        public override object Invoke(object target, params object[] args) {
             return Invoke((P1)args[0], (P2)args[1]);
         }
     }
 
-    public class StaticProxyFuncInfo<T, P1, P2, P3, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, P2, P3, TResult>
-    {
+    public class StaticProxyFuncInfo<T, P1, P2, P3, TResult> : ProxyMethodInfo, IStaticProxyFuncInfo<T, P1, P2, P3, TResult> {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyFuncInfo<T, P1, P2, P3, TResult>));
         private Func<P1, P2, P3, TResult> function;
 
-        public StaticProxyFuncInfo(string methodName) : this(typeof(T).GetMethod(methodName), null)
-        {
+        public StaticProxyFuncInfo(string methodName) : this(typeof(T).GetMethod(methodName), null) {
         }
-        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null)
-        {
+        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null) {
         }
-        public StaticProxyFuncInfo(MethodInfo info) : this(info, null)
-        {
+        public StaticProxyFuncInfo(MethodInfo info) : this(info, null) {
         }
 
-        public StaticProxyFuncInfo(string methodName, Func<P1, P2, P3, TResult> function) : this(typeof(T).GetMethod(methodName), function)
-        {
+        public StaticProxyFuncInfo(string methodName, Func<P1, P2, P3, TResult> function) : this(typeof(T).GetMethod(methodName), function) {
         }
-        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes, Func<P1, P2, P3, TResult> function) : this(typeof(T).GetMethod(methodName, parameterTypes), function)
-        {
+        public StaticProxyFuncInfo(string methodName, Type[] parameterTypes, Func<P1, P2, P3, TResult> function) : this(typeof(T).GetMethod(methodName, parameterTypes), function) {
         }
-        public StaticProxyFuncInfo(MethodInfo info, Func<P1, P2, P3, TResult> function) : base(info)
-        {
+        public StaticProxyFuncInfo(MethodInfo info, Func<P1, P2, P3, TResult> function) : base(info) {
             if (!this.methodInfo.IsStatic)
                 throw new ArgumentException("The method isn't static!");
 
@@ -283,58 +239,46 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public override Type DeclaringType { get { return typeof(T); } }
 
-        private Func<P1, P2, P3, TResult> MakeFunc(MethodInfo methodInfo)
-        {
-            try
-            {
+        private Func<P1, P2, P3, TResult> MakeFunc(MethodInfo methodInfo) {
+            try {
                 return (Func<P1, P2, P3, TResult>)methodInfo.CreateDelegate(typeof(Func<P1, P2, P3, TResult>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public virtual TResult Invoke(P1 p1, P2 p2, P3 p3)
-        {
+        public virtual TResult Invoke(P1 p1, P2 p2, P3 p3) {
             if (this.function != null)
                 return this.function(p1, p2, p3);
 
             return (TResult)this.methodInfo.Invoke(null, new object[] { p1, p2, p3 });
         }
 
-        public override object Invoke(object target, params object[] args)
-        {
+        public override object Invoke(object target, params object[] args) {
             return Invoke((P1)args[0], (P2)args[1], (P3)args[2]);
         }
     }
 
-    public class StaticProxyActionInfo<T> : ProxyMethodInfo, IStaticProxyActionInfo<T>
-    {
+    public class StaticProxyActionInfo<T> : ProxyMethodInfo, IStaticProxyActionInfo<T> {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyActionInfo<T>));
         private Action action;
 
-        public StaticProxyActionInfo(string methodName) : this(typeof(T).GetMethod(methodName), null)
-        {
+        public StaticProxyActionInfo(string methodName) : this(typeof(T).GetMethod(methodName), null) {
         }
-        public StaticProxyActionInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null)
-        {
+        public StaticProxyActionInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null) {
         }
-        public StaticProxyActionInfo(MethodInfo info) : this(info, null)
-        {
+        public StaticProxyActionInfo(MethodInfo info) : this(info, null) {
         }
 
-        public StaticProxyActionInfo(string methodName, Action action) : this(typeof(T).GetMethod(methodName), action)
-        {
+        public StaticProxyActionInfo(string methodName, Action action) : this(typeof(T).GetMethod(methodName), action) {
         }
-        public StaticProxyActionInfo(string methodName, Type[] parameterTypes, Action action) : this(typeof(T).GetMethod(methodName, parameterTypes), action)
-        {
+        public StaticProxyActionInfo(string methodName, Type[] parameterTypes, Action action) : this(typeof(T).GetMethod(methodName, parameterTypes), action) {
         }
 
-        public StaticProxyActionInfo(MethodInfo info, Action action) : base(info)
-        {
+        public StaticProxyActionInfo(MethodInfo info, Action action) : base(info) {
             if (!this.methodInfo.IsStatic)
                 throw new ArgumentException("The method isn't static!");
 
@@ -350,24 +294,19 @@ namespace Loxodon.Framework.Binding.Reflection
         public override Type DeclaringType { get { return typeof(T); } }
 
 
-        private Action MakeAction(MethodInfo methodInfo)
-        {
-            try
-            {
+        private Action MakeAction(MethodInfo methodInfo) {
+            try {
                 return (Action)methodInfo.CreateDelegate(typeof(Action));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public virtual void Invoke()
-        {
-            if (this.action != null)
-            {
+        public virtual void Invoke() {
+            if (this.action != null) {
                 this.action();
                 return;
             }
@@ -375,37 +314,29 @@ namespace Loxodon.Framework.Binding.Reflection
             this.methodInfo.Invoke(null, null);
         }
 
-        public override object Invoke(object target, params object[] args)
-        {
+        public override object Invoke(object target, params object[] args) {
             Invoke();
             return null;
         }
     }
 
-    public class StaticProxyActionInfo<T, P1> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1>
-    {
+    public class StaticProxyActionInfo<T, P1> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1> {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyActionInfo<T, P1>));
         private Action<P1> action;
 
-        public StaticProxyActionInfo(string methodName) : this(typeof(T).GetMethod(methodName), null)
-        {
+        public StaticProxyActionInfo(string methodName) : this(typeof(T).GetMethod(methodName), null) {
         }
-        public StaticProxyActionInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null)
-        {
+        public StaticProxyActionInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null) {
         }
-        public StaticProxyActionInfo(MethodInfo info) : this(info, null)
-        {
+        public StaticProxyActionInfo(MethodInfo info) : this(info, null) {
         }
 
-        public StaticProxyActionInfo(string methodName, Action<P1> action) : this(typeof(T).GetMethod(methodName), action)
-        {
+        public StaticProxyActionInfo(string methodName, Action<P1> action) : this(typeof(T).GetMethod(methodName), action) {
         }
-        public StaticProxyActionInfo(string methodName, Type[] parameterTypes, Action<P1> action) : this(typeof(T).GetMethod(methodName, parameterTypes), action)
-        {
+        public StaticProxyActionInfo(string methodName, Type[] parameterTypes, Action<P1> action) : this(typeof(T).GetMethod(methodName, parameterTypes), action) {
         }
 
-        public StaticProxyActionInfo(MethodInfo info, Action<P1> action) : base(info)
-        {
+        public StaticProxyActionInfo(MethodInfo info, Action<P1> action) : base(info) {
             if (!this.methodInfo.IsStatic)
                 throw new ArgumentException("The method isn't static!");
 
@@ -424,24 +355,19 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public override Type DeclaringType { get { return typeof(T); } }
 
-        private Action<P1> MakeAction(MethodInfo methodInfo)
-        {
-            try
-            {
+        private Action<P1> MakeAction(MethodInfo methodInfo) {
+            try {
                 return (Action<P1>)methodInfo.CreateDelegate(typeof(Action<P1>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public virtual void Invoke(P1 p1)
-        {
-            if (this.action != null)
-            {
+        public virtual void Invoke(P1 p1) {
+            if (this.action != null) {
                 this.action(p1);
                 return;
             }
@@ -449,35 +375,27 @@ namespace Loxodon.Framework.Binding.Reflection
             this.methodInfo.Invoke(null, new object[] { p1 });
         }
 
-        public override object Invoke(object target, params object[] args)
-        {
+        public override object Invoke(object target, params object[] args) {
             Invoke((P1)args[0]);
             return null;
         }
     }
 
-    public class StaticProxyActionInfo<T, P1, P2> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1, P2>
-    {
+    public class StaticProxyActionInfo<T, P1, P2> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1, P2> {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyActionInfo<T, P1, P2>));
         private Action<P1, P2> action;
-        public StaticProxyActionInfo(string methodName) : this(typeof(T).GetMethod(methodName), null)
-        {
+        public StaticProxyActionInfo(string methodName) : this(typeof(T).GetMethod(methodName), null) {
         }
-        public StaticProxyActionInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null)
-        {
+        public StaticProxyActionInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null) {
         }
-        public StaticProxyActionInfo(MethodInfo info) : this(info, null)
-        {
+        public StaticProxyActionInfo(MethodInfo info) : this(info, null) {
         }
 
-        public StaticProxyActionInfo(string methodName, Action<P1, P2> action) : this(typeof(T).GetMethod(methodName), action)
-        {
+        public StaticProxyActionInfo(string methodName, Action<P1, P2> action) : this(typeof(T).GetMethod(methodName), action) {
         }
-        public StaticProxyActionInfo(string methodName, Type[] parameterTypes, Action<P1, P2> action) : this(typeof(T).GetMethod(methodName, parameterTypes), action)
-        {
+        public StaticProxyActionInfo(string methodName, Type[] parameterTypes, Action<P1, P2> action) : this(typeof(T).GetMethod(methodName, parameterTypes), action) {
         }
-        public StaticProxyActionInfo(MethodInfo info, Action<P1, P2> action) : base(info)
-        {
+        public StaticProxyActionInfo(MethodInfo info, Action<P1, P2> action) : base(info) {
             if (!this.methodInfo.IsStatic)
                 throw new ArgumentException("The method isn't static!");
 
@@ -496,24 +414,19 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public override Type DeclaringType { get { return typeof(T); } }
 
-        private Action<P1, P2> MakeAction(MethodInfo methodInfo)
-        {
-            try
-            {
+        private Action<P1, P2> MakeAction(MethodInfo methodInfo) {
+            try {
                 return (Action<P1, P2>)methodInfo.CreateDelegate(typeof(Action<P1, P2>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public virtual void Invoke(P1 p1, P2 p2)
-        {
-            if (this.action != null)
-            {
+        public virtual void Invoke(P1 p1, P2 p2) {
+            if (this.action != null) {
                 this.action(p1, p2);
                 return;
             }
@@ -521,35 +434,27 @@ namespace Loxodon.Framework.Binding.Reflection
             this.methodInfo.Invoke(null, new object[] { p1, p2 });
         }
 
-        public override object Invoke(object target, params object[] args)
-        {
+        public override object Invoke(object target, params object[] args) {
             Invoke((P1)args[0], (P2)args[1]);
             return null;
         }
     }
 
-    public class StaticProxyActionInfo<T, P1, P2, P3> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1, P2, P3>
-    {
+    public class StaticProxyActionInfo<T, P1, P2, P3> : ProxyMethodInfo, IStaticProxyActionInfo<T, P1, P2, P3> {
         private static readonly ILog log = LogManager.GetLogger(typeof(StaticProxyActionInfo<T, P1, P2, P3>));
         private Action<P1, P2, P3> action;
 
-        public StaticProxyActionInfo(string methodName) : this(typeof(T).GetMethod(methodName), null)
-        {
+        public StaticProxyActionInfo(string methodName) : this(typeof(T).GetMethod(methodName), null) {
         }
-        public StaticProxyActionInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null)
-        {
+        public StaticProxyActionInfo(string methodName, Type[] parameterTypes) : this(typeof(T).GetMethod(methodName, parameterTypes), null) {
         }
-        public StaticProxyActionInfo(MethodInfo info) : this(info, null)
-        {
+        public StaticProxyActionInfo(MethodInfo info) : this(info, null) {
         }
-        public StaticProxyActionInfo(string methodName, Action<P1, P2, P3> action) : this(typeof(T).GetMethod(methodName), action)
-        {
+        public StaticProxyActionInfo(string methodName, Action<P1, P2, P3> action) : this(typeof(T).GetMethod(methodName), action) {
         }
-        public StaticProxyActionInfo(string methodName, Type[] parameterTypes, Action<P1, P2, P3> action) : this(typeof(T).GetMethod(methodName, parameterTypes), action)
-        {
+        public StaticProxyActionInfo(string methodName, Type[] parameterTypes, Action<P1, P2, P3> action) : this(typeof(T).GetMethod(methodName, parameterTypes), action) {
         }
-        public StaticProxyActionInfo(MethodInfo info, Action<P1, P2, P3> action) : base(info)
-        {
+        public StaticProxyActionInfo(MethodInfo info, Action<P1, P2, P3> action) : base(info) {
             if (!this.methodInfo.IsStatic)
                 throw new ArgumentException("The method isn't static!");
 
@@ -568,24 +473,19 @@ namespace Loxodon.Framework.Binding.Reflection
         public override Type DeclaringType { get { return typeof(T); } }
 
 
-        private Action<P1, P2, P3> MakeAction(MethodInfo methodInfo)
-        {
-            try
-            {
+        private Action<P1, P2, P3> MakeAction(MethodInfo methodInfo) {
+            try {
                 return (Action<P1, P2, P3>)methodInfo.CreateDelegate(typeof(Action<P1, P2, P3>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public virtual void Invoke(P1 p1, P2 p2, P3 p3)
-        {
-            if (this.action != null)
-            {
+        public virtual void Invoke(P1 p1, P2 p2, P3 p3) {
+            if (this.action != null) {
                 this.action(p1, p2, p3);
                 return;
             }
@@ -593,8 +493,7 @@ namespace Loxodon.Framework.Binding.Reflection
             this.methodInfo.Invoke(null, new object[] { p1, p2, p3 });
         }
 
-        public override object Invoke(object target, params object[] args)
-        {
+        public override object Invoke(object target, params object[] args) {
             Invoke((P1)args[0], (P2)args[1], (P3)args[2]);
             return null;
         }

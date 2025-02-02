@@ -29,18 +29,14 @@ using Loxodon.Framework.Observables;
 using System;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class UniversalTargetProxyFactory : ITargetProxyFactory
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class UniversalTargetProxyFactory : ITargetProxyFactory {
         private IPathParser pathParser;
-        public UniversalTargetProxyFactory(IPathParser pathParser)
-        {
+        public UniversalTargetProxyFactory(IPathParser pathParser) {
             this.pathParser = pathParser;
         }
 
-        public ITargetProxy CreateProxy(object target, BindingDescription description)
-        {
+        public ITargetProxy CreateProxy(object target, BindingDescription description) {
             IProxyType type = description.TargetType != null ? description.TargetType.AsProxy() : target.GetType().AsProxy();
             if (TargetNameUtil.IsCollection(description.TargetName))
                 return CreateItemProxy(target, type, description);
@@ -53,11 +49,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 throw new MissingMemberException(type.Type.FullName, description.TargetName);
 
             var propertyInfo = memberInfo as IProxyPropertyInfo;
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 var valueType = propertyInfo.ValueType;
-                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-                {
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                     object observableValue = propertyInfo.GetValue(target);
                     if (observableValue == null)
                         throw new NullReferenceException(string.Format("The \"{0}\" property is null in class \"{1}\".", propertyInfo.Name, propertyInfo.DeclaringType.Name));
@@ -65,8 +59,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
                 }
 
-                if (typeof(IInteractionAction).IsAssignableFrom(valueType))
-                {
+                if (typeof(IInteractionAction).IsAssignableFrom(valueType)) {
                     object interactionAction = propertyInfo.GetValue(target);
                     if (interactionAction == null)
                         return null;
@@ -78,11 +71,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             var fieldInfo = memberInfo as IProxyFieldInfo;
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 var valueType = fieldInfo.ValueType;
-                if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-                {
+                if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                     object observableValue = fieldInfo.GetValue(target);
                     if (observableValue == null)
                         throw new NullReferenceException(string.Format("The \"{0}\" field is null in class \"{1}\".", fieldInfo.Name, fieldInfo.DeclaringType.Name));
@@ -90,8 +81,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                     return new ObservableTargetProxy(target, (IObservableProperty)observableValue);
                 }
 
-                if (typeof(IInteractionAction).IsAssignableFrom(valueType))
-                {
+                if (typeof(IInteractionAction).IsAssignableFrom(valueType)) {
                     object interactionAction = fieldInfo.GetValue(target);
                     if (interactionAction == null)
                         return null;
@@ -113,21 +103,18 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return null;
         }
 
-        private ITargetProxy CreateItemProxy(object target, IProxyType type, BindingDescription description)
-        {
+        private ITargetProxy CreateItemProxy(object target, IProxyType type, BindingDescription description) {
             Path path = pathParser.Parse(description.TargetName);
             if (path.Count < 1 || path.Count > 2)
                 return null;
 
             IndexedNode indexNode = null;
             object collectionTarget = null;
-            if (path.Count == 1)
-            {
+            if (path.Count == 1) {
                 indexNode = (IndexedNode)path[0];
                 collectionTarget = target;
             }
-            if (path.Count == 2)
-            {
+            if (path.Count == 2) {
                 indexNode = (IndexedNode)path[1];
                 MemberNode memberNode = (MemberNode)path[0];
                 collectionTarget = GetCollectionTarget(type, target, memberNode.Name);
@@ -140,19 +127,16 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             if (itemInfo == null)
                 throw new MissingMemberException(proxyType.Type.FullName, "Item");
 
-            if (indexNode is IntegerIndexedNode intNode)
-            {
+            if (indexNode is IntegerIndexedNode intNode) {
                 return new ItemTargetProxy<int>(collectionTarget, intNode.Value, itemInfo);
             }
-            else if (indexNode is StringIndexedNode stringNode)
-            {
+            else if (indexNode is StringIndexedNode stringNode) {
                 return new ItemTargetProxy<string>(collectionTarget, stringNode.Value, itemInfo);
             }
             return null;
         }
 
-        private static object GetCollectionTarget(IProxyType type, object target, string name)
-        {
+        private static object GetCollectionTarget(IProxyType type, object target, string name) {
             IProxyPropertyInfo propertyInfo = type.GetProperty(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             if (propertyInfo != null)
                 return propertyInfo.GetValue(target);

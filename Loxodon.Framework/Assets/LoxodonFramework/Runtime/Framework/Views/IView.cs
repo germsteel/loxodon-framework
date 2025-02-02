@@ -24,13 +24,11 @@
 
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
+namespace Loxodon.Framework.Views {
     /// <summary>
     /// View, it's anything that display layer.Such as scene , character , UI, etc
     /// </summary>
-    public interface IView
-    {
+    public interface IView {
         string Name { get; set; }
 
         Transform Parent { get; }

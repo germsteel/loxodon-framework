@@ -27,10 +27,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-namespace Loxodon.Framework.TextUGUI.Editors
-{
-    public static class TextUGUIMenu
-    {
+namespace Loxodon.Framework.TextUGUI.Editors {
+    public static class TextUGUIMenu {
         private const string kUILayerName = "UI";
         private const float kWidth = 160f;
         private const float kThickHeight = 30f;
@@ -43,8 +41,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
         /// </summary>
         /// <param name="command"></param>
         [MenuItem("GameObject/UI/Legacy/FormattableText", false, 2001)]
-        static void AddFormattingText(MenuCommand menuCommand)
-        {
+        static void AddFormattingText(MenuCommand menuCommand) {
             GameObject go = CreateUIElementRoot("Text", menuCommand, s_ThickGUIElementSize);
 
             FormattableText lbl = go.AddComponent<FormattableText>();
@@ -57,8 +54,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
         /// </summary>
         /// <param name="command"></param>
         [MenuItem("GameObject/UI/Legacy/TemplateText", false, 2001)]
-        static void AddTemplateText(MenuCommand menuCommand)
-        {
+        static void AddTemplateText(MenuCommand menuCommand) {
             GameObject go = CreateUIElementRoot("Text", menuCommand, s_ThickGUIElementSize);
 
             TemplateText lbl = go.AddComponent<TemplateText>();
@@ -67,8 +63,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
         }
 
 
-        private static void SetPositionVisibleinSceneView(RectTransform canvasRTransform, RectTransform itemTransform)
-        {
+        private static void SetPositionVisibleinSceneView(RectTransform canvasRTransform, RectTransform itemTransform) {
             // Find the best scene view
             SceneView sceneView = SceneView.lastActiveSceneView;
             if (sceneView == null && SceneView.sceneViews.Count > 0)
@@ -82,8 +77,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
             Vector2 localPlanePosition;
             Camera camera = sceneView.camera;
             Vector3 position = Vector3.zero;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRTransform, new Vector2(camera.pixelWidth / 2, camera.pixelHeight / 2), camera, out localPlanePosition))
-            {
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRTransform, new Vector2(camera.pixelWidth / 2, camera.pixelHeight / 2), camera, out localPlanePosition)) {
                 // Adjust for canvas pivot
                 localPlanePosition.x = localPlanePosition.x + canvasRTransform.sizeDelta.x * canvasRTransform.pivot.x;
                 localPlanePosition.y = localPlanePosition.y + canvasRTransform.sizeDelta.y * canvasRTransform.pivot.y;
@@ -112,11 +106,9 @@ namespace Loxodon.Framework.TextUGUI.Editors
             itemTransform.localScale = Vector3.one;
         }
 
-        private static GameObject CreateUIElementRoot(string name, MenuCommand menuCommand, Vector2 size)
-        {
+        private static GameObject CreateUIElementRoot(string name, MenuCommand menuCommand, Vector2 size) {
             GameObject parent = menuCommand.context as GameObject;
-            if (parent == null || parent.GetComponentInParent<Canvas>() == null)
-            {
+            if (parent == null || parent.GetComponentInParent<Canvas>() == null) {
                 parent = GetOrCreateCanvasGameObject();
             }
             GameObject child = new GameObject(name);
@@ -127,16 +119,14 @@ namespace Loxodon.Framework.TextUGUI.Editors
 
             RectTransform rectTransform = child.AddComponent<RectTransform>();
             rectTransform.sizeDelta = size;
-            if (parent != menuCommand.context) // not a context click, so center in sceneview
-            {
+            if (parent != menuCommand.context) // not a context click, so center in sceneview {
                 SetPositionVisibleinSceneView(parent.GetComponent<RectTransform>(), rectTransform);
             }
             Selection.activeGameObject = child;
             return child;
         }
 
-        private static void SetDefaultTextValues(Text lbl)
-        {
+        private static void SetDefaultTextValues(Text lbl) {
             // Set text values we want across UI elements in default controls.
             // Don't set values which are the same as the default values for the Text component,
             // since there's no point in that, and it's good to keep them as consistent as possible.
@@ -145,8 +135,7 @@ namespace Loxodon.Framework.TextUGUI.Editors
 
 
 
-        static public GameObject CreateNewUI()
-        {
+        static public GameObject CreateNewUI() {
             // Root for the UI
             var root = new GameObject("Canvas");
             root.layer = LayerMask.NameToLayer(kUILayerName);
@@ -162,16 +151,13 @@ namespace Loxodon.Framework.TextUGUI.Editors
         }
 
 
-        private static void CreateEventSystem(bool select)
-        {
+        private static void CreateEventSystem(bool select) {
             CreateEventSystem(select, null);
         }
 
-        private static void CreateEventSystem(bool select, GameObject parent)
-        {
+        private static void CreateEventSystem(bool select, GameObject parent) {
             var esys = Object.FindObjectOfType<EventSystem>();
-            if (esys == null)
-            {
+            if (esys == null) {
                 var eventSystem = new GameObject("EventSystem");
                 GameObjectUtility.SetParentAndAlign(eventSystem, parent);
                 esys = eventSystem.AddComponent<EventSystem>();
@@ -180,15 +166,13 @@ namespace Loxodon.Framework.TextUGUI.Editors
                 Undo.RegisterCreatedObjectUndo(eventSystem, "Create " + eventSystem.name);
             }
 
-            if (select && esys != null)
-            {
+            if (select && esys != null) {
                 Selection.activeGameObject = esys.gameObject;
             }
         }
 
         // Helper function that returns a Canvas GameObject; preferably a parent of the selection, or other existing Canvas.
-        static public GameObject GetOrCreateCanvasGameObject()
-        {
+        static public GameObject GetOrCreateCanvasGameObject() {
             GameObject selectedGo = Selection.activeGameObject;
 
             // Try to find a gameobject that is the selected GO or one if its parents.

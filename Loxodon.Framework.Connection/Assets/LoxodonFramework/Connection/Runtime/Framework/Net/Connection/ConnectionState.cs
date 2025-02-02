@@ -22,12 +22,10 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Net.Connection
-{
+namespace Loxodon.Framework.Net.Connection {
     /// <summary>
     /// </summary>
-    public enum ConnectionState
-    {
+    public enum ConnectionState {
         Connecting,
         Connected,
         Exception,

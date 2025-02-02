@@ -25,14 +25,11 @@
 using Loxodon.Framework.Binding.Reflection;
 using System;
 
-namespace Loxodon.Framework.Binding.Parameters
-{
-    public class ParameterWrapProxyInvoker : ParameterWrapBase, IInvoker
-    {
+namespace Loxodon.Framework.Binding.Parameters {
+    public class ParameterWrapProxyInvoker : ParameterWrapBase, IInvoker {
         private readonly IProxyInvoker invoker;
 
-        public ParameterWrapProxyInvoker(IProxyInvoker invoker, ICommandParameter commandParameter) : base(commandParameter)
-        {
+        public ParameterWrapProxyInvoker(IProxyInvoker invoker, ICommandParameter commandParameter) : base(commandParameter) {
             if (invoker == null)
                 throw new ArgumentNullException("invoker");
 
@@ -41,13 +38,11 @@ namespace Loxodon.Framework.Binding.Parameters
                 throw new ArgumentException("Bind method failed.the parameter types do not match.");
         }
 
-        public object Invoke(params object[] args)
-        {
+        public object Invoke(params object[] args) {
             return this.invoker.Invoke(GetParameterValue());
         }
 
-        protected bool IsValid(IProxyInvoker invoker)
-        {
+        protected bool IsValid(IProxyInvoker invoker) {
             IProxyMethodInfo info = invoker.ProxyMethodInfo;
             if (!info.ReturnType.Equals(typeof(void)))
                 return false;

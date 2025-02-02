@@ -15,10 +15,8 @@ using System.Collections;
 using System.Collections.Specialized;
 
 
-namespace LitJson
-{
-    public enum JsonType
-    {
+namespace LitJson {
+    public enum JsonType {
         None,
 
         Object,
@@ -30,8 +28,7 @@ namespace LitJson
         Boolean
     }
 
-    public interface IJsonWrapper : IList, IOrderedDictionary
-    {
+    public interface IJsonWrapper : IList, IOrderedDictionary {
         bool IsArray   { get; }
         bool IsBoolean { get; }
         bool IsDouble  { get; }

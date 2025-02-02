@@ -1,7 +1,5 @@
-Shader "TextMeshPro/Sprite"
-{
-	Properties
-	{
+Shader "TextMeshPro/Sprite" {
+	Properties {
 		_MainTex ("Sprite Texture", 2D) = "white" {}
 		_Color ("Tint", Color) = (1,1,1,1)
 		
@@ -17,10 +15,8 @@ Shader "TextMeshPro/Sprite"
 		[Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
 	}
 
-	SubShader
-	{
-		Tags
-		{ 
+	SubShader {
+		Tags { 
 			"Queue"="Transparent" 
 			"IgnoreProjector"="True" 
 			"RenderType"="Transparent" 
@@ -28,8 +24,7 @@ Shader "TextMeshPro/Sprite"
 			"CanUseSpriteAtlas"="True"
 		}
 		
-		Stencil
-		{
+		Stencil {
 			Ref [_Stencil]
 			Comp [_StencilComp]
 			Pass [_StencilOp] 
@@ -44,8 +39,7 @@ Shader "TextMeshPro/Sprite"
 		Blend SrcAlpha OneMinusSrcAlpha
 		ColorMask [_ColorMask]
 
-		Pass
-		{
+		Pass {
 		CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -56,15 +50,13 @@ Shader "TextMeshPro/Sprite"
 			#pragma multi_compile __ UNITY_UI_CLIP_RECT
 			#pragma multi_compile __ UNITY_UI_ALPHACLIP
 			
-			struct appdata_t
-			{
+			struct appdata_t {
 				float4 vertex   : POSITION;
 				float4 color    : COLOR;
 				float2 texcoord : TEXCOORD0;
 			};
 
-			struct v2f
-			{
+			struct v2f {
 				float4 vertex   : SV_POSITION;
 				fixed4 color    : COLOR;
 				half2 texcoord  : TEXCOORD0;
@@ -75,8 +67,7 @@ Shader "TextMeshPro/Sprite"
 			fixed4 _TextureSampleAdd;
 			float4 _ClipRect;
 
-			v2f vert(appdata_t IN)
-			{
+			v2f vert(appdata_t IN) {
 				v2f OUT;
 				OUT.worldPosition = IN.vertex;
 				OUT.vertex = UnityObjectToClipPos(OUT.worldPosition);
@@ -93,8 +84,7 @@ Shader "TextMeshPro/Sprite"
 
 			sampler2D _MainTex;
 
-			fixed4 frag(v2f IN) : SV_Target
-			{
+			fixed4 frag(v2f IN) : SV_Target {
 				half4 color = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
 				
 				#if UNITY_UI_CLIP_RECT

@@ -29,21 +29,17 @@ using System.Threading;
 using Loxodon.Framework.Execution;
 using UnityEngine;
 
-namespace Loxodon.Framework.Asynchronous
-{
+namespace Loxodon.Framework.Asynchronous {
     [Flags]
-    public enum CoroutineTaskContinuationOptions
-    {
+    public enum CoroutineTaskContinuationOptions {
         None = 0,
         OnCompleted = 1,
         OnCanceled = 2,
         OnFaulted = 4
     }
 
-    public class CoroutineTask
-    {
-        private static IEnumerator DoDelay(float secondsDelay)
-        {
+    public class CoroutineTask {
+        private static IEnumerator DoDelay(float secondsDelay) {
             yield return new WaitForSecondsRealtime(secondsDelay);
         }
 
@@ -52,8 +48,7 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="delay">The time span to wait before completing the returned Task</param>
         /// <returns>A Task that represents the time delay</returns>
-        public static CoroutineTask Delay(TimeSpan delay)
-        {
+        public static CoroutineTask Delay(TimeSpan delay) {
             return Delay((float)delay.TotalSeconds);
         }
 
@@ -62,8 +57,7 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="millisecondsDelay">The number of milliseconds to wait before completing the returned Task</param>
         /// <returns>A Task that represents the time delay</returns>
-        public static CoroutineTask Delay(int millisecondsDelay)
-        {
+        public static CoroutineTask Delay(int millisecondsDelay) {
             return Delay(millisecondsDelay / 1000.0f);
         }
 
@@ -72,8 +66,7 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="secondsDelay">The number of seconds to wait before completing the returned Task</param>
         /// <returns>A Task that represents the time delay</returns>
-        public static CoroutineTask Delay(float secondsDelay)
-        {
+        public static CoroutineTask Delay(float secondsDelay) {
             return new CoroutineTask(DoDelay(secondsDelay));
         }
 
@@ -82,8 +75,7 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="action">The work to execute on the main thread.</param>
         /// <returns>A Task that represents the work queued to execute on the main thread.</returns>
-        public static CoroutineTask Run(Action action)
-        {
+        public static CoroutineTask Run(Action action) {
             return new CoroutineTask(action);
         }
 
@@ -93,8 +85,7 @@ namespace Loxodon.Framework.Asynchronous
         /// <param name="action">The work to execute on the main thread.</param>
         /// <param name="state">The parameter of the work.</param>
         /// <returns>A Task that represents the work queued to execute on the main thread.</returns>
-        public static CoroutineTask Run(Action<object> action, object state)
-        {
+        public static CoroutineTask Run(Action<object> action, object state) {
             return new CoroutineTask(action, state);
         }
 
@@ -103,8 +94,7 @@ namespace Loxodon.Framework.Asynchronous
         /// </summary>
         /// <param name="routine">The work to execute on the Unity3d's coroutine.</param>
         /// <returns>A Task that represents the work queued to execute on the Unity3d's coroutine.</returns>
-        public static CoroutineTask Run(IEnumerator routine)
-        {
+        public static CoroutineTask Run(IEnumerator routine) {
             return new CoroutineTask(routine);
         }
 
@@ -114,8 +104,7 @@ namespace Loxodon.Framework.Asynchronous
         /// <typeparam name="TResult"></typeparam>
         /// <param name="function">The work to execute on the main thread.</param>
         /// <returns>A Task that represents the work queued to execute on the main thread.</returns>
-        public static CoroutineTask<TResult> Run<TResult>(Func<TResult> function)
-        {
+        public static CoroutineTask<TResult> Run<TResult>(Func<TResult> function) {
             return new CoroutineTask<TResult>(function);
         }
 
@@ -126,8 +115,7 @@ namespace Loxodon.Framework.Asynchronous
         /// <param name="function">The work to execute on the main thread.</param>
         /// <param name="state">The parameter of the work.</param>
         /// <returns>A Task that represents the work queued to execute on the main thread.</returns>
-        public static CoroutineTask<TResult> Run<TResult>(Func<object, TResult> function, object state)
-        {
+        public static CoroutineTask<TResult> Run<TResult>(Func<object, TResult> function, object state) {
             return new CoroutineTask<TResult>(function, state);
         }
 
@@ -137,8 +125,7 @@ namespace Loxodon.Framework.Asynchronous
         /// <typeparam name="TResult"></typeparam>
         /// <param name="function">The work to execute on the Unity3d's coroutine.</param>
         /// <returns>A Task that represents the work queued to execute on the Unity3d's coroutine.</returns>
-        public static CoroutineTask<TResult> Run<TResult>(Func<IPromise<TResult>, IEnumerator> function)
-        {
+        public static CoroutineTask<TResult> Run<TResult>(Func<IPromise<TResult>, IEnumerator> function) {
             return new CoroutineTask<TResult>(function);
         }
 
@@ -149,8 +136,7 @@ namespace Loxodon.Framework.Asynchronous
         /// <param name="function">The work to execute on the Unity3d's coroutine.</param>
         /// <param name="state">The parameter of the work.</param>
         /// <returns>A Task that represents the work queued to execute on the Unity3d's coroutine.</returns>
-        public static CoroutineTask<TResult> Run<TResult>(Func<object, IPromise<TResult>, IEnumerator> function, object state)
-        {
+        public static CoroutineTask<TResult> Run<TResult>(Func<object, IPromise<TResult>, IEnumerator> function, object state) {
             return new CoroutineTask<TResult>(function, state);
         }
 
@@ -171,11 +157,9 @@ namespace Loxodon.Framework.Asynchronous
         /// If none of the tasks faulted and none of the tasks were canceled, the resulting task will end in the Completed state.   
         /// </para>
         /// </remarks>
-        public static CoroutineTask WhenAll(params CoroutineTask[] tasks)
-        {
+        public static CoroutineTask WhenAll(params CoroutineTask[] tasks) {
             AsyncResult result = new AsyncResult(true);
-            try
-            {
+            try {
                 if (tasks == null)
                     throw new ArgumentNullException("tasks");
 
@@ -183,17 +167,14 @@ namespace Loxodon.Framework.Asynchronous
                 int curr = count;
                 bool isCancelled = false;
                 List<Exception> exceptions = new List<Exception>();
-                for (int i = 0; i < count; i++)
-                {
+                for (int i = 0; i < count; i++) {
                     var task = tasks[i];
-                    task.asyncResult.Callbackable().OnCallback((ar) =>
-                    {
+                    task.asyncResult.Callbackable().OnCallback((ar) => {
                         isCancelled |= ar.IsCancelled;
                         if (ar.Exception != null)
                             exceptions.Add(ar.Exception);
 
-                        if (Interlocked.Decrement(ref curr) <= 0)
-                        {
+                        if (Interlocked.Decrement(ref curr) <= 0) {
                             if (isCancelled)
                                 result.SetCancelled();
                             else if (exceptions.Count > 0)
@@ -204,8 +185,7 @@ namespace Loxodon.Framework.Asynchronous
                     });
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 result.SetException(e);
             }
             return new CoroutineTask(result);
@@ -231,11 +211,9 @@ namespace Loxodon.Framework.Asynchronous
         /// same order as they were provided. 
         /// </para>
         /// </remarks>
-        public static CoroutineTask<TResult[]> WhenAll<TResult>(params CoroutineTask<TResult>[] tasks)
-        {
+        public static CoroutineTask<TResult[]> WhenAll<TResult>(params CoroutineTask<TResult>[] tasks) {
             AsyncResult<TResult[]> result = new AsyncResult<TResult[]>(true);
-            try
-            {
+            try {
                 if (tasks == null)
                     throw new ArgumentNullException("tasks");
 
@@ -244,24 +222,19 @@ namespace Loxodon.Framework.Asynchronous
                 bool isCancelled = false;
                 List<Exception> exceptions = new List<Exception>();
                 TResult[] array = new TResult[count];
-                for (int i = 0; i < count; i++)
-                {
+                for (int i = 0; i < count; i++) {
                     int index = i;
                     var t = tasks[index];
-                    t.asyncResult.Callbackable().OnCallback((ar) =>
-                    {
-                        try
-                        {
+                    t.asyncResult.Callbackable().OnCallback((ar) => {
+                        try {
                             isCancelled |= ar.IsCancelled;
                             if (ar.Exception != null)
                                 exceptions.Add(ar.Exception);
                             else
                                 array[index] = (TResult)ar.Result;
                         }
-                        finally
-                        {
-                            if (Interlocked.Decrement(ref curr) <= 0)
-                            {
+                        finally {
+                            if (Interlocked.Decrement(ref curr) <= 0) {
                                 if (isCancelled)
                                     result.SetCancelled();
                                 else if (exceptions.Count > 0)
@@ -273,8 +246,7 @@ namespace Loxodon.Framework.Asynchronous
                     });
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 result.SetException(e);
             }
             return new CoroutineTask<TResult[]>(result);
@@ -289,27 +261,22 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned task will complete when any of the supplied tasks has completed.  The returned task will always end in the Completed state 
         /// with its Result set to the first task to complete.  This is true even if the first task to complete ended in the Canceled or Faulted state.
         /// </remarks>
-        public static CoroutineTask<CoroutineTask> WhenAny(params CoroutineTask[] tasks)
-        {
+        public static CoroutineTask<CoroutineTask> WhenAny(params CoroutineTask[] tasks) {
             AsyncResult<CoroutineTask> result = new AsyncResult<CoroutineTask>(true);
-            try
-            {
+            try {
                 if (tasks == null)
                     throw new ArgumentNullException("tasks");
 
                 int count = tasks.Length;
-                for (int i = 0; i < count; i++)
-                {
+                for (int i = 0; i < count; i++) {
                     var task = tasks[i];
-                    task.asyncResult.Callbackable().OnCallback((ar) =>
-                    {
+                    task.asyncResult.Callbackable().OnCallback((ar) => {
                         if (!result.IsDone)
                             result.SetResult(task);
                     });
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 result.SetException(e);
             }
             return new CoroutineTask<CoroutineTask>(result);
@@ -325,27 +292,22 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned task will complete when any of the supplied tasks has completed.  The returned task will always end in the Completed state 
         /// with its Result set to the first task to complete.  This is true even if the first task to complete ended in the Canceled or Faulted state.
         /// </remarks>
-        public static CoroutineTask<CoroutineTask<TResult>> WhenAny<TResult>(params CoroutineTask<TResult>[] tasks)
-        {
+        public static CoroutineTask<CoroutineTask<TResult>> WhenAny<TResult>(params CoroutineTask<TResult>[] tasks) {
             AsyncResult<CoroutineTask<TResult>> result = new AsyncResult<CoroutineTask<TResult>>(true);
-            try
-            {
+            try {
                 if (tasks == null)
                     throw new ArgumentNullException("tasks");
 
                 int count = tasks.Length;
-                for (int i = 0; i < count; i++)
-                {
+                for (int i = 0; i < count; i++) {
                     var task = tasks[i];
-                    task.asyncResult.Callbackable().OnCallback((ar) =>
-                    {
+                    task.asyncResult.Callbackable().OnCallback((ar) => {
                         if (!result.IsDone)
                             result.SetResult(task);
                     });
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 result.SetException(e);
             }
 
@@ -364,71 +326,56 @@ namespace Loxodon.Framework.Asynchronous
 
         public bool IsDone { get { return asyncResult.IsDone; } }
 
-        protected internal CoroutineTask(AsyncResult asyncResult)
-        {
+        protected internal CoroutineTask(AsyncResult asyncResult) {
             this.asyncResult = asyncResult;
         }
 
-        public CoroutineTask(Action action) : this(new AsyncResult())
-        {
-            Executors.RunOnMainThread(() =>
-            {
-                try
-                {
+        public CoroutineTask(Action action) : this(new AsyncResult()) {
+            Executors.RunOnMainThread(() => {
+                try {
                     action();
                     asyncResult.SetResult();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     asyncResult.SetException(e);
                 }
             });
         }
 
-        public CoroutineTask(Action<object> action, object state) : this(new AsyncResult())
-        {
-            Executors.RunOnMainThread(() =>
-            {
-                try
-                {
+        public CoroutineTask(Action<object> action, object state) : this(new AsyncResult()) {
+            Executors.RunOnMainThread(() => {
+                try {
                     action(state);
                     asyncResult.SetResult();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     asyncResult.SetException(e);
                 }
             });
         }
 
-        public CoroutineTask(IEnumerator routine) : this(new AsyncResult(true))
-        {
-            try
-            {
+        public CoroutineTask(IEnumerator routine) : this(new AsyncResult(true)) {
+            try {
                 if (routine == null)
                     throw new ArgumentNullException("routine");
 
                 Executors.RunOnCoroutine(routine, this.asyncResult);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 this.asyncResult.SetException(e);
             }
         }
 
-        public object WaitForDone()
-        {
+        public object WaitForDone() {
             return this.asyncResult.WaitForDone();
         }
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        public virtual IAwaiter<object> GetAwaiter()
-        {
+        public virtual IAwaiter<object> GetAwaiter() {
             return new AsyncResultAwaiter<AsyncResult>(asyncResult);
         }
 #endif
 
-        protected bool IsExecutable(IAsyncResult ar, CoroutineTaskContinuationOptions continuationOptions)
-        {
+        protected bool IsExecutable(IAsyncResult ar, CoroutineTaskContinuationOptions continuationOptions) {
             bool executable = (continuationOptions == CoroutineTaskContinuationOptions.None);
             if (!executable)
                 executable = (ar.Exception == null && (continuationOptions & CoroutineTaskContinuationOptions.OnCompleted) > 0);
@@ -456,16 +403,12 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask ContinueWith(Action continuationAction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask ContinueWith(Action continuationAction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult result = new AsyncResult(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
@@ -473,8 +416,7 @@ namespace Loxodon.Framework.Asynchronous
                     continuationAction();
                     result.SetResult();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -499,16 +441,12 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask ContinueWith(Action<CoroutineTask> continuationAction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask ContinueWith(Action<CoroutineTask> continuationAction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult result = new AsyncResult(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
@@ -516,8 +454,7 @@ namespace Loxodon.Framework.Asynchronous
                     continuationAction(this);
                     result.SetResult();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -543,16 +480,12 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask ContinueWith(Action<CoroutineTask, object> continuationAction, object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask ContinueWith(Action<CoroutineTask, object> continuationAction, object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult result = new AsyncResult(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
@@ -560,8 +493,7 @@ namespace Loxodon.Framework.Asynchronous
                     continuationAction(this, state);
                     result.SetResult();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -585,24 +517,19 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask ContinueWith(IEnumerator continuationRoutine, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask ContinueWith(IEnumerator continuationRoutine, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult result = new AsyncResult(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
 
                     Executors.RunOnCoroutine(continuationRoutine, result);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -627,24 +554,19 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask ContinueWith(Func<CoroutineTask, IEnumerator> continuationFunction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask ContinueWith(Func<CoroutineTask, IEnumerator> continuationFunction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult result = new AsyncResult(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
 
                     Executors.RunOnCoroutine(continuationFunction(this), result);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -671,24 +593,19 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask ContinueWith(Func<CoroutineTask, object, IEnumerator> continuationFunction, object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask ContinueWith(Func<CoroutineTask, object, IEnumerator> continuationFunction, object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult result = new AsyncResult(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
 
                     Executors.RunOnCoroutine(continuationFunction(this, state), result);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -713,16 +630,12 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, TResult> continuationFunction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, TResult> continuationFunction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult<TResult> result = new AsyncResult<TResult>(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
@@ -730,8 +643,7 @@ namespace Loxodon.Framework.Asynchronous
                     TResult value = continuationFunction(this);
                     result.SetResult(value);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -757,16 +669,12 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, object, TResult> continuationFunction, object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, object, TResult> continuationFunction, object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult<TResult> result = new AsyncResult<TResult>(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
@@ -774,8 +682,7 @@ namespace Loxodon.Framework.Asynchronous
                     TResult value = continuationFunction(this, state);
                     result.SetResult(value);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -800,24 +707,19 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, IPromise<TResult>, IEnumerator> continuationFunction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, IPromise<TResult>, IEnumerator> continuationFunction, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult<TResult> result = new AsyncResult<TResult>(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
 
                     Executors.RunOnCoroutine(continuationFunction(this, result), result);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -843,24 +745,19 @@ namespace Loxodon.Framework.Asynchronous
         /// The returned <see cref="CoroutineTask"/> will not be scheduled for execution until the current task has
         /// completed.
         /// </remarks>
-        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, object, IPromise<TResult>, IEnumerator> continuationFunction, object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None)
-        {
+        public CoroutineTask<TResult> ContinueWith<TResult>(Func<CoroutineTask, object, IPromise<TResult>, IEnumerator> continuationFunction, object state, CoroutineTaskContinuationOptions continuationOptions = CoroutineTaskContinuationOptions.None) {
             AsyncResult<TResult> result = new AsyncResult<TResult>(true);
-            this.asyncResult.Callbackable().OnCallback(ar =>
-            {
-                try
-                {
+            this.asyncResult.Callbackable().OnCallback(ar => {
+                try {
                     bool executable = IsExecutable(ar, continuationOptions);
-                    if (!executable)
-                    {
+                    if (!executable) {
                         result.SetCancelled();
                         return;
                     }
 
                     Executors.RunOnCoroutine(continuationFunction(this, state, result), result);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     result.SetException(e);
                 }
             });
@@ -869,75 +766,58 @@ namespace Loxodon.Framework.Asynchronous
 
     }
 
-    public class CoroutineTask<TResult> : CoroutineTask
-    {
+    public class CoroutineTask<TResult> : CoroutineTask {
         private AsyncResult<TResult> asyncResult;
 
         public TResult Result { get { return (TResult)this.asyncResult.Result; } }
 
-        protected internal CoroutineTask(AsyncResult<TResult> asyncResult) : base(asyncResult)
-        {
+        protected internal CoroutineTask(AsyncResult<TResult> asyncResult) : base(asyncResult) {
             this.asyncResult = asyncResult;
         }
 
-        public CoroutineTask(Func<TResult> function) : this(new AsyncResult<TResult>())
-        {
-            Executors.RunOnMainThread(() =>
-            {
-                try
-                {
+        public CoroutineTask(Func<TResult> function) : this(new AsyncResult<TResult>()) {
+            Executors.RunOnMainThread(() => {
+                try {
                     TResult value = function();
                     this.asyncResult.SetResult(value);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     this.asyncResult.SetException(e);
                 }
             });
         }
 
-        public CoroutineTask(Func<object, TResult> function, object state) : this(new AsyncResult<TResult>())
-        {
-            Executors.RunOnMainThread(() =>
-            {
-                try
-                {
+        public CoroutineTask(Func<object, TResult> function, object state) : this(new AsyncResult<TResult>()) {
+            Executors.RunOnMainThread(() => {
+                try {
                     TResult value = function(state);
                     this.asyncResult.SetResult(value);
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     this.asyncResult.SetException(e);
                 }
             });
         }
 
-        public CoroutineTask(Func<IPromise<TResult>, IEnumerator> function) : this(new AsyncResult<TResult>(true))
-        {
-            try
-            {
+        public CoroutineTask(Func<IPromise<TResult>, IEnumerator> function) : this(new AsyncResult<TResult>(true)) {
+            try {
                 Executors.RunOnCoroutine(function(this.asyncResult), this.asyncResult);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 this.asyncResult.SetException(e);
             }
         }
 
-        public CoroutineTask(Func<object, IPromise<TResult>, IEnumerator> function, object state) : this(new AsyncResult<TResult>(true))
-        {
-            try
-            {
+        public CoroutineTask(Func<object, IPromise<TResult>, IEnumerator> function, object state) : this(new AsyncResult<TResult>(true)) {
+            try {
                 Executors.RunOnCoroutine(function(state, this.asyncResult), this.asyncResult);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 this.asyncResult.SetException(e);
             }
         }
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        public new IAwaiter<TResult> GetAwaiter()
-        {
+        public new IAwaiter<TResult> GetAwaiter() {
             return new AsyncResultAwaiter<AsyncResult<TResult>, TResult>(this.asyncResult);
         }
 #endif

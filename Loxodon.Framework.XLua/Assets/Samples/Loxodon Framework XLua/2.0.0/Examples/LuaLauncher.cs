@@ -38,10 +38,8 @@ using Loxodon.Framework.Services;
 using Loxodon.Framework.XLua.Loaders;
 using Loxodon.Framework.Security.Cryptography;
 
-namespace Loxodon.Framework.Examples
-{
-    public class LuaLauncher : MonoBehaviour
-    {
+namespace Loxodon.Framework.Examples {
+    public class LuaLauncher : MonoBehaviour {
         //private static readonly ILog log = LogManager.GetLogger(typeof(LuaLauncher));
 
         public ScriptReference script;
@@ -55,8 +53,7 @@ namespace Loxodon.Framework.Examples
         private Action<MonoBehaviour> onDestroy;
 
         private ApplicationContext context;
-        void Awake()
-        {
+        void Awake() {
             GlobalWindowManager windowManager = FindObjectOfType<GlobalWindowManager>();
             if (windowManager == null)
                 throw new NotFoundException("Not found the GlobalWindowManager.");
@@ -84,8 +81,7 @@ namespace Loxodon.Framework.Examples
 
             var luaEnv = LuaEnvironment.LuaEnv;
 #if UNITY_EDITOR
-            foreach (string dir in Directory.GetDirectories(Application.dataPath, "LuaScripts", SearchOption.AllDirectories))
-            {
+            foreach (string dir in Directory.GetDirectories(Application.dataPath, "LuaScripts", SearchOption.AllDirectories)) {
                 luaEnv.AddLoader(new FileLoader(dir, ".lua"));
                 luaEnv.AddLoader(new FileLoader(dir, ".lua.txt"));
             }
@@ -109,8 +105,7 @@ namespace Loxodon.Framework.Examples
 
         }
 
-        void InitLuaEnv()
-        {
+        void InitLuaEnv() {
             var luaEnv = LuaEnvironment.LuaEnv;
             scriptEnv = luaEnv.NewTable();
 
@@ -136,26 +131,22 @@ namespace Loxodon.Framework.Examples
             onDestroy = metatable.Get<Action<MonoBehaviour>>("destroy");
         }
 
-        void OnEnable()
-        {
+        void OnEnable() {
             if (onEnable != null)
                 onEnable(this);
         }
 
-        void OnDisable()
-        {
+        void OnDisable() {
             if (onDisable != null)
                 onDisable(this);
         }
 
-        void Start()
-        {
+        void Start() {
             if (onStart != null)
                 onStart(this);
         }
 
-        void OnDestroy()
-        {
+        void OnDestroy() {
             if (onDestroy != null)
                 onDestroy(this);
 
@@ -165,14 +156,12 @@ namespace Loxodon.Framework.Examples
             onDisable = null;
             onAwake = null;
 
-            if (metatable != null)
-            {
+            if (metatable != null) {
                 metatable.Dispose();
                 metatable = null;
             }
 
-            if (scriptEnv != null)
-            {
+            if (scriptEnv != null) {
                 scriptEnv.Dispose();
                 scriptEnv = null;
             }

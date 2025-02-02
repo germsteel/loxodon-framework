@@ -31,19 +31,13 @@ using System.Threading;
 using System.Threading.Tasks;
 #endif
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class TaskToCoroutineExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class TaskToCoroutineExample : MonoBehaviour {
 #if NETFX_CORE || NET_STANDARD_2_0 || NET_4_6
-        IEnumerator Start()
-        {
-            Task task = Task.Run(() =>
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    try
-                    {
+        IEnumerator Start() {
+            Task task = Task.Run(() => {
+                for (int i = 0; i < 5; i++) {
+                    try {
                         Thread.Sleep(200);
                     }
                     catch (Exception) { }

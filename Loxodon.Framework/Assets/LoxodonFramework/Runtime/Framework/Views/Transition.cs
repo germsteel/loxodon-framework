@@ -29,10 +29,8 @@ using Loxodon.Framework.Execution;
 using Loxodon.Framework.Asynchronous;
 using System.Runtime.CompilerServices;
 
-namespace Loxodon.Framework.Views
-{
-    public abstract class Transition : ITransition
-    {
+namespace Loxodon.Framework.Views {
+    public abstract class Transition : ITransition {
         private static readonly ILog log = LogManager.GetLogger(typeof(Transition));
 
         private IManageable window;
@@ -49,18 +47,15 @@ namespace Loxodon.Framework.Views
         private Action<IWindow, WindowState> onStateChanged;
         private Action onFinish;
 
-        public Transition(IManageable window)
-        {
+        public Transition(IManageable window) {
             this.window = window;
         }
 
-        ~Transition()
-        {
+        ~Transition() {
             this.Unbind();
         }
 
-        protected virtual void Bind()
-        {
+        protected virtual void Bind() {
             if (bound)
                 return;
 
@@ -69,8 +64,7 @@ namespace Loxodon.Framework.Views
                 this.window.StateChanged += StateChanged;
         }
 
-        protected virtual void Unbind()
-        {
+        protected virtual void Unbind() {
             if (!bound)
                 return;
 
@@ -80,118 +74,96 @@ namespace Loxodon.Framework.Views
                 this.window.StateChanged -= StateChanged;
         }
 
-        public virtual IManageable Window
-        {
+        public virtual IManageable Window {
             get { return this.window; }
             set { this.window = value; }
         }
 
-        public virtual bool IsDone
-        {
+        public virtual bool IsDone {
             get { return this.done; }
             protected set { this.done = value; }
         }
 
-        public virtual object WaitForDone()
-        {
+        public virtual object WaitForDone() {
             return Executors.WaitWhile(() => !IsDone);
         }
 
-        public virtual bool AnimationDisabled
-        {
+        public virtual bool AnimationDisabled {
             get { return this.animationDisabled; }
             protected set { this.animationDisabled = value; }
         }
 
-        public virtual int Layer
-        {
+        public virtual int Layer {
             get { return this.layer; }
             protected set { this.layer = value; }
         }
 
-        public virtual Func<IWindow, IWindow, ActionType> OverlayPolicy
-        {
+        public virtual Func<IWindow, IWindow, ActionType> OverlayPolicy {
             get { return this.overlayPolicy; }
             protected set { this.overlayPolicy = value; }
         }
 
-        protected void StateChanged(object sender, WindowStateEventArgs e)
-        {
+        protected void StateChanged(object sender, WindowStateEventArgs e) {
             this.RaiseStateChanged((IWindow)sender, e.State);
         }
 
-        protected virtual void RaiseStart()
-        {
-            try
-            {
+        protected virtual void RaiseStart() {
+            try {
                 if (this.onStart != null)
                     this.onStart();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.Warn("", e);
             }
         }
 
-        protected virtual void RaiseStateChanged(IWindow window, WindowState state)
-        {
-            try
-            {
+        protected virtual void RaiseStateChanged(IWindow window, WindowState state) {
+            try {
                 if (this.onStateChanged != null)
                     this.onStateChanged(window, state);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.Warn("", e);
             }
         }
 
-        protected virtual void RaiseFinished()
-        {
-            try
-            {
+        protected virtual void RaiseFinished() {
+            try {
                 if (this.onFinish != null)
                     this.onFinish();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.Warn("", e);
             }
         }
 
-        protected virtual void OnStart()
-        {
+        protected virtual void OnStart() {
             this.Bind();
             this.RaiseStart();
         }
 
-        protected virtual void OnEnd()
-        {
+        protected virtual void OnEnd() {
             this.done = true;
             this.RaiseFinished();
             this.Unbind();
         }
 
-        public IAwaiter GetAwaiter()
-        {
+        public IAwaiter GetAwaiter() {
             return new TransitionAwaiter(this);
         }
 
-        public ITransition DisableAnimation(bool disabled)
-        {
-            if (this.running)
-            {
+        public ITransition DisableAnimation(bool disabled) {
+            if (this.running) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is running.DisableAnimation failed.");
 
                 return this;
             }
 
-            if (this.done)
-            {
+            if (this.done) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is done.DisableAnimation failed.");
 
@@ -202,18 +174,15 @@ namespace Loxodon.Framework.Views
             return this;
         }
 
-        public ITransition AtLayer(int layer)
-        {
-            if (this.running)
-            {
+        public ITransition AtLayer(int layer) {
+            if (this.running) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is running.sets the layer failed.");
 
                 return this;
             }
 
-            if (this.done)
-            {
+            if (this.done) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is done.sets the layer failed.");
 
@@ -224,18 +193,15 @@ namespace Loxodon.Framework.Views
             return this;
         }
 
-        public ITransition Overlay(Func<IWindow, IWindow, ActionType> policy)
-        {
-            if (this.running)
-            {
+        public ITransition Overlay(Func<IWindow, IWindow, ActionType> policy) {
+            if (this.running) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is running.sets the policy failed.");
 
                 return this;
             }
 
-            if (this.done)
-            {
+            if (this.done) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is done.sets the policy failed.");
 
@@ -246,18 +212,15 @@ namespace Loxodon.Framework.Views
             return this;
         }
 
-        public ITransition OnStart(Action callback)
-        {
-            if (this.running)
-            {
+        public ITransition OnStart(Action callback) {
+            if (this.running) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is running.OnStart failed.");
 
                 return this;
             }
 
-            if (this.done)
-            {
+            if (this.done) {
                 callback();
                 return this;
             }
@@ -266,10 +229,8 @@ namespace Loxodon.Framework.Views
             return this;
         }
 
-        public ITransition OnStateChanged(Action<IWindow, WindowState> callback)
-        {
-            if (this.running)
-            {
+        public ITransition OnStateChanged(Action<IWindow, WindowState> callback) {
+            if (this.running) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("The transition is running.OnStateChanged failed.");
 
@@ -283,10 +244,8 @@ namespace Loxodon.Framework.Views
             return this;
         }
 
-        public ITransition OnFinish(Action callback)
-        {
-            if (this.done)
-            {
+        public ITransition OnFinish(Action callback) {
+            if (this.done) {
                 callback();
                 return this;
             }
@@ -295,8 +254,7 @@ namespace Loxodon.Framework.Views
             return this;
         }
 
-        public virtual IEnumerator TransitionTask()
-        {
+        public virtual IEnumerator TransitionTask() {
             this.running = true;
             this.OnStart();
 #if UNITY_5_3_OR_NEWER
@@ -312,43 +270,35 @@ namespace Loxodon.Framework.Views
         protected abstract IEnumerator DoTransition();
     }
 
-    public class CompletedTransition : Transition
-    {
-        public CompletedTransition(IManageable window) : base(window)
-        {
+    public class CompletedTransition : Transition {
+        public CompletedTransition(IManageable window) : base(window) {
             this.IsDone = true;
         }
 
-        protected override IEnumerator DoTransition()
-        {
+        protected override IEnumerator DoTransition() {
             yield break;
         }
     }
 
-    public struct TransitionAwaiter : IAwaiter, ICriticalNotifyCompletion
-    {
+    public struct TransitionAwaiter : IAwaiter, ICriticalNotifyCompletion {
         private Transition transition;
 
-        public TransitionAwaiter(Transition transition)
-        {
+        public TransitionAwaiter(Transition transition) {
             this.transition = transition ?? throw new ArgumentNullException("transition");
         }
 
         public bool IsCompleted => transition.IsDone;
 
-        public void GetResult()
-        {
+        public void GetResult() {
             if (!IsCompleted)
                 throw new Exception("The task is not finished yet");
         }
 
-        public void OnCompleted(Action continuation)
-        {
+        public void OnCompleted(Action continuation) {
             UnsafeOnCompleted(continuation);
         }
 
-        public void UnsafeOnCompleted(Action continuation)
-        {
+        public void UnsafeOnCompleted(Action continuation) {
             if (continuation == null)
                 throw new ArgumentNullException("continuation");
             transition.OnFinish(continuation);

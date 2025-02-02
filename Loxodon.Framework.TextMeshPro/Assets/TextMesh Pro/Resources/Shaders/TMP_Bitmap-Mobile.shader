@@ -25,8 +25,7 @@ SubShader {
 
 	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 
-	Stencil
-	{
+	Stencil {
 		Ref[_Stencil]
 		Comp[_StencilComp]
 		Pass[_StencilOp]
@@ -79,8 +78,7 @@ SubShader {
 		uniform float		_MaskSoftnessX;
 		uniform float		_MaskSoftnessY;
 
-		v2f vert (appdata_t v)
-		{
+		v2f vert (appdata_t v) {
 			v2f OUT;
 			float4 vert = v.vertex;
 			vert.x += _VertexOffsetX;
@@ -104,8 +102,7 @@ SubShader {
 			return OUT;
 		}
 
-		fixed4 frag (v2f IN) : COLOR
-		{
+		fixed4 frag (v2f IN) : COLOR {
 			fixed4 color = fixed4(IN.color.rgb, IN.color.a * tex2D(_MainTex, IN.texcoord0).a);
 
 			// Alternative implementation to UnityGet2DClipping with support for softness.

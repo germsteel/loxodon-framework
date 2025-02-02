@@ -26,25 +26,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Utilities
-{
+namespace Loxodon.Framework.Utilities {
     [Obsolete("This type will be removed in version 3.0")]
-    public class FilterEnumerator : IEnumerator
-    {
+    public class FilterEnumerator : IEnumerator {
         private IEnumerator enumerator;
         private Predicate<object> match;
-        public FilterEnumerator(IEnumerator enumerator, Predicate<object> match)
-        {
+        public FilterEnumerator(IEnumerator enumerator, Predicate<object> match) {
             this.enumerator = enumerator;
             this.match = match;
         }
 
         public object Current { get; private set; }
 
-        public bool MoveNext()
-        {
-            while (this.enumerator.MoveNext())
-            {
+        public bool MoveNext() {
+            while (this.enumerator.MoveNext()) {
                 var current = this.enumerator.Current;
                 if (!match(current))
                     continue;
@@ -55,19 +50,16 @@ namespace Loxodon.Framework.Utilities
             return false;
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             this.enumerator.Reset();
         }
     }
 
     [Obsolete("This type will be removed in version 3.0")]
-    public class FilterEnumerator<T> : IEnumerator<T>
-    {
+    public class FilterEnumerator<T> : IEnumerator<T> {
         private IEnumerator<T> enumerator;
         private Predicate<T> match;
-        public FilterEnumerator(IEnumerator<T> enumerator, Predicate<T> match)
-        {
+        public FilterEnumerator(IEnumerator<T> enumerator, Predicate<T> match) {
             this.Current = default(T);
             this.enumerator = enumerator;
             this.match = match;
@@ -77,10 +69,8 @@ namespace Loxodon.Framework.Utilities
 
         object IEnumerator.Current { get { return this.Current; } }
 
-        public bool MoveNext()
-        {
-            while (this.enumerator.MoveNext())
-            {
+        public bool MoveNext() {
+            while (this.enumerator.MoveNext()) {
                 var current = this.enumerator.Current;
                 if (!match(current))
                     continue;
@@ -91,18 +81,15 @@ namespace Loxodon.Framework.Utilities
             return false;
         }
 
-        public void Reset()
-        {
+        public void Reset() {
             this.enumerator.Reset();
         }
 
         #region IDisposable Support
         private bool disposedValue = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
                 this.Reset();
                 this.enumerator = null;
                 this.match = null;
@@ -110,13 +97,11 @@ namespace Loxodon.Framework.Utilities
             }
         }
 
-        ~FilterEnumerator()
-        {
+        ~FilterEnumerator() {
             Dispose(false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }

@@ -25,10 +25,8 @@
 using UnityEngine;
 using UnityEngine.UIElements.Experimental;
 
-namespace Loxodon.Framework.Views.Animations
-{
-    public class UIToolkitAlphaAnimation : UIAnimation
-    {
+namespace Loxodon.Framework.Views.Animations {
+    public class UIToolkitAlphaAnimation : UIAnimation {
         [Range(0f, 1f)]
         public float from = 1f;
         [Range(0f, 1f)]
@@ -38,11 +36,9 @@ namespace Loxodon.Framework.Views.Animations
 
         private UIToolkitWindow window;
 
-        void OnEnable()
-        {
+        void OnEnable() {
             this.window = this.GetComponent<UIToolkitWindow>();
-            switch (this.AnimationType)
-            {
+            switch (this.AnimationType) {
                 case AnimationType.EnterAnimation:
                     this.window.EnterAnimation = this;
                     break;
@@ -57,17 +53,14 @@ namespace Loxodon.Framework.Views.Animations
                     break;
             }
 
-            if (this.AnimationType == AnimationType.ActivationAnimation || this.AnimationType == AnimationType.EnterAnimation)
-            {
+            if (this.AnimationType == AnimationType.ActivationAnimation || this.AnimationType == AnimationType.EnterAnimation) {
                 this.window.RootVisualElement.style.opacity = from;
             }
         }
 
-        public override IAnimation Play()
-        {
+        public override IAnimation Play() {
             this.OnStart();
-            (this.window.RootVisualElement as ITransitionAnimations).Start(from, to, (int)(duration * 1000), (e, value) =>
-            {
+            (this.window.RootVisualElement as ITransitionAnimations).Start(from, to, (int)(duration * 1000), (e, value) => {
                 this.window.RootVisualElement.style.opacity = value;
                 if (value == to)
                     this.OnEnd();

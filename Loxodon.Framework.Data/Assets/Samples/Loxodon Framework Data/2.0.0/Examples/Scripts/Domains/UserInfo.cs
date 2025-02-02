@@ -29,10 +29,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 #endif
 
-namespace Loxodon.Framework.Examples.Domains
-{
-    public class UserInfo
-    {
+namespace Loxodon.Framework.Examples.Domains {
+    public class UserInfo {
 #if NEWTONSOFT
         [JsonProperty("id")]
 #endif
@@ -69,8 +67,7 @@ namespace Loxodon.Framework.Examples.Domains
         public Status Status { get; set; }
     }
 
-    public class Address
-    {
+    public class Address {
 #if NEWTONSOFT
         [JsonProperty("province")]
 #endif
@@ -87,8 +84,7 @@ namespace Loxodon.Framework.Examples.Domains
         public string Postcode { get; set; }
     }
 
-    public enum Status
-    {
+    public enum Status {
         OK,
         LOCKED,
         DELETED

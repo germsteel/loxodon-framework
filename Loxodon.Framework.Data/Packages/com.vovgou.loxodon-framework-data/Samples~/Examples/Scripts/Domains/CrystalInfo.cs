@@ -26,10 +26,8 @@
 using Newtonsoft.Json;
 #endif
 using System.Collections.Generic;
-namespace Loxodon.Framework.Examples.Domains
-{
-    public class CrystalInfo
-    {
+namespace Loxodon.Framework.Examples.Domains {
+    public class CrystalInfo {
         /// <summary>
         /// ID
         /// </summary>

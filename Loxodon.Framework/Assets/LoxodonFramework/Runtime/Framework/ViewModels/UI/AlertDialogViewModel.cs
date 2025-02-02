@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.ViewModels
-{
-    public class AlertDialogViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.ViewModels {
+    public class AlertDialogViewModel : ViewModelBase {
         protected string title;
         protected string message;
         protected string confirmButtonText;
@@ -41,8 +39,7 @@ namespace Loxodon.Framework.ViewModels
         /// <summary>
         /// The title of the dialog box. This may be null.
         /// </summary>
-        public virtual string Title
-        {
+        public virtual string Title {
             get { return this.title; }
             set { this.Set(ref this.title, value); }
         }
@@ -50,8 +47,7 @@ namespace Loxodon.Framework.ViewModels
         /// <summary>
         /// The message to be shown to the user.
         /// </summary>
-        public virtual string Message
-        {
+        public virtual string Message {
             get { return this.message; }
             set { this.Set(ref this.message, value); }
         }
@@ -60,8 +56,7 @@ namespace Loxodon.Framework.ViewModels
         /// The text shown in the "confirm" button in the dialog box. 
         /// If left null, the button will be invisible.
         /// </summary>
-        public virtual string ConfirmButtonText
-        {
+        public virtual string ConfirmButtonText {
             get { return this.confirmButtonText; }
             set { this.Set(ref this.confirmButtonText, value); }
         }
@@ -70,8 +65,7 @@ namespace Loxodon.Framework.ViewModels
         /// The text shown in the "neutral" button in the dialog box. 
         /// If left null, the button will be invisible.
         /// </summary>
-        public virtual string NeutralButtonText
-        {
+        public virtual string NeutralButtonText {
             get { return this.neutralButtonText; }
             set { this.Set(ref this.neutralButtonText, value); }
         }
@@ -80,8 +74,7 @@ namespace Loxodon.Framework.ViewModels
         /// The text shown in the "cancel" button in the dialog box. 
         /// If left null, the button will be invisible.
         /// </summary>
-        public virtual string CancelButtonText
-        {
+        public virtual string CancelButtonText {
             get { return this.cancelButtonText; }
             set { this.Set(ref this.cancelButtonText, value); }
         }
@@ -90,8 +83,7 @@ namespace Loxodon.Framework.ViewModels
         /// Whether the dialog box is canceled when 
         /// touched outside the window's bounds. 
         /// </summary>
-        public virtual bool CanceledOnTouchOutside
-        {
+        public virtual bool CanceledOnTouchOutside {
             get { return this.canceledOnTouchOutside; }
             set { this.Set(ref this.canceledOnTouchOutside, value); }
         }
@@ -102,8 +94,7 @@ namespace Loxodon.Framework.ViewModels
         /// parameter indicating if the "confirm" button (true) or the "cancel" button
         /// (false) was pressed by the user.
         /// </summary>
-        public virtual Action<int> Click
-        {
+        public virtual Action<int> Click {
             get { return this.click; }
             set { this.Set(ref this.click, value); }
         }
@@ -111,8 +102,7 @@ namespace Loxodon.Framework.ViewModels
         /// <summary>
         /// The dialog box has been closed.
         /// </summary>
-        public virtual bool Closed
-        {
+        public virtual bool Closed {
             get { return this.closed; }
             protected set { this.Set(ref this.closed, value); }
         }
@@ -120,23 +110,19 @@ namespace Loxodon.Framework.ViewModels
         /// <summary>
         /// result
         /// </summary>
-        public virtual int Result
-        {
+        public virtual int Result {
             get { return this.result; }
         }
 
-        public virtual void OnClick(int which)
-        {
-            try
-            {
+        public virtual void OnClick(int which) {
+            try {
                 this.result = which;
                 var click = this.Click;
                 if (click != null)
                     click(which);
             }
             catch (Exception) { }
-            finally
-            {
+            finally {
                 this.Closed = true;
             }
         }

@@ -26,22 +26,18 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
+namespace Loxodon.Framework.Tutorials {
     [RequireComponent(typeof(Image))]
-    public class AsyncSpriteLoader : MonoBehaviour
-    {
+    public class AsyncSpriteLoader : MonoBehaviour {
         private Image target;
         private string spriteName;
         public Sprite defaultSprite;
         public Material defaultMaterial;
         public string spritePath;
 
-        public string SpriteName
-        {
+        public string SpriteName {
             get { return this.spriteName; }
-            set
-            {
+            set {
                 if (this.spriteName == value)
                     return;
 
@@ -51,15 +47,12 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             this.target = this.GetComponent<Image>();
         }
 
-        protected virtual void OnSpriteChanged()
-        {
-            if (string.IsNullOrEmpty(this.spriteName))
-            {
+        protected virtual void OnSpriteChanged() {
+            if (string.IsNullOrEmpty(this.spriteName)) {
                 this.target.sprite = null;
                 this.target.material = null;
                 return;
@@ -75,15 +68,12 @@ namespace Loxodon.Framework.Tutorials
         /// Simulate the way asynchronous loading
         /// </summary>
         /// <returns></returns>
-        IEnumerator LoadSprite()
-        {
+        IEnumerator LoadSprite() {
             yield return new WaitForSeconds(1f); 
 
             Sprite[] sprites = Resources.LoadAll<Sprite>(this.spritePath);
-            foreach(var sprite in sprites)
-            {
-                if(sprite.name.Equals(this.spriteName))
-                {
+            foreach(var sprite in sprites) {
+                if(sprite.name.Equals(this.spriteName)) {
                     this.target.sprite = sprite;
                     this.target.material = null;
                 }

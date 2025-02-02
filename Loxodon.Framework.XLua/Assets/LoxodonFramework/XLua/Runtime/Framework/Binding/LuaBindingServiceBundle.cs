@@ -29,16 +29,12 @@ using Loxodon.Framework.Binding.Proxy.Sources.Object;
 using Loxodon.Framework.Binding.Proxy.Targets;
 using Loxodon.Framework.Services;
 
-namespace Loxodon.Framework.Binding
-{
-    public class LuaBindingServiceBundle : BindingServiceBundle
-    {
-        public LuaBindingServiceBundle(IServiceContainer container) : base(container)
-        {
+namespace Loxodon.Framework.Binding {
+    public class LuaBindingServiceBundle : BindingServiceBundle {
+        public LuaBindingServiceBundle(IServiceContainer container) : base(container) {
         }
 
-        protected override void OnStart(IServiceContainer container)
-        {
+        protected override void OnStart(IServiceContainer container) {
             base.OnStart(container);
 
             /* Support XLua */
@@ -54,8 +50,7 @@ namespace Loxodon.Framework.Binding
             targetProxyFactoryRegister.Register(new LuaTargetProxyFactory(), 30);
         }
 
-        protected override void OnStop(IServiceContainer container)
-        {
+        protected override void OnStop(IServiceContainer container) {
             base.OnStop(container);
         }
     }

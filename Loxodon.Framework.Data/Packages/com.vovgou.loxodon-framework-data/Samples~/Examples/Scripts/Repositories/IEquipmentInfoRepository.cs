@@ -24,10 +24,8 @@
 
 using Loxodon.Framework.Examples.Domains;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public interface IEquipmentInfoRepository
-    {
+namespace Loxodon.Framework.Examples.Repositories {
+    public interface IEquipmentInfoRepository {
         EquipmentInfo GetById(int id);
 
         EquipmentInfo GetBySign(string sign, int quality);

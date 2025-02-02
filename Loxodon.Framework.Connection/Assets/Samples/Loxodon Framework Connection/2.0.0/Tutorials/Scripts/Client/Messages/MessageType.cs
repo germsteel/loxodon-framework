@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Examples.Messages
-{
-    public enum MessageType
-    {
+namespace Loxodon.Framework.Examples.Messages {
+    public enum MessageType {
         Request,
         Response,
         Notification

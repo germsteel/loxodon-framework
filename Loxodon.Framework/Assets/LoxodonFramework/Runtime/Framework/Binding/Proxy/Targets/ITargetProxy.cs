@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public interface ITargetProxy : IBindingProxy
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public interface ITargetProxy : IBindingProxy {
         Type Type { get; }
 
         TypeCode TypeCode { get; }

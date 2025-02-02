@@ -24,21 +24,17 @@
 using Loxodon.Framework.Asynchronous;
 using System;
 
-namespace Loxodon.Framework.Views
-{
-    public static class WindowExtensions
-    {
+namespace Loxodon.Framework.Views {
+    public static class WindowExtensions {
         /// <summary>
         /// wait until the window is dismissed
         /// </summary>
         /// <param name="window"></param>
         /// <returns></returns>
-        public static Asynchronous.IAsyncResult WaitDismissed(this Window window)
-        {
+        public static Asynchronous.IAsyncResult WaitDismissed(this Window window) {
             AsyncResult result = new AsyncResult();
             EventHandler handler = null;
-            handler = (sender, eventArgs) =>
-            {
+            handler = (sender, eventArgs) => {
                 window.OnDismissed -= handler;
                 result.SetResult(null);
             };
@@ -51,12 +47,10 @@ namespace Loxodon.Framework.Views
         /// </summary>
         /// <param name="window"></param>
         /// <returns></returns>
-        public static Asynchronous.IAsyncResult WaitDisabled(this UIView view)
-        {
+        public static Asynchronous.IAsyncResult WaitDisabled(this UIView view) {
             AsyncResult result = new AsyncResult();
             EventHandler handler = null;
-            handler = (sender, eventArgs) =>
-            {
+            handler = (sender, eventArgs) => {
                 view.OnDisabled -= handler;
                 result.SetResult(null);
             };

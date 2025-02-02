@@ -26,12 +26,9 @@ using Loxodon.Framework.Configurations;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-namespace Loxodon.Framework.Tutorials
-{
-    public class ConfigurationExample : MonoBehaviour
-    {
-        private void Start()
-        {
+namespace Loxodon.Framework.Tutorials {
+    public class ConfigurationExample : MonoBehaviour {
+        private void Start() {
             IConfiguration conf = CreateConfiguration();
             Version appVersion = conf.GetVersion("application.app.version");
             Version dataVersion = conf.GetVersion("application.data.version");
@@ -52,14 +49,12 @@ namespace Loxodon.Framework.Tutorials
             Debug.LogFormat("password:{0}", password);
 
             int i = 1;
-            foreach (string gateway in gatewayArray)
-            {
+            foreach (string gateway in gatewayArray) {
                 Debug.LogFormat("gateway {0}:{1}", i++, gateway);
             }
         }
 
-        private IConfiguration CreateConfiguration()
-        {
+        private IConfiguration CreateConfiguration() {
             List<IConfiguration> list = new List<IConfiguration>();
 
             //Load default configuration file

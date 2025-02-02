@@ -27,15 +27,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Loxodon.Framework.Editors
-{
+namespace Loxodon.Framework.Editors {
     [CustomPropertyDrawer(typeof(Variable))]
-    public class VariableDrawer : PropertyDrawer
-    {
+    public class VariableDrawer : PropertyDrawer {
         private const float HORIZONTAL_GAP = 5;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             EditorGUI.BeginProperty(position, label, property);
 
             var name = property.FindPropertyRelative("name");
@@ -56,16 +53,13 @@ namespace Loxodon.Framework.Editors
 
             VariableType variableTypeValue = (VariableType)variableType.enumValueIndex;
 
-            if (variableTypeValue == VariableType.Component)
-            {
+            if (variableTypeValue == VariableType.Component) {
                 int index = 0;
                 List<System.Type> types = new List<System.Type>();
                 var component = (Component)objectValue.objectReferenceValue;
-                if (component != null)
-                {
+                if (component != null) {
                     GameObject go = component.gameObject;
-                    foreach (var c in go.GetComponents<Component>())
-                    {
+                    foreach (var c in go.GetComponents<Component>()) {
                         if (c == null)
                             continue;
 
@@ -73,10 +67,8 @@ namespace Loxodon.Framework.Editors
                             types.Add(c.GetType());
                     }
 
-                    for (int i = 0; i < types.Count; i++)
-                    {
-                        if (component.GetType().Equals(types[i]))
-                        {
+                    for (int i = 0; i < types.Count; i++) {
+                        if (component.GetType().Equals(types[i])) {
                             index = i;
                             break;
                         }
@@ -87,33 +79,28 @@ namespace Loxodon.Framework.Editors
                     types.Add(typeof(Transform));
 
                 List<GUIContent> contents = new List<GUIContent>();
-                foreach (var t in types)
-                {
+                foreach (var t in types) {
                     contents.Add(new GUIContent(t.Name, t.FullName));
                 }
 
                 EditorGUI.BeginChangeCheck();
                 var newIndex = EditorGUI.Popup(typeRect, GUIContent.none, index, contents.ToArray(), EditorStyles.popup);
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     if (component != null)
                         objectValue.objectReferenceValue = component.gameObject.GetComponent(types[newIndex]);
                     else
                         objectValue.objectReferenceValue = null;
                 }
             }
-            else
-            {
+            else {
                 EditorGUI.LabelField(typeRect, variableTypeValue.ToString());
             }
 
-            switch (variableTypeValue)
-            {
+            switch (variableTypeValue) {
                 case VariableType.Component:
                     EditorGUI.BeginChangeCheck();
                     objectValue.objectReferenceValue = EditorGUI.ObjectField(valueRect, GUIContent.none, objectValue.objectReferenceValue, typeof(UnityEngine.Component), true);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         if (string.IsNullOrEmpty(name.stringValue) && objectValue.objectReferenceValue != null)
                             name.stringValue = NormalizeName(objectValue.objectReferenceValue.name);
                     }
@@ -121,8 +108,7 @@ namespace Loxodon.Framework.Editors
                 case VariableType.GameObject:
                     EditorGUI.BeginChangeCheck();
                     objectValue.objectReferenceValue = EditorGUI.ObjectField(valueRect, GUIContent.none, objectValue.objectReferenceValue, typeof(UnityEngine.GameObject), true);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         if (string.IsNullOrEmpty(name.stringValue) && objectValue.objectReferenceValue != null)
                             name.stringValue = NormalizeName(objectValue.objectReferenceValue.name);
                     }
@@ -130,8 +116,7 @@ namespace Loxodon.Framework.Editors
                 case VariableType.Object:
                     EditorGUI.BeginChangeCheck();
                     objectValue.objectReferenceValue = EditorGUI.ObjectField(valueRect, GUIContent.none, objectValue.objectReferenceValue, typeof(UnityEngine.Object), true);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         if (string.IsNullOrEmpty(name.stringValue) && objectValue.objectReferenceValue != null)
                             name.stringValue = NormalizeName(objectValue.objectReferenceValue.name);
                     }
@@ -140,8 +125,7 @@ namespace Loxodon.Framework.Editors
                     Color color = DataConverter.ToColor(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     color = EditorGUI.ColorField(valueRect, GUIContent.none, color);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(color);
                     }
                     break;
@@ -149,8 +133,7 @@ namespace Loxodon.Framework.Editors
                     Vector2 vector2 = DataConverter.ToVector2(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     vector2 = EditorGUI.Vector2Field(valueRect, GUIContent.none, vector2);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(vector2);
                     }
                     break;
@@ -158,8 +141,7 @@ namespace Loxodon.Framework.Editors
                     Vector3 vector3 = DataConverter.ToVector3(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     vector3 = EditorGUI.Vector3Field(valueRect, GUIContent.none, vector3);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(vector3);
                     }
                     break;
@@ -173,8 +155,7 @@ namespace Loxodon.Framework.Editors
                     tmpRect.y -= height;
                     vector4 = EditorGUI.Vector4Field(tmpRect, "", vector4);
 #endif
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(vector4);
                     }
                     break;
@@ -182,8 +163,7 @@ namespace Loxodon.Framework.Editors
                     bool b = DataConverter.ToBoolean(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     b = EditorGUI.Toggle(valueRect, GUIContent.none, b);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(b);
                     }
                     break;
@@ -191,8 +171,7 @@ namespace Loxodon.Framework.Editors
                     float f = DataConverter.ToSingle(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     f = EditorGUI.FloatField(valueRect, GUIContent.none, f);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(f);
                     }
                     break;
@@ -200,8 +179,7 @@ namespace Loxodon.Framework.Editors
                     int i = DataConverter.ToInt32(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     i = EditorGUI.IntField(valueRect, GUIContent.none, i);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(i);
                     }
                     break;
@@ -209,8 +187,7 @@ namespace Loxodon.Framework.Editors
                     string s = DataConverter.ToString(dataValue.stringValue);
                     EditorGUI.BeginChangeCheck();
                     s = EditorGUI.TextField(valueRect, GUIContent.none, s);
-                    if (EditorGUI.EndChangeCheck())
-                    {
+                    if (EditorGUI.EndChangeCheck()) {
                         dataValue.stringValue = DataConverter.GetString(s);
                     }
                     break;
@@ -221,8 +198,7 @@ namespace Loxodon.Framework.Editors
         }
 
 
-        protected virtual string NormalizeName(string name)
-        {
+        protected virtual string NormalizeName(string name) {
             if (string.IsNullOrEmpty(name))
                 return "";
 

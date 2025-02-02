@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
-{
-    public interface IWovenNodeProxyFinder
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving {
+    public interface IWovenNodeProxyFinder {
         ISourceProxy GetSourceProxy(string name);
 
     }

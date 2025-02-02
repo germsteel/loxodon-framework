@@ -24,29 +24,24 @@
 
 using FairyGUI;
 using Loxodon.Framework.Binding.Reflection;
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class FairyPropertyProxy : PropertyTargetProxy
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class FairyPropertyProxy : PropertyTargetProxy {
 
         private EventListener listener;
-        public FairyPropertyProxy(object target, IProxyPropertyInfo propertyInfo, EventListener listener) : base(target, propertyInfo)
-        {
+        public FairyPropertyProxy(object target, IProxyPropertyInfo propertyInfo, EventListener listener) : base(target, propertyInfo) {
             this.listener = listener;
         }
 
         public override BindingMode DefaultMode { get { return BindingMode.TwoWay; } }
 
-        protected override void DoSubscribeForValueChange(object target)
-        {
+        protected override void DoSubscribeForValueChange(object target) {
             if (this.listener == null || target == null)
                 return;
 
             listener.Add(RaiseValueChanged);
         }
 
-        protected override void DoUnsubscribeForValueChange(object target)
-        {
+        protected override void DoUnsubscribeForValueChange(object target) {
             if (listener != null)
                 listener.Remove(RaiseValueChanged);
         }

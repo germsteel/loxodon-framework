@@ -37,39 +37,31 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class DialogServiceExampleViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class DialogServiceExampleViewModel : ViewModelBase {
         private SimpleCommand openAlertDialog;
         private SimpleCommand openAlertDialog2;
 
         private IDialogService dialogService;
 
-        public DialogServiceExampleViewModel(IDialogService dialogService)
-        {
+        public DialogServiceExampleViewModel(IDialogService dialogService) {
             this.dialogService = dialogService;
 
-            this.openAlertDialog = new SimpleCommand(() =>
-            {
+            this.openAlertDialog = new SimpleCommand(() => {
                 this.openAlertDialog.Enabled = false;
                 IAsyncResult<int> result = this.dialogService.ShowDialog("Dialog Service Example", "This is a dialog test.", "Yes", "No", null, true);
-                result.Callbackable().OnCallback(r =>
-                {
-                    if (r.Result == AlertDialog.BUTTON_POSITIVE)
-                    {
+                result.Callbackable().OnCallback(r => {
+                    if (r.Result == AlertDialog.BUTTON_POSITIVE) {
                         Debug.LogFormat("Click: Yes");
                     }
-                    else if (r.Result == AlertDialog.BUTTON_NEGATIVE)
-                    {
+                    else if (r.Result == AlertDialog.BUTTON_NEGATIVE) {
                         Debug.LogFormat("Click: No");
                     }
                     this.openAlertDialog.Enabled = true;
                 });
             });
 
-            this.openAlertDialog2 = new SimpleCommand(() =>
-            {
+            this.openAlertDialog2 = new SimpleCommand(() => {
                 this.openAlertDialog2.Enabled = false;
 
                 AlertDialogViewModel viewModel = new AlertDialogViewModel();
@@ -78,11 +70,9 @@ namespace Loxodon.Framework.Tutorials
                 viewModel.ConfirmButtonText = "OK";
 
                 IAsyncResult<AlertDialogViewModel> result = this.dialogService.ShowDialog("UI/AlertDialog", viewModel);
-                result.Callbackable().OnCallback(r =>
-                {
+                result.Callbackable().OnCallback(r => {
                     AlertDialogViewModel vm = r.Result;
-                    if (vm.Result == AlertDialog.BUTTON_POSITIVE)
-                    {
+                    if (vm.Result == AlertDialog.BUTTON_POSITIVE) {
                         Debug.LogFormat("Click: OK");
                     }
                     this.openAlertDialog2.Enabled = true;
@@ -94,13 +84,11 @@ namespace Loxodon.Framework.Tutorials
         public ICommand OpenAlertDialog2 { get { return this.openAlertDialog2; } }
     }
 
-    public class DialogServiceExample : WindowView
-    {
+    public class DialogServiceExample : WindowView {
         public Button openAlert;
         public Button openAlert2;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
@@ -120,8 +108,7 @@ namespace Loxodon.Framework.Tutorials
             container.Register<IDialogService>(dialogService);
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             ApplicationContext context = Context.GetApplicationContext();
             IDialogService dialogService = context.GetService<IDialogService>();
             DialogServiceExampleViewModel viewModel = new DialogServiceExampleViewModel(dialogService);

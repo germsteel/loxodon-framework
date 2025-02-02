@@ -1,12 +1,9 @@
 ﻿using Loxodon.Log.NLogger;
 using UnityEngine;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class NLogManager : MonoBehaviour
-    {
-        void Awake()
-        {
+namespace Loxodon.Framework.Tutorials {
+    public class NLogManager : MonoBehaviour {
+        void Awake() {
             ////Load the NLog configuration file from the StreamingAssets directory
             //Loxodon.Log.LogManager.Registry(NLogFactory.Load(Application.streamingAssetsPath + "/config.xml"));
 
@@ -16,8 +13,7 @@ namespace Loxodon.Framework.Tutorials
             DontDestroyOnLoad(this.gameObject);
         }
 
-        void OnDestroy()
-        {
+        void OnDestroy() {
             NLogFactory.Shutdown();
         }
     }

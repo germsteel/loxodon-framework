@@ -26,10 +26,8 @@ using Loxodon.Framework.Observables;
 using System;
 using UnityEngine;
 
-namespace Loxodon.Framework.Localizations
-{
-    public interface ILocalization
-    {
+namespace Loxodon.Framework.Localizations {
+    public interface ILocalization {
         /// <summary>
         /// Return a decorator localization containing every key from the current
         /// localization that starts with the specified prefix.The prefix is

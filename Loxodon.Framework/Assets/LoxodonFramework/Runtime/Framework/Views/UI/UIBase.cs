@@ -25,15 +25,12 @@
 using Loxodon.Framework.Contexts;
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Views
-{
-    public abstract class UIBase
-    {
+namespace Loxodon.Framework.Views {
+    public abstract class UIBase {
         private static readonly ILog log = LogManager.GetLogger(typeof(UIBase));
         private const string DEFAULT_VIEW_LOCATOR_KEY = "_DEFAULT_VIEW_LOCATOR";
 
-        protected static IUIViewLocator GetUIViewLocator()
-        {
+        protected static IUIViewLocator GetUIViewLocator() {
             ApplicationContext context = Context.GetApplicationContext();
             IUIViewLocator locator = context.GetService<IUIViewLocator>();
             if (locator != null)
@@ -43,16 +40,14 @@ namespace Loxodon.Framework.Views
                 log.Warn("Not found the \"IUIViewLocator\" in the ApplicationContext.Try loading the Tips using the DefaultUIViewLocator.");
 
             locator = context.GetService<IUIViewLocator>(DEFAULT_VIEW_LOCATOR_KEY);
-            if (locator == null)
-            {
+            if (locator == null) {
                 locator = new DefaultUIViewLocator();
                 context.GetContainer().Register(DEFAULT_VIEW_LOCATOR_KEY, locator);
             }
             return locator;
         }
 
-        protected static IUIViewGroup GetCurrentViewGroup()
-        {
+        protected static IUIViewGroup GetCurrentViewGroup() {
             GlobalWindowManagerBase windowManager = GlobalWindowManagerBase.Root;
             IWindow window = windowManager.Current;
             while (window is WindowContainer windowContainer)

@@ -25,13 +25,10 @@
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public static class StringEscapeUtils
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public static class StringEscapeUtils {
         static ConcurrentDictionary<char, string> ESCAPE_CHARS = new ConcurrentDictionary<char, string>();
-        static StringEscapeUtils()
-        {
+        static StringEscapeUtils() {
             ESCAPE_CHARS.TryAdd('\b', "\\b");
             ESCAPE_CHARS.TryAdd('\n', "\\n");
             ESCAPE_CHARS.TryAdd('\t', "\\t");
@@ -42,12 +39,10 @@ namespace Loxodon.Framework.Data.Editors
             ESCAPE_CHARS.TryAdd('/', "\\/");
         }
 
-        public static string Escape(string input)
-        {
+        public static string Escape(string input) {
             StringBuilder buf = new StringBuilder();
             string value = null;
-            foreach (var c in input)
-            {
+            foreach (var c in input) {
                 if (ESCAPE_CHARS.TryGetValue(c, out value))
                     buf.Append(value);
                 else

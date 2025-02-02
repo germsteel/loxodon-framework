@@ -29,30 +29,23 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Expressions
-{
-    class Scope
-    {
+namespace Loxodon.Framework.Binding.Expressions {
+    class Scope {
         private readonly Scope parent;
         private readonly Dictionary<ParameterExpression, object> values = new Dictionary<ParameterExpression, object>();
 
-        public Scope()
-        {
+        public Scope() {
             parent = null;
         }
-        public Scope(Scope parent)
-        {
+        public Scope(Scope parent) {
             this.parent = parent;
         }
-        public bool ContainsKey(ParameterExpression key)
-        {
+        public bool ContainsKey(ParameterExpression key) {
             return values.ContainsKey(key) || (parent != null && parent.ContainsKey(key));
         }
 
-        public object this[ParameterExpression key]
-        {
-            get
-            {
+        public object this[ParameterExpression key] {
+            get {
                 object result;
                 if (values.TryGetValue(key, out result))
                     return result;
@@ -62,16 +55,13 @@ namespace Loxodon.Framework.Binding.Expressions
 
                 throw new InvalidOperationException("Parameter not defined.");
             }
-            set
-            {
-                if (values.ContainsKey(key))
-                {
+            set {
+                if (values.ContainsKey(key)) {
                     values[key] = value;
                     return;
                 }
 
-                if (parent != null)
-                {
+                if (parent != null) {
                     parent[key] = value;
                     return;
                 }
@@ -80,25 +70,20 @@ namespace Loxodon.Framework.Binding.Expressions
             }
         }
 
-        public void Register(ParameterExpression expr, object value)
-        {
+        public void Register(ParameterExpression expr, object value) {
             values[expr] = value;
         }
     }
 
-    class ParameterReplacer : ExpressionVisitor
-    {
+    class ParameterReplacer : ExpressionVisitor {
         private readonly Scope scope;
 
-        public ParameterReplacer(Scope scope)
-        {
+        public ParameterReplacer(Scope scope) {
             this.scope = scope;
         }
 
-        protected override Expression VisitParameter(ParameterExpression expr)
-        {
-            if (scope.ContainsKey(expr))
-            {
+        protected override Expression VisitParameter(ParameterExpression expr) {
+            if (scope.ContainsKey(expr)) {
                 var boxType = typeof(StrongBox<>).MakeGenericType(expr.Type);
                 return Expression.Field(Expression.Constant(Activator.CreateInstance(boxType, scope[expr]), boxType), "Value");
             }
@@ -106,18 +91,13 @@ namespace Loxodon.Framework.Binding.Expressions
         }
     }
 
-    class EvaluatingVisitor : ExpressionVisitor
-    {
+    class EvaluatingVisitor : ExpressionVisitor {
         private Scope values = new Scope();
 
-        private object BinaryOperate(ExpressionType exprType, TypeCode typeCode, object left, object right)
-        {
-            switch (exprType)
-            {
-                case ExpressionType.Add:
-                    {
-                        switch (typeCode)
-                        {
+        private object BinaryOperate(ExpressionType exprType, TypeCode typeCode, object left, object right) {
+            switch (exprType) {
+                case ExpressionType.Add: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left + (sbyte)right;
                             case TypeCode.Byte: return (byte)left + (byte)right;
                             case TypeCode.Int16: return (short)left + (short)right;
@@ -133,10 +113,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.AddChecked:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.AddChecked: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return checked((sbyte)left + (sbyte)right);
                             case TypeCode.Byte: return checked((byte)left + (byte)right);
                             case TypeCode.Int16: return checked((short)left + (short)right);
@@ -152,10 +130,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.Subtract:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.Subtract: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left - (sbyte)right;
                             case TypeCode.Byte: return (byte)left - (byte)right;
                             case TypeCode.Int16: return (short)left - (short)right;
@@ -171,10 +147,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.SubtractChecked:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.SubtractChecked: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return checked((sbyte)left - (sbyte)right);
                             case TypeCode.Byte: return checked((byte)left - (byte)right);
                             case TypeCode.Int16: return checked((short)left - (short)right);
@@ -190,10 +164,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.Multiply:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.Multiply: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left * (sbyte)right;
                             case TypeCode.Byte: return (byte)left * (byte)right;
                             case TypeCode.Int16: return (short)left * (short)right;
@@ -209,10 +181,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.MultiplyChecked:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.MultiplyChecked: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return checked((sbyte)left * (sbyte)right);
                             case TypeCode.Byte: return checked((byte)left * (byte)right);
                             case TypeCode.Int16: return checked((short)left * (short)right);
@@ -228,10 +198,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.Divide:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.Divide: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left / (sbyte)right;
                             case TypeCode.Byte: return (byte)left / (byte)right;
                             case TypeCode.Int16: return (short)left / (short)right;
@@ -247,10 +215,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.Modulo:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.Modulo: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left % (sbyte)right;
                             case TypeCode.Byte: return (byte)left % (byte)right;
                             case TypeCode.Int16: return (short)left % (short)right;
@@ -266,10 +232,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.And:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.And: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left & (sbyte)right;
                             case TypeCode.Byte: return (byte)left & (byte)right;
                             case TypeCode.Int16: return (short)left & (short)right;
@@ -283,10 +247,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.Or:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.Or: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return Convert.ToByte(left) | Convert.ToByte(right);
                             case TypeCode.Byte: return (byte)left | (byte)right;
                             case TypeCode.Int16: return (short)left | (short)right;
@@ -300,10 +262,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.ExclusiveOr:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.ExclusiveOr: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left ^ (sbyte)right;
                             case TypeCode.Byte: return (byte)left ^ (byte)right;
                             case TypeCode.Int16: return (short)left ^ (short)right;
@@ -317,26 +277,20 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.AndAlso:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.AndAlso: {
+                        switch (typeCode) {
                             case TypeCode.Boolean: return (bool)left && (bool)right;
                         }
                         break;
                     }
-                case ExpressionType.OrElse:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.OrElse: {
+                        switch (typeCode) {
                             case TypeCode.Boolean: return (bool)left || (bool)right;
                         }
                         break;
                     }
-                case ExpressionType.Equal:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.Equal: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left == (sbyte)right;
                             case TypeCode.Byte: return (byte)left == (byte)right;
                             case TypeCode.Int16: return (short)left == (short)right;
@@ -353,10 +307,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.NotEqual:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.NotEqual: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left != (sbyte)right;
                             case TypeCode.Byte: return (byte)left != (byte)right;
                             case TypeCode.Int16: return (short)left != (short)right;
@@ -373,10 +325,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.LessThan:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.LessThan: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left < (sbyte)right;
                             case TypeCode.Byte: return (byte)left < (byte)right;
                             case TypeCode.Int16: return (short)left < (short)right;
@@ -392,10 +342,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.LessThanOrEqual:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.LessThanOrEqual: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left <= (sbyte)right;
                             case TypeCode.Byte: return (byte)left <= (byte)right;
                             case TypeCode.Int16: return (short)left <= (short)right;
@@ -411,10 +359,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.GreaterThan:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.GreaterThan: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left > (sbyte)right;
                             case TypeCode.Byte: return (byte)left > (byte)right;
                             case TypeCode.Int16: return (short)left > (short)right;
@@ -430,10 +376,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.GreaterThanOrEqual:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.GreaterThanOrEqual: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left >= (sbyte)right;
                             case TypeCode.Byte: return (byte)left >= (byte)right;
                             case TypeCode.Int16: return (short)left >= (short)right;
@@ -449,10 +393,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.RightShift:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.RightShift: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left >> (int)right;
                             case TypeCode.Byte: return (byte)left >> (int)right;
                             case TypeCode.Int16: return (short)left >> (int)right;
@@ -465,10 +407,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.LeftShift:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.LeftShift: {
+                        switch (typeCode) {
                             case TypeCode.SByte: return (sbyte)left << (int)right;
                             case TypeCode.Byte: return (byte)left << (int)right;
                             case TypeCode.Int16: return (short)left << (int)right;
@@ -486,8 +426,7 @@ namespace Loxodon.Framework.Binding.Expressions
             throw new NotSupportedException("Expressions of type " + exprType + " failed.");
         }
 
-        protected override Expression VisitBinary(BinaryExpression expr)
-        {
+        protected override Expression VisitBinary(BinaryExpression expr) {
             var left = ((ConstantExpression)Visit(expr.Left)).Value;
             var right = ((ConstantExpression)Visit(expr.Right)).Value;
 
@@ -497,8 +436,7 @@ namespace Loxodon.Framework.Binding.Expressions
             if (unliftedLeft.GetTypeInfo().IsEnum && unliftedLeft.Equals(unliftedRight))
 #else
             if (unliftedLeft.IsEnum && unliftedLeft.Equals(unliftedRight))
-#endif
-            {
+#endif {
                 var underlyingType = Enum.GetUnderlyingType(unliftedLeft);
                 var nullableUnderlying = typeof(Nullable<>).MakeGenericType(underlyingType);
                 return Visit(Expression.Convert(Expression.MakeBinary(expr.NodeType, Expression.Convert(expr.Left, nullableUnderlying), Expression.Convert(expr.Right, nullableUnderlying), expr.IsLiftedToNull, expr.Method, expr.Conversion), expr.Type));
@@ -508,21 +446,16 @@ namespace Loxodon.Framework.Binding.Expressions
             if (!unliftedLeft.GetTypeInfo().IsPrimitive)
 #else
             if (!unliftedLeft.IsPrimitive)
-#endif
-            {
-                if (expr.NodeType == ExpressionType.AndAlso || expr.NodeType == ExpressionType.OrElse)
-                {
+#endif {
+                if (expr.NodeType == ExpressionType.AndAlso || expr.NodeType == ExpressionType.OrElse) {
                     var truthMethod = unliftedLeft.GetMethod(expr.NodeType == ExpressionType.AndAlso ? "op_False" : "op_True", new[] { unliftedLeft });
-                    if (truthMethod != null && (bool)truthMethod.Invoke(null, new object[] { left }))
-                    {
+                    if (truthMethod != null && (bool)truthMethod.Invoke(null, new object[] { left })) {
                         return Expression.Constant(left, expr.Type);
                     }
-                    if (expr.IsLiftedToNull && right == null)
-                    {
+                    if (expr.IsLiftedToNull && right == null) {
                         return Expression.Constant(null, expr.Type);
                     }
-                    if (expr.Method != null)
-                    {
+                    if (expr.Method != null) {
                         return Expression.Constant(expr.Method.Invoke(null, new object[] { left, right }), expr.Type);
                     }
                 }
@@ -531,11 +464,9 @@ namespace Loxodon.Framework.Binding.Expressions
                 || expr.Left.Type.Equals(typeof(bool)))
                 && (expr.Right.Type.Equals(typeof(bool?))
                 || expr.Right.Type.Equals(typeof(bool))) && expr.Type.Equals(typeof(bool?))
-                && (expr.NodeType == ExpressionType.And || expr.NodeType == ExpressionType.Or))
-            {
+                && (expr.NodeType == ExpressionType.And || expr.NodeType == ExpressionType.Or)) {
                 Func<bool?, bool?, bool?> evaluator = null;
-                switch (expr.NodeType)
-                {
+                switch (expr.NodeType) {
                     case ExpressionType.And:
                         evaluator = (l, r) => l & r;
                         break;
@@ -545,69 +476,54 @@ namespace Loxodon.Framework.Binding.Expressions
                 }
                 return Expression.Constant(evaluator.DynamicInvoke(left, right), expr.Type);
             }
-            if (expr.IsLiftedToNull)
-            {
+            if (expr.IsLiftedToNull) {
                 if ((expr.Left.Type.Equals(typeof(bool?)) || expr.Left.Type.Equals(typeof(bool))) &&
-                  (expr.Right.Type.Equals(typeof(bool?)) || expr.Right.Type.Equals(typeof(bool))))
-                {
-                    if (expr.NodeType == ExpressionType.AndAlso && false.Equals(left))
-                    {
+                  (expr.Right.Type.Equals(typeof(bool?)) || expr.Right.Type.Equals(typeof(bool)))) {
+                    if (expr.NodeType == ExpressionType.AndAlso && false.Equals(left)) {
                         return Expression.Constant(false, expr.Type);
                     }
-                    if (expr.NodeType == ExpressionType.OrElse && true.Equals(left))
-                    {
+                    if (expr.NodeType == ExpressionType.OrElse && true.Equals(left)) {
                         return Expression.Constant(true, expr.Type);
                     }
                 }
-                if (left == null || right == null)
-                {
+                if (left == null || right == null) {
                     return Expression.Constant(null, expr.Type);
                 }
             }
-            if (expr.IsLifted)
-            {
-                switch (expr.NodeType)
-                {
+            if (expr.IsLifted) {
+                switch (expr.NodeType) {
                     case ExpressionType.LessThan:
                     case ExpressionType.LessThanOrEqual:
                     case ExpressionType.GreaterThan:
                     case ExpressionType.GreaterThanOrEqual:
-                        if (left == null || right == null)
-                        {
+                        if (left == null || right == null) {
                             return Expression.Constant(false, expr.Type);
                         }
                         break;
                     case ExpressionType.Equal:
-                        if (left == null || right == null)
-                        {
+                        if (left == null || right == null) {
                             return Expression.Constant(left == right, expr.Type);
                         }
                         break;
                     case ExpressionType.NotEqual:
-                        if (left == null || right == null)
-                        {
+                        if (left == null || right == null) {
                             return Expression.Constant(left != right, expr.Type);
                         }
                         break;
                 }
             }
-            if (expr.Method != null)
-            {
+            if (expr.Method != null) {
                 result = expr.Method.Invoke(null, new[] { left, right });
             }
-            else if (expr.NodeType == ExpressionType.Coalesce || expr.NodeType == ExpressionType.ArrayIndex)
-            {
-                switch (expr.NodeType)
-                {
+            else if (expr.NodeType == ExpressionType.Coalesce || expr.NodeType == ExpressionType.ArrayIndex) {
+                switch (expr.NodeType) {
                     case ExpressionType.Coalesce:
-                        if (left != null)
-                        {
+                        if (left != null) {
                             result = left;
                             if (expr.Conversion != null)
                                 result = Evaluate(expr.Conversion, values, result);
                         }
-                        else
-                        {
+                        else {
                             result = right;
                         }
                         break;
@@ -615,20 +531,17 @@ namespace Loxodon.Framework.Binding.Expressions
 #if NETFX_CORE
                         result = ((Array)left).GetValue((int)right);
 #else
-                        if (expr.Right.Type.Equals(typeof(int)))
-                        {
+                        if (expr.Right.Type.Equals(typeof(int))) {
                             result = ((Array)left).GetValue((int)right);
                         }
-                        else
-                        {
+                        else {
                             result = ((Array)left).GetValue((long)right);
                         }
 #endif
                         break;
                 }
             }
-            else
-            {
+            else {
 #if NETFX_CORE
                 TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(unliftedLeft);
 #else
@@ -640,11 +553,9 @@ namespace Loxodon.Framework.Binding.Expressions
             return Expression.Constant(result, expr.Type);
         }
 
-        protected override Expression VisitMember(MemberExpression expr)
-        {
+        protected override Expression VisitMember(MemberExpression expr) {
             object root = null;
-            if (expr.Expression != null)
-            {
+            if (expr.Expression != null) {
                 root = ((ConstantExpression)Visit(expr.Expression)).Value;
                 if (IsNullable(expr.Expression.Type))
                     return Expression.Constant(PerformOnNullable(root, expr.Member, new Expression[0]), expr.Type);
@@ -652,8 +563,7 @@ namespace Loxodon.Framework.Binding.Expressions
             return Expression.Constant(expr.Member.Get(root));
         }
 
-        private bool IsNullable(Type t)
-        {
+        private bool IsNullable(Type t) {
 #if NETFX_CORE
             return t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>));
 #else
@@ -661,15 +571,13 @@ namespace Loxodon.Framework.Binding.Expressions
 #endif
         }
 
-        private Type Unlift(Type t)
-        {
+        private Type Unlift(Type t) {
             if (IsNullable(t))
                 return t.GetGenericArguments()[0];
             return t;
         }
 
-        protected override Expression VisitUnary(UnaryExpression expr)
-        {
+        protected override Expression VisitUnary(UnaryExpression expr) {
             if (expr.NodeType == ExpressionType.Quote)
                 return Expression.Constant(new ParameterReplacer(values).Visit(expr.Operand), expr.Type);
 
@@ -677,8 +585,7 @@ namespace Loxodon.Framework.Binding.Expressions
             if (expr.IsLiftedToNull && val == null)
                 return Expression.Constant(null, expr.Type);
 
-            if (expr.Method != null)
-            {
+            if (expr.Method != null) {
                 var parameterType = expr.Method.GetParameters()[0].ParameterType;
 #if NETFX_CORE
                 if (val == null && parameterType.GetTypeInfo().IsValueType && !IsNullable(parameterType))
@@ -691,13 +598,11 @@ namespace Loxodon.Framework.Binding.Expressions
 
             Type realSourceType;
             Type realTargetType;
-            if (expr.IsLifted)
-            {
+            if (expr.IsLifted) {
                 realSourceType = Unlift(expr.Operand.Type);
                 realTargetType = Unlift(expr.Type);
             }
-            else
-            {
+            else {
                 realSourceType = expr.Operand.Type;
                 realTargetType = expr.Type;
             }
@@ -709,8 +614,7 @@ namespace Loxodon.Framework.Binding.Expressions
 #endif
 
             object result = null;
-            switch (expr.NodeType)
-            {
+            switch (expr.NodeType) {
                 case ExpressionType.TypeAs:
                     return Expression.Constant(expr.Type.IsInstanceOfType(val) ? val : null, expr.Type);
                 case ExpressionType.Convert:
@@ -720,10 +624,8 @@ namespace Loxodon.Framework.Binding.Expressions
                     return Expression.Constant(convertMethod.Invoke(null, new object[] { val }), expr.Type);
                 case ExpressionType.ArrayLength:
                     return Expression.Constant(((Array)val).Length, expr.Type);
-                case ExpressionType.Negate:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.Negate: {
+                        switch (typeCode) {
                             case TypeCode.SByte:
                                 result = -(sbyte)val;
                                 break;
@@ -762,10 +664,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.NegateChecked:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.NegateChecked: {
+                        switch (typeCode) {
                             case TypeCode.SByte:
                                 result = checked(-(sbyte)val);
                                 break;
@@ -804,10 +704,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.UnaryPlus:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.UnaryPlus: {
+                        switch (typeCode) {
                             case TypeCode.SByte:
                                 result = +(sbyte)val;
                                 break;
@@ -846,10 +744,8 @@ namespace Loxodon.Framework.Binding.Expressions
                         }
                         break;
                     }
-                case ExpressionType.Not:
-                    {
-                        switch (typeCode)
-                        {
+                case ExpressionType.Not: {
+                        switch (typeCode) {
                             case TypeCode.SByte:
                                 result = ~(sbyte)val;
                                 break;
@@ -890,28 +786,24 @@ namespace Loxodon.Framework.Binding.Expressions
             throw new NotSupportedException("Bad unary operation: " + expr);
         }
 
-        private object InvokeMethod(Func<object[], object> invoke, IEnumerable<Expression> arguments)
-        {
+        private object InvokeMethod(Func<object[], object> invoke, IEnumerable<Expression> arguments) {
             var args = arguments.Select(a => ((ConstantExpression)Visit(a)).Value).ToArray();
             var result = invoke(args);
             return result;
         }
 
-        private object PerformOnNullable(object root, MemberInfo member, IEnumerable<Expression> arguments)
-        {
+        private object PerformOnNullable(object root, MemberInfo member, IEnumerable<Expression> arguments) {
             var args = arguments.Select(a => ((ConstantExpression)Visit(a)).Value).ToArray();
             if (member.Name.Equals("HasValue"))
                 return root != null;
 
-            if (member.Name.Equals("Value"))
-            {
+            if (member.Name.Equals("Value")) {
                 if (root == null)
                     throw new InvalidOperationException("Nullable object must have a value.");
                 return root;
             }
 
-            if (member.Name.Equals("ToString"))
-            {
+            if (member.Name.Equals("ToString")) {
                 if (root == null)
                     return string.Empty;
                 return root.ToString();
@@ -920,16 +812,14 @@ namespace Loxodon.Framework.Binding.Expressions
             if (member.Name.Equals("Equals"))
                 return object.Equals(root, args[0]);
 
-            if (member.Name.Equals("GetHashCode"))
-            {
+            if (member.Name.Equals("GetHashCode")) {
                 if (root == null)
                     return 0;
 
                 return root.GetHashCode();
             }
 
-            if (member.Name.Equals("GetValueOrDefault"))
-            {
+            if (member.Name.Equals("GetValueOrDefault")) {
                 if (root == null)
                     return args.FirstOrDefault();
                 return root;
@@ -938,15 +828,12 @@ namespace Loxodon.Framework.Binding.Expressions
             throw new NotSupportedException("Cannot call on Nullable");
         }
 
-        protected override Expression VisitMethodCall(MethodCallExpression expr)
-        {
+        protected override Expression VisitMethodCall(MethodCallExpression expr) {
             object root;
-            if (expr.Method.IsStatic)
-            {
+            if (expr.Method.IsStatic) {
                 root = null;
             }
-            else
-            {
+            else {
                 root = ((ConstantExpression)Visit(expr.Object)).Value;
                 if (IsNullable(expr.Object.Type))
                     return Expression.Constant(PerformOnNullable(root, expr.Method, expr.Arguments), expr.Type);
@@ -955,41 +842,34 @@ namespace Loxodon.Framework.Binding.Expressions
             return Expression.Constant(InvokeMethod(args => expr.Method.Invoke(root, args), expr.Arguments), expr.Type.Equals(typeof(void)) ? typeof(object) : expr.Type);
         }
 
-        protected override Expression VisitConditional(ConditionalExpression expr)
-        {
+        protected override Expression VisitConditional(ConditionalExpression expr) {
             return ((bool)((ConstantExpression)Visit(expr.Test)).Value) ? Visit(expr.IfTrue) : Visit(expr.IfFalse);
         }
 
-        protected override Expression VisitTypeBinary(TypeBinaryExpression expr)
-        {
+        protected override Expression VisitTypeBinary(TypeBinaryExpression expr) {
             return Expression.Constant(expr.TypeOperand.IsInstanceOfType(((ConstantExpression)Visit(expr.Expression)).Value), expr.Type);
         }
 
-        protected override Expression VisitParameter(ParameterExpression expr)
-        {
+        protected override Expression VisitParameter(ParameterExpression expr) {
             return Expression.Constant(values[expr], expr.Type);
         }
 
-        protected override Expression VisitLambda(LambdaExpression expr)
-        {
+        protected override Expression VisitLambda(LambdaExpression expr) {
             Func<object[], object> proxy = args => Evaluate(expr, values, args);
             return Expression.Constant(proxy, typeof(Func<object[], object>));
         }
 
-        protected override Expression VisitInvocation(InvocationExpression expr)
-        {
+        protected override Expression VisitInvocation(InvocationExpression expr) {
             var toInvoke = (Delegate)((ConstantExpression)Visit(expr.Expression)).Value;
             var result = InvokeMethod(args => toInvoke.DynamicInvoke(args), expr.Arguments);
             return Expression.Constant(result, expr.Type.Equals(typeof(void)) ? typeof(object) : expr.Type);
         }
 
-        protected override Expression VisitNewArrayInit(NewArrayExpression expr)
-        {
+        protected override Expression VisitNewArrayInit(NewArrayExpression expr) {
             var expressions = expr.Expressions;
             int count = expressions != null ? expressions.Count : 0;
             Array array = (Array)Activator.CreateInstance(expr.Type, count);
-            for (int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 var expression = this.Visit(expressions[i]);
                 ConstantExpression constantExpression = expression as ConstantExpression;
                 if (constantExpression != null)
@@ -998,17 +878,14 @@ namespace Loxodon.Framework.Binding.Expressions
             return Expression.Constant(array, expr.Type);
         }
 
-        internal static object Evaluate(LambdaExpression expr, Scope scope, params object[] args)
-        {
+        internal static object Evaluate(LambdaExpression expr, Scope scope, params object[] args) {
             var visitor = new EvaluatingVisitor();
             visitor.values = new Scope(scope);
 
             var first = expr.Parameters.GetEnumerator();
             var sencond = args != null ? args.GetEnumerator() : null;
-            while (first.MoveNext())
-            {
-                if (sencond.MoveNext())
-                {
+            while (first.MoveNext()) {
+                if (sencond.MoveNext()) {
                     visitor.values.Register(first.Current, sencond.Current);
                 }
             }

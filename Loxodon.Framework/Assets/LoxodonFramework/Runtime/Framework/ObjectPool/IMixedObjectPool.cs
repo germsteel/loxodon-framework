@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.ObjectPool
-{
-    public interface IMixedObjectPool<T> : IDisposable where T : class
-    {
+namespace Loxodon.Framework.ObjectPool {
+    public interface IMixedObjectPool<T> : IDisposable where T : class {
         /// <summary>
         /// Gets an object from the pool if one is available, otherwise creates one.
         /// </summary>

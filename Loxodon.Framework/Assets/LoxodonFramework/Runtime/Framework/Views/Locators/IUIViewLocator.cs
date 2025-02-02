@@ -24,10 +24,8 @@
 
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Views
-{
-    public interface IUIViewLocator
-    {
+namespace Loxodon.Framework.Views {
+    public interface IUIViewLocator {
         IView LoadView(string name);
 
         T LoadView<T>(string name) where T : IView;

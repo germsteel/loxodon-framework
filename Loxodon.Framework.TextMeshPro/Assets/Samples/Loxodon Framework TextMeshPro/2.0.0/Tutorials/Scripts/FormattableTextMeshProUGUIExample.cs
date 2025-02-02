@@ -31,10 +31,8 @@ using Loxodon.Framework.Views.TextMeshPro;
 using System;
 using UnityEngine;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class FormattableTextMeshProUGUIExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class FormattableTextMeshProUGUIExample : MonoBehaviour {
         public FormattableTextMeshProUGUI paramBinding1;//参数绑定示例1，支持1-4个不同参数
         public GenericParameters<DateTime, int> paramBinding2;//参数绑定的另外一种方式，支持1-4个不同参数
         public FormattableTextMeshProUGUI arrayBinding;//也可以使用 ArrayParameters<float>
@@ -43,8 +41,7 @@ namespace Loxodon.Framework.Tutorials
 
         private ExampleViewModel viewModel;
 
-        private void Start()
-        {
+        private void Start() {
             ApplicationContext context = Context.GetApplicationContext();
             IServiceContainer container = context.GetContainer();
             BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -87,54 +84,46 @@ namespace Loxodon.Framework.Tutorials
             this.SetDataContext(this.viewModel);
         }
 
-        void Update()
-        {
+        void Update() {
             viewModel.Time = DateTime.Now;
             viewModel.FrameCount = Time.frameCount;
             viewModel.Hero.Health = (Time.frameCount % 1000) / 10;
         }
     }
 
-    public class ExampleViewModel : ObservableObject
-    {
+    public class ExampleViewModel : ObservableObject {
         private DateTime time;
         private TimeSpan timeSpan;
         private string template;
         private int frameCount;
         private Hero hero;
-        public DateTime Time
-        {
+        public DateTime Time {
             get { return this.time; }
             set { this.Set(ref time, value); }
         }
 
-        public TimeSpan TimeSpan
-        {
+        public TimeSpan TimeSpan {
             get { return this.timeSpan; }
             set { this.Set(ref timeSpan, value); }
         }
 
-        public int FrameCount
-        {
+        public int FrameCount {
             get { return this.frameCount; }
             set { this.Set(ref frameCount, value); }
         }
 
-        public string Template
-        {
+        public string Template {
             get { return this.template; }
             set { this.Set(ref template, value); }
         }
 
-        public Hero Hero
-        {
+        public Hero Hero {
             get { return this.hero; }
             set { this.Set(ref hero, value); }
         }
     }
 
-    public class Hero : ObservableObject
-    {
+    public class Hero : ObservableObject {
         private float attackSpeed = 95.5f;
         private float moveSpeed = 2.4f;
         private int health = 100;
@@ -143,44 +132,37 @@ namespace Loxodon.Framework.Tutorials
         private string name;
         private int age;
 
-        public string Name
-        {
+        public string Name {
             get { return this.name; }
             set { this.Set(ref name, value); }
         }
 
-        public int Age
-        {
+        public int Age {
             get { return this.age; }
             set { this.Set(ref age, value); }
         }
 
-        public float AttackSpeed
-        {
+        public float AttackSpeed {
             get { return this.attackSpeed; }
             set { this.Set(ref attackSpeed, value); }
         }
 
-        public float MoveSpeed
-        {
+        public float MoveSpeed {
             get { return this.moveSpeed; }
             set { this.Set(ref moveSpeed, value); }
         }
 
-        public int Health
-        {
+        public int Health {
             get { return this.health; }
             set { this.Set(ref health, value); }
         }
 
-        public int AttackDamage
-        {
+        public int AttackDamage {
             get { return this.attackDamage; }
             set { this.Set(ref attackDamage, value); }
         }
 
-        public int Armor
-        {
+        public int Armor {
             get { return this.armor; }
             set { this.Set(ref armor, value); }
         }

@@ -23,16 +23,12 @@
  */
 
 using UnityEngine;
-namespace Loxodon.Framework.Binding.Contexts
-{
-    public class BindingContextLifecycle : MonoBehaviour
-    {
+namespace Loxodon.Framework.Binding.Contexts {
+    public class BindingContextLifecycle : MonoBehaviour {
         private IBindingContext bindingContext;
-        public IBindingContext BindingContext
-        {
+        public IBindingContext BindingContext {
             get { return this.bindingContext; }
-            set
-            {
+            set {
                 if (this.bindingContext == value)
                     return;
 
@@ -43,10 +39,8 @@ namespace Loxodon.Framework.Binding.Contexts
             }
         }
 
-        protected virtual void OnDestroy()
-        {
-            if (this.bindingContext != null)
-            {
+        protected virtual void OnDestroy() {
+            if (this.bindingContext != null) {
                 this.bindingContext.Dispose();
                 this.bindingContext = null;
             }

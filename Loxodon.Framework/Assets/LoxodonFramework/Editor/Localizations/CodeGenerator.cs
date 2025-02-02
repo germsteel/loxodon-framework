@@ -27,12 +27,9 @@ using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Loxodon.Framework.Editors
-{
-    public class CodeGenerator
-	{
-		public string Generate (string className, Dictionary<string,object> dict)
-		{
+namespace Loxodon.Framework.Editors {
+    public class CodeGenerator {
+		public string Generate (string className, Dictionary<string,object> dict) {
 			string template = "using Loxodon.Framework.Localizations;\r\n${namespaces}\r\npublic static partial class ${name}\r\n{\r\n${properties}}";			
 			string format = "    public readonly static V<{0}> {1} = new V<{0}>(\"{2}\"); ";
 
@@ -58,13 +55,11 @@ namespace Loxodon.Framework.Editors
 			return code;
 		}
 
-		private string GetPropertyName (string key)
-		{
+		private string GetPropertyName (string key) {
 			return Regex.Replace (key, "[.]", "_");
 		}
 
-		private string GetTypeName (System.Type type)
-		{
+		private string GetTypeName (System.Type type) {
 			TypeCode typeCode = Type.GetTypeCode (type);
 			switch (typeCode) {
 			case TypeCode.String:

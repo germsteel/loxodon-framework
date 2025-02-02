@@ -29,10 +29,8 @@ using System.Reflection;
 
 using UnityEngine;
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public class ProxyType : IProxyType
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public class ProxyType : IProxyType {
         private static readonly BindingFlags DEFAULT_LOOKUP = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
         private readonly Dictionary<string, IProxyEventInfo> events = new Dictionary<string, IProxyEventInfo>();
@@ -50,22 +48,18 @@ namespace Loxodon.Framework.Binding.Reflection
         private readonly Type type;
         private ProxyType baseType;
 
-        public ProxyType(Type type, ProxyFactory factory)
-        {
+        public ProxyType(Type type, ProxyFactory factory) {
             this.factory = factory;
             this.type = type;
         }
 
         public Type Type { get { return this.type; } }
 
-        protected void AddMethodInfo(IProxyMethodInfo methodInfo)
-        {
-            lock (_lock)
-            {
+        protected void AddMethodInfo(IProxyMethodInfo methodInfo) {
+            lock (_lock) {
                 string name = methodInfo.Name;
                 List<IProxyMethodInfo> list;
-                if (!this.methods.TryGetValue(name, out list))
-                {
+                if (!this.methods.TryGetValue(name, out list)) {
                     list = new List<IProxyMethodInfo>();
                     this.methods.Add(name, list);
                 }
@@ -73,10 +67,8 @@ namespace Loxodon.Framework.Binding.Reflection
             }
         }
 
-        protected void RemoveMethodInfo(IProxyMethodInfo methodInfo)
-        {
-            lock (_lock)
-            {
+        protected void RemoveMethodInfo(IProxyMethodInfo methodInfo) {
+            lock (_lock) {
                 string name = methodInfo.Name;
                 List<IProxyMethodInfo> list;
                 if (!this.methods.TryGetValue(name, out list))
@@ -86,16 +78,13 @@ namespace Loxodon.Framework.Binding.Reflection
             }
         }
 
-        protected IProxyMethodInfo GetMethodInfo(string name, Type[] parameterTypes)
-        {
-            lock (_lock)
-            {
+        protected IProxyMethodInfo GetMethodInfo(string name, Type[] parameterTypes) {
+            lock (_lock) {
                 if (!this.methods.ContainsKey(name))
                     return null;
 
                 List<IProxyMethodInfo> list = this.methods[name];
-                foreach (IProxyMethodInfo info in list)
-                {
+                foreach (IProxyMethodInfo info in list) {
                     if (IsParameterMatch(info, parameterTypes))
                         return info;
                 }
@@ -103,16 +92,13 @@ namespace Loxodon.Framework.Binding.Reflection
             }
         }
 
-        protected bool IsParameterMatch(IProxyMethodInfo proxyMethodInfo, Type[] parameterTypes)
-        {
+        protected bool IsParameterMatch(IProxyMethodInfo proxyMethodInfo, Type[] parameterTypes) {
             ParameterInfo[] parameters = proxyMethodInfo.Parameters;
             if ((parameters == null || parameters.Length == 0) && (parameterTypes == null || parameterTypes.Length == 0))
                 return true;
 
-            if (parameters != null && parameterTypes != null && parameters.Length == parameterTypes.Length)
-            {
-                for (int i = 0; i < parameters.Length; i++)
-                {
+            if (parameters != null && parameterTypes != null && parameters.Length == parameterTypes.Length) {
+                for (int i = 0; i < parameters.Length; i++) {
                     if (parameters[i].ParameterType != parameterTypes[i])
                         return false;
                 }
@@ -121,65 +107,52 @@ namespace Loxodon.Framework.Binding.Reflection
             return false;
         }
 
-        public void Register(IProxyMemberInfo memberInfo)
-        {
+        public void Register(IProxyMemberInfo memberInfo) {
             if (!memberInfo.DeclaringType.Equals(type))
                 throw new ArgumentException();
 
             string name = memberInfo.Name;
-            if (memberInfo is IProxyPropertyInfo)
-            {
+            if (memberInfo is IProxyPropertyInfo) {
                 this.properties.Add(name, (IProxyPropertyInfo)memberInfo);
             }
-            else if (memberInfo is IProxyMethodInfo)
-            {
+            else if (memberInfo is IProxyMethodInfo) {
                 this.AddMethodInfo((IProxyMethodInfo)memberInfo);
             }
-            else if (memberInfo is IProxyFieldInfo)
-            {
+            else if (memberInfo is IProxyFieldInfo) {
                 this.fields.Add(name, (IProxyFieldInfo)memberInfo);
             }
-            else if (memberInfo is IProxyEventInfo)
-            {
+            else if (memberInfo is IProxyEventInfo) {
                 this.events.Add(name, (IProxyEventInfo)memberInfo);
             }
-            else if (memberInfo is IProxyItemInfo)
-            {
+            else if (memberInfo is IProxyItemInfo) {
                 this.itemInfo = (IProxyItemInfo)memberInfo;
             }
         }
 
-        public void Unregister(IProxyMemberInfo memberInfo)
-        {
+        public void Unregister(IProxyMemberInfo memberInfo) {
             if (!memberInfo.DeclaringType.Equals(type))
                 throw new ArgumentException();
 
             string name = memberInfo.Name;
-            if (memberInfo is IProxyPropertyInfo)
-            {
+            if (memberInfo is IProxyPropertyInfo) {
                 this.properties.Remove(name);
             }
-            else if (memberInfo is IProxyMethodInfo)
-            {
+            else if (memberInfo is IProxyMethodInfo) {
                 this.RemoveMethodInfo((IProxyMethodInfo)memberInfo);
             }
-            else if (memberInfo is IProxyFieldInfo)
-            {
+            else if (memberInfo is IProxyFieldInfo) {
                 this.fields.Remove(name);
             }
-            else if (memberInfo is IProxyEventInfo)
-            {
+            else if (memberInfo is IProxyEventInfo) {
                 this.events.Remove(name);
             }
-            else if (memberInfo is IProxyItemInfo)
-            {
+            else if (memberInfo is IProxyItemInfo) {
                 if (this.itemInfo == memberInfo)
                     this.itemInfo = null;
             }
         }
 
-        private IProxyType GetBase()
-        {
+        private IProxyType GetBase() {
             if (this.baseType != null)
                 return this.baseType;
 
@@ -190,10 +163,8 @@ namespace Loxodon.Framework.Binding.Reflection
             this.baseType = factory.GetType(_baseType, true);
             return this.baseType;
         }
-        public IProxyMemberInfo GetMember(string name)
-        {
-            if (name.Equals("Item") && typeof(ICollection).IsAssignableFrom(type))
-            {
+        public IProxyMemberInfo GetMember(string name) {
+            if (name.Equals("Item") && typeof(ICollection).IsAssignableFrom(type)) {
                 return GetItem();
             }
 
@@ -216,8 +187,7 @@ namespace Loxodon.Framework.Binding.Reflection
             return null;
         }
 
-        public IProxyMemberInfo GetMember(string name, BindingFlags flags)
-        {
+        public IProxyMemberInfo GetMember(string name, BindingFlags flags) {
             if (name.Equals("Item") && typeof(ICollection).IsAssignableFrom(type))
                 return GetItem();
 
@@ -240,8 +210,7 @@ namespace Loxodon.Framework.Binding.Reflection
             return null;
         }
 
-        public IProxyEventInfo GetEvent(string name)
-        {
+        public IProxyEventInfo GetEvent(string name) {
             IProxyEventInfo info;
             if (this.events.TryGetValue(name, out info))
                 return info;
@@ -249,25 +218,20 @@ namespace Loxodon.Framework.Binding.Reflection
             return FindEventInfo(name, DEFAULT_LOOKUP, true);
         }
 
-        private IProxyEventInfo FindEventInfo(string name, BindingFlags flags, bool includeInterface)
-        {
+        private IProxyEventInfo FindEventInfo(string name, BindingFlags flags, bool includeInterface) {
             IProxyEventInfo info = null;
             EventInfo eventInfo = this.type.GetEvent(name, flags | BindingFlags.DeclaredOnly);
-            if (eventInfo != null)
-            {
+            if (eventInfo != null) {
                 if (this.events.TryGetValue(eventInfo.Name, out info))
                     return info;
                 return this.CreateProxyEventInfo(eventInfo);
             }
 
-            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object)))
-            {
-                if (baseType != null)
-                {
+            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object))) {
+                if (baseType != null) {
                     info = baseType.FindEventInfo(name, flags, false);
                 }
-                else if (type.BaseType.GetEvent(name, flags & ~BindingFlags.DeclaredOnly) != null)
-                {
+                else if (type.BaseType.GetEvent(name, flags & ~BindingFlags.DeclaredOnly) != null) {
                     baseType = factory.GetType(type.BaseType, true);
                     info = baseType.FindEventInfo(name, flags, false);
                 }
@@ -275,11 +239,9 @@ namespace Loxodon.Framework.Binding.Reflection
                     return info;
             }
 
-            if (includeInterface)
-            {
+            if (includeInterface) {
                 Type[] types = type.GetInterfaces();
-                foreach (Type interfaceType in types)
-                {
+                foreach (Type interfaceType in types) {
                     ProxyType proxyType = factory.GetType(interfaceType, false);
                     if (proxyType == null && interfaceType.GetEvent(name, flags | BindingFlags.DeclaredOnly) != null)
                         proxyType = factory.GetType(interfaceType, true);
@@ -295,38 +257,31 @@ namespace Loxodon.Framework.Binding.Reflection
             return null;
         }
 
-        public IProxyFieldInfo GetField(string name)
-        {
+        public IProxyFieldInfo GetField(string name) {
             IProxyFieldInfo info;
             if (this.fields.TryGetValue(name, out info))
                 return info;
 
             return FindFieldInfo(name, DEFAULT_LOOKUP, true);
         }
-        public IProxyFieldInfo GetField(string name, BindingFlags flags)
-        {
+        public IProxyFieldInfo GetField(string name, BindingFlags flags) {
             return FindFieldInfo(name, flags, true);
         }
 
-        private IProxyFieldInfo FindFieldInfo(string name, BindingFlags flags, bool includeInterface)
-        {
+        private IProxyFieldInfo FindFieldInfo(string name, BindingFlags flags, bool includeInterface) {
             IProxyFieldInfo info = null;
             FieldInfo fieldInfo = this.type.GetField(name, flags | BindingFlags.DeclaredOnly);
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 if (this.fields.TryGetValue(fieldInfo.Name, out info))
                     return info;
                 return this.CreateProxyFieldInfo(fieldInfo);
             }
 
-            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object)))
-            {
-                if (baseType != null)
-                {
+            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object))) {
+                if (baseType != null) {
                     info = baseType.FindFieldInfo(name, flags, false);
                 }
-                else if (type.BaseType.GetField(name, flags & ~BindingFlags.DeclaredOnly) != null)
-                {
+                else if (type.BaseType.GetField(name, flags & ~BindingFlags.DeclaredOnly) != null) {
                     baseType = factory.GetType(type.BaseType, true);
                     info = baseType.FindFieldInfo(name, flags, false);
                 }
@@ -334,11 +289,9 @@ namespace Loxodon.Framework.Binding.Reflection
                     return info;
             }
 
-            if (includeInterface)
-            {
+            if (includeInterface) {
                 Type[] types = type.GetInterfaces();
-                foreach (Type interfaceType in types)
-                {
+                foreach (Type interfaceType in types) {
                     ProxyType proxyType = factory.GetType(interfaceType, false);
                     if (proxyType == null && interfaceType.GetField(name, flags | BindingFlags.DeclaredOnly) != null)
                         proxyType = factory.GetType(interfaceType, true);
@@ -354,8 +307,7 @@ namespace Loxodon.Framework.Binding.Reflection
             return null;
         }
 
-        public IProxyPropertyInfo GetProperty(string name)
-        {
+        public IProxyPropertyInfo GetProperty(string name) {
             IProxyPropertyInfo info;
             if (this.properties.TryGetValue(name, out info))
                 return info;
@@ -363,31 +315,25 @@ namespace Loxodon.Framework.Binding.Reflection
             return FindPropertyInfo(name, DEFAULT_LOOKUP, true);
         }
 
-        public IProxyPropertyInfo GetProperty(string name, BindingFlags flags)
-        {
+        public IProxyPropertyInfo GetProperty(string name, BindingFlags flags) {
             return FindPropertyInfo(name, flags, true);
         }
 
-        private IProxyPropertyInfo FindPropertyInfo(string name, BindingFlags flags, bool includeInterface)
-        {
+        private IProxyPropertyInfo FindPropertyInfo(string name, BindingFlags flags, bool includeInterface) {
             IProxyPropertyInfo info = null;
             PropertyInfo propertyInfo = this.type.GetProperty(name, flags | BindingFlags.DeclaredOnly);
 
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 if (this.properties.TryGetValue(propertyInfo.Name, out info))
                     return info;
                 return this.CreateProxyPropertyInfo(propertyInfo);
             }
 
-            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object)))
-            {
-                if (baseType != null)
-                {
+            if (type.BaseType != null && !type.BaseType.Equals(typeof(System.Object))) {
+                if (baseType != null) {
                     info = baseType.FindPropertyInfo(name, flags, false);
                 }
-                else if (type.BaseType.GetProperty(name, flags & ~BindingFlags.DeclaredOnly) != null)
-                {
+                else if (type.BaseType.GetProperty(name, flags & ~BindingFlags.DeclaredOnly) != null) {
                     baseType = factory.GetType(type.BaseType, true);
                     info = baseType.FindPropertyInfo(name, flags, false);
                 }
@@ -395,11 +341,9 @@ namespace Loxodon.Framework.Binding.Reflection
                     return info;
             }
 
-            if (includeInterface)
-            {
+            if (includeInterface) {
                 Type[] types = type.GetInterfaces();
-                foreach (Type interfaceType in types)
-                {
+                foreach (Type interfaceType in types) {
                     ProxyType proxyType = factory.GetType(interfaceType, false);
                     if (proxyType == null && interfaceType.GetProperty(name, flags | BindingFlags.DeclaredOnly) != null)
                         proxyType = factory.GetType(interfaceType, true);
@@ -415,17 +359,14 @@ namespace Loxodon.Framework.Binding.Reflection
             return null;
         }
 
-        public IProxyItemInfo GetItem()
-        {
+        public IProxyItemInfo GetItem() {
             if (this.itemInfo != null)
                 return this.itemInfo;
 
-            if (type.IsArray)
-            {
+            if (type.IsArray) {
                 return this.CreateArrayProxyItemInfo(type);
             }
-            else
-            {
+            else {
                 PropertyInfo propertyInfo = this.type.GetProperty("Item", BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
                 if (propertyInfo != null)
                     return this.CreateProxyItemInfo(propertyInfo);
@@ -438,8 +379,7 @@ namespace Loxodon.Framework.Binding.Reflection
             }
         }
 
-        public IProxyMethodInfo GetMethod(string name)
-        {
+        public IProxyMethodInfo GetMethod(string name) {
             MethodInfo methodInfo = this.type.GetMethod(name);
             if (methodInfo == null)
                 return null;
@@ -447,8 +387,7 @@ namespace Loxodon.Framework.Binding.Reflection
             return this.GetMethod(name, methodInfo.GetParameterTypes().ToArray());
         }
 
-        public virtual IProxyMethodInfo GetMethod(string name, Type[] parameterTypes)
-        {
+        public virtual IProxyMethodInfo GetMethod(string name, Type[] parameterTypes) {
             IProxyMethodInfo info = this.GetMethodInfo(name, parameterTypes);
             if (info != null)
                 return info;
@@ -456,8 +395,7 @@ namespace Loxodon.Framework.Binding.Reflection
             return FindMethodInfo(name, parameterTypes, DEFAULT_LOOKUP, true);
         }
 
-        public IProxyMethodInfo GetMethod(string name, BindingFlags flags)
-        {
+        public IProxyMethodInfo GetMethod(string name, BindingFlags flags) {
             MethodInfo methodInfo = this.type.GetMethod(name, flags);
             if (methodInfo == null)
                 return null;
@@ -465,31 +403,25 @@ namespace Loxodon.Framework.Binding.Reflection
             return this.GetMethod(name, methodInfo.GetParameterTypes().ToArray(), flags);
         }
 
-        public IProxyMethodInfo GetMethod(string name, Type[] parameterTypes, BindingFlags flags)
-        {
+        public IProxyMethodInfo GetMethod(string name, Type[] parameterTypes, BindingFlags flags) {
             return FindMethodInfo(name, parameterTypes, flags, true);
         }
 
-        private IProxyMethodInfo FindMethodInfo(string name, Type[] parameterTypes, BindingFlags flags, bool includeInterface)
-        {
+        private IProxyMethodInfo FindMethodInfo(string name, Type[] parameterTypes, BindingFlags flags, bool includeInterface) {
             IProxyMethodInfo info = null;
             MethodInfo methodInfo = this.type.GetMethod(name, flags | BindingFlags.DeclaredOnly, null, parameterTypes, null);
-            if (methodInfo != null)
-            {
+            if (methodInfo != null) {
                 info = this.GetMethodInfo(name, parameterTypes);
                 if (info != null)
                     return info;
                 return this.CreateProxyMethodInfo(methodInfo);
             }
 
-            if (type.BaseType != null)
-            {
-                if (baseType != null)
-                {
+            if (type.BaseType != null) {
+                if (baseType != null) {
                     info = baseType.FindMethodInfo(name, parameterTypes, flags, false);
                 }
-                else if (type.BaseType.GetMethod(name, flags & ~BindingFlags.DeclaredOnly) != null)
-                {
+                else if (type.BaseType.GetMethod(name, flags & ~BindingFlags.DeclaredOnly) != null) {
                     baseType = factory.GetType(type.BaseType, true);
                     info = baseType.FindMethodInfo(name, parameterTypes, flags, false);
                 }
@@ -497,11 +429,9 @@ namespace Loxodon.Framework.Binding.Reflection
                     return info;
             }
 
-            if (includeInterface)
-            {
+            if (includeInterface) {
                 Type[] types = type.GetInterfaces();
-                foreach (Type interfaceType in types)
-                {
+                foreach (Type interfaceType in types) {
                     ProxyType proxyType = factory.GetType(interfaceType, false);
                     if (proxyType == null && interfaceType.GetMethod(name, flags | BindingFlags.DeclaredOnly, null, parameterTypes, null) != null)
                         proxyType = factory.GetType(interfaceType, true);
@@ -517,22 +447,18 @@ namespace Loxodon.Framework.Binding.Reflection
             return null;
         }
 
-        protected IProxyEventInfo CreateProxyEventInfo(EventInfo eventInfo)
-        {
+        protected IProxyEventInfo CreateProxyEventInfo(EventInfo eventInfo) {
             ProxyEventInfo info = new ProxyEventInfo(eventInfo);
             this.events.Add(info.Name, info);
             return info;
         }
 
-        protected IProxyFieldInfo CreateProxyFieldInfo(FieldInfo fieldInfo)
-        {
+        protected IProxyFieldInfo CreateProxyFieldInfo(FieldInfo fieldInfo) {
             IProxyFieldInfo info = null;
-            try
-            {
+            try {
                 info = (IProxyFieldInfo)Activator.CreateInstance(typeof(ProxyFieldInfo<,>).MakeGenericType(fieldInfo.DeclaringType, fieldInfo.FieldType), fieldInfo);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 info = new ProxyFieldInfo(fieldInfo);
             }
             if (info != null)
@@ -540,22 +466,18 @@ namespace Loxodon.Framework.Binding.Reflection
             return info;
         }
 
-        internal IProxyPropertyInfo CreateProxyPropertyInfo(PropertyInfo propertyInfo)
-        {
+        internal IProxyPropertyInfo CreateProxyPropertyInfo(PropertyInfo propertyInfo) {
             IProxyPropertyInfo info = null;
-            try
-            {
+            try {
                 Type type = propertyInfo.DeclaringType;
-                if (propertyInfo.IsStatic())
-                {
+                if (propertyInfo.IsStatic()) {
                     ParameterInfo[] parameters = propertyInfo.GetIndexParameters();
                     if (parameters != null && parameters.Length > 0)
                         throw new ParameterMismatchException();
 
                     info = (IProxyPropertyInfo)Activator.CreateInstance(typeof(StaticProxyPropertyInfo<,>).MakeGenericType(type, propertyInfo.PropertyType), propertyInfo);
                 }
-                else
-                {
+                else {
                     ParameterInfo[] parameters = propertyInfo.GetIndexParameters();
                     if (parameters != null && parameters.Length == 1)
                         throw new ParameterMismatchException();
@@ -563,12 +485,10 @@ namespace Loxodon.Framework.Binding.Reflection
                     info = (IProxyPropertyInfo)Activator.CreateInstance(typeof(ProxyPropertyInfo<,>).MakeGenericType(type, propertyInfo.PropertyType), propertyInfo);
                 }
             }
-            catch (ParameterMismatchException e)
-            {
+            catch (ParameterMismatchException e) {
                 throw e;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 info = new ProxyPropertyInfo(propertyInfo);
             }
             if (info != null)
@@ -576,115 +496,86 @@ namespace Loxodon.Framework.Binding.Reflection
             return info;
         }
 
-        protected IProxyMethodInfo CreateProxyMethodInfo(MethodInfo methodInfo)
-        {
+        protected IProxyMethodInfo CreateProxyMethodInfo(MethodInfo methodInfo) {
             IProxyMethodInfo info = null;
-            try
-            {
+            try {
                 Type returnType = methodInfo.ReturnType;
                 ParameterInfo[] parameters = methodInfo.GetParameters();
                 Type type = methodInfo.DeclaringType;
-                if (typeof(void).Equals(returnType))
-                {
-                    if (methodInfo.IsStatic)
-                    {
-                        if (parameters == null || parameters.Length == 0)
-                        {
+                if (typeof(void).Equals(returnType)) {
+                    if (methodInfo.IsStatic) {
+                        if (parameters == null || parameters.Length == 0) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(StaticProxyActionInfo<>).MakeGenericType(type), methodInfo);
                         }
-                        else if (parameters.Length == 1)
-                        {
+                        else if (parameters.Length == 1) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(StaticProxyActionInfo<,>).MakeGenericType(type, parameters[0].ParameterType), methodInfo);
                         }
-                        else if (parameters.Length == 2)
-                        {
+                        else if (parameters.Length == 2) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(StaticProxyActionInfo<,,>).MakeGenericType(type, parameters[0].ParameterType, parameters[1].ParameterType), methodInfo);
                         }
-                        else if (parameters.Length == 3)
-                        {
+                        else if (parameters.Length == 3) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(StaticProxyActionInfo<,,,>).MakeGenericType(type, parameters[0].ParameterType, parameters[1].ParameterType, parameters[2].ParameterType), methodInfo);
                         }
-                        else
-                        {
+                        else {
                             info = new ProxyMethodInfo(methodInfo);
                         }
                     }
-                    else
-                    {
-                        if (parameters == null || parameters.Length == 0)
-                        {
+                    else {
+                        if (parameters == null || parameters.Length == 0) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(ProxyActionInfo<>).MakeGenericType(type), methodInfo);
                         }
-                        else if (parameters.Length == 1)
-                        {
+                        else if (parameters.Length == 1) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(ProxyActionInfo<,>).MakeGenericType(type, parameters[0].ParameterType), methodInfo);
                         }
-                        else if (parameters.Length == 2)
-                        {
+                        else if (parameters.Length == 2) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(ProxyActionInfo<,,>).MakeGenericType(type, parameters[0].ParameterType, parameters[1].ParameterType), methodInfo);
                         }
-                        else if (parameters.Length == 3)
-                        {
+                        else if (parameters.Length == 3) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(ProxyActionInfo<,,,>).MakeGenericType(type, parameters[0].ParameterType, parameters[1].ParameterType, parameters[2].ParameterType), methodInfo);
                         }
-                        else
-                        {
+                        else {
                             info = new ProxyMethodInfo(methodInfo);
                         }
                     }
                 }
-                else
-                {
-                    if (methodInfo.IsStatic)
-                    {
-                        if (parameters == null || parameters.Length == 0)
-                        {
+                else {
+                    if (methodInfo.IsStatic) {
+                        if (parameters == null || parameters.Length == 0) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(StaticProxyFuncInfo<,>).MakeGenericType(type, returnType), methodInfo);
                         }
-                        else if (parameters.Length == 1)
-                        {
+                        else if (parameters.Length == 1) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(StaticProxyFuncInfo<,,>).MakeGenericType(type, parameters[0].ParameterType, returnType), methodInfo);
                         }
-                        else if (parameters.Length == 2)
-                        {
+                        else if (parameters.Length == 2) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(StaticProxyFuncInfo<,,,>).MakeGenericType(type, parameters[0].ParameterType, parameters[1].ParameterType, returnType), methodInfo);
                         }
-                        else if (parameters.Length == 3)
-                        {
+                        else if (parameters.Length == 3) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(StaticProxyFuncInfo<,,,,>).MakeGenericType(type, parameters[0].ParameterType, parameters[1].ParameterType, parameters[2].ParameterType, returnType), methodInfo);
                         }
-                        else
-                        {
+                        else {
                             info = new ProxyMethodInfo(methodInfo);
                         }
                     }
-                    else
-                    {
-                        if (parameters == null || parameters.Length == 0)
-                        {
+                    else {
+                        if (parameters == null || parameters.Length == 0) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(ProxyFuncInfo<,>).MakeGenericType(type, returnType), methodInfo);
                         }
-                        else if (parameters.Length == 1)
-                        {
+                        else if (parameters.Length == 1) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(ProxyFuncInfo<,,>).MakeGenericType(type, parameters[0].ParameterType, returnType), methodInfo);
                         }
-                        else if (parameters.Length == 2)
-                        {
+                        else if (parameters.Length == 2) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(ProxyFuncInfo<,,,>).MakeGenericType(type, parameters[0].ParameterType, parameters[1].ParameterType, returnType), methodInfo);
                         }
-                        else if (parameters.Length == 3)
-                        {
+                        else if (parameters.Length == 3) {
                             info = (IProxyMethodInfo)Activator.CreateInstance(typeof(ProxyFuncInfo<,,,,>).MakeGenericType(type, parameters[0].ParameterType, parameters[1].ParameterType, parameters[2].ParameterType, returnType), methodInfo);
                         }
-                        else
-                        {
+                        else {
                             info = new ProxyMethodInfo(methodInfo);
                         }
                     }
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 info = new ProxyMethodInfo(methodInfo);
             }
             if (info != null)
@@ -693,20 +584,16 @@ namespace Loxodon.Framework.Binding.Reflection
             return info;
         }
 
-        protected IProxyItemInfo CreateArrayProxyItemInfo(Type type)
-        {
+        protected IProxyItemInfo CreateArrayProxyItemInfo(Type type) {
             var elementType = type.GetElementType();
 
             IProxyItemInfo info = null;
-            try
-            {
+            try {
                 info = (IProxyItemInfo)Activator.CreateInstance(typeof(ArrayProxyItemInfo<,>).MakeGenericType(type, elementType));
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 var code = Type.GetTypeCode(elementType);
-                switch (code)
-                {
+                switch (code) {
                     case TypeCode.Boolean:
                         info = new ArrayProxyItemInfo<bool[], bool>();
                         break;
@@ -752,8 +639,7 @@ namespace Loxodon.Framework.Binding.Reflection
                     case TypeCode.UInt64:
                         info = new ArrayProxyItemInfo<UInt64[], UInt64>();
                         break;
-                    case TypeCode.Object:
-                        {
+                    case TypeCode.Object: {
                             if (type.Equals(typeof(Vector2)))
                                 info = new ArrayProxyItemInfo<Vector2[], Vector2>();
                             else if (type.Equals(typeof(Vector3)))
@@ -783,8 +669,7 @@ namespace Loxodon.Framework.Binding.Reflection
             return info;
         }
 
-        protected IProxyItemInfo CreateProxyItemInfo(PropertyInfo propertyInfo)
-        {
+        protected IProxyItemInfo CreateProxyItemInfo(PropertyInfo propertyInfo) {
             Type type = propertyInfo.DeclaringType;
             ParameterInfo[] parameters = propertyInfo.GetIndexParameters();
             if (parameters == null || parameters.Length != 1)
@@ -795,34 +680,26 @@ namespace Loxodon.Framework.Binding.Reflection
             int typeFlag = TypeFlag(type, keyType, valueType);
 
             IProxyItemInfo info = null;
-            try
-            {
-                if (typeFlag == 1)
-                {
+            try {
+                if (typeFlag == 1) {
                     info = (IProxyItemInfo)Activator.CreateInstance(typeof(DictionaryProxyItemInfo<,,>).MakeGenericType(type, keyType, valueType), propertyInfo);
                 }
-                else if (typeFlag == 2)
-                {
+                else if (typeFlag == 2) {
                     info = (IProxyItemInfo)Activator.CreateInstance(typeof(ListProxyItemInfo<,>).MakeGenericType(type, valueType), propertyInfo);
                 }
-                else
-                {
+                else {
                     info = new ProxyItemInfo(propertyInfo);
                 }
 
             }
-            catch (Exception)
-            {
-                if (typeFlag == 1)
-                {
+            catch (Exception) {
+                if (typeFlag == 1) {
                     info = this.CreateDictionaryProxyItemInfo(propertyInfo);
                 }
-                else if (typeFlag == 2)
-                {
+                else if (typeFlag == 2) {
                     info = this.CreateListProxyItemInfo(propertyInfo);
                 }
-                else
-                {
+                else {
                     info = new ProxyItemInfo(propertyInfo);
                 }
             }
@@ -832,32 +709,27 @@ namespace Loxodon.Framework.Binding.Reflection
             return info;
         }
 
-        protected int TypeFlag(Type type, Type keyType, Type valueType)
-        {
-            try
-            {
+        protected int TypeFlag(Type type, Type keyType, Type valueType) {
+            try {
                 if (keyType.Equals(typeof(int)) && typeof(IList<>).MakeGenericType(valueType).IsAssignableFrom(type))
                     return 2;
                 if (typeof(IDictionary<,>).MakeGenericType(keyType, valueType).IsAssignableFrom(type))
                     return 1;
                 return 0;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return 0;
             }
         }
 
-        protected virtual IProxyItemInfo CreateListProxyItemInfo(PropertyInfo propertyInfo)
-        {
+        protected virtual IProxyItemInfo CreateListProxyItemInfo(PropertyInfo propertyInfo) {
             var type = propertyInfo.PropertyType;
 #if NETFX_CORE
             TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
 #else
             TypeCode typeCode = Type.GetTypeCode(type);
 #endif
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.Boolean:
                     return new ListProxyItemInfo<IList<bool>, bool>(propertyInfo);
                 case TypeCode.Byte:
@@ -888,8 +760,7 @@ namespace Loxodon.Framework.Binding.Reflection
                     return new ListProxyItemInfo<IList<UInt32>, UInt32>(propertyInfo);
                 case TypeCode.UInt64:
                     return new ListProxyItemInfo<IList<UInt64>, UInt64>(propertyInfo);
-                case TypeCode.Object:
-                    {
+                case TypeCode.Object: {
                         if (type.Equals(typeof(Vector2)))
                             return new ListProxyItemInfo<IList<Vector2>, Vector2>(propertyInfo);
                         if (type.Equals(typeof(Vector3)))
@@ -912,8 +783,7 @@ namespace Loxodon.Framework.Binding.Reflection
             }
         }
 
-        protected virtual IProxyItemInfo CreateDictionaryProxyItemInfo(PropertyInfo propertyInfo)
-        {
+        protected virtual IProxyItemInfo CreateDictionaryProxyItemInfo(PropertyInfo propertyInfo) {
             ParameterInfo[] parameters = propertyInfo.GetIndexParameters();
             var type = propertyInfo.PropertyType;
 #if NETFX_CORE
@@ -922,10 +792,8 @@ namespace Loxodon.Framework.Binding.Reflection
             TypeCode typeCode = Type.GetTypeCode(type);
 #endif
 
-            if (parameters[0].ParameterType.Equals(typeof(string)))
-            {
-                switch (typeCode)
-                {
+            if (parameters[0].ParameterType.Equals(typeof(string))) {
+                switch (typeCode) {
                     case TypeCode.Boolean:
                         return new DictionaryProxyItemInfo<IDictionary<string, bool>, string, bool>(propertyInfo);
                     case TypeCode.Byte:
@@ -956,8 +824,7 @@ namespace Loxodon.Framework.Binding.Reflection
                         return new DictionaryProxyItemInfo<IDictionary<string, UInt32>, string, UInt32>(propertyInfo);
                     case TypeCode.UInt64:
                         return new DictionaryProxyItemInfo<IDictionary<string, UInt64>, string, UInt64>(propertyInfo);
-                    case TypeCode.Object:
-                        {
+                    case TypeCode.Object: {
                             if (type.Equals(typeof(Vector2)))
                                 return new DictionaryProxyItemInfo<IDictionary<string, Vector2>, string, Vector2>(propertyInfo);
                             if (type.Equals(typeof(Vector3)))
@@ -979,10 +846,8 @@ namespace Loxodon.Framework.Binding.Reflection
                         return new ProxyItemInfo(propertyInfo);
                 }
             }
-            else if (parameters[0].ParameterType.Equals(typeof(int)))
-            {
-                switch (typeCode)
-                {
+            else if (parameters[0].ParameterType.Equals(typeof(int))) {
+                switch (typeCode) {
                     case TypeCode.Boolean:
                         return new DictionaryProxyItemInfo<IDictionary<int, bool>, int, bool>(propertyInfo);
                     case TypeCode.Byte:
@@ -1013,8 +878,7 @@ namespace Loxodon.Framework.Binding.Reflection
                         return new DictionaryProxyItemInfo<IDictionary<int, UInt32>, int, UInt32>(propertyInfo);
                     case TypeCode.UInt64:
                         return new DictionaryProxyItemInfo<IDictionary<int, UInt64>, int, UInt64>(propertyInfo);
-                    case TypeCode.Object:
-                        {
+                    case TypeCode.Object: {
                             if (type.Equals(typeof(Vector2)))
                                 return new DictionaryProxyItemInfo<IDictionary<int, Vector2>, int, Vector2>(propertyInfo);
                             if (type.Equals(typeof(Vector3)))
@@ -1036,8 +900,7 @@ namespace Loxodon.Framework.Binding.Reflection
                         return new ProxyItemInfo(propertyInfo);
                 }
             }
-            else
-            {
+            else {
                 return new ProxyItemInfo(propertyInfo);
             }
         }

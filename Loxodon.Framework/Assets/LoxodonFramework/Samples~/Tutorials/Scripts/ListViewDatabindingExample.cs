@@ -32,10 +32,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ListViewDatabindingExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ListViewDatabindingExample : MonoBehaviour {
         private ListViewViewModel viewModel;
 
         public Button addButton;
@@ -56,15 +54,13 @@ namespace Loxodon.Framework.Tutorials
 
         private AsyncViewInteractionAction editViewInteractionAction;
 
-        void Awake()
-        {
+        void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
 
             Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
-            foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures"))
-            {
+            foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures")) {
                 if (sprite != null)
                     sprites.Add(sprite.name, sprite);
             }
@@ -72,15 +68,13 @@ namespace Loxodon.Framework.Tutorials
             converterRegistry.Register("spriteConverter", new SpriteConverter(sprites));
         }
 
-        void OnDestroy()
-        {
+        void OnDestroy() {
             ApplicationContext context = Context.GetApplicationContext();
             IConverterRegistry converterRegistry = context.GetContainer().Resolve<IConverterRegistry>();
             converterRegistry.Unregister("spriteConverter");
         }
 
-        void Start()
-        {
+        void Start() {
             editViewInteractionAction = new AsyncViewInteractionAction(editView);
             viewModel = new ListViewViewModel();
             IBindingContext bindingContext = this.BindingContext();

@@ -31,15 +31,12 @@ using Loxodon.Framework.Binding.Reflection;
 using Loxodon.Framework.Observables;
 using UnityEngine;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class UnityTargetProxyFactory : ITargetProxyFactory
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class UnityTargetProxyFactory : ITargetProxyFactory {
         [ThreadStatic]
         private static readonly List<Type> TYPES = new List<Type>();
         private static readonly Type[] EMPTY_TYPES = new Type[0];
-        public ITargetProxy CreateProxy(object target, BindingDescription description)
-        {
+        public ITargetProxy CreateProxy(object target, BindingDescription description) {
             if (TargetNameUtil.IsCollection(description.TargetName))
                 return null;
 
@@ -52,8 +49,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 throw new MissingMemberException(type.Type.FullName, description.TargetName);
 
             UnityEventBase updateTrigger = null;
-            if (!string.IsNullOrEmpty(description.UpdateTrigger))
-            {
+            if (!string.IsNullOrEmpty(description.UpdateTrigger)) {
                 IProxyPropertyInfo updateTriggerPropertyInfo = type.GetProperty(description.UpdateTrigger);
                 IProxyFieldInfo updateTriggerFieldInfo = updateTriggerPropertyInfo == null ? type.GetField(description.UpdateTrigger) : null;
                 if (updateTriggerPropertyInfo != null)
@@ -71,13 +67,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             var propertyInfo = memberInfo as IProxyPropertyInfo;
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 if (typeof(IObservableProperty).IsAssignableFrom(propertyInfo.ValueType))
                     return null;
 
-                if (typeof(UnityEventBase).IsAssignableFrom(propertyInfo.ValueType))
-                {
+                if (typeof(UnityEventBase).IsAssignableFrom(propertyInfo.ValueType)) {
                     //Event Type
                     object unityEvent = propertyInfo.GetValue(target);
                     Type[] paramTypes = GetUnityEventParametersType(propertyInfo.ValueType);
@@ -92,13 +86,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             var fieldInfo = memberInfo as IProxyFieldInfo;
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 if (typeof(IObservableProperty).IsAssignableFrom(fieldInfo.ValueType))
                     return null;
 
-                if (typeof(UnityEventBase).IsAssignableFrom(fieldInfo.ValueType))
-                {
+                if (typeof(UnityEventBase).IsAssignableFrom(fieldInfo.ValueType)) {
                     //Event Type
                     object unityEvent = fieldInfo.GetValue(target);
                     Type[] paramTypes = GetUnityEventParametersType(fieldInfo.ValueType);
@@ -115,11 +107,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return null;
         }
 
-        protected virtual ITargetProxy CreateUnityPropertyProxy(object target, IProxyPropertyInfo propertyInfo, UnityEventBase updateTrigger)
-        {
+        protected virtual ITargetProxy CreateUnityPropertyProxy(object target, IProxyPropertyInfo propertyInfo, UnityEventBase updateTrigger) {
             TypeCode typeCode = propertyInfo.ValueTypeCode;
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.String: return new UnityPropertyProxy<string>(target, propertyInfo, (UnityEvent<string>)updateTrigger);
                 case TypeCode.Boolean: return new UnityPropertyProxy<bool>(target, propertyInfo, (UnityEvent<bool>)updateTrigger);
                 case TypeCode.SByte: return new UnityPropertyProxy<sbyte>(target, propertyInfo, (UnityEvent<sbyte>)updateTrigger);
@@ -135,8 +125,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Double: return new UnityPropertyProxy<double>(target, propertyInfo, (UnityEvent<double>)updateTrigger);
                 case TypeCode.Decimal: return new UnityPropertyProxy<decimal>(target, propertyInfo, (UnityEvent<decimal>)updateTrigger);
                 case TypeCode.DateTime: return new UnityPropertyProxy<DateTime>(target, propertyInfo, (UnityEvent<DateTime>)updateTrigger);
-                default:
-                    {
+                default: {
                         Type valueType = propertyInfo.ValueType;
                         if (valueType.Equals(typeof(Vector2)))
                             return new UnityPropertyProxy<Vector2>(target, propertyInfo, (UnityEvent<Vector2>)updateTrigger);
@@ -150,11 +139,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
-        protected virtual ITargetProxy CreateUnityFieldProxy(object target, IProxyFieldInfo fieldInfo, UnityEventBase updateTrigger)
-        {
+        protected virtual ITargetProxy CreateUnityFieldProxy(object target, IProxyFieldInfo fieldInfo, UnityEventBase updateTrigger) {
             TypeCode typeCode = fieldInfo.ValueTypeCode;
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.String: return new UnityFieldProxy<string>(target, fieldInfo, (UnityEvent<string>)updateTrigger);
                 case TypeCode.Boolean: return new UnityFieldProxy<bool>(target, fieldInfo, (UnityEvent<bool>)updateTrigger);
                 case TypeCode.SByte: return new UnityFieldProxy<sbyte>(target, fieldInfo, (UnityEvent<sbyte>)updateTrigger);
@@ -170,8 +157,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 case TypeCode.Double: return new UnityFieldProxy<double>(target, fieldInfo, (UnityEvent<double>)updateTrigger);
                 case TypeCode.Decimal: return new UnityFieldProxy<decimal>(target, fieldInfo, (UnityEvent<decimal>)updateTrigger);
                 case TypeCode.DateTime: return new UnityFieldProxy<DateTime>(target, fieldInfo, (UnityEvent<DateTime>)updateTrigger);
-                default:
-                    {
+                default: {
                         Type valueType = fieldInfo.ValueType;
                         if (valueType.Equals(typeof(Vector2)))
                             return new UnityFieldProxy<Vector2>(target, fieldInfo, (UnityEvent<Vector2>)updateTrigger);
@@ -185,10 +171,8 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
-        protected virtual ITargetProxy CreateUnityEventProxy(object target, UnityEventBase unityEvent, Type[] paramTypes)
-        {
-            switch (paramTypes.Length)
-            {
+        protected virtual ITargetProxy CreateUnityEventProxy(object target, UnityEventBase unityEvent, Type[] paramTypes) {
+            switch (paramTypes.Length) {
                 case 0:
                     return new UnityEventProxy(target, (UnityEvent)unityEvent);
                 case 1:
@@ -197,8 +181,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
 #else
                     TypeCode typeCode = Type.GetTypeCode(paramTypes[0]);
 #endif
-                    switch (typeCode)
-                    {
+                    switch (typeCode) {
                         case TypeCode.String: return new UnityEventProxy<string>(target, (UnityEvent<string>)unityEvent);
                         case TypeCode.Boolean: return new UnityEventProxy<bool>(target, (UnityEvent<bool>)unityEvent);
                         case TypeCode.SByte: return new UnityEventProxy<sbyte>(target, (UnityEvent<sbyte>)unityEvent);
@@ -214,8 +197,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                         case TypeCode.Double: return new UnityEventProxy<double>(target, (UnityEvent<double>)unityEvent);
                         case TypeCode.Decimal: return new UnityEventProxy<decimal>(target, (UnityEvent<decimal>)unityEvent);
                         case TypeCode.DateTime: return new UnityEventProxy<DateTime>(target, (UnityEvent<DateTime>)unityEvent);
-                        default:
-                            {
+                        default: {
                                 Type valueType = paramTypes[0];
                                 if (valueType.Equals(typeof(Vector2)))
                                     return new UnityEventProxy<Vector2>(target, (UnityEvent<Vector2>)unityEvent);
@@ -238,8 +220,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
-        protected Type[] GetUnityEventParametersType(Type type)
-        {
+        protected Type[] GetUnityEventParametersType(Type type) {
             MethodInfo info = type.GetMethod("Invoke");
             if (info == null)
                 throw new MemberAccessException($"{type.Name}.Invoke() method has been stripped, please declare to preserve this method in the link.xml file");
@@ -249,8 +230,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 return EMPTY_TYPES;
 
             TYPES.Clear();
-            foreach (ParameterInfo parameter in parameters)
-            {
+            foreach (ParameterInfo parameter in parameters) {
                 TYPES.Add(parameter.ParameterType);
             }
 

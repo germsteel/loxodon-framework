@@ -29,26 +29,22 @@ using UnityEngine;
 using System.Collections.Generic;
 using Loxodon.Log;
 
-namespace Loxodon.Framework.Prefs
-{
+namespace Loxodon.Framework.Prefs {
     /// <summary>
     /// 
     /// </summary>
-    public class BinaryFilePreferencesFactory : AbstractFactory
-    {
+    public class BinaryFilePreferencesFactory : AbstractFactory {
         /// <summary>
         /// 
         /// </summary>
-        public BinaryFilePreferencesFactory() : this(null, null)
-        {
+        public BinaryFilePreferencesFactory() : this(null, null) {
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="serializer"></param>
-        public BinaryFilePreferencesFactory(ISerializer serializer) : this(serializer, null)
-        {
+        public BinaryFilePreferencesFactory(ISerializer serializer) : this(serializer, null) {
         }
 
         /// <summary>
@@ -56,8 +52,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="serializer"></param>
         /// <param name="encryptor"></param>
-        public BinaryFilePreferencesFactory(ISerializer serializer, IEncryptor encryptor) : base(serializer, encryptor)
-        {
+        public BinaryFilePreferencesFactory(ISerializer serializer, IEncryptor encryptor) : base(serializer, encryptor) {
         }
 
         /// <summary>
@@ -65,8 +60,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public override Preferences Create(string name)
-        {
+        public override Preferences Create(string name) {
             return new BinaryFilePreferences(name, this.Serializer, this.Encryptor);
         }
     }
@@ -74,8 +68,7 @@ namespace Loxodon.Framework.Prefs
     /// <summary>
     /// 
     /// </summary>
-    public class BinaryFilePreferences : Preferences
-    {
+    public class BinaryFilePreferences : Preferences {
         private static readonly ILog log = LogManager.GetLogger(typeof(BinaryFilePreferences));
 
         private string root;
@@ -99,8 +92,7 @@ namespace Loxodon.Framework.Prefs
         /// <param name="name"></param>
         /// <param name="serializer"></param>
         /// <param name="encryptor"></param>
-        public BinaryFilePreferences(string name, ISerializer serializer, IEncryptor encryptor) : base(name)
-        {
+        public BinaryFilePreferences(string name, ISerializer serializer, IEncryptor encryptor) : base(name) {
             this.root = Application.persistentDataPath;
             this.serializer = serializer;
             this.encryptor = encryptor;
@@ -111,8 +103,7 @@ namespace Loxodon.Framework.Prefs
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual StringBuilder GetDirectory()
-        {
+        public virtual StringBuilder GetDirectory() {
             StringBuilder buf = new StringBuilder(this.root);
             buf.Append("/").Append(this.Name).Append("/");
             return buf;
@@ -122,18 +113,15 @@ namespace Loxodon.Framework.Prefs
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual StringBuilder GetFullFileName()
-        {
+        public virtual StringBuilder GetFullFileName() {
             return this.GetDirectory().Append("prefs.dat");
         }
 
         /// <summary>
         /// 
         /// </summary>
-        protected override void Load()
-        {
-            try
-            {
+        protected override void Load() {
+            try {
                 string filename = this.GetFullFileName().ToString();
                 if (!File.Exists(filename))
                     return;
@@ -146,13 +134,10 @@ namespace Loxodon.Framework.Prefs
                     data = encryptor.Decode(data);
 
                 this.dict.Clear();
-                using (MemoryStream stream = new MemoryStream(data))
-                {
-                    using (BinaryReader reader = new BinaryReader(stream))
-                    {
+                using (MemoryStream stream = new MemoryStream(data)) {
+                    using (BinaryReader reader = new BinaryReader(stream)) {
                         int count = reader.ReadInt32();
-                        for (int i = 0; i < count; i++)
-                        {
+                        for (int i = 0; i < count; i++) {
                             string key = reader.ReadString();
                             string value = reader.ReadString();
                             this.dict.Add(key, value);
@@ -160,15 +145,13 @@ namespace Loxodon.Framework.Prefs
                     }
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("Load failed,{0}", e);
             }
         }
 
-        public override object GetObject(string key, Type type, object defaultValue)
-        {
+        public override object GetObject(string key, Type type, object defaultValue) {
             if (!this.dict.ContainsKey(key))
                 return defaultValue;
 
@@ -179,10 +162,8 @@ namespace Loxodon.Framework.Prefs
             return serializer.Deserialize(str, type);
         }
 
-        public override void SetObject(string key, object value)
-        {
-            if (value == null)
-            {
+        public override void SetObject(string key, object value) {
+            if (value == null) {
                 this.dict.Remove(key);
                 return;
             }
@@ -197,8 +178,7 @@ namespace Loxodon.Framework.Prefs
         /// <param name="key"></param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public override T GetObject<T>(string key, T defaultValue)
-        {
+        public override T GetObject<T>(string key, T defaultValue) {
             if (!this.dict.ContainsKey(key))
                 return defaultValue;
 
@@ -215,10 +195,8 @@ namespace Loxodon.Framework.Prefs
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public override void SetObject<T>(string key, T value)
-        {
-            if (value == null)
-            {
+        public override void SetObject<T>(string key, T value) {
+            if (value == null) {
                 this.dict.Remove(key);
                 return;
             }
@@ -226,8 +204,7 @@ namespace Loxodon.Framework.Prefs
             this.dict[key] = serializer.Serialize(value);
         }
 
-        public override object[] GetArray(string key, Type type, object[] defaultValue)
-        {
+        public override object[] GetArray(string key, Type type, object[] defaultValue) {
             if (!this.dict.ContainsKey(key))
                 return defaultValue;
 
@@ -237,30 +214,25 @@ namespace Loxodon.Framework.Prefs
 
             string[] items = str.Split(ARRAY_SEPARATOR);
             List<object> list = new List<object>();
-            for (int i = 0; i < items.Length; i++)
-            {
+            for (int i = 0; i < items.Length; i++) {
                 string item = items[i];
                 if (string.IsNullOrEmpty(item))
                     list.Add(null);
-                else
-                {
+                else {
                     list.Add(serializer.Deserialize(items[i], type));
                 }
             }
             return list.ToArray();
         }
 
-        public override void SetArray(string key, object[] values)
-        {
-            if (values == null || values.Length == 0)
-            {
+        public override void SetArray(string key, object[] values) {
+            if (values == null || values.Length == 0) {
                 this.dict.Remove(key);
                 return;
             }
 
             StringBuilder buf = new StringBuilder();
-            for (int i = 0; i < values.Length; i++)
-            {
+            for (int i = 0; i < values.Length; i++) {
                 var value = values[i];
                 buf.Append(serializer.Serialize(value));
                 if (i < values.Length - 1)
@@ -270,8 +242,7 @@ namespace Loxodon.Framework.Prefs
             this.dict[key] = buf.ToString();
         }
 
-        public override T[] GetArray<T>(string key, T[] defaultValue)
-        {
+        public override T[] GetArray<T>(string key, T[] defaultValue) {
             if (!this.dict.ContainsKey(key))
                 return defaultValue;
 
@@ -281,30 +252,25 @@ namespace Loxodon.Framework.Prefs
 
             string[] items = str.Split(ARRAY_SEPARATOR);
             List<T> list = new List<T>();
-            for (int i = 0; i < items.Length; i++)
-            {
+            for (int i = 0; i < items.Length; i++) {
                 string item = items[i];
                 if (string.IsNullOrEmpty(item))
                     list.Add(default(T));
-                else
-                {
+                else {
                     list.Add((T)serializer.Deserialize(items[i], typeof(T)));
                 }
             }
             return list.ToArray();
         }
 
-        public override void SetArray<T>(string key, T[] values)
-        {
-            if (values == null || values.Length == 0)
-            {
+        public override void SetArray<T>(string key, T[] values) {
+            if (values == null || values.Length == 0) {
                 this.dict.Remove(key);
                 return;
             }
 
             StringBuilder buf = new StringBuilder();
-            for (int i = 0; i < values.Length; i++)
-            {
+            for (int i = 0; i < values.Length; i++) {
                 var value = values[i];
                 buf.Append(serializer.Serialize(value));
                 if (i < values.Length - 1)
@@ -319,8 +285,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public override bool ContainsKey(string key)
-        {
+        public override bool ContainsKey(string key) {
             return this.dict.ContainsKey(key);
         }
 
@@ -328,8 +293,7 @@ namespace Loxodon.Framework.Prefs
         /// 
         /// </summary>
         /// <param name="key"></param>
-        public override void Remove(string key)
-        {
+        public override void Remove(string key) {
             if (this.dict.ContainsKey(key))
                 this.dict.Remove(key);
         }
@@ -337,30 +301,24 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        public override void RemoveAll()
-        {
+        public override void RemoveAll() {
             this.dict.Clear();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public override void Save()
-        {
-            if (this.dict.Count <= 0)
-            {
+        public override void Save() {
+            if (this.dict.Count <= 0) {
                 this.Delete();
                 return;
             }
 
             Directory.CreateDirectory(this.GetDirectory().ToString());
-            using (MemoryStream stream = new MemoryStream())
-            {
-                using (BinaryWriter writer = new BinaryWriter(stream))
-                {
+            using (MemoryStream stream = new MemoryStream()) {
+                using (BinaryWriter writer = new BinaryWriter(stream)) {
                     writer.Write(this.dict.Count);
-                    foreach (KeyValuePair<string, string> kv in this.dict)
-                    {
+                    foreach (KeyValuePair<string, string> kv in this.dict) {
                         writer.Write(kv.Key);
                         writer.Write(kv.Value);
                     }
@@ -378,8 +336,7 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// 
         /// </summary>
-        public override void Delete()
-        {
+        public override void Delete() {
             this.dict.Clear();
             string filename = this.GetFullFileName().ToString();
             if (File.Exists(filename))

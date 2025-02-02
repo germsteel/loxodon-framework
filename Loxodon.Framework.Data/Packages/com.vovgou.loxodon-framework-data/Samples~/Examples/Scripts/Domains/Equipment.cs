@@ -26,10 +26,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Loxodon.Framework.Examples.Domains
-{
-    public class Equipment
-    {
+namespace Loxodon.Framework.Examples.Domains {
+    public class Equipment {
         private float health = 0;
 
         private float attackDamage = 0;
@@ -42,15 +40,12 @@ namespace Loxodon.Framework.Examples.Domains
 
         private List<CrystalInfo> crystals;
 
-        public Equipment() : this(new List<CrystalInfo>())
-        {
+        public Equipment() : this(new List<CrystalInfo>()) {
         }
 
-        public Equipment(List<CrystalInfo> crystals)
-        {
+        public Equipment(List<CrystalInfo> crystals) {
             this.crystals = crystals;
-            foreach (var crystal in this.crystals)
-            {
+            foreach (var crystal in this.crystals) {
                 if (crystal != null)
                     Apply(crystal);
             }
@@ -74,8 +69,7 @@ namespace Loxodon.Framework.Examples.Domains
         /// <summary>
         /// 镶嵌的宝石
         /// </summary>
-        public ReadOnlyCollection<CrystalInfo> Crystals
-        {
+        public ReadOnlyCollection<CrystalInfo> Crystals {
             get { return crystals.AsReadOnly(); }
         }
 
@@ -89,16 +83,14 @@ namespace Loxodon.Framework.Examples.Domains
         /// </summary>
         public EquipmentInfo Definition { get; set; }
 
-        public float Health
-        {
+        public float Health {
             get { return Definition.Health + this.health; }
         }
 
         /// <summary>
         /// 攻击力伤害
         /// </summary>
-        public float AttackDamage
-        {
+        public float AttackDamage {
 
             get { return Definition.AttackDamage + this.attackDamage; }
         }
@@ -107,8 +99,7 @@ namespace Loxodon.Framework.Examples.Domains
         /// 法术强度
         /// </summary>
 
-        public float AbilityPower
-        {
+        public float AbilityPower {
             get { return Definition.AbilityPower + this.abilityPower; }
         }
 
@@ -116,16 +107,14 @@ namespace Loxodon.Framework.Examples.Domains
         /// 护甲值
         /// </summary>
 
-        public float Armor
-        {
+        public float Armor {
             get { return Definition.Armor + this.armor; }
         }
 
         /// <summary>
         /// 魔法抗性
         /// </summary>
-        public float MagicResist
-        {
+        public float MagicResist {
             get { return Definition.MagicResist + this.magicResist; }
         }
 
@@ -135,8 +124,7 @@ namespace Loxodon.Framework.Examples.Domains
         /// <param name="index"></param>
         /// <param name="crystal"></param>
         /// <returns></returns>
-        public bool InlayCrystal(int index, CrystalInfo crystal)
-        {
+        public bool InlayCrystal(int index, CrystalInfo crystal) {
             if (index < 0)
                 throw new IndexOutOfRangeException();
 
@@ -153,8 +141,7 @@ namespace Loxodon.Framework.Examples.Domains
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public CrystalInfo UnloadCrystal(int index)
-        {
+        public CrystalInfo UnloadCrystal(int index) {
             if (index < 0 || index > crystals.Count)
                 throw new IndexOutOfRangeException();
 
@@ -164,13 +151,11 @@ namespace Loxodon.Framework.Examples.Domains
             return crystal;
         }
 
-        private void Apply(CrystalInfo crystal)
-        {
+        private void Apply(CrystalInfo crystal) {
             if (crystal == null)
                 return;
 
-            switch (crystal.Key)
-            {
+            switch (crystal.Key) {
                 case "health":
                     this.health += crystal.Value;
                     break;
@@ -189,13 +174,11 @@ namespace Loxodon.Framework.Examples.Domains
             }
         }
 
-        private void Remove(CrystalInfo crystal)
-        {
+        private void Remove(CrystalInfo crystal) {
             if (crystal == null)
                 return;
 
-            switch (crystal.Key)
-            {
+            switch (crystal.Key) {
                 case "health":
                     this.health -= crystal.Value;
                     break;

@@ -25,39 +25,32 @@
 using System;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Observables
-{
+namespace Loxodon.Framework.Observables {
     [Serializable]
-    public abstract class ObservablePropertyBase<T>
-    {
+    public abstract class ObservablePropertyBase<T> {
         private readonly object _lock = new object();
         private EventHandler valueChanged;
         protected T _value;
 
-        public event EventHandler ValueChanged
-        {
+        public event EventHandler ValueChanged {
             add { lock (_lock) { this.valueChanged += value; } }
             remove { lock (_lock) { this.valueChanged -= value; } }
         }
 
-        public ObservablePropertyBase() : this(default(T))
-        {
+        public ObservablePropertyBase() : this(default(T)) {
         }
 
-        public ObservablePropertyBase(T value)
-        {
+        public ObservablePropertyBase(T value) {
             this._value = value;
         }
 
         public virtual Type Type { get { return typeof(T); } }
 
-        protected void RaiseValueChanged()
-        {
+        protected void RaiseValueChanged() {
             this.valueChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        protected virtual bool Equals(T x, T y)
-        {
+        protected virtual bool Equals(T x, T y) {
             return EqualityComparer<T>.Default.Equals(x, y);
             //if (x != null)
             //{
@@ -74,23 +67,18 @@ namespace Loxodon.Framework.Observables
     }
 
     [Serializable]
-    public class ObservableProperty : ObservablePropertyBase<object>, IObservableProperty
-    {
-        public ObservableProperty() : this(null)
-        {
+    public class ObservableProperty : ObservablePropertyBase<object>, IObservableProperty {
+        public ObservableProperty() : this(null) {
         }
 
-        public ObservableProperty(object value) : base(value)
-        {
+        public ObservableProperty(object value) : base(value) {
         }
 
         public override Type Type { get { return this._value != null ? this._value.GetType() : typeof(object); } }
 
-        public virtual object Value
-        {
+        public virtual object Value {
             get { return this._value; }
-            set
-            {
+            set {
                 if (this.Equals(this._value, value))
                     return;
 
@@ -99,8 +87,7 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             var v = this.Value;
             if (v == null)
                 return "";
@@ -110,20 +97,15 @@ namespace Loxodon.Framework.Observables
     }
 
     [Serializable]
-    public class ObservableProperty<T> : ObservablePropertyBase<T>, IObservableProperty<T>
-    {
-        public ObservableProperty() : this(default(T))
-        {
+    public class ObservableProperty<T> : ObservablePropertyBase<T>, IObservableProperty<T> {
+        public ObservableProperty() : this(default(T)) {
         }
-        public ObservableProperty(T value) : base(value)
-        {
+        public ObservableProperty(T value) : base(value) {
         }
 
-        public virtual T Value
-        {
+        public virtual T Value {
             get { return this._value; }
-            set
-            {
+            set {
                 if (this.Equals(this._value, value))
                     return;
 
@@ -132,14 +114,12 @@ namespace Loxodon.Framework.Observables
             }
         }
 
-        object IObservableProperty.Value
-        {
+        object IObservableProperty.Value {
             get { return this.Value; }
             set { this.Value = (T)value; }
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             var v = this.Value;
             if (v == null)
                 return "";
@@ -147,13 +127,11 @@ namespace Loxodon.Framework.Observables
             return v.ToString();
         }
 
-        public static implicit operator T(ObservableProperty<T> data)
-        {
+        public static implicit operator T(ObservableProperty<T> data) {
             return data.Value;
         }
 
-        public static implicit operator ObservableProperty<T>(T data)
-        {
+        public static implicit operator ObservableProperty<T>(T data) {
             return new ObservableProperty<T>(data);
         }
     }

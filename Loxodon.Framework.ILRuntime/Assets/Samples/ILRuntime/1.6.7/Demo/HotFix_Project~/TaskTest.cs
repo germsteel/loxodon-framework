@@ -5,26 +5,20 @@ using System.Threading.Tasks;
 using UnityEngine.UI;
 using Loxodon.Framework.Asynchronous;
 
-namespace HotFix_Project
-{
-    public class TaskTest
-    {
+namespace HotFix_Project {
+    public class TaskTest {
 
-        public static void Run()
-        {
+        public static void Run() {
             UnityEngine.Debug.LogFormat("aaaaaaaaaaaaaaaaaaaaaaaaa");
             User user = new User();
 
-            try
-            {
+            try {
                 //For<Text, string>(v => v.text);
-                Task.Run(() =>
-                {
+                Task.Run(() => {
                     return user;
                 });
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 UnityEngine.Debug.LogFormat("eeeeeeeee {0}", e);
 
             }
@@ -33,14 +27,12 @@ namespace HotFix_Project
         /// <summary>
         ///  测试异步调用，成功
         /// </summary>
-        public static async void AsyncRun()
-        {
+        public static async void AsyncRun() {
             UnityEngine.Debug.LogFormat("aaaaaaaaaaaaaaaaaaaaaaaaa");
 
             await Task.Delay(2000);
 
-            var result = Executors.RunAsync(()=> 
-            {
+            var result = Executors.RunAsync(()=>  {
                 UnityEngine.Debug.LogFormat("ssssssssssssss");
             });
 
@@ -50,8 +42,7 @@ namespace HotFix_Project
 
         }
 
-        public static void For<TTarget, TResult>(Expression<Func<TTarget, TResult>> memberExpression)
-        {
+        public static void For<TTarget, TResult>(Expression<Func<TTarget, TResult>> memberExpression) {
             //ILRuntimePathParser parser = new ILRuntimePathParser();
 
             //string targetName = parser.ParseMemberName(memberExpression);

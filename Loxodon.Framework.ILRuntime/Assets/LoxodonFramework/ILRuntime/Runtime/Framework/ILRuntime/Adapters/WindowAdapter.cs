@@ -4,10 +4,8 @@ using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
 
-namespace Loxodon.Framework.ILRuntimes.Adapters
-{   
-    public class WindowAdapter : CrossBindingAdaptor
-    {
+namespace Loxodon.Framework.ILRuntimes.Adapters {   
+    public class WindowAdapter : CrossBindingAdaptor {
         static CrossBindingMethodInfo mOnEnable_0 = new CrossBindingMethodInfo("OnEnable");
         static CrossBindingMethodInfo mOnDisable_1 = new CrossBindingMethodInfo("OnDisable");
         static CrossBindingFunctionInfo<System.Boolean, Loxodon.Framework.Asynchronous.IAsyncResult> mActivate_2 = new CrossBindingFunctionInfo<System.Boolean, Loxodon.Framework.Asynchronous.IAsyncResult>("Activate");
@@ -60,39 +58,31 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
         static CrossBindingMethodInfo mOnDidApplyAnimationProperties_49 = new CrossBindingMethodInfo("OnDidApplyAnimationProperties");
         static CrossBindingMethodInfo mOnCanvasGroupChanged_50 = new CrossBindingMethodInfo("OnCanvasGroupChanged");
         static CrossBindingMethodInfo mOnCanvasHierarchyChanged_51 = new CrossBindingMethodInfo("OnCanvasHierarchyChanged");
-        public override Type BaseCLRType
-        {
-            get
-            {
+        public override Type BaseCLRType {
+            get {
                 return typeof(Loxodon.Framework.Views.Window);
             }
         }
 
-        public override Type AdaptorType
-        {
-            get
-            {
+        public override Type AdaptorType {
+            get {
                 return typeof(Adapter);
             }
         }
 
-        public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
-        {
+        public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance) {
             return new Adapter(appdomain, instance);
         }
 
-        public class Adapter : Loxodon.Framework.Views.Window, CrossBindingAdaptorType, IBehaviourAdapter
-        {
+        public class Adapter : Loxodon.Framework.Views.Window, CrossBindingAdaptorType, IBehaviourAdapter {
             ILTypeInstance instance;
             ILRuntime.Runtime.Enviorment.AppDomain appdomain;
 
-            public Adapter()
-            {
+            public Adapter() {
 
             }
 
-            public Adapter(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
-            {
+            public Adapter(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance) {
                 this.appdomain = appdomain;
                 this.instance = instance;
             }
@@ -101,8 +91,7 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
 
             public AppDomain AppDomain { get { return appdomain; } set { appdomain = value; } }
 
-            protected override void OnEnable()
-            {
+            protected override void OnEnable() {
                 if (this.instance == null)
                     return;
 
@@ -112,141 +101,123 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
                     mOnEnable_0.Invoke(this.instance);
             }
 
-            protected override void OnDisable()
-            {
+            protected override void OnDisable() {
                 if (mOnDisable_1.CheckShouldInvokeBase(this.instance))
                     base.OnDisable();
                 else
                     mOnDisable_1.Invoke(this.instance);
             }
 
-            public override Loxodon.Framework.Asynchronous.IAsyncResult Activate(System.Boolean ignoreAnimation)
-            {
+            public override Loxodon.Framework.Asynchronous.IAsyncResult Activate(System.Boolean ignoreAnimation) {
                 if (mActivate_2.CheckShouldInvokeBase(this.instance))
                     return base.Activate(ignoreAnimation);
                 else
                     return mActivate_2.Invoke(this.instance, ignoreAnimation);
             }
 
-            public override Loxodon.Framework.Asynchronous.IAsyncResult Passivate(System.Boolean ignoreAnimation)
-            {
+            public override Loxodon.Framework.Asynchronous.IAsyncResult Passivate(System.Boolean ignoreAnimation) {
                 if (mPassivate_3.CheckShouldInvokeBase(this.instance))
                     return base.Passivate(ignoreAnimation);
                 else
                     return mPassivate_3.Invoke(this.instance, ignoreAnimation);
             }
 
-            protected override void OnActivatedChanged()
-            {
+            protected override void OnActivatedChanged() {
                 if (mOnActivatedChanged_4.CheckShouldInvokeBase(this.instance))
                     base.OnActivatedChanged();
                 else
                     mOnActivatedChanged_4.Invoke(this.instance);
             }
 
-            protected override void OnCreate(Loxodon.Framework.Views.IBundle bundle)
-            {
+            protected override void OnCreate(Loxodon.Framework.Views.IBundle bundle) {
                 mOnCreate_5.Invoke(this.instance, bundle);
             }
 
-            public override Loxodon.Framework.Asynchronous.IAsyncResult DoShow(System.Boolean ignoreAnimation)
-            {
+            public override Loxodon.Framework.Asynchronous.IAsyncResult DoShow(System.Boolean ignoreAnimation) {
                 if (mDoShow_6.CheckShouldInvokeBase(this.instance))
                     return base.DoShow(ignoreAnimation);
                 else
                     return mDoShow_6.Invoke(this.instance, ignoreAnimation);
             }
 
-            protected override void OnShow()
-            {
+            protected override void OnShow() {
                 if (mOnShow_7.CheckShouldInvokeBase(this.instance))
                     base.OnShow();
                 else
                     mOnShow_7.Invoke(this.instance);
             }
 
-            public override Loxodon.Framework.Asynchronous.IAsyncResult DoHide(System.Boolean ignoreAnimation)
-            {
+            public override Loxodon.Framework.Asynchronous.IAsyncResult DoHide(System.Boolean ignoreAnimation) {
                 if (mDoHide_8.CheckShouldInvokeBase(this.instance))
                     return base.DoHide(ignoreAnimation);
                 else
                     return mDoHide_8.Invoke(this.instance, ignoreAnimation);
             }
 
-            protected override void OnHide()
-            {
+            protected override void OnHide() {
                 if (mOnHide_9.CheckShouldInvokeBase(this.instance))
                     base.OnHide();
                 else
                     mOnHide_9.Invoke(this.instance);
             }
 
-            public override void DoDismiss()
-            {
+            public override void DoDismiss() {
                 if (mDoDismiss_10.CheckShouldInvokeBase(this.instance))
                     base.DoDismiss();
                 else
                     mDoDismiss_10.Invoke(this.instance);
             }
 
-            protected override void OnDismiss()
-            {
+            protected override void OnDismiss() {
                 if (mOnDismiss_11.CheckShouldInvokeBase(this.instance))
                     base.OnDismiss();
                 else
                     mOnDismiss_11.Invoke(this.instance);
             }
 
-            protected override void OnDestroy()
-            {
+            protected override void OnDestroy() {
                 if (mOnDestroy_12.CheckShouldInvokeBase(this.instance))
                     base.OnDestroy();
                 else
                     mOnDestroy_12.Invoke(this.instance);
             }
 
-            public override Loxodon.Framework.Views.IUIView GetView(System.String name)
-            {
+            public override Loxodon.Framework.Views.IUIView GetView(System.String name) {
                 if (mGetView_18.CheckShouldInvokeBase(this.instance))
                     return base.GetView(name);
                 else
                     return mGetView_18.Invoke(this.instance, name);
             }
 
-            public override void AddView(Loxodon.Framework.Views.IUIView view, System.Boolean worldPositionStays)
-            {
+            public override void AddView(Loxodon.Framework.Views.IUIView view, System.Boolean worldPositionStays) {
                 if (mAddView_19.CheckShouldInvokeBase(this.instance))
                     base.AddView(view, worldPositionStays);
                 else
                     mAddView_19.Invoke(this.instance, view, worldPositionStays);
             }
 
-            public override void AddView(Loxodon.Framework.Views.IUIView view, Loxodon.Framework.Views.UILayout layout)
-            {
+            public override void AddView(Loxodon.Framework.Views.IUIView view, Loxodon.Framework.Views.UILayout layout) {
                 if (mAddView_20.CheckShouldInvokeBase(this.instance))
                     base.AddView(view, layout);
                 else
                     mAddView_20.Invoke(this.instance, view, layout);
             }
 
-            public override void RemoveView(Loxodon.Framework.Views.IUIView view, System.Boolean worldPositionStays)
-            {
+            public override void RemoveView(Loxodon.Framework.Views.IUIView view, System.Boolean worldPositionStays) {
                 if (mRemoveView_21.CheckShouldInvokeBase(this.instance))
                     base.RemoveView(view, worldPositionStays);
                 else
                     mRemoveView_21.Invoke(this.instance, view, worldPositionStays);
             }
 
-            protected override void OnVisibilityChanged()
-            {
+            protected override void OnVisibilityChanged() {
                 if (mOnVisibilityChanged_40.CheckShouldInvokeBase(this.instance))
                     base.OnVisibilityChanged();
                 else
                     mOnVisibilityChanged_40.Invoke(this.instance);
             }
 
-            protected override void Awake()
-            {
+            protected override void Awake() {
                 if (this.instance == null)
                     return;
 
@@ -256,16 +227,14 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
                     mAwake_41.Invoke(this.instance);
             }
 
-            protected override void Start()
-            {
+            protected override void Start() {
                 if (mStart_42.CheckShouldInvokeBase(this.instance))
                     base.Start();
                 else
                     mStart_42.Invoke(this.instance);
             }
 
-            public override System.Boolean IsActive()
-            {
+            public override System.Boolean IsActive() {
                 if (mIsActive_43.CheckShouldInvokeBase(this.instance))
                     return base.IsActive();
                 else
@@ -336,18 +305,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             //        mOnCanvasHierarchyChanged_51.Invoke(this.instance);
             //}
 
-            public override Loxodon.Framework.Views.Animations.IAnimation ActivationAnimation
-            {
-            get
-            {
+            public override Loxodon.Framework.Views.Animations.IAnimation ActivationAnimation {
+            get {
                 if (mget_ActivationAnimation_13.CheckShouldInvokeBase(this.instance))
                     return base.ActivationAnimation;
                 else
                     return mget_ActivationAnimation_13.Invoke(this.instance);
 
             }
-            set
-            {
+            set {
                 if (mset_ActivationAnimation_14.CheckShouldInvokeBase(this.instance))
                     base.ActivationAnimation = value;
                 else
@@ -356,18 +322,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override Loxodon.Framework.Views.Animations.IAnimation PassivationAnimation
-            {
-            get
-            {
+            public override Loxodon.Framework.Views.Animations.IAnimation PassivationAnimation {
+            get {
                 if (mget_PassivationAnimation_15.CheckShouldInvokeBase(this.instance))
                     return base.PassivationAnimation;
                 else
                     return mget_PassivationAnimation_15.Invoke(this.instance);
 
             }
-            set
-            {
+            set {
                 if (mset_PassivationAnimation_16.CheckShouldInvokeBase(this.instance))
                     base.PassivationAnimation = value;
                 else
@@ -376,10 +339,8 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override System.Collections.Generic.List<Loxodon.Framework.Views.IUIView> Views
-            {
-            get
-            {
+            public override System.Collections.Generic.List<Loxodon.Framework.Views.IUIView> Views {
+            get {
                 if (mget_Views_17.CheckShouldInvokeBase(this.instance))
                     return base.Views;
                 else
@@ -388,18 +349,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override System.String Name
-            {
-            get
-            {
+            public override System.String Name {
+            get {
                 if (mget_Name_22.CheckShouldInvokeBase(this.instance))
                     return base.Name;
                 else
                     return mget_Name_22.Invoke(this.instance);
 
             }
-            set
-            {
+            set {
                 if (mset_Name_23.CheckShouldInvokeBase(this.instance))
                     base.Name = value;
                 else
@@ -408,10 +366,8 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override UnityEngine.Transform Parent
-            {
-            get
-            {
+            public override UnityEngine.Transform Parent {
+            get {
                 if (mget_Parent_24.CheckShouldInvokeBase(this.instance))
                     return base.Parent;
                 else
@@ -420,10 +376,8 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override UnityEngine.GameObject Owner
-            {
-            get
-            {
+            public override UnityEngine.GameObject Owner {
+            get {
                 if (mget_Owner_25.CheckShouldInvokeBase(this.instance))
                     return base.Owner;
                 else
@@ -432,10 +386,8 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override UnityEngine.Transform Transform
-            {
-            get
-            {
+            public override UnityEngine.Transform Transform {
+            get {
                 if (mget_Transform_26.CheckShouldInvokeBase(this.instance))
                     return base.Transform;
                 else
@@ -444,10 +396,8 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override UnityEngine.RectTransform RectTransform
-            {
-            get
-            {
+            public override UnityEngine.RectTransform RectTransform {
+            get {
                 if (mget_RectTransform_27.CheckShouldInvokeBase(this.instance))
                     return base.RectTransform;
                 else
@@ -456,18 +406,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override System.Boolean Visibility
-            {
-            get
-            {
+            public override System.Boolean Visibility {
+            get {
                 if (mget_Visibility_28.CheckShouldInvokeBase(this.instance))
                     return base.Visibility;
                 else
                     return mget_Visibility_28.Invoke(this.instance);
 
             }
-            set
-            {
+            set {
                 if (mset_Visibility_29.CheckShouldInvokeBase(this.instance))
                     base.Visibility = value;
                 else
@@ -476,18 +423,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override Loxodon.Framework.Views.Animations.IAnimation EnterAnimation
-            {
-            get
-            {
+            public override Loxodon.Framework.Views.Animations.IAnimation EnterAnimation {
+            get {
                 if (mget_EnterAnimation_30.CheckShouldInvokeBase(this.instance))
                     return base.EnterAnimation;
                 else
                     return mget_EnterAnimation_30.Invoke(this.instance);
 
             }
-            set
-            {
+            set {
                 if (mset_EnterAnimation_31.CheckShouldInvokeBase(this.instance))
                     base.EnterAnimation = value;
                 else
@@ -496,18 +440,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override Loxodon.Framework.Views.Animations.IAnimation ExitAnimation
-            {
-            get
-            {
+            public override Loxodon.Framework.Views.Animations.IAnimation ExitAnimation {
+            get {
                 if (mget_ExitAnimation_32.CheckShouldInvokeBase(this.instance))
                     return base.ExitAnimation;
                 else
                     return mget_ExitAnimation_32.Invoke(this.instance);
 
             }
-            set
-            {
+            set {
                 if (mset_ExitAnimation_33.CheckShouldInvokeBase(this.instance))
                     base.ExitAnimation = value;
                 else
@@ -516,18 +457,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override System.Single Alpha
-            {
-            get
-            {
+            public override System.Single Alpha {
+            get {
                 if (mget_Alpha_34.CheckShouldInvokeBase(this.instance))
                     return base.Alpha;
                 else
                     return mget_Alpha_34.Invoke(this.instance);
 
             }
-            set
-            {
+            set {
                 if (mset_Alpha_35.CheckShouldInvokeBase(this.instance))
                     base.Alpha = value;
                 else
@@ -536,18 +474,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override System.Boolean Interactable
-            {
-            get
-            {
+            public override System.Boolean Interactable {
+            get {
                 if (mget_Interactable_36.CheckShouldInvokeBase(this.instance))
                     return base.Interactable;
                 else
                     return mget_Interactable_36.Invoke(this.instance);
 
             }
-            set
-            {
+            set {
                 if (mset_Interactable_37.CheckShouldInvokeBase(this.instance))
                     base.Interactable = value;
                 else
@@ -556,10 +491,8 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override UnityEngine.CanvasGroup CanvasGroup
-            {
-            get
-            {
+            public override UnityEngine.CanvasGroup CanvasGroup {
+            get {
                 if (mget_CanvasGroup_38.CheckShouldInvokeBase(this.instance))
                     return base.CanvasGroup;
                 else
@@ -568,10 +501,8 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             }
             }
 
-            public override Loxodon.Framework.Views.IAttributes ExtraAttributes
-            {
-            get
-            {
+            public override Loxodon.Framework.Views.IAttributes ExtraAttributes {
+            get {
                 if (mget_ExtraAttributes_39.CheckShouldInvokeBase(this.instance))
                     return base.ExtraAttributes;
                 else
@@ -579,18 +510,15 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
 
             }
             }
-            void IBehaviourAdapter.Awake()
-            {
+            void IBehaviourAdapter.Awake() {
                 this.Awake();
                 this.OnEnable();
             }
 
-            public override string ToString()
-            {
+            public override string ToString() {
                 IMethod m = appdomain.ObjectType.GetMethod("ToString", 0);
                 m = instance.Type.GetVirtualMethod(m);
-                if (m == null || m is ILMethod)
-                {
+                if (m == null || m is ILMethod) {
                     return instance.ToString();
                 }
                 else

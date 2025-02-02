@@ -31,13 +31,11 @@ using UnityEngine;
 
 using ValueType = Loxodon.Framework.Localizations.ValueType;
 
-namespace Loxodon.Framework.Editors
-{
+namespace Loxodon.Framework.Editors {
     [CustomEditor(typeof(LocalizationSourceBehaviour))]
     [CanEditMultipleObjects]
 
-    public class LocalizationSourceBehaviourEditor : LocalizationSourceEditor
-    {
+    public class LocalizationSourceBehaviourEditor : LocalizationSourceEditor {
         [SerializeField]
         private int currLanguageIndex = 0;
 
@@ -52,16 +50,14 @@ namespace Loxodon.Framework.Editors
         private List<string> languages;
         private MultilingualSource source;
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             var sourceProperty = serializedObject.FindProperty("Source");
             var entriesProperty = sourceProperty.FindPropertyRelative("entries");
             var languagesProperty = sourceProperty.FindPropertyRelative("languages");
 
             this.source = (target as LocalizationSourceBehaviour).Source;
             this.languages = source.Languages;
-            if (this.languages.Count <= 0)
-            {
+            if (this.languages.Count <= 0) {
                 CultureInfo cultureInfo = Locale.GetCultureInfo();
                 this.languages.Add(cultureInfo.Name);
             }
@@ -82,12 +78,10 @@ namespace Loxodon.Framework.Editors
             languageList.drawHeaderCallback = DrawLanguageListHeader;
             languageList.drawElementCallback = DrawLanguageListElement;
             languageList.drawElementBackgroundCallback = DrawElementBackground;
-            languageList.onSelectCallback = list =>
-            {
+            languageList.onSelectCallback = list => {
                 this.selectedLanguageIndex = list.index;
             };
-            languageList.onReorderCallback = list =>
-            {
+            languageList.onReorderCallback = list => {
                 int oldIndex = this.selectedLanguageIndex;
                 int newIndex = list.index;
                 OnMove(oldIndex, newIndex);
@@ -95,12 +89,10 @@ namespace Loxodon.Framework.Editors
             };
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             this.serializedObject.Update();
 
-            if (GUILayout.Button("Localization Source", TitleGUIStyle))
-            {
+            if (GUILayout.Button("Localization Source", TitleGUIStyle)) {
                 Application.OpenURL("https://github.com/cocowolf/loxodon-framework/blob/master/docs/LoxodonFramework.md");
             }
 
@@ -112,8 +104,7 @@ namespace Loxodon.Framework.Editors
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
-            switch (toolbarIndex)
-            {
+            switch (toolbarIndex) {
                 case 0:
                     this.entryList.DoLayoutList();
                     break;
@@ -125,23 +116,20 @@ namespace Loxodon.Framework.Editors
             this.serializedObject.ApplyModifiedProperties();
         }
 
-        protected virtual float EntryListElementHeight(int index)
-        {
+        protected virtual float EntryListElementHeight(int index) {
             if (this.foldoutIndex == index)
                 return this.elementHeight;
 
             return entryList.elementHeight;
         }
 
-        protected virtual void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        protected virtual void DrawElementBackground(Rect rect, int index, bool isActive, bool isFocused) {
             ReorderableList.defaultBehaviours.DrawElementBackground(rect, index, isActive, false, true);
         }
 
         #region EntryList
 
-        protected virtual void DrawEntryListElement(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        protected virtual void DrawEntryListElement(Rect rect, int index, bool isActive, bool isFocused) {
             var entries = entryList.serializedProperty;
             if (index < 0 || index >= entries.arraySize)
                 return;
@@ -159,18 +147,15 @@ namespace Loxodon.Framework.Editors
             var buttonLeftRect = new Rect(entryRect.xMax + HORIZONTAL_GAP, y - 1, 18, 18);
             var buttonRightRect = new Rect(buttonLeftRect.xMax, y - 1, 18, 18);
 
-            if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft))
-            {
+            if (GUI.Button(buttonLeftRect, new GUIContent("+"), EditorStyles.miniButtonLeft)) {
                 DuplicateEntry(entries, index);
             }
-            if (GUI.Button(buttonRightRect, new GUIContent("-"), EditorStyles.miniButtonRight))
-            {
+            if (GUI.Button(buttonRightRect, new GUIContent("-"), EditorStyles.miniButtonRight)) {
                 AskRemoveEntry(entries, index);
             }
         }
 
-        protected virtual void DrawEntryField(Rect position, SerializedProperty entry, int index)
-        {
+        protected virtual void DrawEntryField(Rect position, SerializedProperty entry, int index) {
             var keyProperty = entry.FindPropertyRelative("key");
             var typeProperty = entry.FindPropertyRelative("type");
             var valuesProperty = entry.FindPropertyRelative("values");
@@ -186,14 +171,12 @@ namespace Loxodon.Framework.Editors
             var foldout = index == foldoutIndex;
             EditorGUI.BeginChangeCheck();
             foldout = EditorGUI.Foldout(foldoutRect, foldout, GUIContent.none);
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 foldoutIndex = foldout ? index : -1;
                 this.entryList.index = foldoutIndex;
             }
 
-            if (foldoutIndex != index)
-            {
+            if (foldoutIndex != index) {
                 Rect keyRect = new Rect(foldoutRect.xMax - 15, y, Mathf.Min(200, width * 0.4f), height);
                 Rect typeRect = new Rect(keyRect.xMax + HORIZONTAL_GAP, y, Mathf.Min(120, width * 0.2f), height);
                 Rect valueRect = new Rect(typeRect.xMax + HORIZONTAL_GAP, y, position.xMax - typeRect.xMax - HORIZONTAL_GAP, height);
@@ -206,8 +189,7 @@ namespace Loxodon.Framework.Editors
                 var valueProperty = valuesProperty.GetArrayElementAtIndex(this.currLanguageIndex);
                 DrawValueField(valueRect, valueProperty, type);
             }
-            else
-            {
+            else {
                 y += height + VERTICAL_GAP;
                 width = position.width + 40;
                 Rect keyLabelRect = new Rect(x, y, Mathf.Min(200, width * 0.4f), height);
@@ -226,8 +208,7 @@ namespace Loxodon.Framework.Editors
 
                 float valueHeight = type == ValueType.String ? height * 2 : height;
 
-                for (int i = 0; i < languages.Count; i++)
-                {
+                for (int i = 0; i < languages.Count; i++) {
                     Rect languageRect = new Rect(x, y, Mathf.Min(200, width * 0.4f), height);
                     Rect valueRect = new Rect(languageRect.xMax + HORIZONTAL_GAP, y, position.xMax - languageRect.xMax - HORIZONTAL_GAP, valueHeight);
 
@@ -248,8 +229,7 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        protected virtual void DrawEntryListHeader(Rect rect)
-        {
+        protected virtual void DrawEntryListHeader(Rect rect) {
             float x = rect.x;
             float y = rect.y;
             float width = rect.width;
@@ -263,35 +243,29 @@ namespace Loxodon.Framework.Editors
             currLanguageIndex = EditorGUI.Popup(languageRect, currLanguageIndex, list.ToArray(), EditorStyles.popup);
         }
 
-        protected virtual void OnAddEntry(ReorderableList list)
-        {
+        protected virtual void OnAddEntry(ReorderableList list) {
             var entries = list.serializedProperty;
             int index = entries.arraySize > 0 ? entries.arraySize : 0;
             this.DrawContextMenu(entries, index);
         }
 
-        protected virtual void OnRemoveEntry(ReorderableList list)
-        {
+        protected virtual void OnRemoveEntry(ReorderableList list) {
             var entries = list.serializedProperty;
             AskRemoveEntry(entries, list.index);
         }
 
-        protected virtual void DrawContextMenu(SerializedProperty entries, int index)
-        {
+        protected virtual void DrawContextMenu(SerializedProperty entries, int index) {
             GenericMenu menu = new GenericMenu();
-            foreach (ValueType valueType in System.Enum.GetValues(typeof(ValueType)))
-            {
+            foreach (ValueType valueType in System.Enum.GetValues(typeof(ValueType))) {
                 var type = valueType;
-                menu.AddItem(new GUIContent(valueType.ToString()), false, context =>
-                {
+                menu.AddItem(new GUIContent(valueType.ToString()), false, context => {
                     AddEntry(entries, index, type);
                 }, null);
             }
             menu.ShowAsContext();
         }
 
-        protected virtual void AddEntry(SerializedProperty entries, int index, ValueType type)
-        {
+        protected virtual void AddEntry(SerializedProperty entries, int index, ValueType type) {
             if (index < 0 || index > entries.arraySize)
                 return;
 
@@ -306,14 +280,12 @@ namespace Loxodon.Framework.Editors
             keyProperty.stringValue = string.Empty;
             typeProperty.enumValueIndex = (int)type;
 
-            if(this.languages.Count > valuesProperty.arraySize)
-            {
+            if(this.languages.Count > valuesProperty.arraySize) {
                 for(int i= valuesProperty.arraySize;i<this.languages.Count;i++)
                     valuesProperty.InsertArrayElementAtIndex(i);
             }
 
-            for (int i = 0; i < valuesProperty.arraySize; i++)
-            {
+            for (int i = 0; i < valuesProperty.arraySize; i++) {
                 var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
                 valueProperty.FindPropertyRelative("dataValue").stringValue = null;
                 valueProperty.FindPropertyRelative("objectValue").objectReferenceValue = null;
@@ -323,8 +295,7 @@ namespace Loxodon.Framework.Editors
             GUI.FocusControl(null);
         }
 
-        protected virtual void DuplicateEntry(SerializedProperty entries, int index)
-        {
+        protected virtual void DuplicateEntry(SerializedProperty entries, int index) {
             if (index < 0 || index >= entries.arraySize)
                 return;
 
@@ -337,8 +308,7 @@ namespace Loxodon.Framework.Editors
 
             keyProperty.stringValue = string.Empty;
 
-            for (int i = 0; i < valuesProperty.arraySize; i++)
-            {
+            for (int i = 0; i < valuesProperty.arraySize; i++) {
                 var valueProperty = valuesProperty.GetArrayElementAtIndex(i);
                 valueProperty.FindPropertyRelative("dataValue").stringValue = null;
                 valueProperty.FindPropertyRelative("objectValue").objectReferenceValue = null;
@@ -348,27 +318,23 @@ namespace Loxodon.Framework.Editors
             GUI.FocusControl(null);
         }
 
-        protected virtual void AskRemoveEntry(SerializedProperty entries, int index)
-        {
+        protected virtual void AskRemoveEntry(SerializedProperty entries, int index) {
             if (entries == null || index < 0 || index >= entries.arraySize)
                 return;
 
             var variable = entries.GetArrayElementAtIndex(index);
             var key = variable.FindPropertyRelative("key").stringValue;
-            if (string.IsNullOrEmpty(key))
-            {
+            if (string.IsNullOrEmpty(key)) {
                 RemoveEntry(entries, index);
                 return;
             }
 
-            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\"?", key), "Yes", "Cancel"))
-            {
+            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\"?", key), "Yes", "Cancel")) {
                 RemoveEntry(entries, index);
             }
         }
 
-        protected virtual void RemoveEntry(SerializedProperty entries, int index)
-        {
+        protected virtual void RemoveEntry(SerializedProperty entries, int index) {
             if (index < 0 || index >= entries.arraySize)
                 return;
 
@@ -380,8 +346,7 @@ namespace Loxodon.Framework.Editors
         #endregion
 
         #region LanguagePanel
-        protected virtual void DrawLanguageListElement(Rect rect, int index, bool isActive, bool isFocused)
-        {
+        protected virtual void DrawLanguageListElement(Rect rect, int index, bool isActive, bool isFocused) {
             var languagesProperty = this.languageList.serializedProperty;
             if (index < 0 || index >= languagesProperty.arraySize)
                 return;
@@ -400,20 +365,17 @@ namespace Loxodon.Framework.Editors
             if (languagesProperty.arraySize <= 1)
                 GUI.enabled = false;
 
-            if (GUI.Button(deleteButtonRect, new GUIContent("-"), EditorStyles.miniButton))
-            {
+            if (GUI.Button(deleteButtonRect, new GUIContent("-"), EditorStyles.miniButton)) {
                 RemoveLanguage(languagesProperty, index);
             }
             GUI.enabled = true;
         }
 
-        protected virtual void DrawLanguageListHeader(Rect rect)
-        {
+        protected virtual void DrawLanguageListHeader(Rect rect) {
             GUI.Label(rect, "Languages");
         }
 
-        protected void DrawLanguageField(Rect position, SerializedProperty languageProperty, int index)
-        {
+        protected void DrawLanguageField(Rect position, SerializedProperty languageProperty, int index) {
             var code = languageProperty.stringValue;
             var language = Language.GetLanguage(code);
 
@@ -434,30 +396,25 @@ namespace Loxodon.Framework.Editors
 
             EditorGUI.LabelField(defaultRect, index == 0 ? string.Format("default({0})", code) : "");
 
-            if (GUI.Button(codeRect, new GUIContent(code), EditorStyles.popup))
-            {
+            if (GUI.Button(codeRect, new GUIContent(code), EditorStyles.popup)) {
                 DrawLanguageContextMenu(index);
             }
         }
 
-        protected virtual void OnAddLanguage(ReorderableList list)
-        {
+        protected virtual void OnAddLanguage(ReorderableList list) {
             var languages = list.serializedProperty;
             int index = languages.arraySize > 0 ? languages.arraySize : 0;
             this.DrawLanguageContextMenu(index);
         }
 
-        protected virtual void OnRemoveLanguage(ReorderableList list)
-        {
+        protected virtual void OnRemoveLanguage(ReorderableList list) {
             var languagesProperty = list.serializedProperty;
             RemoveLanguage(languagesProperty, list.index);
         }
 
-        protected virtual List<Language> GetLanguages(params string[] filters)
-        {
+        protected virtual List<Language> GetLanguages(params string[] filters) {
             List<Language> list = Language.GetAll(filters);
-            list.Sort((x, y) =>
-            {
+            list.Sort((x, y) => {
                 int n = x.Name.CompareTo(y.Name);
                 if (n != 0)
                     return n;
@@ -467,25 +424,20 @@ namespace Loxodon.Framework.Editors
             return list;
         }
 
-        protected virtual List<string> GetSelectedLanguages()
-        {
+        protected virtual List<string> GetSelectedLanguages() {
             List<string> list = new List<string>();
-            foreach (var code in this.languages)
-            {
+            foreach (var code in this.languages) {
                 var language = Language.GetLanguage(code);
                 list.Add(string.Format("{0} [{1}]", language.Name, language.Code));
             }
             return list;
         }
 
-        protected virtual void DrawLanguageContextMenu(int index)
-        {
+        protected virtual void DrawLanguageContextMenu(int index) {
             GenericMenu menu = new GenericMenu();
-            foreach (var language in GetLanguages(languages.ToArray()))
-            {
+            foreach (var language in GetLanguages(languages.ToArray())) {
                 var code = language.Code;
-                menu.AddItem(new GUIContent(language.Key), false, context =>
-                {
+                menu.AddItem(new GUIContent(language.Key), false, context => {
                     AddLanguage(languages, index, code);
                 }, null);
             }
@@ -493,25 +445,20 @@ namespace Loxodon.Framework.Editors
             menu.ShowAsContext();
         }
 
-        protected virtual void AddLanguage(List<string> list, int index, string code)
-        {
+        protected virtual void AddLanguage(List<string> list, int index, string code) {
             if (index < 0 || index > list.Count)
                 return;
 
             var languagesProperty = languageList.serializedProperty;
-            try
-            {
-                if (index == list.Count)
-                {
+            try {
+                if (index == list.Count) {
                     if (list.Contains(code))
                         return;
-                    else
-                    {
+                    else {
                         languagesProperty.InsertArrayElementAtIndex(index);
                         languagesProperty.GetArrayElementAtIndex(index).stringValue = code;
                         var entriesProperty = this.entryList.serializedProperty;
-                        for (int i = 0; i < entriesProperty.arraySize; i++)
-                        {
+                        for (int i = 0; i < entriesProperty.arraySize; i++) {
                             var entryProperty = entriesProperty.GetArrayElementAtIndex(i);
                             var valuesProperty = entryProperty.FindPropertyRelative("values");
                             valuesProperty.InsertArrayElementAtIndex(index);
@@ -519,36 +466,30 @@ namespace Loxodon.Framework.Editors
                             valueProperty.FindPropertyRelative("dataValue").stringValue = null;
                             valueProperty.FindPropertyRelative("objectValue").objectReferenceValue = null;
 
-                            if (valuesProperty.arraySize > languagesProperty.arraySize)
-                            {
-                                for (int j = valuesProperty.arraySize - 1; j >= languagesProperty.arraySize; j--)
-                                {
+                            if (valuesProperty.arraySize > languagesProperty.arraySize) {
+                                for (int j = valuesProperty.arraySize - 1; j >= languagesProperty.arraySize; j--) {
                                     valuesProperty.DeleteArrayElementAtIndex(j);
                                 }
                             }
                         }
                     }
                 }
-                else
-                {
+                else {
                     languagesProperty.GetArrayElementAtIndex(index).stringValue = code;
                 }
             }
-            finally
-            {
+            finally {
                 this.serializedObject.ApplyModifiedProperties();
                 GUI.FocusControl(null);
             }
 
         }
 
-        protected virtual void RemoveLanguage(SerializedProperty languagesProperty, int index)
-        {
+        protected virtual void RemoveLanguage(SerializedProperty languagesProperty, int index) {
             if (languagesProperty == null || index < 0 || index >= languagesProperty.arraySize)
                 return;
 
-            if (languagesProperty.arraySize <= 1)
-            {
+            if (languagesProperty.arraySize <= 1) {
                 EditorUtility.DisplayDialog("Title", "The last item cannot be deleted!", "OK");
                 return;
             }
@@ -559,14 +500,12 @@ namespace Loxodon.Framework.Editors
             var languageProperty = languagesProperty.GetArrayElementAtIndex(index);
             var code = languageProperty.stringValue;
 
-            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\" and all its data?", code), "Yes", "Cancel"))
-            {
+            if (EditorUtility.DisplayDialog("Confirm delete", string.Format("Are you sure you want to delete the item named \"{0}\" and all its data?", code), "Yes", "Cancel")) {
                 this.serializedObject.Update();
                 languagesProperty.DeleteArrayElementAtIndex(index);
 
                 var entriesProperty = this.entryList.serializedProperty;
-                for (int i = 0; i < entriesProperty.arraySize; i++)
-                {
+                for (int i = 0; i < entriesProperty.arraySize; i++) {
                     var entryProperty = entriesProperty.GetArrayElementAtIndex(i);
                     var valuesProperty = entryProperty.FindPropertyRelative("values");
                     if (valuesProperty.arraySize > index)
@@ -579,15 +518,13 @@ namespace Loxodon.Framework.Editors
             }
         }
 
-        protected virtual void OnMove(int oldIndex, int newIndex)
-        {
+        protected virtual void OnMove(int oldIndex, int newIndex) {
             if (this.currLanguageIndex == oldIndex)
                 this.currLanguageIndex = newIndex;
 
             this.serializedObject.Update();
             var entriesProperty = this.entryList.serializedProperty;
-            for (int i = 0; i < entriesProperty.arraySize; i++)
-            {
+            for (int i = 0; i < entriesProperty.arraySize; i++) {
                 var entryProperty = entriesProperty.GetArrayElementAtIndex(i);
                 var valuesProperty = entryProperty.FindPropertyRelative("values");
                 valuesProperty.MoveArrayElement(oldIndex, newIndex);

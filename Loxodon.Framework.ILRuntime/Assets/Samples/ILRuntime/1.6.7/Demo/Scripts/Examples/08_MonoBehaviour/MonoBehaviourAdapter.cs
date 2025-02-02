@@ -8,41 +8,32 @@ using ILRuntime.Runtime.Intepreter;
 using ILRuntime.CLR.Method;
 
 
-public class MonoBehaviourAdapter : CrossBindingAdaptor
-{
-    public override Type BaseCLRType
-    {
-        get
-        {
+public class MonoBehaviourAdapter : CrossBindingAdaptor {
+    public override Type BaseCLRType {
+        get {
             return typeof(MonoBehaviour);
         }
     }
 
-    public override Type AdaptorType
-    {
-        get
-        {
+    public override Type AdaptorType {
+        get {
             return typeof(Adapter);
         }
     }
 
-    public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
-    {
+    public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance) {
         return new Adapter(appdomain, instance);
     }
     //为了完整实现MonoBehaviour的所有特性，这个Adapter还得扩展，这里只抛砖引玉，只实现了最常用的Awake, Start和Update
-    public class Adapter : MonoBehaviour, CrossBindingAdaptorType
-    {
+    public class Adapter : MonoBehaviour, CrossBindingAdaptorType {
         ILTypeInstance instance;
         ILRuntime.Runtime.Enviorment.AppDomain appdomain;
 
-        public Adapter()
-        {
+        public Adapter() {
 
         }
 
-        public Adapter(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
-        {
+        public Adapter(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance) {
             this.appdomain = appdomain;
             this.instance = instance;
         }
@@ -53,19 +44,15 @@ public class MonoBehaviourAdapter : CrossBindingAdaptor
 
         IMethod mAwakeMethod;
         bool mAwakeMethodGot;
-        public void Awake()
-        {
+        public void Awake() {
             //Unity会在ILRuntime准备好这个实例前调用Awake，所以这里暂时先不掉用
-            if (instance != null)
-            {
-                if (!mAwakeMethodGot)
-                {
+            if (instance != null) {
+                if (!mAwakeMethodGot) {
                     mAwakeMethod = instance.Type.GetMethod("Awake", 0);
                     mAwakeMethodGot = true;
                 }
 
-                if (mAwakeMethod != null)
-                {
+                if (mAwakeMethod != null) {
                     appdomain.Invoke(mAwakeMethod, instance, null);
                 }
             }
@@ -73,42 +60,34 @@ public class MonoBehaviourAdapter : CrossBindingAdaptor
 
         IMethod mStartMethod;
         bool mStartMethodGot;
-        void Start()
-        {
-            if (!mStartMethodGot)
-            {
+        void Start() {
+            if (!mStartMethodGot) {
                 mStartMethod = instance.Type.GetMethod("Start", 0);
                 mStartMethodGot = true;
             }
 
-            if (mStartMethod != null)
-            {
+            if (mStartMethod != null) {
                 appdomain.Invoke(mStartMethod, instance, null);
             }
         }
 
         IMethod mUpdateMethod;
         bool mUpdateMethodGot;
-        void Update()
-        {
-            if (!mUpdateMethodGot)
-            {
+        void Update() {
+            if (!mUpdateMethodGot) {
                 mUpdateMethod = instance.Type.GetMethod("Update", 0);
                 mUpdateMethodGot = true;
             }
 
-            if (mUpdateMethod != null)
-            {
+            if (mUpdateMethod != null) {
                 appdomain.Invoke(mUpdateMethod, instance, null);
             }
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             IMethod m = appdomain.ObjectType.GetMethod("ToString", 0);
             m = instance.Type.GetVirtualMethod(m);
-            if (m == null || m is ILMethod)
-            {
+            if (m == null || m is ILMethod) {
                 return instance.ToString();
             }
             else

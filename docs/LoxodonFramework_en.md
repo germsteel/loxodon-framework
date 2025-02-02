@@ -222,15 +222,13 @@ openupm add com.vovgou.loxodon-framework
 Modify the Packages/manifest.json file in your project, nodejs and openm-cli clients are not required.
 Find Packages/manifest.json file in your project root folder，add the third-party repository "package.openupm.com" configuration in "scopeRegistries" node and add "com.vovgou.loxodon-framework" in "dependencies" node. Save and switch to Unity window, then complete installation.
 
-````
-    {
+```` {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework": "2.0.0-preview"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -364,8 +362,7 @@ Look at the code below, which introduces how to define the view model and the vi
     /// <summary>
     /// AccountViewModel
     /// </summary>
-    public class AccountViewModel : ObservableObject
-    {
+    public class AccountViewModel : ObservableObject {
         private int id;
         private string username;
         private string password;
@@ -373,38 +370,32 @@ Look at the code below, which introduces how to define the view model and the vi
         private DateTime birthday;
         private readonly ObservableProperty<string> address = new ObservableProperty<string>();
 
-        public int ID
-        {
+        public int ID {
             get { return this.id; }
             set { this.Set<int>(ref this.id, value, "ID"); }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set<string>(ref this.username, value, "Username"); }
         }
 
-        public string Password
-        {
+        public string Password {
             get { return this.password; }
             set { this.Set<string>(ref this.password, value, "Password"); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set<string>(ref this.email, value, "Email"); }
         }
 
-        public DateTime Birthday
-        {
+        public DateTime Birthday {
             get { return this.birthday; }
             set { this.Set<DateTime>(ref this.birthday, value, "Birthday"); }
         }
 
-        public ObservableProperty<string> Address
-        {
+        public ObservableProperty<string> Address {
             get { return this.address; }
         }
     }
@@ -413,64 +404,53 @@ Look at the code below, which introduces how to define the view model and the vi
     /// <summary>
     /// DatabindingViewModel
     /// </summary>
-    public class DatabindingViewModel : ViewModelBase
-    {
+    public class DatabindingViewModel : ViewModelBase {
         private AccountViewModel account;
         private bool remember;
         private string username;
         private string email;
         private ObservableDictionary<string, string> errors = new ObservableDictionary<string, string>();
 
-        public AccountViewModel Account
-        {
+        public AccountViewModel Account {
             get { return this.account; }
             set { this.Set<AccountViewModel>(ref account, value, "Account"); }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set<string>(ref this.username, value, "Username"); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set<string>(ref this.email, value, "Email"); }
         }
 
-        public bool Remember
-        {
+        public bool Remember {
             get { return this.remember; }
             set { this.Set<bool>(ref this.remember, value, "Remember"); }
         }
 
-        public ObservableDictionary<string, string> Errors
-        {
+        public ObservableDictionary<string, string> Errors {
             get { return this.errors; }
             set { this.Set<ObservableDictionary<string, string>>(ref this.errors, value, "Errors"); }
         }
 
-        public void OnUsernameValueChanged(string value)
-        {
+        public void OnUsernameValueChanged(string value) {
             Debug.LogFormat("Username ValueChanged:{0}", value);
         }
 
-        public void OnEmailValueChanged(string value)
-        {
+        public void OnEmailValueChanged(string value) {
             Debug.LogFormat("Email ValueChanged:{0}", value);
         }
 
-        public void OnSubmit()
-        {
-            if (string.IsNullOrEmpty(this.Username) || !Regex.IsMatch(this.Username, "^[a-zA-Z0-9_-]{4,12}$"))
-            {
+        public void OnSubmit() {
+            if (string.IsNullOrEmpty(this.Username) || !Regex.IsMatch(this.Username, "^[a-zA-Z0-9_-]{4,12}$")) {
                 this.errors["errorMessage"] = "Please enter a valid username.";
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.Email) || !Regex.IsMatch(this.Email, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"))
-            {
+            if (string.IsNullOrEmpty(this.Email) || !Regex.IsMatch(this.Email, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")) {
                 this.errors["errorMessage"] = "Please enter a valid email.";
                 return;
             }
@@ -485,8 +465,7 @@ Look at the code below, which introduces how to define the view model and the vi
     /// <summary>
     /// DatabindingExample
     /// </summary>
-    public class DatabindingExample : UIView
-    {
+    public class DatabindingExample : UIView {
         public Text title;
         public Text username;
         public Text password;
@@ -502,8 +481,7 @@ Look at the code below, which introduces how to define the view model and the vi
         public Toggle rememberEdit;
         public Button submit;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             //get application context
             ApplicationContext context = Context.GetApplicationContext();
 
@@ -518,11 +496,9 @@ Look at the code below, which introduces how to define the view model and the vi
 
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             //create account sub-view
-            AccountViewModel account = new AccountViewModel()
-            {
+            AccountViewModel account = new AccountViewModel() {
                 ID = 1,
                 Username = "test",
                 Password = "test",
@@ -532,8 +508,7 @@ Look at the code below, which introduces how to define the view model and the vi
             account.Address.Value = "beijing";
 
             //create data binding view
-            DatabindingViewModel databindingViewModel = new DatabindingViewModel()
-            {
+            DatabindingViewModel databindingViewModel = new DatabindingViewModel() {
                 Account = account
             };
 
@@ -879,27 +854,23 @@ Although Preferences already supports most data types, but you can keep extend y
     /// <summary>
     /// Customize a type encoder
     /// </summary>
-    public class ColorTypeEncoder : ITypeEncoder
-    {
+    public class ColorTypeEncoder : ITypeEncoder {
         private int priority = 900;       	//When a type is supported by more than one type encoder,
         	//the highest priority is valid (between -999 and 999).
 
-        public int Priority
-        {
+        public int Priority {
             get { return this.priority; }
             set { this.priority = value; }
         }
 
-        public bool IsSupport(Type type)
-        {
+        public bool IsSupport(Type type) {
             if (type.Equals(typeof(Color)))
                 return true;
             return false;
         }
 
         // exchange the string type to the object type
-        public object Decode(Type type, string value)
-        {
+        public object Decode(Type type, string value) {
             if (string.IsNullOrEmpty(value))
                 return null;
 
@@ -911,8 +882,7 @@ Although Preferences already supports most data types, but you can keep extend y
         }
 
         // Convert the object to a String to save it, because PlayerPrefs only supports String data
-        public string Encode(object value)
-        {            
+        public string Encode(object value) {            
             return ColorUtility.ToHtmlStringRGBA((Color)value);
         }
     }
@@ -1191,8 +1161,7 @@ Right-click on the root directory of the localization configuration, and pop up 
 
 ![](images/Localization_Make.png)
 
-    public static partial class R
-    {
+    public static partial class R {
         public readonly static V<string> startup_progressbar_tip_loading = new V<string>("startup.progressbar.tip.loading");
 
         public readonly static V<string> startup_progressbar_tip_unziping = new V<string>("startup.progressbar.tip.unziping");
@@ -1219,21 +1188,17 @@ Right-click on the root directory of the localization configuration, and pop up 
 	The following example is the code for loading sound effects using my Loxodon.Framework.Bundle plugin.
 
         [RequireComponent(typeof(AudioSource))]
-        public class LocalizedAudioSource : AbstractLocalized<AudioSource>
-        {
+        public class LocalizedAudioSource : AbstractLocalized<AudioSource> {
             private IResources resources;
-            private void Awake()
-            {
+            private void Awake() {
                 Context context = Context.GetApplicationContext();
                 this.resources = context.GetService<IResources>();
             }
 
-            protected override void OnValueChanged(object sender, EventArgs e)
-            {
+            protected override void OnValueChanged(object sender, EventArgs e) {
                 string path = (string)this.value.Value;
                 var result = resources.LoadAssetAsync<AudioClip>(path);
-                result.Callbackable().OnCallback(r =>
-                {
+                result.Callbackable().OnCallback(r => {
                     if (r.Exception != null)
                         return;
 
@@ -1252,21 +1217,17 @@ Right-click on the root directory of the localization configuration, and pop up 
 
 	The setting of RectTransform is related to the anchor point position. The following code is just an example. Please modify it according to your actual situation.
 
-        public class LocalizedRectTransform : AbstractLocalized<RectTransform>
-        {
-            protected override void OnValueChanged(object sender, EventArgs e)
-            {
+        public class LocalizedRectTransform : AbstractLocalized<RectTransform> {
+            protected override void OnValueChanged(object sender, EventArgs e) {
                 RectTransform rectTransform = this.target;
-                if (this.value.Value is Vector2[])
-                {
+                if (this.value.Value is Vector2[]) {
                     Vector2[] vectors = (Vector2[])this.value.Value;
                     rectTransform.offsetMin = vectors[0];
                     rectTransform.offsetMax = vectors[1];
                     return;
                 }
 
-                if (this.value.Value is Rect)
-                {
+                if (this.value.Value is Rect) {
                     Rect rect = (Rect)this.value.Value;
                     rectTransform.anchoredPosition = new Vector2(rect.x, rect.y);
                     rectTransform.sizeDelta = new Vector2(rect.width, rect.height);               
@@ -1364,14 +1325,12 @@ Using localized configuration with UI components, let's simulate a scenario of l
 
 ![](images/Localization_Example.png)
 
-    public class LocalizationExample : MonoBehaviour
-    {
+    public class LocalizationExample : MonoBehaviour {
         public Dropdown dropdown;
 
         private Localization localization;
 
-        void Awake ()
-        {
+        void Awake () {
             CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
 
             // Create a data provider and load the localization file
@@ -1386,8 +1345,7 @@ Using localized configuration with UI components, let's simulate a scenario of l
             this.dropdown.onValueChanged.AddListener (OnValueChanged);
         }
 
-        void OnValueChanged (int value)
-        {
+        void OnValueChanged (int value) {
             switch (value) {
             case 0:
                 // Set the current language of the localization service to English
@@ -1404,8 +1362,7 @@ Using localized configuration with UI components, let's simulate a scenario of l
             }
         }
 
-        void OnDestroy ()
-        {
+        void OnDestroy () {
             this.dropdown.onValueChanged.RemoveListener (OnValueChanged);
         }
     }
@@ -1534,11 +1491,9 @@ In order to facilitate the asynchronous calling of coroutines and threads, I des
 
 Using AsyncResult, let's create a coroutine task that can be canceled, and obtain the execution result by synchronous blocking and callback respectively.
 
-    public class AsyncResultExample : MonoBehaviour
-    {
+    public class AsyncResultExample : MonoBehaviour {
 
-        protected IEnumerator Start ()
-        {
+        protected IEnumerator Start () {
             //********Start the task and invoke the example synchronously***********//
             IAsyncResult<bool> result = StartTask();
 
@@ -1546,26 +1501,21 @@ Using AsyncResult, let's create a coroutine task that can be canceled, and obtai
             // the result.waitForDone () function returns an iterator, iEnumerator
             yield return result.WaitForDone ();
 
-            if(r.Exception !=null)
-            {
+            if(r.Exception !=null) {
                 Debug.LogFormat("Task fault：{0}",r.Exception);
             }
-            else
-            {    
+            else {    
                 Debug.LogFormat("Task success result = {0}",r.Result);
             }
 
 
             //********Start the task and invoke the example with a callback***********//
             result = StartTask();
-            result.Callbackable().OnCallback((r) =>
-            {
-                if(r.Exception !=null)
-                {
+            result.Callbackable().OnCallback((r) => {
+                if(r.Exception !=null) {
                     Debug.LogFormat("Task fault：{0}",r.Exception);
                 }
-                else
-                {    
+                else {    
                     Debug.LogFormat("Task success result = {0}",r.Result);
                 }
             });
@@ -1573,8 +1523,7 @@ Using AsyncResult, let's create a coroutine task that can be canceled, and obtai
         }
 
         // Creat a task
-        public IAsyncResult<bool> StartTask()
-        {
+        public IAsyncResult<bool> StartTask() {
             // Create an asynchronous result with cancelable = true that supports cancellation
             AsyncResult<bool> result = new AsyncResult<bool> (true);
 
@@ -1589,8 +1538,7 @@ Using AsyncResult, let's create a coroutine task that can be canceled, and obtai
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask (IPromise<bool> promise)
-        {
+        protected IEnumerator DoTask (IPromise<bool> promise) {
             for (int i = 0; i < 20; i++) {
 
                 // If the asyncResult.cancel () function is called externally,
@@ -1615,36 +1563,30 @@ The ProgressResult is similar to the AsyncResult function, except that the task 
     /// <summary>
     /// Task schedule
     /// </summary>
-    public class Progress
-    {
+    public class Progress {
         public int bytes;
         public int TotalBytes;
 
         public int Percentage { get { return (bytes * 100) / TotalBytes; } }
     }
 
-    public class ProgressResultExample : MonoBehaviour
-    {
-        protected void Start()
-        {
+    public class ProgressResultExample : MonoBehaviour {
+        protected void Start() {
             // start a task
             IProgressResult<Progress, string> result = StartTask();
 
             // print task schedule
-            result.Callbackable().OnProgressCallback(progress =>
-            {
+            result.Callbackable().OnProgressCallback(progress => {
                 Debug.LogFormat("Percentage: {0}% ", progress.Percentage);
             });
 
             // listen task result
-            result.Callbackable().OnCallback(r =>
-            {
+            result.Callbackable().OnCallback(r => {
                 Debug.LogFormat("IsDone:{0} Result:{1}", r.IsDone, r.Result);
             });
         }
 
-        public IProgressResult<Progress, string> StartTask()
-        {
+        public IProgressResult<Progress, string> StartTask() {
             ProgressResult<Progress, string> result = new ProgressResult<Progress, string>(true);
 
             this.StartCoroutine(DoTask(result));
@@ -1657,18 +1599,15 @@ The ProgressResult is similar to the AsyncResult function, except that the task 
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask(IProgressPromise<Progress, string> promise)
-        {
+        protected IEnumerator DoTask(IProgressPromise<Progress, string> promise) {
             int n = 50;
             Progress progress = new Progress();
             progress.TotalBytes = n;
             progress.bytes = 0;
             StringBuilder buf = new StringBuilder();
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 /* If the task is cancelled, then stop the task */
-                if (promise.IsCancellationRequested)
-                {
+                if (promise.IsCancellationRequested) {
                     promise.SetCancelled();
                     yield break;
                 }
@@ -1689,27 +1628,21 @@ The ProgressResult is similar to the AsyncResult function, except that the task 
 
 An asynchronous task is an encapsulation of a thread task or a coroutine task. Passing an iterator IEnumerator to AsyncTask can create a coroutine task, or passing a delegate function to create a task that a background thread executes. According to the task execution process, a task is divided into several stages before execution, after execution is successful / after execution fails, and execution ends. In each stage, you can register your own code block through a delegate callback. In the following example, let's see how to create a coroutine task.
 
-    public class AsyncTaskExample : MonoBehaviour
-    {
-        protected IEnumerator Start()
-        {
+    public class AsyncTaskExample : MonoBehaviour {
+        protected IEnumerator Start() {
             AsyncTask task = new AsyncTask(DoTask(), true);
 
             /* Start task */
-            task.OnPreExecute(() =>
-            {
+            task.OnPreExecute(() => {
                 // Invoked before the task executes
                 Debug.Log("The task has started.");
-            }).OnPostExecute(() =>
-            {
+            }).OnPostExecute(() => {
                 // Invoked after the task executes
                 Debug.Log("The task has completed.");/* only execute successfully */
-            }).OnError((e) =>
-            {
+            }).OnError((e) => {
                 // The task failed to execute the call
                 Debug.LogFormat("An error occurred:{0}", e);
-            }).OnFinish(() =>
-            {
+            }).OnFinish(() => {
                 // When the task completes, it will be called whether it succeeds or fails
                 Debug.Log("The task has been finished.");/* completed or error or canceled*/
             }).Start();
@@ -1725,11 +1658,9 @@ An asynchronous task is an encapsulation of a thread task or a coroutine task. P
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask()
-        {
+        protected IEnumerator DoTask() {
             int n = 10;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 yield return new WaitForSeconds(0.5f);
             }
         }    
@@ -1739,33 +1670,26 @@ An asynchronous task is an encapsulation of a thread task or a coroutine task. P
 
 ProgressTask is similar to AsyncTask in that it only increases the task progress. Similarly, ProgressTask can create a coroutine task or a background thread task.
 
-    public class ProgressTaskExample : MonoBehaviour
-    {
-        protected IEnumerator Start()
-        {
+    public class ProgressTaskExample : MonoBehaviour {
+        protected IEnumerator Start() {
             // Create a task that will be executed in a background thread
             ProgressTask<float, string> task = new ProgressTask<float, string>(
                     new Action<IProgressPromise<float, string>>(DoTask), false, true);
 
             /* Start a task */
-            task.OnPreExecute(() =>
-            {
+            task.OnPreExecute(() => {
                 // Called before the task executes
                 Debug.Log("The task has started.");
-            }).OnPostExecute((result) =>
-            {
+            }).OnPostExecute((result) => {
                 // Called after successful execution of the task
                 Debug.LogFormat("The task has completed. result:{0}", result);/* only execute successfully */
-            }).OnProgressUpdate((progress) =>
-            {
+            }).OnProgressUpdate((progress) => {
                 // The progress of task execution
                 Debug.LogFormat("The current progress:{0}%", (int)(progress * 100));
-            }).OnError((e) =>
-            {
+            }).OnError((e) => {
                 // Called after the task failed to execute
                 Debug.LogFormat("An error occurred:{0}", e);
-            }).OnFinish(() =>
-            {
+            }).OnFinish(() => {
                 // When the task completes, it will be called whether it succeeds or fails
                 Debug.Log("The task has been finished.");/* completed or error or canceled*/
             }).Start();
@@ -1781,18 +1705,14 @@ ProgressTask is similar to AsyncTask in that it only increases the task progress
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected void DoTask(IProgressPromise<float, string> promise)
-        {
-            try
-            {
+        protected void DoTask(IProgressPromise<float, string> promise) {
+            try {
                 int n = 50;
                 float progress = 0f;
                 StringBuilder buf = new StringBuilder();
-                for (int i = 0; i < n; i++)
-                {
+                for (int i = 0; i < n; i++) {
                     /* If the task is cancelled, then stop the task */
-                    if (promise.IsCancellationRequested)
-                    {
+                    if (promise.IsCancellationRequested) {
                         promise.SetCancelled();
                         break;
                     }
@@ -1805,8 +1725,7 @@ ProgressTask is similar to AsyncTask in that it only increases the task progress
                 promise.UpdateProgress(1f);
                 promise.SetResult(buf.ToString()); /* update the result. */
             }
-            catch (System.Exception e)
-            {
+            catch (System.Exception e) {
                 promise.SetException(e);
             }
         }
@@ -1817,10 +1736,8 @@ ProgressTask is similar to AsyncTask in that it only increases the task progress
 
 Before C # 4.0, you needed to perform a complex asynchronous operation, generally using thread pool technology to perform a task. Introduced the Task (System.Threading.Tasks.Task) mechanism in C # 4.0, which provides a more convenient and concise API. In order to keep Unity3D coroutine asynchronous tasks and thread asynchronous tasks Task consistent, I implemented the CoroutineTask class Its API is basically the same as Task. The only difference is that it executes coroutine asynchronous tasks, and all its tasks are executed in the main thread.
 
-    public class CoroutineTaskExample : MonoBehaviour
-    {
-        IEnumerator Start()
-        {
+    public class CoroutineTaskExample : MonoBehaviour {
+        IEnumerator Start() {
             CoroutineTask task = new CoroutineTask(DoTask())
                 .ContinueWith(
                     DoContinueTask(),
@@ -1841,21 +1758,17 @@ Before C # 4.0, you needed to perform a complex asynchronous operation, generall
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask()
-        {
+        protected IEnumerator DoTask() {
             int n = 10;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 Debug.LogFormat("Task:i = {0}", i);
                 yield return new WaitForSeconds(0.5f);
             }
         }
 
-        protected IEnumerator DoContinueTask()
-        {
+        protected IEnumerator DoContinueTask() {
             int n = 10;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 Debug.LogFormat("ContinueTask:i = {0}", i);
                 yield return new WaitForSeconds(0.5f);
             }
@@ -1873,10 +1786,8 @@ Since the release of Unity2017, it is already possible to use the new C# feature
 
 Example one: async and await using method
 
-    public class AsyncAndAwaitExample : MonoBehaviour
-    {
-        async void Start()
-        {
+    public class AsyncAndAwaitExample : MonoBehaviour {
+        async void Start() {
             await new WaitForSeconds(2f);
             Debug.Log("WaitForSeconds  End");
 
@@ -1897,17 +1808,13 @@ Example one: async and await using method
             Debug.Log("DoTask End");
         }
 
-        IAsyncResult<int> Calculate()
-        {
-            return Executors.RunAsync<int>(() =>
-            {
+        IAsyncResult<int> Calculate() {
+            return Executors.RunAsync<int>(() => {
                 Debug.LogFormat("Calculate Task ThreadId:{0}", Thread.CurrentThread.ManagedThreadId);
                 int total = 0;
-                for (int i = 0; i < 20; i++)
-                {
+                for (int i = 0; i < 20; i++) {
                     total += i;
-                    try
-                    {
+                    try {
                         Thread.Sleep(100);
                     }
                     catch (Exception) { }
@@ -1916,12 +1823,10 @@ Example one: async and await using method
             });
         }
 
-        IEnumerator DoTask(int n)
-        {
+        IEnumerator DoTask(int n) {
             yield return new WaitForSeconds(1f);
 
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 yield return null;
             }
         }
@@ -1934,10 +1839,8 @@ Example two: Within the function, the main thread and background thread can be s
 
     using System.Threading;
     using System.Threading.Tasks;
-    public class AsyncAndAwaitSwitchThreadsExample : MonoBehaviour
-    {
-        async void Start()
-        {
+    public class AsyncAndAwaitSwitchThreadsExample : MonoBehaviour {
+        async void Start() {
             //Unity Thread
             Debug.LogFormat("1. ThreadID:{0}",Thread.CurrentThread.ManagedThreadId);
 
@@ -1971,16 +1874,11 @@ The framework extends the AsCoroutine() function for tasks to support the corout
 
     using Loxodon.Framework.Asynchronous;
     //Extends the namespace in which the AsCoroutine() function resides
-    public class TaskToCoroutineExample : MonoBehaviour
-    {
-        IEnumerator Start()
-        {
-            Task task = Task.Run(() =>
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    try
-                    {
+    public class TaskToCoroutineExample : MonoBehaviour {
+        IEnumerator Start() {
+            Task task = Task.Run(() => {
+                for (int i = 0; i < 5; i++) {
+                    try {
                         Thread.Sleep(200);
                     }
                     catch (Exception) { }
@@ -2044,13 +1942,11 @@ I have implemented the Iluatask interface in C#, which can automatically convert
 
 Start() returns an AsyncTask Lua object. refer the below C# code.
 
-    public class LuaBehaviour : MonoBehaviour, ILuaExtendable
-    {
+    public class LuaBehaviour : MonoBehaviour, ILuaExtendable {
         protected LuaTable metatable;
         protected Func<MonoBehaviour, ILuaTask> onStart;
 
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             ...
 
             metatable = (LuaTable)result[0];
@@ -2059,10 +1955,8 @@ Start() returns an AsyncTask Lua object. refer the below C# code.
             onStart = metatable.Get<Func<MonoBehaviour, ILuaTask>>("start");
         }
 
-        protected virtual async void Start()
-        {
-            if (onStart != null)
-            {
+        protected virtual async void Start() {
+            if (onStart != null) {
                 // if start is an asynchronous function wrapped by async,
                 // it will return the Iluatask object, otherwise it will return null
                 ILuaTask task = onStart(this);
@@ -2078,8 +1972,7 @@ In conjunction with async and await, we wrap Lua's xpcall functions with a try f
 
 The input parameters of the try function are a Lua table with the following structure: t[0] is the main function, t.Catch is the catch function, and t.fupward is the finally function.
 
-
-	{
+ {
 		function()
 			--this is main function.
 		end,
@@ -2123,28 +2016,23 @@ In the development of Unity3d logic scripts, multi-threading is not supported. A
 
 #### Executors
 
-    public class ExecutorExample : MonoBehaviour
-    {
+    public class ExecutorExample : MonoBehaviour {
 
-        IEnumerator Start()
-        {
+        IEnumerator Start() {
             //Run a task asynchronously in a background thread
-            Executors.RunAsync(() =>
-            {
+            Executors.RunAsync(() => {
                 Debug.LogFormat("RunAsync ");
             });
 
             //Run a task asynchronously in a background thread
-            Executors.RunAsync(() =>
-            {
+            Executors.RunAsync(() => {
                 //sleep 1000 micro second
                 Thread.Sleep(1000);
 
                 //Switch from the background thread to the main thread,
                 //waitForExecution = true，the current function can be return
                 //until main thread execute complete
-                Executors.RunOnMainThread(() =>
-                {
+                Executors.RunOnMainThread(() => {
                     Debug.LogFormat("RunOnMainThread Time:{0} frame:{1}", Time.time, Time.frameCount);
                 }, true);
             });
@@ -2156,10 +2044,8 @@ In the development of Unity3d logic scripts, multi-threading is not supported. A
             yield return result.WaitForDone();
         }
 
-        IEnumerator DoRun()
-        {
-            for (int i = 0; i < 10; i++)
-            {
+        IEnumerator DoRun() {
+            for (int i = 0; i < 10; i++) {
                 Debug.LogFormat("i = {0}", i);
                 yield return null;
             }
@@ -2176,8 +2062,7 @@ In this framework, a threaded timed task executor (ThreadScheduledExecutor) and 
 
     //After a delay of 1000 micro seconds,
     //print "This is a test." every 2000 micro seconds at a fixed frequency.
-    IAsyncResult result = scheduled.ScheduleAtFixedRate(() =>
-    {
+    IAsyncResult result = scheduled.ScheduleAtFixedRate(() => {
         Debug.Log("This is a test.");
     }, 1000, 2000);
 
@@ -2191,8 +2076,7 @@ InterceptableEnumerator supports conditional statement blocks. You can insert a 
     /// <summary>
     /// This is the wrapper function for an iterator
     /// </summary>
-    protected static InterceptableEnumerator WrapEnumerator(IEnumerator routine, IPromise promise)
-    {
+    protected static InterceptableEnumerator WrapEnumerator(IEnumerator routine, IPromise promise) {
         InterceptableEnumerator enumerator;
         if(routine is InterceptableEnumerator)
             enumerator = (InterceptableEnumerator)routine;
@@ -2206,8 +2090,7 @@ InterceptableEnumerator supports conditional statement blocks. You can insert a 
         //Registrates an exception-catching statement block
         //that assigns the exception to the task result and prints the error
         //if the coroutine executes an error
-        enumerator.RegisterCatchBlock(e =>
-        {
+        enumerator.RegisterCatchBlock(e => {
             if (promise != null)
                 promise.SetException(e);
 
@@ -2216,10 +2099,8 @@ InterceptableEnumerator supports conditional statement blocks. You can insert a 
         });
 
         //Register a Finally block to ensure that the task can exit properly
-        enumerator.RegisterFinallyBlock(() =>
-        {
-            if (promise != null && !promise.IsDone)
-            {
+        enumerator.RegisterFinallyBlock(() => {
+            if (promise != null && !promise.IsDone) {
                 if (promise.GetType().IsSubclassOfGenericTypeDefinition(typeof(IPromise<>)))
                     promise.SetException(new Exception("No value given the Result"));
                 else
@@ -2235,19 +2116,16 @@ For more examples, see the Basic Tutorials.unity
 
 Messenger is used for communication between application modules. It provides the function of message subscription and publishing. Messenger supports subscribing and publishing messages by message type, and subscribing and publishing messages by channel.
 
-    public class MessengerExample : MonoBehaviour
-    {
+    public class MessengerExample : MonoBehaviour {
         private IDisposable subscription;
         private IDisposable chatroomSubscription;
-        private void Start()
-        {
+        private void Start() {
             //get default Messenger
             Messenger messenger = Messenger.Default;
 
             //Subscribe to a message, ensuring that Subscription is a member variable,
             //otherwise it will automatically unsubscribe when it is collected by GC
-            subscription = messenger.Subscribe((PropertyChangedMessage<string> message) =>
-            {
+            subscription = messenger.Subscribe((PropertyChangedMessage<string> message) => {
                 Debug.LogFormat("Received Message:{0}", message);
             });
 
@@ -2255,8 +2133,7 @@ Messenger is used for communication between application modules. It provides the
             messenger.Publish(new PropertyChangedMessage<string>("clark", "tom", "Name"));
 
             //Subscribe to the chat channel "ChatRoom1"
-            chatroomSubscription = messenger.Subscribe("chatroom1", (string message) =>
-             {
+            chatroomSubscription = messenger.Subscribe("chatroom1", (string message) => {
                  Debug.LogFormat("Received Message:{0}", message);
              });
 
@@ -2264,17 +2141,14 @@ Messenger is used for communication between application modules. It provides the
             messenger.Publish("chatroom1", "hello!");
         }
 
-        private void OnDestroy()
-        {
-            if (this.subscription != null)
-            {
+        private void OnDestroy() {
+            if (this.subscription != null) {
                 //Unsubscribe message
                 this.subscription.Dispose();
                 this.subscription = null;
             }
 
-            if (this.chatroomSubscription != null)
-            {
+            if (this.chatroomSubscription != null) {
                 //Unsubscribe message
                 this.chatroomSubscription.Dispose();
                 this.chatroomSubscription = null;
@@ -2290,12 +2164,10 @@ ObservableObject, ObservableList, ObservableDictionary are indispensable in the 
 
 Let's take a look at the usage example of ObservableDictionary. When we need to create a custom ListView control, we need to understand its principle.
 
-    public class ObservableDictionaryExample : MonoBehaviour
-    {
+    public class ObservableDictionaryExample : MonoBehaviour {
         private ObservableDictionary<int, Item> dict;
 
-        protected void Start()
-        {
+        protected void Start() {
     #if UNITY_IOS
             //In IOS, the generic type dictionary needs to provide the iEqualityComparer <TKey>,
             //otherwise it may be a JIT exception
@@ -2316,39 +2188,31 @@ Let's take a look at the usage example of ObservableDictionary. When we need to 
             dict.Clear();
         }
 
-        protected void OnDestroy()
-        {
-            if (this.dict != null)
-            {
+        protected void OnDestroy() {
+            if (this.dict != null) {
                 this.dict.CollectionChanged -= OnCollectionChanged;
                 this.dict = null;
             }
         }
 
         //Set changing event
-        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
-        {
-            switch (eventArgs.Action)
-            {
+        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs) {
+            switch (eventArgs.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (KeyValuePair<int, Item> kv in eventArgs.NewItems)
-                    {
+                    foreach (KeyValuePair<int, Item> kv in eventArgs.NewItems) {
                         Debug.LogFormat("ADD key:{0} item:{1}", kv.Key, kv.Value);
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (KeyValuePair<int, Item> kv in eventArgs.OldItems)
-                    {
+                    foreach (KeyValuePair<int, Item> kv in eventArgs.OldItems) {
                         Debug.LogFormat("REMOVE key:{0} item:{1}", kv.Key, kv.Value);
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    foreach (KeyValuePair<int, Item> kv in eventArgs.OldItems)
-                    {
+                    foreach (KeyValuePair<int, Item> kv in eventArgs.OldItems) {
                         Debug.LogFormat("REPLACE before key:{0} item:{1}", kv.Key, kv.Value);
                     }
-                    foreach (KeyValuePair<int, Item> kv in eventArgs.NewItems)
-                    {
+                    foreach (KeyValuePair<int, Item> kv in eventArgs.NewItems) {
                         Debug.LogFormat("REPLACE after key:{0} item:{1}", kv.Key, kv.Value);
                     }
                     break;
@@ -2430,8 +2294,7 @@ In general, basic data types are automatically converted when the field type of 
 
     //Load a Sprite atlas
     Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
-    foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures"))
-    {
+    foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures")) {
         if (sprite != null)
             sprites.Add(sprite.name, sprite);
     }
@@ -2552,33 +2415,27 @@ Binding from event to command (ICommand) or method supports custom parameters. U
 
 In the example, the Click event of a group of Button buttons is bound to the OnClick function of the view model. You can know which button is currently pressed by the parameter buttonName.
 
-    public class ButtonGroupViewModel : ViewModelBase
-    {
+    public class ButtonGroupViewModel : ViewModelBase {
         private string text;
         private readonly SimpleCommand<string> click;
-        public ButtonGroupViewModel()
-        {
+        public ButtonGroupViewModel() {
             this.click = new SimpleCommand<string>(OnClick);
         }
 
-        public string Text
-        {
+        public string Text {
             get { return this.text; }
             set { this.Set<string>(ref text, value, "Text"); }
         }
 
-        public ICommand Click
-        {
+        public ICommand Click {
             get { return this.click; }
         }
 
-        public void OnClick(string buttonName)
-        {
+        public void OnClick(string buttonName) {
             Executors.RunOnCoroutineNoReturn(DoClick(buttonName));
         }
 
-        private IEnumerator DoClick(string buttonName)
-        {
+        private IEnumerator DoClick(string buttonName) {
             this.click.Enabled = false;
             this.Text = string.Format("Click Button:{0}.Restore button status after one second", buttonName);
             Debug.LogFormat("Click Button:{0}", buttonName);
@@ -2590,8 +2447,7 @@ In the example, the Click event of a group of Button buttons is bound to the OnC
     }
 
 
-    protected override void Start()
-    {
+    protected override void Start() {
         ButtonGroupViewModel viewModel = new ButtonGroupViewModel();
 
         IBindingContext bindingContext = this.BindingContext();
@@ -2632,11 +2488,9 @@ Generally, the data binding is initialized in the view creation function. The bi
 
 In the IOS platform, JIT compilation is not allowed, and dynamic code generation is not allowed. When data binding functions access object properties, fields, and methods, they cannot be accessed through dynamic generation delegation like other platforms. They can only be accessed through reflection. The efficiency of reflection is well known. It's bad, so I provide the ability to statically inject accessors to bypass reflection. By default, I have created property accessors for some classes of the UGUI and Unity engines. With reference to my code, you can also register the accessors of common properties of the view model class to the type proxy.
 
-    public class UnityProxyRegister
-    {
+    public class UnityProxyRegister {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Initialize()
-        {
+        static void Initialize() {
             Register<Transform, Vector3>("localPosition", t => t.localPosition, (t, v) => t.localPosition = v);
             Register<Transform, Vector3>("eulerAngles", t => t.eulerAngles, (t, v) => t.eulerAngles = v);
             Register<Transform, Vector3>("localEulerAngles", t => t.localEulerAngles, (t, v) => t.localEulerAngles = v);
@@ -2716,18 +2570,15 @@ In the IOS platform, JIT compilation is not allowed, and dynamic code generation
             Register<ToggleGroup, bool>("allowSwitchOff", t => t.allowSwitchOff, (t, v) => t.allowSwitchOff = v);
         }
 
-        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter)
-        {
+        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter) {
             var propertyInfo = typeof(T).GetProperty(name);
-            if (propertyInfo is PropertyInfo)
-            {
+            if (propertyInfo is PropertyInfo) {
                 ProxyFactory.Default.Register(new ProxyPropertyInfo<T, TValue>(name, getter, setter));
                 return;
             }
 
             var fieldInfo = typeof(T).GetField(name);
-            if (fieldInfo is FieldInfo)
-            {
+            if (fieldInfo is FieldInfo) {
                 ProxyFactory.Default.Register(new ProxyFieldInfo<T, TValue>(name, getter, setter));
                 return;
             }
@@ -2781,8 +2632,7 @@ Customize a C# fade-in animation
 
 ![](images/Animations_Alpha.png)
 
-    public class AlphaAnimation : UIAnimation
-    {
+    public class AlphaAnimation : UIAnimation {
         [Range (0f, 1f)]
         public float from = 1f;
         [Range (0f, 1f)]
@@ -2792,8 +2642,7 @@ Customize a C# fade-in animation
 
         private IUIView view;
 
-        void OnEnable ()
-        {
+        void OnEnable () {
             this.view = this.GetComponent<IUIView> ();
             switch (this.AnimationType) {
             case AnimationType.EnterAnimation:
@@ -2813,14 +2662,12 @@ Customize a C# fade-in animation
             }
 
             if (this.AnimationType == AnimationType.ActivationAnimation
-                    || this.AnimationType == AnimationType.EnterAnimation)
-            {
+                    || this.AnimationType == AnimationType.EnterAnimation) {
                 this.view.CanvasGroup.alpha = from;
             }
         }
 
-        public override IAnimation Play ()
-        {
+        public override IAnimation Play () {
             this.view.CanvasGroup.DOFade (this.to, this.duration)
             .OnStart (this.OnStart)
             .OnComplete (this.OnEnd)
@@ -2863,8 +2710,7 @@ The following uses AlertDialog as an example to introduce their usage.
 
     //C#，Opens a dialog window
     AlertDialog.ShowMessage("This is a dialog test.", "Interation Example", "Yes", null, "No", true,
-    result =>
-    {
+    result => {
         Debug.LogFormat("Result:{0}",result);
     });
 
@@ -2891,15 +2737,13 @@ The following uses AlertDialog as an example to introduce their usage.
     Window is the root container of a UI interface view (IUIViewGroup, IUIView). It is also a controller. It is responsible for creating, destroying, displaying, and hiding window views. It is responsible for managing the life cycle of views and view models. Window interaction, etc.
 
       //C#，creat a window
-      public class ExampleWindow : Window
-      {
+      public class ExampleWindow : Window {
           public Text progressBarText;
           public Slider progressBarSlider;
           public Text tipText;
           public Button button;
 
-          protected override void OnCreate(IBundle bundle)
-          {
+          protected override void OnCreate(IBundle bundle) {
               BindingSet<ExampleWindow, ExampleViewModel> bindingSet;
               bindingSet = this.CreateBindingSet(new ExampleViewModel());
 
@@ -2916,8 +2760,7 @@ The following uses AlertDialog as an example to introduce their usage.
               bindingSet.Build();
           }
 
-          protected override void OnDismiss()
-          {
+          protected override void OnDismiss() {
           }
       }
 
@@ -2978,14 +2821,12 @@ InteractionRequest (InteractionRequest) is the most difficult to understand, the
 
 Take a look at the following code example, using an interactive request to open a warning dialog window, and receive the result selected by the user when the dialog window is closed.
 
-    public class InteractionExampleViewModel : ViewModelBase
-    {
+    public class InteractionExampleViewModel : ViewModelBase {
         private InteractionRequest<DialogNotification> alertDialogRequest;
 
         private SimpleCommand openAlertDialog;
 
-        public InteractionExampleViewModel()
-        {
+        public InteractionExampleViewModel() {
             // Create an interaction request that sends an open dialog notification
             // to the control layer (InteractionExample)
             this.alertDialogRequest = new InteractionRequest<DialogNotification>(this);
@@ -2998,8 +2839,7 @@ Take a look at the following code example, using an interactive request to open 
 
         public ICommand OpenAlertDialog { get { return this.openAlertDialog; } }
 
-        public void Click()
-        {
+        public void Click() {
             // Set command Enable to false, decouple by data binding,
             // and indirectly make view-layer buttons unclickable
             this.openAlertDialog.Enabled = false;
@@ -3010,19 +2850,16 @@ Take a look at the following code example, using an interactive request to open 
 
             // Create a callback function
             // that will be called when the AlertDialog dialog is closed
-            Action<DialogNotification> callback = n =>
-            {
+            Action<DialogNotification> callback = n => {
                 // Set the Enable of the command to true,
                 // and the button will be automatically restored by binding
                 this.openAlertDialog.Enabled = true;
 
-                if (n.DialogResult == AlertDialog.BUTTON_POSITIVE)
-                {
+                if (n.DialogResult == AlertDialog.BUTTON_POSITIVE) {
                     // The YES button of the dialog box is pressed
                     Debug.LogFormat("Click: Yes");
                 }
-                else if (n.DialogResult == AlertDialog.BUTTON_NEGATIVE)
-                {
+                else if (n.DialogResult == AlertDialog.BUTTON_NEGATIVE) {
                     // The NO button of the dialog box is pressed
                     Debug.LogFormat("Click: No");
                 }
@@ -3034,11 +2871,9 @@ Take a look at the following code example, using an interactive request to open 
         }
     }
 
-    public class InteractionExample : WindowView
-    {
+    public class InteractionExample : WindowView {
         public Button openAlert;
-        protected override void Start()
-        {
+        protected override void Start() {
             InteractionExampleViewModel viewModel = new InteractionExampleViewModel();
             this.SetDataContext(viewModel);
 
@@ -3061,8 +2896,7 @@ Take a look at the following code example, using an interactive request to open 
         }
 
         // Functions that create and open dialogs, triggered by interactive requests
-        private void OnOpenAlert(object sender, InteractionEventArgs args)
-        {
+        private void OnOpenAlert(object sender, InteractionEventArgs args) {
             // Receive notification from AlertDialogRequest for viewmodel layer interaction
 
             // Get notification data
@@ -3079,8 +2913,7 @@ Take a look at the following code example, using an interactive request to open 
                 null,
                 notification.CancelButtonText,
                 notification.CanceledOnTouchOutside,
-                (result) =>
-                {
+                (result) => {
                     // Assign the result of the dialog button event response to
                     // the Notification and pass it to the viewmodel layer for use
                     notification.DialogResult = result;
@@ -3105,8 +2938,7 @@ InteractionAction is used in conjunction with InteractionRequest. An interaction
 
     // Create a command to display the Loading window in the ViewModel,
     // and open a Loading interface through the command call interaction request
-    this.ShowLoading = new SimpleCommand(() =>
-    {
+    this.ShowLoading = new SimpleCommand(() => {
         VisibilityNotification notification = new VisibilityNotification(true);
         this.loadingRequest.Raise(notification);
     });
@@ -3129,12 +2961,9 @@ In the following example, I created a ListView view script and used it to dynami
 
 First we create a ListView control, and use this control to listen for changes in the ObservableDictionary of the equipment collection. When the content in the collection changes, the UGUI view is automatically updated, and equipment is added to and removed from the equipment list.
 
-    public class ListView : UIView
-    {
-        public class ItemClickedEvent : UnityEvent<int>
-        {
-            public ItemClickedEvent()
-            {
+    public class ListView : UIView {
+        public class ItemClickedEvent : UnityEvent<int> {
+            public ItemClickedEvent() {
             }
         }
 
@@ -3147,11 +2976,9 @@ First we create a ListView control, and use this control to listen for changes i
         public ItemClickedEvent OnSelectChanged = new ItemClickedEvent();
 
         // Equipment collection, assigned via data binding
-        public ObservableList<ListItemViewModel> Items
-        {
+        public ObservableList<ListItemViewModel> Items {
             get { return this.items; }
-            set
-            {
+            set {
                 if (this.items == value)
                     return;
 
@@ -3173,10 +3000,8 @@ First we create a ListView control, and use this control to listen for changes i
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
-        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
-        {
-            switch (eventArgs.Action)
-            {
+        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs) {
+            switch (eventArgs.Action) {
                 case NotifyCollectionChangedAction.Add:
                     this.AddItem(eventArgs.NewStartingIndex, eventArgs.NewItems[0]);
                     break;
@@ -3195,32 +3020,26 @@ First we create a ListView control, and use this control to listen for changes i
             }
         }
 
-        protected virtual void OnItemsChanged()
-        {
-            for (int i = 0; i < this.items.Count; i++)
-            {
+        protected virtual void OnItemsChanged() {
+            for (int i = 0; i < this.items.Count; i++) {
                 this.AddItem(i, items[i]);
             }
         }
 
-        protected virtual void OnSelectChange(GameObject itemViewGo)
-        {
+        protected virtual void OnSelectChange(GameObject itemViewGo) {
             if (this.OnSelectChanged == null || itemViewGo == null)
                 return;
 
-            for (int i = 0; i < this.content.childCount; i++)
-            {
+            for (int i = 0; i < this.content.childCount; i++) {
                 var child = this.content.GetChild(i);
-                if (itemViewGo.transform == child)
-                {
+                if (itemViewGo.transform == child) {
                     this.OnSelectChanged.Invoke(i);
                     break;
                 }
             }
         }
 
-        protected virtual void AddItem(int index, object item)
-        {
+        protected virtual void AddItem(int index, object item) {
             var itemViewGo = Instantiate(this.itemTemplate);
             itemViewGo.transform.SetParent(this.content, false);
             itemViewGo.transform.SetSiblingIndex(index);
@@ -3233,38 +3052,31 @@ First we create a ListView control, and use this control to listen for changes i
             itemView.SetDataContext(item);
         }
 
-        protected virtual void RemoveItem(int index, object item)
-        {
+        protected virtual void RemoveItem(int index, object item) {
             Transform transform = this.content.GetChild(index);
             UIView itemView = transform.GetComponent<UIView>();
-            if (itemView.GetDataContext() == item)
-            {
+            if (itemView.GetDataContext() == item) {
                 itemView.gameObject.SetActive(false);
                 Destroy(itemView.gameObject);
             }
         }
 
-        protected virtual void ReplaceItem(int index, object oldItem, object item)
-        {
+        protected virtual void ReplaceItem(int index, object oldItem, object item) {
             Transform transform = this.content.GetChild(index);
             UIView itemView = transform.GetComponent<UIView>();
-            if (itemView.GetDataContext() == oldItem)
-            {
+            if (itemView.GetDataContext() == oldItem) {
                 itemView.SetDataContext(item);
             }
         }
 
-        protected virtual void MoveItem(int oldIndex, int index, object item)
-        {
+        protected virtual void MoveItem(int oldIndex, int index, object item) {
             Transform transform = this.content.GetChild(oldIndex);
             UIView itemView = transform.GetComponent<UIView>();
             itemView.transform.SetSiblingIndex(index);
         }
 
-        protected virtual void ResetItem()
-        {
-            for (int i = this.content.childCount - 1; i >= 0; i--)
-            {
+        protected virtual void ResetItem() {
+            for (int i = this.content.childCount - 1; i >= 0; i--) {
                 Transform transform = this.content.GetChild(i);
                 Destroy(transform.gameObject);
             }
@@ -3273,15 +3085,13 @@ First we create a ListView control, and use this control to listen for changes i
 
 Then create an Item view ListItemView of the equipment list, which is responsible for binding the UGUI control on the Item view to the equipment's view model, and automatically update the content of the Item view when the equipment's view model changes.
 
-    public class ListItemView : UIView
-    {
+    public class ListItemView : UIView {
         public Text title;
         public Text price;
         public Image image;
         public GameObject border;
 
-        protected override void Start()
-        {
+        protected override void Start() {
             // Bind the view element on the Item
             BindingSet<ListItemView, ListItemViewModel> bindingSet = this.CreateBindingSet<ListItemView, ListItemViewModel>();
             bindingSet.Bind(this.title).For(v => v.text).To(vm => vm.Title).OneWay();
@@ -3295,21 +3105,16 @@ Then create an Item view ListItemView of the equipment list, which is responsibl
 
 Finally, the view model code for the ListView control and ListItemView is as follows.
 
-    public class ListViewViewModel : ViewModelBase
-    {
+    public class ListViewViewModel : ViewModelBase {
         private readonly ObservableList<ListItemViewModel> items = new ObservableList<ListItemViewModel>();
 
-        public ObservableList<ListItemViewModel> Items
-        {
+        public ObservableList<ListItemViewModel> Items {
             get { return this.items; }
         }
 
-        public ListItemViewModel SelectedItem
-        {
-            get
-            {
-                foreach (var item in items)
-                {
+        public ListItemViewModel SelectedItem {
+            get {
+                foreach (var item in items) {
                     if (item.IsSelected)
                         return item;
                 }
@@ -3317,8 +3122,7 @@ Finally, the view model code for the ListView control and ListItemView is as fol
             }
         }
 
-        public void AddItem()
-        {
+        public void AddItem() {
             int i = this.items.Count;
             int iconIndex = Random.Range(1, 30);
             this.items.Add(new ListItemViewModel() {
@@ -3328,8 +3132,7 @@ Finally, the view model code for the ListView control and ListItemView is as fol
             });
         }
 
-        public void RemoveItem()
-        {
+        public void RemoveItem() {
             if (this.items.Count <= 0)
                 return;
 
@@ -3337,82 +3140,69 @@ Finally, the view model code for the ListView control and ListItemView is as fol
             this.items.RemoveAt(index);
         }
 
-        public void ClearItem()
-        {
+        public void ClearItem() {
             if (this.items.Count <= 0)
                 return;
 
             this.items.Clear();
         }
 
-        public void ChangeItemIcon()
-        {
+        public void ChangeItemIcon() {
             if (this.items.Count <= 0)
                 return;
 
-            foreach (var item in this.items)
-            {
+            foreach (var item in this.items) {
                 int iconIndex = Random.Range(1, 30);
                 item.Icon = string.Format("EquipImages_{0}", iconIndex);
             }
         }
 
-        public void Select(int index)
-        {
+        public void Select(int index) {
             if (index <= -1 || index > this.items.Count - 1)
                 return;
 
-            for (int i = 0; i < this.items.Count; i++)
-            {
-                if (i == index)
-                {
+            for (int i = 0; i < this.items.Count; i++) {
+                if (i == index) {
                     items[i].IsSelected = !items[i].IsSelected;
                     if (items[i].IsSelected)
                         Debug.LogFormat("Select, Current Index:{0}", index);
                     else
                         Debug.LogFormat("Cancel");
                 }
-                else
-                {
+                else {
                     items[i].IsSelected = false;
                 }
             }
         }
     }
 
-    public class ListItemViewModel : ViewModelBase
-    {
+    public class ListItemViewModel : ViewModelBase {
         private string title;
         private string icon;
         private float price;
         private bool selected;
 
-        public string Title
-        {
+        public string Title {
             get { return this.title; }
             set { this.Set<string>(ref title, value, "Title"); }
         }
-        public string Icon
-        {
+        public string Icon {
             get { return this.icon; }
             set { this.Set<string>(ref icon, value, "Icon"); }
         }
 
-        public float Price
-        {
+        public float Price {
             get { return this.price; }
             set { this.Set<float>(ref price, value, "Price"); }
         }
 
-        public bool IsSelected
-        {
+        public bool IsSelected {
             get { return this.selected; }
             set { this.Set<bool>(ref selected, value, "IsSelected"); }
         }
     }
 
-    public class ListViewDatabindingExample : MonoBehaviour
-    {
+    public class ListViewDatabindingExample : MonoBehaviour {
         private int itemCount;
         private ListViewViewModel viewModel;
 
@@ -3426,15 +3216,13 @@ Finally, the view model code for the ListView control and ListItemView is as fol
 
         public ListView listView;
 
-        void Awake()
-        {
+        void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
 
             Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
-            foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures"))
-            {
+            foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures")) {
                 if (sprite != null)
                     sprites.Add(sprite.name, sprite);
             }
@@ -3442,11 +3230,9 @@ Finally, the view model code for the ListView control and ListItemView is as fol
             converterRegistry.Register("spriteConverter", new SpriteConverter(sprites));
         }
 
-        void Start()
-        {
+        void Start() {
             viewModel = new ListViewViewModel();
-            for (int i = 0; i < 3; i++)
-            {
+            for (int i = 0; i < 3; i++) {
                 viewModel.AddItem();
             }
 
@@ -3483,19 +3269,16 @@ First, we implement a sprite asynchronous loader and hang it on the Image contro
 
 
     [RequireComponent(typeof(Image))]
-    public class AsyncSpriteLoader : MonoBehaviour
-    {
+    public class AsyncSpriteLoader : MonoBehaviour {
         private Image target;
         private string spriteName;
         public Sprite defaultSprite;
         public Material defaultMaterial;
         public string spritePath;
 
-        public string SpriteName
-        {
+        public string SpriteName {
             get { return this.spriteName; }
-            set
-            {
+            set {
                 if (this.spriteName == value)
                     return;
 
@@ -3505,15 +3288,12 @@ First, we implement a sprite asynchronous loader and hang it on the Image contro
             }
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             this.target = this.GetComponent<Image>();
         }
 
-        protected virtual void OnSpriteChanged()
-        {
-            if (string.IsNullOrEmpty(this.spriteName))
-            {
+        protected virtual void OnSpriteChanged() {
+            if (string.IsNullOrEmpty(this.spriteName)) {
                 this.target.sprite = null;
                 this.target.material = null;
                 return;
@@ -3530,15 +3310,12 @@ First, we implement a sprite asynchronous loader and hang it on the Image contro
         /// wait a second in the loader for the effect to be obvious
         /// </summary>
         /// <returns></returns>
-        IEnumerator LoadSprite()
-        {
+        IEnumerator LoadSprite() {
             yield return new WaitForSeconds(1f);
 
             Sprite[] sprites = Resources.LoadAll<Sprite>(this.spritePath);
-            foreach(var sprite in sprites)
-            {
-                if(sprite.name.Equals(this.spriteName))
-                {
+            foreach(var sprite in sprites) {
+                if(sprite.name.Equals(this.spriteName)) {
                     this.target.sprite = sprite;
                     this.target.material = null;
                 }
@@ -3548,37 +3325,31 @@ First, we implement a sprite asynchronous loader and hang it on the Image contro
 
 Then create the view and view model code of the sample interface as follows.
 
-    public class SpriteViewModel : ViewModelBase
-    {
+    public class SpriteViewModel : ViewModelBase {
         private string spriteName = "EquipImages_1";
 
-        public string SpriteName
-        {
+        public string SpriteName {
             get { return this.spriteName; }
             set { this.Set<string>(ref spriteName, value, "SpriteName"); }
         }
 
-        public void ChangeSpriteName()
-        {
+        public void ChangeSpriteName() {
             this.SpriteName = string.Format("EquipImages_{0}", Random.Range(1, 30));
         }
     }
 
-    public class DatabindingForAsyncLoadingSpriteExample : MonoBehaviour
-    {
+    public class DatabindingForAsyncLoadingSpriteExample : MonoBehaviour {
         public Button changeSpriteButton;
 
         public AsyncSpriteLoader spriteLoader;
 
-        void Awake()
-        {
+        void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
         }
 
-        void Start()
-        {
+        void Start() {
             var viewModel = new SpriteViewModel();
 
             IBindingContext bindingContext = this.BindingContext();
@@ -3932,8 +3703,7 @@ Extending the Loxodon.Framework.XLua.Editors.EncryptorFactory class can create a
 
 For example, if you add the following code, you can see the interface as shown in the editing interface.
 
-    public class ExampleCryptographFactory : EncryptorFactory
-    {
+    public class ExampleCryptographFactory : EncryptorFactory {
         [Multiline(2)]
         [SerializeField]
         private string privateKey;
@@ -3942,8 +3712,7 @@ For example, if you add the following code, you can see the interface as shown i
         [SerializeField]
         private string publicKey;
 
-        public override IEncryptor Create()
-        {
+        public override IEncryptor Create() {
             throw new NotImplementedException();
         }
     }

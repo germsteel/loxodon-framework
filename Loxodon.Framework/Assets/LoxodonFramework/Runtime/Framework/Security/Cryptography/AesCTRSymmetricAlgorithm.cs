@@ -26,14 +26,11 @@
 using System;
 using System.Security.Cryptography;
 
-namespace Loxodon.Framework.Security.Cryptography
-{
-    public class AesCTRSymmetricAlgorithm : SymmetricAlgorithm
-    {
+namespace Loxodon.Framework.Security.Cryptography {
+    public class AesCTRSymmetricAlgorithm : SymmetricAlgorithm {
         private RijndaelManaged rijndael;
 
-        public AesCTRSymmetricAlgorithm(byte[] key, byte[] iv)
-        {
+        public AesCTRSymmetricAlgorithm(byte[] key, byte[] iv) {
             int blockSize = 128;
             this.BlockSizeValue = blockSize;
             this.ModeValue = CipherMode.ECB;
@@ -42,8 +39,7 @@ namespace Loxodon.Framework.Security.Cryptography
             this.KeyValue = key;
             this.IVValue = iv;
 
-            this.rijndael = new RijndaelManaged()
-            {
+            this.rijndael = new RijndaelManaged() {
                 Mode = CipherMode.ECB,
                 Padding = PaddingMode.None,
                 KeySize = 128,
@@ -51,29 +47,24 @@ namespace Loxodon.Framework.Security.Cryptography
             };
         }
 
-        public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgbIV)
-        {
+        public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgbIV) {
             return new AesCTRCryptoTransform(rijndael, rgbKey, rgbIV);
         }
 
-        public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgbIV)
-        {
+        public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgbIV) {
             return new AesCTRCryptoTransform(rijndael, rgbKey, rgbIV);
         }
 
-        public override void GenerateIV()
-        {
+        public override void GenerateIV() {
             rijndael.GenerateIV();
         }
 
-        public override void GenerateKey()
-        {
+        public override void GenerateKey() {
             rijndael.GenerateKey();
         }
     }
 
-    public class AesCTRCryptoTransform : ICryptoTransform
-    {
+    public class AesCTRCryptoTransform : ICryptoTransform {
         private readonly byte[] key;
         private readonly byte[] iv;
         private readonly ICryptoTransform transform;
@@ -83,8 +74,7 @@ namespace Loxodon.Framework.Security.Cryptography
         private uint counter;
         private int index;
         private byte[] masks;
-        public AesCTRCryptoTransform(SymmetricAlgorithm algorithm, byte[] key, byte[] iv)
-        {
+        public AesCTRCryptoTransform(SymmetricAlgorithm algorithm, byte[] key, byte[] iv) {
             this.key = key;
             this.iv = iv;
             this.blockSize = algorithm.BlockSize / 8;
@@ -101,11 +91,9 @@ namespace Loxodon.Framework.Security.Cryptography
         public int InputBlockSize { get { return blockSize; } }
         public int OutputBlockSize { get { return blockSize; } }
 
-        protected uint Counter
-        {
+        protected uint Counter {
             get { return this.counter; }
-            set
-            {
+            set {
                 if (this.counter == value)
                     return;
 
@@ -114,11 +102,9 @@ namespace Loxodon.Framework.Security.Cryptography
             }
         }
 
-        public long Position
-        {
+        public long Position {
             get { return position; }
-            set
-            {
+            set {
                 if (this.position == value)
                     return;
 
@@ -128,17 +114,14 @@ namespace Loxodon.Framework.Security.Cryptography
             }
         }
 
-        public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
-        {
-            for (var i = 0; i < inputCount; i++)
-            {
+        public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) {
+            for (var i = 0; i < inputCount; i++) {
                 byte mask = masks[index];
                 outputBuffer[outputOffset + i] = (byte)(inputBuffer[inputOffset + i] ^ mask);
 
                 this.position++;
                 this.index++;
-                if (index == blockSize)
-                {
+                if (index == blockSize) {
                     this.Counter++;
                     this.index = 0;
                 }
@@ -146,22 +129,19 @@ namespace Loxodon.Framework.Security.Cryptography
             return inputCount;
         }
 
-        public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
-        {
+        public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount) {
             var outputBuffer = new byte[inputCount];
             TransformBlock(inputBuffer, inputOffset, inputCount, outputBuffer, 0);
             return outputBuffer;
         }
 
-        private void CalculateMask(uint counter)
-        {
+        private void CalculateMask(uint counter) {
             byte[] data = BitConverter.GetBytes(counter);
             Array.Copy(data, 0, iv, 12, 4);
             transform.TransformBlock(iv, 0, iv.Length, masks, 0);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
         }
     }
 }

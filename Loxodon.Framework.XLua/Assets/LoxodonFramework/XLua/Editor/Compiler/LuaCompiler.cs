@@ -27,32 +27,25 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Loxodon.Framework.XLua.Editors
-{
-    public class LuaCompiler
-    {
+namespace Loxodon.Framework.XLua.Editors {
+    public class LuaCompiler {
         private string command;
         private IEncryptor encryptor;
 
-        public LuaCompiler(string command) : this(command, null)
-        {
+        public LuaCompiler(string command) : this(command, null) {
         }
 
-        public LuaCompiler(string command, IEncryptor encryptor)
-        {
+        public LuaCompiler(string command, IEncryptor encryptor) {
             this.command = command;
             this.encryptor = encryptor;
         }
 
-        public void Compile(string inputFilename, string outputFilename, bool debug)
-        {
+        public void Compile(string inputFilename, string outputFilename, bool debug) {
             Compile(new FileInfo(inputFilename), new FileInfo(outputFilename), debug);
         }
 
-        public void Compile(FileInfo inputFile, FileInfo outputFile, bool debug)
-        {
-            if (!inputFile.Exists)
-            {
+        public void Compile(FileInfo inputFile, FileInfo outputFile, bool debug) {
+            if (!inputFile.Exists) {
                 UnityEngine.Debug.LogErrorFormat("Not found the file \"{0}\"", inputFile.FullName);
                 return;
             }
@@ -62,17 +55,14 @@ namespace Loxodon.Framework.XLua.Editors
 
             RunCMD(command, string.Format(" {0} -o \"{1}\" \"{2}\"", debug ? "" : "-s", outputFile.FullName, inputFile.FullName));
 
-            if (this.encryptor != null && outputFile.Exists)
-            {
+            if (this.encryptor != null && outputFile.Exists) {
                 byte[] buffer = File.ReadAllBytes(outputFile.FullName);
                 File.WriteAllBytes(outputFile.FullName, encryptor.Encrypt(buffer));
             }
         }
 
-        public void Copy(FileInfo inputFile, FileInfo outputFile)
-        {
-            if (!inputFile.Exists)
-            {
+        public void Copy(FileInfo inputFile, FileInfo outputFile) {
+            if (!inputFile.Exists) {
                 UnityEngine.Debug.LogErrorFormat("Not found the file \"{0}\"", inputFile.FullName);
                 return;
             }
@@ -87,10 +77,8 @@ namespace Loxodon.Framework.XLua.Editors
             File.WriteAllBytes(outputFile.FullName, buffer);
         }
 
-        public static void RunCMD(string command, string args)
-        {
-            try
-            {
+        public static void RunCMD(string command, string args) {
+            try {
                 ProcessStartInfo start = new ProcessStartInfo();
                 start.FileName = command;
                 start.Arguments = args;
@@ -116,8 +104,7 @@ namespace Loxodon.Framework.XLua.Editors
                 if (!string.IsNullOrEmpty(error))
                     UnityEngine.Debug.LogError(error);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 UnityEngine.Debug.LogException(e);
             }
         }

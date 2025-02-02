@@ -82,8 +82,7 @@ SubShader {
 	half _FaceShininess;
 	half _OutlineShininess;
 
-	struct Input
-	{
+	struct Input {
 		fixed4	color			: COLOR;
 		float2	uv_MainTex;
 		float2	uv2_FaceTex;
@@ -99,8 +98,7 @@ SubShader {
 	ENDCG
 
 	// Pass to render object as a shadow caster
-	Pass
-	{
+	Pass {
 		Name "Caster"
 		Tags { "LightMode" = "ShadowCaster" }
 		Offset 1, 1
@@ -129,8 +127,7 @@ SubShader {
 		float _FaceDilate;
 		float _ScaleRatioA;
 
-		v2f vert( appdata_base v )
-		{
+		v2f vert( appdata_base v ) {
 			v2f o;
 			TRANSFER_SHADOW_CASTER(o)
 			o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
@@ -141,8 +138,7 @@ SubShader {
 
 		uniform sampler2D _MainTex;
 
-		float4 frag(v2f i) : COLOR
-		{
+		float4 frag(v2f i) : COLOR {
 			fixed4 texcol = tex2D(_MainTex, i.uv).a;
 			clip(texcol.a - i.alphaClip);
 			SHADOW_CASTER_FRAGMENT(i)

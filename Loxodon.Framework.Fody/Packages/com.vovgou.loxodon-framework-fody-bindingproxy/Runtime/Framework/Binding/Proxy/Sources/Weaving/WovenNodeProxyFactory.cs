@@ -28,12 +28,9 @@ using Loxodon.Framework.Interactivity;
 using Loxodon.Framework.Observables;
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
-{
-    public class WovenNodeProxyFactory : INodeProxyFactory
-    {
-        public ISourceProxy Create(object source, PathToken token)
-        {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving {
+    public class WovenNodeProxyFactory : INodeProxyFactory {
+        public ISourceProxy Create(object source, PathToken token) {
             IPathNode node = token.Current;
             if (source == null || node is IndexedNode)
                 return null;
@@ -43,8 +40,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
             return null;
         }
 
-        protected virtual ISourceProxy CreateProxy(IWovenNodeProxyFinder source, IPathNode node)
-        {
+        protected virtual ISourceProxy CreateProxy(IWovenNodeProxyFinder source, IPathNode node) {
             var memberNode = node as MemberNode;
             if (memberNode == null)
                 return null;
@@ -59,16 +55,14 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
                 return null;
 
             var valueType = proxy.Type;
-            if (typeof(IObservableProperty).IsAssignableFrom(valueType))
-            {
+            if (typeof(IObservableProperty).IsAssignableFrom(valueType)) {
                 object observableValue = (proxy as IObtainable)?.GetValue();
                 if (observableValue == null)
                     return null;
 
                 return new ObservableNodeProxy(source, (IObservableProperty)observableValue);
             }
-            else if (typeof(IInteractionRequest).IsAssignableFrom(valueType))
-            {
+            else if (typeof(IInteractionRequest).IsAssignableFrom(valueType)) {
                 object request = (proxy as IObtainable)?.GetValue();
                 if (request == null)
                     return null;

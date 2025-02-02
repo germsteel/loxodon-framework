@@ -25,14 +25,11 @@
 using Loxodon.Framework.Observables;
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Text
-{
-    public class ObservableLiteralSourceProxy : NotifiableSourceProxyBase, ISourceProxy, IObtainable
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Text {
+    public class ObservableLiteralSourceProxy : NotifiableSourceProxyBase, ISourceProxy, IObtainable {
         private IObservableProperty observableProperty;
 
-        public ObservableLiteralSourceProxy(IObservableProperty source) : base(source)
-        {
+        public ObservableLiteralSourceProxy(IObservableProperty source) : base(source) {
             if (source == null)
                 throw new ArgumentNullException("source");
 
@@ -40,30 +37,25 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Text
             this.observableProperty.ValueChanged += OnValueChanged;
         }
 
-        private void OnValueChanged(object sender, EventArgs e)
-        {
+        private void OnValueChanged(object sender, EventArgs e) {
             this.RaiseValueChanged();
         }
 
         public override Type Type { get { return observableProperty.Type; } }
 
-        public virtual object GetValue()
-        {
+        public virtual object GetValue() {
             return this.observableProperty.Value;
         }
 
-        public virtual TValue GetValue<TValue>()
-        {
+        public virtual TValue GetValue<TValue>() {
             return (TValue)Convert.ChangeType(this.observableProperty.Value, typeof(TValue));
         }
 
         #region IDisposable Support    
         private bool disposedValue = false;
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
+        protected override void Dispose(bool disposing) {
+            if (!disposedValue) {
                 if (this.observableProperty != null)
                     this.observableProperty.ValueChanged -= OnValueChanged;
 

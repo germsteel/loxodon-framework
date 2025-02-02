@@ -26,10 +26,8 @@ using Loxodon.Framework.Asynchronous;
 using System;
 using System.IO;
 
-namespace Loxodon.Framework.Net.Http
-{
-    public interface IFileDownloader
-    {
+namespace Loxodon.Framework.Net.Http {
+    public interface IFileDownloader {
         IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(Uri path, string fileName);
 
         IProgressResult<ProgressInfo, FileInfo> DownloadFileAsync(Uri path, FileInfo fileInfo);
@@ -37,14 +35,11 @@ namespace Loxodon.Framework.Net.Http
         IProgressResult<ProgressInfo, ResourceInfo[]> DownloadFileAsync(ResourceInfo[] infos);
     }
 
-    public class ResourceInfo
-    {
-        public ResourceInfo(Uri path, FileInfo fileInfo) : this(path, fileInfo, -1)
-        {
+    public class ResourceInfo {
+        public ResourceInfo(Uri path, FileInfo fileInfo) : this(path, fileInfo, -1) {
         }
 
-        public ResourceInfo(Uri path, FileInfo fileInfo, long fileSize)
-        {
+        public ResourceInfo(Uri path, FileInfo fileInfo, long fileSize) {
             this.Path = path;
             this.FileInfo = fileInfo;
             this.FileSize = fileSize;

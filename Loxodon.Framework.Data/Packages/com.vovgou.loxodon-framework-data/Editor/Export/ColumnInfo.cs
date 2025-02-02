@@ -22,21 +22,16 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public enum IndexType
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public enum IndexType {
         None,
         Index,
         Unique
     }
-    public class ColumnInfo
-    {
-        public ColumnInfo(int columnNo, string columnName, string typeName, string comment) : this(columnNo, columnName, typeName, comment, IndexType.None)
-        {
+    public class ColumnInfo {
+        public ColumnInfo(int columnNo, string columnName, string typeName, string comment) : this(columnNo, columnName, typeName, comment, IndexType.None) {
         }
-        public ColumnInfo(int columnNo, string columnName, string typeName, string comment, IndexType indexType)
-        {
+        public ColumnInfo(int columnNo, string columnName, string typeName, string comment, IndexType indexType) {
             this.ColumnNo = columnNo;
             this.ColumnName = columnName;
             this.TypeName = typeName;

@@ -10,8 +10,7 @@
 // Author Clark
 // 
 
-namespace Loxodon.Framework.TextFormatting
-{
+namespace Loxodon.Framework.TextFormatting {
     using System;
     using System.Text;
     using System.Diagnostics.Contracts;
@@ -24,16 +23,14 @@ namespace Loxodon.Framework.TextFormatting
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    internal struct HebrewNumberParsingContext
-    {
+    internal struct HebrewNumberParsingContext {
         // The current state of the state machine for parsing Hebrew numbers.
         internal HebrewNumber.HS state;
         // The current value of the Hebrew number.
         // The final value is determined when state is FoundEndOfHebrewNumber.
         internal int result;
 
-        public HebrewNumberParsingContext(int result)
-        {
+        public HebrewNumberParsingContext(int result) {
             // Set the start state of the state machine for parsing Hebrew numbers.
             state = HebrewNumber.HS.Start;
             this.result = result;
@@ -46,8 +43,7 @@ namespace Loxodon.Framework.TextFormatting
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    internal enum HebrewNumberParsingState
-    {
+    internal enum HebrewNumberParsingState {
         InvalidHebrewNumber,
         NotHebrewDigit,
         FoundEndOfHebrewNumber,
@@ -68,13 +64,11 @@ namespace Loxodon.Framework.TextFormatting
     //
     ////////////////////////////////////////////////////////////////////////////
 
-    internal class HebrewNumber
-    {
+    internal class HebrewNumber {
 
         // This class contains only static methods.  Add a private ctor so that
         // compiler won't generate a default one for us.
-        private HebrewNumber()
-        {
+        private HebrewNumber() {
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -97,8 +91,7 @@ namespace Loxodon.Framework.TextFormatting
         //
         ////////////////////////////////////////////////////////////////////////////
 
-        internal static void ToString(int Number, ref ValueStringBuilder result)
-        {
+        internal static void ToString(int Number, ref ValueStringBuilder result) {
             char cTens = '\x0';
             char cUnits;               // tens and units chars
             int Hundreds, Tens;              // hundreds and tens values
@@ -107,8 +100,7 @@ namespace Loxodon.Framework.TextFormatting
             //
             //  Adjust the number if greater than 5000.
             //
-            if (Number > 5000)
-            {
+            if (Number > 5000) {
                 Number -= 5000;
             }
 
@@ -119,22 +111,19 @@ namespace Loxodon.Framework.TextFormatting
             //
             Hundreds = Number / 100;
 
-            if (Hundreds > 0)
-            {
+            if (Hundreds > 0) {
                 Number -= Hundreds * 100;
                 // \x05e7 = 100
                 // \x05e8 = 200
                 // \x05e9 = 300
                 // \x05ea = 400
                 // If the number is greater than 400, use the multiples of 400.
-                for (int i = 0; i < (Hundreds / 4); i++)
-                {
+                for (int i = 0; i < (Hundreds / 4); i++) {
                     result.Append('\x05ea');
                 }
 
                 int remains = Hundreds % 4;
-                if (remains > 0)
-                {
+                if (remains > 0) {
                     result.Append((char)((int)'\x05e6' + remains));
                 }
             }
@@ -145,8 +134,7 @@ namespace Loxodon.Framework.TextFormatting
             Tens = Number / 10;
             Number %= 10;
 
-            switch (Tens)
-            {
+            switch (Tens) {
                 case (0):
                     cTens = '\x0';
                     break;
@@ -185,15 +173,13 @@ namespace Loxodon.Framework.TextFormatting
             cUnits = (char)(Number > 0 ? ((int)'\x05d0' + Number - 1) : 0);
 
             if ((cUnits == '\x05d4') &&            // Hebrew Letter He  (5)
-                (cTens == '\x05d9'))
-            {              // Hebrew Letter Yod (10)
+                (cTens == '\x05d9')) {              // Hebrew Letter Yod (10)
                 cUnits = '\x05d5';                 // Hebrew Letter Vav (6)
                 cTens = '\x05d8';                 // Hebrew Letter Tet (9)
             }
 
             if ((cUnits == '\x05d5') &&            // Hebrew Letter Vav (6)
-                (cTens == '\x05d9'))
-            {               // Hebrew Letter Yod (10)
+                (cTens == '\x05d9')) {               // Hebrew Letter Yod (10)
                 cUnits = '\x05d6';                 // Hebrew Letter Zayin (7)
                 cTens = '\x05d8';                 // Hebrew Letter Tet (9)
             }
@@ -202,22 +188,18 @@ namespace Loxodon.Framework.TextFormatting
             //  Copy the appropriate info to the given buffer.
             //
 
-            if (cTens != '\x0')
-            {
+            if (cTens != '\x0') {
                 result.Append(cTens);
             }
 
-            if (cUnits != '\x0')
-            {
+            if (cUnits != '\x0') {
                 result.Append(cUnits);
             }
 
-            if (result.Length > 1)
-            {
+            if (result.Length > 1) {
                 result.Insert(result.Length - 1, '"', 1);
             }
-            else
-            {
+            else {
                 result.Append('\'');
             }
         }
@@ -229,8 +211,7 @@ namespace Loxodon.Framework.TextFormatting
         //
         ////////////////////////////////////////////////////////////////////////////
 
-        enum HebrewToken
-        {
+        enum HebrewToken {
             Invalid = -1,
             Digit400 = 0,
             Digit200_300 = 1,
@@ -250,12 +231,10 @@ namespace Loxodon.Framework.TextFormatting
         //
         ////////////////////////////////////////////////////////////////////////////
 
-        class HebrewValue
-        {
+        class HebrewValue {
             internal HebrewToken token;
             internal int value;
-            internal HebrewValue(HebrewToken token, int value)
-            {
+            internal HebrewValue(HebrewToken token, int value) {
                 this.token = token;
                 this.value = value;
             }
@@ -306,8 +285,7 @@ namespace Loxodon.Framework.TextFormatting
         //
         ////////////////////////////////////////////////////////////////////////////
 
-        internal enum HS
-        {
+        internal enum HS {
             _err = -1,          // an error state
             Start = 0,
             S400 = 1,           // a Hebrew digit 400
@@ -372,43 +350,34 @@ namespace Loxodon.Framework.TextFormatting
         //
         ////////////////////////////////////////////////////////////////////////
 
-        internal static HebrewNumberParsingState ParseByChar(char ch, ref HebrewNumberParsingContext context)
-        {
+        internal static HebrewNumberParsingState ParseByChar(char ch, ref HebrewNumberParsingContext context) {
             HebrewToken token;
-            if (ch == '\'')
-            {
+            if (ch == '\'') {
                 token = HebrewToken.SingleQuote;
             }
-            else if (ch == '\"')
-            {
+            else if (ch == '\"') {
                 token = HebrewToken.DoubleQuote;
             }
-            else
-            {
+            else {
                 int index = (int)ch - minHebrewNumberCh;
-                if (index >= 0 && index < HebrewValues.Length)
-                {
+                if (index >= 0 && index < HebrewValues.Length) {
                     token = HebrewValues[index].token;
-                    if (token == HebrewToken.Invalid)
-                    {
+                    if (token == HebrewToken.Invalid) {
                         return (HebrewNumberParsingState.NotHebrewDigit);
                     }
                     context.result += HebrewValues[index].value;
                 }
-                else
-                {
+                else {
                     // Not in valid Hebrew digit range.
                     return (HebrewNumberParsingState.NotHebrewDigit);
                 }
             }
             context.state = NumberPasingState[(int)context.state][(int)token];
-            if (context.state == HS._err)
-            {
+            if (context.state == HS._err) {
                 // Invalid Hebrew state.  This indicates an incorrect Hebrew number.
                 return (HebrewNumberParsingState.InvalidHebrewNumber);
             }
-            if (context.state == HS.END)
-            {
+            if (context.state == HS.END) {
                 // Reach a terminal state.
                 return (HebrewNumberParsingState.FoundEndOfHebrewNumber);
             }
@@ -427,10 +396,8 @@ namespace Loxodon.Framework.TextFormatting
         //
         ////////////////////////////////////////////////////////////////////////
 
-        internal static bool IsDigit(char ch)
-        {
-            if (ch >= minHebrewNumberCh && ch <= maxHebrewNumberCh)
-            {
+        internal static bool IsDigit(char ch) {
+            if (ch >= minHebrewNumberCh && ch <= maxHebrewNumberCh) {
                 return (HebrewValues[ch - minHebrewNumberCh].value >= 0);
             }
             return (ch == '\'' || ch == '\"');

@@ -24,10 +24,8 @@
 
 using System.Collections;
 
-namespace Loxodon.Framework.Views.UI
-{
-    public interface IBindingAdapter
-    {
+namespace Loxodon.Framework.Views.UI {
+    public interface IBindingAdapter {
         IList Items { get; set; }
     }
 }

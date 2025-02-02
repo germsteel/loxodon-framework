@@ -30,23 +30,18 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public class JsonEquipmentInfoRepository : IEquipmentInfoRepository
-    {
+namespace Loxodon.Framework.Examples.Repositories {
+    public class JsonEquipmentInfoRepository : IEquipmentInfoRepository {
         private Dictionary<int, EquipmentInfo> equipments = new Dictionary<int, EquipmentInfo>();
         private bool loaded = false;
-        private void LoadAll()
-        {
+        private void LoadAll() {
             var text = Resources.Load<TextAsset>("Json/equipmentinfo");
             if (text == null || text.text.Length <= 0)
                 return;
 
-            using (StringReader reader = new StringReader(text.text))
-            {
+            using (StringReader reader = new StringReader(text.text)) {
                 string line;
-                while ((line = reader.ReadLine()) != null)
-                {
+                while ((line = reader.ReadLine()) != null) {
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
 
@@ -59,8 +54,7 @@ namespace Loxodon.Framework.Examples.Repositories
             this.loaded = true;
         }
 
-        public virtual EquipmentInfo GetById(int id)
-        {
+        public virtual EquipmentInfo GetById(int id) {
             if (!loaded)
                 this.LoadAll();
 
@@ -69,8 +63,7 @@ namespace Loxodon.Framework.Examples.Repositories
             return info;
         }
 
-        public virtual EquipmentInfo GetBySign(string sign, int quality)
-        {
+        public virtual EquipmentInfo GetBySign(string sign, int quality) {
             if (!loaded)
                 this.LoadAll();
 

@@ -25,14 +25,10 @@
 using System;
 using UnityEngine;
 
-namespace Loxodon.Framework.Localizations
-{
-    public class ColorTypeConverter : ITypeConverter
-    {
-        public bool Support(string typeName)
-        {
-            switch (typeName)
-            {
+namespace Loxodon.Framework.Localizations {
+    public class ColorTypeConverter : ITypeConverter {
+        public bool Support(string typeName) {
+            switch (typeName) {
                 case "color":
                     return true;
                 default:
@@ -40,10 +36,8 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        public Type GetType(string typeName)
-        {
-            switch (typeName)
-            {
+        public Type GetType(string typeName) {
+            switch (typeName) {
                 case "color":
                     return typeof(Color);
                 default:
@@ -51,8 +45,7 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        public object Convert(Type type, object value)
-        {
+        public object Convert(Type type, object value) {
             if (type == null)
                 throw new NotSupportedException();
 

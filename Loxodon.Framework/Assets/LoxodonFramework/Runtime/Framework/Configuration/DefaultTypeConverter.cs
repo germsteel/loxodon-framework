@@ -26,20 +26,16 @@ using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Loxodon.Framework.Configurations
-{
-    public class DefaultTypeConverter : ITypeConverter
-    {
-        public virtual bool Support(Type type)
-        {
+namespace Loxodon.Framework.Configurations {
+    public class DefaultTypeConverter : ITypeConverter {
+        public virtual bool Support(Type type) {
 #if NETFX_CORE
             TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
 #else
             TypeCode typeCode = Type.GetTypeCode(type);
 #endif
 
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.Boolean:
                 case TypeCode.Char:
                 case TypeCode.SByte:
@@ -56,8 +52,7 @@ namespace Loxodon.Framework.Configurations
                 case TypeCode.String:
                 case TypeCode.Decimal:
                     return true;
-                default:
-                    {
+                default: {
                         if (type.Equals(typeof(Version)))
                             return true;
                         if (type.Equals(typeof(Color)))
@@ -75,19 +70,16 @@ namespace Loxodon.Framework.Configurations
             }
         }
 
-        public virtual object Convert(Type type, object value)
-        {
+        public virtual object Convert(Type type, object value) {
 #if NETFX_CORE
             TypeCode typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(type);
 #else
             TypeCode typeCode = Type.GetTypeCode(type);
 #endif
 
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.Boolean:
-                    if (value is string)
-                    {
+                    if (value is string) {
                         string v = ((string)value).Trim().ToLower();
                         if (v.Equals("yes") || v.Equals("true"))
                             return true;
@@ -96,8 +88,7 @@ namespace Loxodon.Framework.Configurations
                         else
                             throw new FormatException();
                     }
-                    else
-                    {
+                    else {
                         return System.Convert.ChangeType(value, type);
                     }
                 case TypeCode.Char:
@@ -115,121 +106,102 @@ namespace Loxodon.Framework.Configurations
                 case TypeCode.String:
                 case TypeCode.Decimal:
                     return System.Convert.ChangeType(value, type);
-                default:
-                    {
-                        if (type.Equals(typeof(Version)))
-                        {
+                default: {
+                        if (type.Equals(typeof(Version))) {
                             if (value is Version)
                                 return (Version)value;
 
                             if (!(value is string))
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name));
 
-                            try
-                            {
+                            try {
                                 return new Version((string)value);
                             }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name), e);
                             }
                         }
-                        else if (type.Equals(typeof(Color)))
-                        {
+                        else if (type.Equals(typeof(Color))) {
                             if (value is Color)
                                 return (Color)value;
 
                             if (!(value is string))
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name));
 
-                            try
-                            {
+                            try {
                                 Color color;
                                 if (ColorUtility.TryParseHtmlString((string)value, out color))
                                     return color;
                             }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name), e);
                             }
                         }
-                        else if (type.Equals(typeof(Vector2)))
-                        {
+                        else if (type.Equals(typeof(Vector2))) {
                             if (value is Vector2)
                                 return (Vector2)value;
 
                             if (!(value is string))
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name));
 
-                            try
-                            {
+                            try {
                                 var val = Regex.Replace(((string)value).Trim(), @"(^\()|(\)$)", "");
                                 string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                                 if (s.Length == 2)
                                     return new Vector2(float.Parse(s[0]), float.Parse(s[1]));
                             }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name), e);
                             }
                         }
-                        else if (type.Equals(typeof(Vector3)))
-                        {
+                        else if (type.Equals(typeof(Vector3))) {
                             if (value is Vector3)
                                 return (Vector3)value;
 
                             if (!(value is string))
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name));
 
-                            try
-                            {
+                            try {
                                 var val = Regex.Replace(((string)value).Trim(), @"(^\()|(\)$)", "");
                                 string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                                 if (s.Length == 3)
                                     return new Vector3(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]));
                             }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name), e);
                             }
                         }
-                        else if (type.Equals(typeof(Vector4)))
-                        {
+                        else if (type.Equals(typeof(Vector4))) {
                             if (value is Vector4)
                                 return (Vector4)value;
 
                             if (!(value is string))
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name));
 
-                            try
-                            {
+                            try {
                                 var val = Regex.Replace(((string)value).Trim(), @"(^\()|(\)$)", "");
                                 string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                                 if (s.Length == 4)
                                     return new Vector4(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]), float.Parse(s[3]));
                             }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name), e);
                             }
                         }
-                        else if (type.Equals(typeof(Rect)))
-                        {
+                        else if (type.Equals(typeof(Rect))) {
                             if (value is Rect)
                                 return (Rect)value;
 
                             if (!(value is string))
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name));
 
-                            try
-                            {
+                            try {
                                 var val = Regex.Replace(((string)value).Trim(), @"(^\()|(\)$)", "");
                                 string[] s = val.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                                 if (s.Length == 4)
                                     return new Rect(float.Parse(s[0]), float.Parse(s[1]), float.Parse(s[2]), float.Parse(s[3]));
                             }
-                            catch (Exception e)
-                            {
+                            catch (Exception e) {
                                 throw new FormatException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name), e);
                             }
                         }

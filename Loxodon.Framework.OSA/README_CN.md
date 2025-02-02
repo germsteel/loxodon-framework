@@ -28,82 +28,67 @@
 
 ## 快速开始 ##
 
-    public class ListViewExampleViewModel : ViewModelBase
-    {
+    public class ListViewExampleViewModel : ViewModelBase {
         private int id = 0;
         private ObservableList<ItemViewModel> items;
 
-        public ObservableList<ItemViewModel> Items
-        {
+        public ObservableList<ItemViewModel> Items {
             get { return this.items; }
             set { this.Set(ref items, value); }
         }
 
-        public ListViewExampleViewModel()
-        {
+        public ListViewExampleViewModel() {
             this.CreateItems(3);
         }
 
-        public void AddItem()
-        {
+        public void AddItem() {
             items.Add(CreateItem());
         }
 
-        public void ChangeItem()
-        {
-            if (items != null && items.Count > 0)
-            {
+        public void ChangeItem() {
+            if (items != null && items.Count > 0) {
                 var model = items[0];
                 model.Color = DemosUtil.GetRandomColor();
             }
         }
 
-        public void MoveItem()
-        {
-            if (items != null && items.Count > 1)
-            {
+        public void MoveItem() {
+            if (items != null && items.Count > 1) {
                 items.Move(0, items.Count - 1);
             }
         }
 
-        public void ResetItem()
-        {
+        public void ResetItem() {
             items.Clear();
         }
 
-        private void CreateItems(int count)
-        {
+        private void CreateItems(int count) {
             this.items = new ObservableList<ItemViewModel>();
             for (int i = 0; i < count; i++)
                 items.Add(CreateItem());
         }
 
-        private ItemViewModel CreateItem()
-        {
-            return new ItemViewModel(this.items)
-            {
+        private ItemViewModel CreateItem() {
+            return new ItemViewModel(this.items) {
                 Title = "Item #" + (id++),
             };
         }
     }
 
-    public class ListViewExample : MonoBehaviour
-    {
+    public class ListViewExample : MonoBehaviour {
         public Button addButton;
         public Button changeButton;
         public Button moveButton;
         public Button resetButton;
         public ListViewBindingAdapter listView;
 
-        protected void Awake()
-        {
+        protected void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
         }
 
-        private void Start()
-        {
+        private void Start() {
             var bindingSet = this.CreateBindingSet<ListViewExample, ListViewExampleViewModel>();
 
             bindingSet.Bind(addButton).For(v => v.onClick).To(vm => vm.AddItem);

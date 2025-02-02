@@ -27,42 +27,33 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 
-namespace Loxodon.Framework.Localizations
-{
+namespace Loxodon.Framework.Localizations {
     /// <summary>
     /// XML document parser
     /// </summary>
-    public class XmlDocumentParser : AbstractDocumentParser
-    {
-        public XmlDocumentParser() : this(null)
-        {
+    public class XmlDocumentParser : AbstractDocumentParser {
+        public XmlDocumentParser() : this(null) {
         }
 
-        public XmlDocumentParser(List<ITypeConverter> converters) : base(converters)
-        {            
+        public XmlDocumentParser(List<ITypeConverter> converters) : base(converters) {            
         }
 
-        public override Dictionary<string, object> Parse(Stream input, CultureInfo cultureInfo)
-        {
+        public override Dictionary<string, object> Parse(Stream input, CultureInfo cultureInfo) {
             Dictionary<string, object> data = new Dictionary<string, object>();
-            using (XmlTextReader reader = new XmlTextReader(input))
-            {
+            using (XmlTextReader reader = new XmlTextReader(input)) {
                 string elementName = null;
                 string typeName = null;
                 string name = null;
                 string value = null;
                 List<string> list = new List<string>();
-                while (reader.Read())
-                {
-                    switch (reader.NodeType)
-                    {
+                while (reader.Read()) {
+                    switch (reader.NodeType) {
                         case XmlNodeType.Element:
                             elementName = reader.Name;
                             if (string.IsNullOrEmpty(elementName) || elementName.Equals("resources"))
                                 break;
 
-                            if (elementName.Equals("item"))
-                            {
+                            if (elementName.Equals("item")) {
                                 //array item
                                 var content = reader.ReadElementString();
                                 list.Add(content);
@@ -73,8 +64,7 @@ namespace Loxodon.Framework.Localizations
                             if (string.IsNullOrEmpty(name))
                                 throw new XmlException("The attribute of name is null.");
 
-                            if (elementName.EndsWith("-array"))
-                            {
+                            if (elementName.EndsWith("-array")) {
                                 //array item
                                 typeName = elementName.Replace("-array", "");
                                 list.Clear();
@@ -87,8 +77,7 @@ namespace Loxodon.Framework.Localizations
                             break;
                         case XmlNodeType.EndElement:
                             elementName = reader.Name;
-                            if (!string.IsNullOrEmpty(elementName) && elementName.EndsWith("-array"))
-                            {
+                            if (!string.IsNullOrEmpty(elementName) && elementName.EndsWith("-array")) {
                                 //array
                                 data[name] = this.Parse(typeName, list);
                                 list.Clear();

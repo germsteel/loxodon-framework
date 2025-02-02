@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HotFix_Project
-{
-    class TestValueType
-    {
-        public static void RunTest()
-        {
+namespace HotFix_Project {
+    class TestValueType {
+        public static void RunTest() {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             //Debug.Log("测试Vector3的各种运算");
             Vector3 a = new Vector3(1, 2, 3);
@@ -30,8 +27,7 @@ namespace HotFix_Project
 
             sw.Start();
             float dot = 0;
-            for(int i = 0; i < 100000; i++)
-            {
+            for(int i = 0; i < 100000; i++) {
                 a += Vector3.one;
                 dot += Vector3.Dot(a, Vector3.zero);
             }
@@ -40,8 +36,7 @@ namespace HotFix_Project
             Debug.LogFormat("Value: a={0},dot={1}, time = {2}ms", a, dot, sw.ElapsedMilliseconds);
         }
 
-        public static void RunTest2()
-        {
+        public static void RunTest2() {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             //Debug.Log("测试Vector3的各种运算");
             Quaternion a = new Quaternion(1, 2, 3, 4);
@@ -61,8 +56,7 @@ namespace HotFix_Project
             sw.Start();
             var rot = Quaternion.Euler(c);
             float dot = 0;
-            for (int i = 0; i < 100000; i++)
-            {
+            for (int i = 0; i < 100000; i++) {
                 a *= rot;
                 dot += Quaternion.Dot(a, b);
             }
@@ -71,8 +65,7 @@ namespace HotFix_Project
             Debug.LogFormat("Value: a={0},dot={1}, time = {2}ms", a, dot, sw.ElapsedMilliseconds);
         }
 
-        public static void RunTest3()
-        {
+        public static void RunTest3() {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             //Debug.Log("测试Vector2的各种运算");
             Vector2 a = new Vector2(1, 2);
@@ -96,8 +89,7 @@ namespace HotFix_Project
 
             sw.Start();
             float dot = 0;
-            for (int i = 0; i < 100000; i++)
-            {
+            for (int i = 0; i < 100000; i++) {
                 a += Vector2.one;
                 dot += Vector2.Dot(a, Vector2.zero);
             }

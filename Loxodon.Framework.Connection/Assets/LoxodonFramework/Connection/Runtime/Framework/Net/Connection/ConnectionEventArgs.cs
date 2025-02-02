@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public class ConnectionEventArgs : EventArgs
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public class ConnectionEventArgs : EventArgs {
         public static readonly ConnectionEventArgs ConnectingEventArgs = new ConnectionEventArgs("Connecting");
         public static readonly ConnectionEventArgs ReconnectingEventArgs = new ConnectionEventArgs("Reconnecting");
         public static readonly ConnectionEventArgs ConnectedEventArgs = new ConnectionEventArgs("Connected");
@@ -36,15 +34,13 @@ namespace Loxodon.Framework.Net.Connection
         public static readonly ConnectionEventArgs ClosingEventArgs = new ConnectionEventArgs("Closing");
         public static readonly ConnectionEventArgs ClosedEventArgs = new ConnectionEventArgs("Closed");
 
-        public ConnectionEventArgs(string name)
-        {
+        public ConnectionEventArgs(string name) {
             this.Name = name;
         }
 
         public string Name { get; }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return string.Format("ConnectionEvent:[{0}]", this.Name);
         }
     }

@@ -4,10 +4,8 @@ using ILRuntime.Runtime.Enviorment;
 using ILRuntime.Runtime.Intepreter;
 using AppDomain = ILRuntime.Runtime.Enviorment.AppDomain;
 
-namespace Loxodon.Framework.ILRuntimes.Adapters
-{
-    public class UIBehaviourAdapter : CrossBindingAdaptor
-    {
+namespace Loxodon.Framework.ILRuntimes.Adapters {
+    public class UIBehaviourAdapter : CrossBindingAdaptor {
         static CrossBindingMethodInfo mAwake_0 = new CrossBindingMethodInfo("Awake");
         static CrossBindingMethodInfo mOnEnable_1 = new CrossBindingMethodInfo("OnEnable");
         static CrossBindingMethodInfo mStart_2 = new CrossBindingMethodInfo("Start");
@@ -22,39 +20,31 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
         static CrossBindingMethodInfo mOnDidApplyAnimationProperties_11 = new CrossBindingMethodInfo("OnDidApplyAnimationProperties");
         static CrossBindingMethodInfo mOnCanvasGroupChanged_12 = new CrossBindingMethodInfo("OnCanvasGroupChanged");
         static CrossBindingMethodInfo mOnCanvasHierarchyChanged_13 = new CrossBindingMethodInfo("OnCanvasHierarchyChanged");
-        public override Type BaseCLRType
-        {
-            get
-            {
+        public override Type BaseCLRType {
+            get {
                 return typeof(UnityEngine.EventSystems.UIBehaviour);
             }
         }
 
-        public override Type AdaptorType
-        {
-            get
-            {
+        public override Type AdaptorType {
+            get {
                 return typeof(Adapter);
             }
         }
 
-        public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
-        {
+        public override object CreateCLRInstance(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance) {
             return new Adapter(appdomain, instance);
         }
 
-        public class Adapter : UnityEngine.EventSystems.UIBehaviour, CrossBindingAdaptorType, IBehaviourAdapter
-        {
+        public class Adapter : UnityEngine.EventSystems.UIBehaviour, CrossBindingAdaptorType, IBehaviourAdapter {
             ILTypeInstance instance;
             ILRuntime.Runtime.Enviorment.AppDomain appdomain;
 
-            public Adapter()
-            {
+            public Adapter() {
 
             }
 
-            public Adapter(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance)
-            {
+            public Adapter(ILRuntime.Runtime.Enviorment.AppDomain appdomain, ILTypeInstance instance) {
                 this.appdomain = appdomain;
                 this.instance = instance;
             }
@@ -63,40 +53,35 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
 
             public AppDomain AppDomain { get { return this.appdomain; } set { this.appdomain = value; } }
 
-            protected override void Awake()
-            {
+            protected override void Awake() {
                 if (mAwake_0.CheckShouldInvokeBase(this.instance))
                     base.Awake();
                 else
                     mAwake_0.Invoke(this.instance);
             }
 
-            protected override void OnEnable()
-            {
+            protected override void OnEnable() {
                 if (mOnEnable_1.CheckShouldInvokeBase(this.instance))
                     base.OnEnable();
                 else
                     mOnEnable_1.Invoke(this.instance);
             }
 
-            protected override void Start()
-            {
+            protected override void Start() {
                 if (mStart_2.CheckShouldInvokeBase(this.instance))
                     base.Start();
                 else
                     mStart_2.Invoke(this.instance);
             }
 
-            protected override void OnDisable()
-            {
+            protected override void OnDisable() {
                 if (mOnDisable_3.CheckShouldInvokeBase(this.instance))
                     base.OnDisable();
                 else
                     mOnDisable_3.Invoke(this.instance);
             }
 
-            protected override void OnDestroy()
-            {
+            protected override void OnDestroy() {
                 if (mOnDestroy_4.CheckShouldInvokeBase(this.instance))
                     base.OnDestroy();
                 else
@@ -175,20 +160,17 @@ namespace Loxodon.Framework.ILRuntimes.Adapters
             //        mOnCanvasHierarchyChanged_13.Invoke(this.instance);
             //}
 
-            public override string ToString()
-            {
+            public override string ToString() {
                 IMethod m = appdomain.ObjectType.GetMethod("ToString", 0);
                 m = instance.Type.GetVirtualMethod(m);
-                if (m == null || m is ILMethod)
-                {
+                if (m == null || m is ILMethod) {
                     return instance.ToString();
                 }
                 else
                     return instance.Type.FullName;
             }
 
-            void IBehaviourAdapter.Awake()
-            {
+            void IBehaviourAdapter.Awake() {
                 this.Awake();
                 this.OnEnable();
             }

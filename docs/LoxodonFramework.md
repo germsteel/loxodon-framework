@@ -211,15 +211,13 @@ LoxodonFramework是一个轻量级的MVVM(Model-View-ViewModel)框架，它是�
 ### 修改Packages/manifest.json文件安装
 
 通过修改manifest.json文件安装，不需要安装nodejs和openupm-cli客户端。在Unity项目根目录下找到Packages/manifest.json文件，在文件的scopedRegistries（没有可以自己添加）节点下添加第三方仓库package.openupm.com的配置，同时在dependencies节点下添加com.vovgou.loxodon-framework的配置，保存后切换到Unity窗口即可完成安装。
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework": "2.0.0-preview"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -350,8 +348,7 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
     /// <summary>
     /// 账号子视图模型
     /// </summary>
-    public class AccountViewModel : ObservableObject
-    {
+    public class AccountViewModel : ObservableObject {
         private int id;
         private string username;
         private string password;
@@ -359,38 +356,32 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
         private DateTime birthday;
         private readonly ObservableProperty<string> address = new ObservableProperty<string>();
 
-        public int ID
-        {
+        public int ID {
             get { return this.id; }
             set { this.Set<int>(ref this.id, value, "ID"); }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set<string>(ref this.username, value, "Username"); }
         }
 
-        public string Password
-        {
+        public string Password {
             get { return this.password; }
             set { this.Set<string>(ref this.password, value, "Password"); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set<string>(ref this.email, value, "Email"); }
         }
 
-        public DateTime Birthday
-        {
+        public DateTime Birthday {
             get { return this.birthday; }
             set { this.Set<DateTime>(ref this.birthday, value, "Birthday"); }
         }
 
-        public ObservableProperty<string> Address
-        {
+        public ObservableProperty<string> Address {
             get { return this.address; }
         }
     }
@@ -399,64 +390,53 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
     /// <summary>
     /// 数据绑定示例的视图模型
     /// </summary>
-    public class DatabindingViewModel : ViewModelBase
-    {
+    public class DatabindingViewModel : ViewModelBase {
         private AccountViewModel account;
         private bool remember;
         private string username;
         private string email;
         private ObservableDictionary<string, string> errors = new ObservableDictionary<string, string>();
 
-        public AccountViewModel Account
-        {
+        public AccountViewModel Account {
             get { return this.account; }
             set { this.Set<AccountViewModel>(ref account, value, "Account"); }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set<string>(ref this.username, value, "Username"); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set<string>(ref this.email, value, "Email"); }
         }
 
-        public bool Remember
-        {
+        public bool Remember {
             get { return this.remember; }
             set { this.Set<bool>(ref this.remember, value, "Remember"); }
         }
 
-        public ObservableDictionary<string, string> Errors
-        {
+        public ObservableDictionary<string, string> Errors {
             get { return this.errors; }
             set { this.Set<ObservableDictionary<string, string>>(ref this.errors, value, "Errors"); }
         }
 
-        public void OnUsernameValueChanged(string value)
-        {
+        public void OnUsernameValueChanged(string value) {
             Debug.LogFormat("Username ValueChanged:{0}", value);
         }
 
-        public void OnEmailValueChanged(string value)
-        {
+        public void OnEmailValueChanged(string value) {
             Debug.LogFormat("Email ValueChanged:{0}", value);
         }
 
-        public void OnSubmit()
-        {
-            if (string.IsNullOrEmpty(this.Username) || !Regex.IsMatch(this.Username, "^[a-zA-Z0-9_-]{4,12}$"))
-            {
+        public void OnSubmit() {
+            if (string.IsNullOrEmpty(this.Username) || !Regex.IsMatch(this.Username, "^[a-zA-Z0-9_-]{4,12}$")) {
                 this.errors["errorMessage"] = "Please enter a valid username.";
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.Email) || !Regex.IsMatch(this.Email, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"))
-            {
+            if (string.IsNullOrEmpty(this.Email) || !Regex.IsMatch(this.Email, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")) {
                 this.errors["errorMessage"] = "Please enter a valid email.";
                 return;
             }
@@ -471,8 +451,7 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
     /// <summary>
     /// 数据绑定示例视图
     /// </summary>
-    public class DatabindingExample : UIView
-    {
+    public class DatabindingExample : UIView {
         public Text title;
         public Text username;
         public Text password;
@@ -488,8 +467,7 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
         public Toggle rememberEdit;
         public Button submit;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             //获得应用上下文
             ApplicationContext context = Context.GetApplicationContext();
 
@@ -504,11 +482,9 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
 
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             //创建账号子视图
-            AccountViewModel account = new AccountViewModel()
-            {
+            AccountViewModel account = new AccountViewModel() {
                 ID = 1,
                 Username = "test",
                 Password = "test",
@@ -518,8 +494,7 @@ Unity 2019.3.4f1及以上版本支持使用git URL安装. 如下图添加 https:
             account.Address.Value = "beijing";
 
             //创建数据绑定视图
-            DatabindingViewModel databindingViewModel = new DatabindingViewModel()
-            {
+            DatabindingViewModel databindingViewModel = new DatabindingViewModel() {
                 Account = account
             };
 
@@ -853,26 +828,22 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
     /// <summary>
     /// 自定义一个类型编码器
     /// </summary>
-    public class ColorTypeEncoder : ITypeEncoder
-    {
+    public class ColorTypeEncoder : ITypeEncoder {
         private int priority = 900; //当一个类型被多个类型编码器支持时，优先级最高的有效(优先级在-999到999之间)
 
-        public int Priority
-        {
+        public int Priority {
             get { return this.priority; }
             set { this.priority = value; }
         }
 
-        public bool IsSupport(Type type)
-        {
+        public bool IsSupport(Type type) {
             if (type.Equals(typeof(Color)))
                 return true;
             return false;
         }
 
         //将string类型转回对象类型
-        public object Decode(Type type, string value)
-        {
+        public object Decode(Type type, string value) {
             if (string.IsNullOrEmpty(value))
                 return null;
 
@@ -884,8 +855,7 @@ Perference除了扩展以上功能外，我还扩展了配置的作用域，如�
         }
 
         //将对象转换为string来保存，因为PlayerPrefs只支持string类型的数据
-        public string Encode(object value)
-        {            
+        public string Encode(object value) {            
             return ColorUtility.ToHtmlStringRGBA((Color)value);
         }
     }
@@ -1154,8 +1124,7 @@ XML 格式配置如下:
 
 ![](images/Localization_Make.png)
 
-    public static partial class R
-    {
+    public static partial class R {
         public readonly static V<string> startup_progressbar_tip_loading = new V<string>("startup.progressbar.tip.loading");
 
         public readonly static V<string> startup_progressbar_tip_unziping = new V<string>("startup.progressbar.tip.unziping");
@@ -1182,21 +1151,17 @@ XML 格式配置如下:
     如下示例是使用我的Loxodon.Framework.Bundle插件加载音效的代码。
 
         [RequireComponent(typeof(AudioSource))]
-        public class LocalizedAudioSource : AbstractLocalized<AudioSource>
-        {
+        public class LocalizedAudioSource : AbstractLocalized<AudioSource> {
             private IResources resources;
-            private void Awake()
-            {
+            private void Awake() {
                 Context context = Context.GetApplicationContext();
                 this.resources = context.GetService<IResources>();
             }
 
-            protected override void OnValueChanged(object sender, EventArgs e)
-            {
+            protected override void OnValueChanged(object sender, EventArgs e) {
                 string path = (string)this.value.Value;
                 var result = resources.LoadAssetAsync<AudioClip>(path);
-                result.Callbackable().OnCallback(r =>
-                {
+                result.Callbackable().OnCallback(r => {
                     if (r.Exception != null)
                         return;
 
@@ -1215,21 +1180,17 @@ XML 格式配置如下:
 
     关于RectTransform的设置与锚点位置有关，以下代码仅仅是一个示例，请根据自己的实际情况修改。
 
-        public class LocalizedRectTransform : AbstractLocalized<RectTransform>
-        {
-            protected override void OnValueChanged(object sender, EventArgs e)
-            {
+        public class LocalizedRectTransform : AbstractLocalized<RectTransform> {
+            protected override void OnValueChanged(object sender, EventArgs e) {
                 RectTransform rectTransform = this.target;
-                if (this.value.Value is Vector2[])
-                {
+                if (this.value.Value is Vector2[]) {
                     Vector2[] vectors = (Vector2[])this.value.Value;
                     rectTransform.offsetMin = vectors[0];
                     rectTransform.offsetMax = vectors[1];
                     return;
                 }
 
-                if (this.value.Value is Rect)
-                {
+                if (this.value.Value is Rect) {
                     Rect rect = (Rect)this.value.Value;
                     rectTransform.anchoredPosition = new Vector2(rect.x, rect.y);
                     rectTransform.sizeDelta = new Vector2(rect.width, rect.height);               
@@ -1313,14 +1274,12 @@ XML 格式配置如下:
 
 ![](images/Localization_Example.png)
 
-    public class LocalizationExample : MonoBehaviour
-    {
+    public class LocalizationExample : MonoBehaviour {
         public Dropdown dropdown;
 
         private Localization localization;
 
-        void Awake ()
-        {
+        void Awake () {
             CultureInfo cultureInfo = Locale.GetCultureInfoByLanguage (SystemLanguage.English);
 
             //创建一个数据提供器，从LocalizationTutorials目录中加载本地化文件
@@ -1334,8 +1293,7 @@ XML 格式配置如下:
             this.dropdown.onValueChanged.AddListener (OnValueChanged);
         }
 
-        void OnValueChanged (int value)
-        {
+        void OnValueChanged (int value) {
             switch (value) {
             case 0:
                 //设置本地化服务当前语言为英文
@@ -1352,8 +1310,7 @@ XML 格式配置如下:
             }
         }
 
-        void OnDestroy ()
-        {
+        void OnDestroy () {
             this.dropdown.onValueChanged.RemoveListener (OnValueChanged);
         }
     }
@@ -1477,37 +1434,30 @@ CSV源文件
 
 利用AsyncResult，我们来创建一个可以取消的协程任务，并分别通过同步阻塞的方式和回调的方式来获得执行结果。
 
-    public class AsyncResultExample : MonoBehaviour
-    {
+    public class AsyncResultExample : MonoBehaviour {
 
-        protected IEnumerator Start ()
-        {
+        protected IEnumerator Start () {
             //********启动任务，同步方式调用示例***********//
             IAsyncResult<bool> result = StartTask();
 
             //等待任务完成，result.WaitForDone ()函数返回一个迭代器IEnumerator
             yield return result.WaitForDone ();
 
-            if(r.Exception !=null)
-            {
+            if(r.Exception !=null) {
                 Debug.LogFormat("任务执行失败：{0}",r.Exception);
             }
-            else
-            {    
+            else {    
                 Debug.LogFormat("任务执行成功 result = {0}",r.Result);
             }
 
 
             //********启动任务，回调方式调用示例***********//
             result = StartTask();
-            result.Callbackable().OnCallback((r) =>
-            {
-                if(r.Exception !=null)
-                {
+            result.Callbackable().OnCallback((r) => {
+                if(r.Exception !=null) {
                     Debug.LogFormat("任务执行失败：{0}",r.Exception);
                 }
-                else
-                {    
+                else {    
                     Debug.LogFormat("任务执行成功 result = {0}",r.Result);
                 }
             });
@@ -1515,8 +1465,7 @@ CSV源文件
         }
 
         //创建一个任务
-        public IAsyncResult<bool> StartTask()
-        {
+        public IAsyncResult<bool> StartTask() {
             //创建一个异步结果，参数cancelable = true，支持取消操作
             AsyncResult<bool> result = new AsyncResult<bool> (true);
 
@@ -1531,8 +1480,7 @@ CSV源文件
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask (IPromise<bool> promise)
-        {
+        protected IEnumerator DoTask (IPromise<bool> promise) {
             for (int i = 0; i < 20; i++) {
                 //如果外部调用了AsyncResult.Cancel()函数，则这里的IsCancellationRequested = true，请求取消任务
                 if (promise.IsCancellationRequested) {        
@@ -1554,36 +1502,30 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
     /// <summary>
     /// 任务进度
     /// </summary>
-    public class Progress
-    {
+    public class Progress {
         public int bytes;
         public int TotalBytes;
 
         public int Percentage { get { return (bytes * 100) / TotalBytes; } }
     }
 
-    public class ProgressResultExample : MonoBehaviour
-    {
-        protected void Start()
-        {
+    public class ProgressResultExample : MonoBehaviour {
+        protected void Start() {
             //开始一个任务
             IProgressResult<Progress, string> result = StartTask();
 
             //打印任务进度
-            result.Callbackable().OnProgressCallback(progress =>
-            {
+            result.Callbackable().OnProgressCallback(progress => {
                 Debug.LogFormat("Percentage: {0}% ", progress.Percentage);
             });
 
             //监听任务结果
-            result.Callbackable().OnCallback(r =>
-            {
+            result.Callbackable().OnCallback(r => {
                 Debug.LogFormat("IsDone:{0} Result:{1}", r.IsDone, r.Result);
             });
         }
 
-        public IProgressResult<Progress, string> StartTask()
-        {
+        public IProgressResult<Progress, string> StartTask() {
             ProgressResult<Progress, string> result = new ProgressResult<Progress, string>(true);
 
             this.StartCoroutine(DoTask(result));
@@ -1596,18 +1538,15 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask(IProgressPromise<Progress, string> promise)
-        {
+        protected IEnumerator DoTask(IProgressPromise<Progress, string> promise) {
             int n = 50;
             Progress progress = new Progress();
             progress.TotalBytes = n;
             progress.bytes = 0;
             StringBuilder buf = new StringBuilder();
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 /* If the task is cancelled, then stop the task */
-                if (promise.IsCancellationRequested)
-                {
+                if (promise.IsCancellationRequested) {
                     promise.SetCancelled();
                     yield break;
                 }
@@ -1628,27 +1567,21 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
 
 异步任务是对一个线程任务或者一个协程任务的封装，将一个迭代器IEnumerator传入AsyncTask可以创建一个协程任务，或者将一个委托函数传入，可以创建一个后台线程执行的任务。根据任务执行过程，将一个任务拆分成执行前、执行成功后/执行失败后、执行结束几个阶段，在每一个阶段中都可以通过一个委托回调来注册自己的代码块。下面的示例中，我们来看看怎么创建一个协程任务。
 
-    public class AsyncTaskExample : MonoBehaviour
-    {
-        protected IEnumerator Start()
-        {
+    public class AsyncTaskExample : MonoBehaviour {
+        protected IEnumerator Start() {
             AsyncTask task = new AsyncTask(DoTask(), true);
 
             /* 开始任务 */
-            task.OnPreExecute(() =>
-            {
+            task.OnPreExecute(() => {
                 //任务执行前调用
                 Debug.Log("The task has started.");
-            }).OnPostExecute(() =>
-            {
+            }).OnPostExecute(() => {
                 //任务成功执行后调用
                 Debug.Log("The task has completed.");/* only execute successfully */
-            }).OnError((e) =>
-            {
+            }).OnError((e) => {
                 //任务执行失败调用
                 Debug.LogFormat("An error occurred:{0}", e);
-            }).OnFinish(() =>
-            {
+            }).OnFinish(() => {
                 //任务执行完毕，无论成功失败，都会调用
                 Debug.Log("The task has been finished.");/* completed or error or canceled*/
             }).Start();
@@ -1664,11 +1597,9 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask()
-        {
+        protected IEnumerator DoTask() {
             int n = 10;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 yield return new WaitForSeconds(0.5f);
             }
         }    
@@ -1678,33 +1609,26 @@ ProgressResult与AsyncResult功能类似，只是增加了任务进度，下面�
 
 ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样ProgressTask既可以创建一个协程任务，也可以创建一个后台线程的任务。
 
-    public class ProgressTaskExample : MonoBehaviour
-    {
-        protected IEnumerator Start()
-        {
+    public class ProgressTaskExample : MonoBehaviour {
+        protected IEnumerator Start() {
             //创建一个任务，这个任务将在一个后台线程中执行
             ProgressTask<float, string> task = new ProgressTask<float, string>(
                     new Action<IProgressPromise<float, string>>(DoTask), false, true);
 
             /* 开始一个任务 */
-            task.OnPreExecute(() =>
-            {
+            task.OnPreExecute(() => {
                 //在任务执行前调用
                 Debug.Log("The task has started.");
-            }).OnPostExecute((result) =>
-            {
+            }).OnPostExecute((result) => {
                 //在任务成功执行后调用
                 Debug.LogFormat("The task has completed. result:{0}", result);/* only execute successfully */
-            }).OnProgressUpdate((progress) =>
-            {
+            }).OnProgressUpdate((progress) => {
                 //任务执行的进度
                 Debug.LogFormat("The current progress:{0}%", (int)(progress * 100));
-            }).OnError((e) =>
-            {
+            }).OnError((e) => {
                 //在任务执行失败后调用
                 Debug.LogFormat("An error occurred:{0}", e);
-            }).OnFinish(() =>
-            {
+            }).OnFinish(() => {
                 //任务执行完毕，无论成功失败，都会调用
                 Debug.Log("The task has been finished.");/* completed or error or canceled*/
             }).Start();
@@ -1719,18 +1643,14 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected void DoTask(IProgressPromise<float, string> promise)
-        {
-            try
-            {
+        protected void DoTask(IProgressPromise<float, string> promise) {
+            try {
                 int n = 50;
                 float progress = 0f;
                 StringBuilder buf = new StringBuilder();
-                for (int i = 0; i < n; i++)
-                {
+                for (int i = 0; i < n; i++) {
                     /* If the task is cancelled, then stop the task */
-                    if (promise.IsCancellationRequested)
-                    {
+                    if (promise.IsCancellationRequested) {
                         promise.SetCancelled();
                         break;
                     }
@@ -1743,8 +1663,7 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
                 promise.UpdateProgress(1f);
                 promise.SetResult(buf.ToString()); /* update the result. */
             }
-            catch (System.Exception e)
-            {
+            catch (System.Exception e) {
                 promise.SetException(e);
             }
         }
@@ -1755,10 +1674,8 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
 
 在C# 4.0之前需要执行一个复杂的异步操作时，一般都使用线程池技术来执行一个任务。在C# 4.0中引人了Task（System.Threading.Tasks.Task）机制，它提供了更为方便和简洁的API，为保持Unity3D协程异步任务和线程异步任务Task用法一致，我实现了CoroutineTask类，它的API基本上和Task是一致的，唯一的区别就是它执行的是协程异步任务，它的所有任务都是在主线程中执行。
 
-    public class CoroutineTaskExample : MonoBehaviour
-    {
-        IEnumerator Start()
-        {
+    public class CoroutineTaskExample : MonoBehaviour {
+        IEnumerator Start() {
             CoroutineTask task = new CoroutineTask(DoTask())
                 .ContinueWith(
                     DoContinueTask(),
@@ -1779,21 +1696,17 @@ ProgressTask与AsyncTask功能类似，只是增加了任务进度，同样Progr
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected IEnumerator DoTask()
-        {
+        protected IEnumerator DoTask() {
             int n = 10;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 Debug.LogFormat("Task:i = {0}", i);
                 yield return new WaitForSeconds(0.5f);
             }
         }
 
-        protected IEnumerator DoContinueTask()
-        {
+        protected IEnumerator DoContinueTask() {
             int n = 10;
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 Debug.LogFormat("ContinueTask:i = {0}", i);
                 yield return new WaitForSeconds(0.5f);
             }
@@ -1811,10 +1724,8 @@ Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以�
 
 示例一，async和await使用方式
 
-    public class AsyncAndAwaitExample : MonoBehaviour
-    {
-        async void Start()
-        {
+    public class AsyncAndAwaitExample : MonoBehaviour {
+        async void Start() {
             await new WaitForSeconds(2f);
             Debug.Log("WaitForSeconds  End");
 
@@ -1835,17 +1746,13 @@ Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以�
             Debug.Log("DoTask End");
         }
 
-        IAsyncResult<int> Calculate()
-        {
-            return Executors.RunAsync<int>(() =>
-            {
+        IAsyncResult<int> Calculate() {
+            return Executors.RunAsync<int>(() => {
                 Debug.LogFormat("Calculate Task ThreadId:{0}", Thread.CurrentThread.ManagedThreadId);
                 int total = 0;
-                for (int i = 0; i < 20; i++)
-                {
+                for (int i = 0; i < 20; i++) {
                     total += i;
-                    try
-                    {
+                    try {
                         Thread.Sleep(100);
                     }
                     catch (Exception) { }
@@ -1854,12 +1761,10 @@ Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以�
             });
         }
 
-        IEnumerator DoTask(int n)
-        {
+        IEnumerator DoTask(int n) {
             yield return new WaitForSeconds(1f);
 
-            for (int i = 0; i < n; i++)
-            {
+            for (int i = 0; i < n; i++) {
                 yield return null;
             }
         }
@@ -1870,10 +1775,8 @@ Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以�
     using Loxodon.Framework.Asynchronous;//扩展函数GetAwaiter()所在命名空间
     using System.Threading;
     using System.Threading.Tasks;
-    public class AsyncAndAwaitSwitchThreadsExample : MonoBehaviour
-    {
-        async void Start()
-        {
+    public class AsyncAndAwaitSwitchThreadsExample : MonoBehaviour {
+        async void Start() {
             //Unity Thread
             Debug.LogFormat("1. ThreadID:{0}",Thread.CurrentThread.ManagedThreadId);
 
@@ -1906,16 +1809,11 @@ Unity2017发布后，使用 .Net 4.x 或者 .Net Standard 2.0库，已经可以�
 框架为Task扩展了AsCoroutine()函数，支持Task转为Unity的协程，请看示例。
 
     using Loxodon.Framework.Asynchronous;//扩展函数AsCoroutine()所在命名空间
-    public class TaskToCoroutineExample : MonoBehaviour
-    {
-        IEnumerator Start()
-        {
-            Task task = Task.Run(() =>
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    try
-                    {
+    public class TaskToCoroutineExample : MonoBehaviour {
+        IEnumerator Start() {
+            Task task = Task.Run(() => {
+                for (int i = 0; i < 5; i++) {
+                    try {
                         Thread.Sleep(200);
                     }
                     catch (Exception) { }
@@ -1976,13 +1874,11 @@ async & await函数定义在AsyncTask模块中，只要在lua文件中通过requ
 
 如上示例中的M.start函数，执行start()将会返回一个AsyncTask的lua对象，请看下面的C#调用代码。
 
-    public class LuaBehaviour : MonoBehaviour, ILuaExtendable
-    {
+    public class LuaBehaviour : MonoBehaviour, ILuaExtendable {
         protected LuaTable metatable;
         protected Func<MonoBehaviour, ILuaTask> onStart;
 
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             ...
 
             metatable = (LuaTable)result[0];
@@ -1990,10 +1886,8 @@ async & await函数定义在AsyncTask模块中，只要在lua文件中通过requ
             onStart = metatable.Get<Func<MonoBehaviour, ILuaTask>>("start");
         }
 
-        protected virtual async void Start()
-        {
-            if (onStart != null)
-            {
+        protected virtual async void Start() {
+            if (onStart != null) {
                 //start是async包装的异步函数则会返回ILuaTask对象，否则返回null
                 ILuaTask task = onStart(this);
                 if (task != null)
@@ -2007,8 +1901,7 @@ async & await函数定义在AsyncTask模块中，只要在lua文件中通过requ
 为配合async和await的使用，使用try函数包装了lua的xpcall函数，以方便在lua函数中捕获异常。
 
 try函数的输入参数一个lua表，起结构如下，t[0]是主函数，t.catch是catch函数，t.finally是finally函数
-
-	{
+ {
 		function()
 			--这是主函数
 		end,
@@ -2049,27 +1942,22 @@ try/catch的示例
 
 #### 执行器(Executors)
 
-    public class ExecutorExample : MonoBehaviour
-    {
+    public class ExecutorExample : MonoBehaviour {
 
-        IEnumerator Start()
-        {
+        IEnumerator Start() {
             //在后台线程中异步运行一个任务
-            Executors.RunAsync(() =>
-            {
+            Executors.RunAsync(() => {
                 Debug.LogFormat("RunAsync ");
             });
 
             //在后台线程中异步运行一个任务
-            Executors.RunAsync(() =>
-            {
+            Executors.RunAsync(() => {
                 //睡眠1000毫秒
                 Thread.Sleep(1000);
 
                 //从后台线程切换到主线程中，
                 //waitForExecution = true，当前函数直到主线程执行完后才返回
-                Executors.RunOnMainThread(() =>
-                {
+                Executors.RunOnMainThread(() => {
                     Debug.LogFormat("RunOnMainThread Time:{0} frame:{1}", Time.time, Time.frameCount);
                 }, true);
             });
@@ -2081,10 +1969,8 @@ try/catch的示例
             yield return result.WaitForDone();
         }
 
-        IEnumerator DoRun()
-        {
-            for (int i = 0; i < 10; i++)
-            {
+        IEnumerator DoRun() {
+            for (int i = 0; i < 10; i++) {
                 Debug.LogFormat("i = {0}", i);
                 yield return null;
             }
@@ -2100,8 +1986,7 @@ try/catch的示例
     scheduled.Start();
 
     //延时1000毫秒后执行，以固定频率，每隔2000毫秒，打印一句“This is a test.”
-    IAsyncResult result = scheduled.ScheduleAtFixedRate(() =>
-    {
+    IAsyncResult result = scheduled.ScheduleAtFixedRate(() => {
         Debug.Log("This is a test.");
     }, 1000, 2000);
 
@@ -2115,8 +2000,7 @@ InterceptableEnumerator支持条件语句块，可以在外部插入一个条件
     /// <summary>
     /// 这是一个迭代器的包装函数
     /// </summary>
-    protected static InterceptableEnumerator WrapEnumerator(IEnumerator routine, IPromise promise)
-    {
+    protected static InterceptableEnumerator WrapEnumerator(IEnumerator routine, IPromise promise) {
         InterceptableEnumerator enumerator;
         if(routine is InterceptableEnumerator)
             enumerator = (InterceptableEnumerator)routine;
@@ -2127,8 +2011,7 @@ InterceptableEnumerator支持条件语句块，可以在外部插入一个条件
         enumerator.RegisterConditionBlock(() => !(promise.IsCancellationRequested));
 
         //注册一个异常捕获语句块，如果协程执行错误，则将异常赋值到任务结果，并打印错误
-        enumerator.RegisterCatchBlock(e =>
-        {
+        enumerator.RegisterCatchBlock(e => {
             if (promise != null)
                 promise.SetException(e);
 
@@ -2137,10 +2020,8 @@ InterceptableEnumerator支持条件语句块，可以在外部插入一个条件
         });
 
         //注册一个Finally语句块，确保任务能够正常结束退出
-        enumerator.RegisterFinallyBlock(() =>
-        {
-            if (promise != null && !promise.IsDone)
-            {
+        enumerator.RegisterFinallyBlock(() => {
+            if (promise != null && !promise.IsDone) {
                 if (promise.GetType().IsSubclassOfGenericTypeDefinition(typeof(IPromise<>)))
                     promise.SetException(new Exception("No value given the Result"));
                 else
@@ -2156,18 +2037,15 @@ InterceptableEnumerator支持条件语句块，可以在外部插入一个条件
 
 Messenger用于应用模块间的通讯，它提供了消息订阅和发布的功能。Messenger支持按消息类型订阅和发布消息，也支持按channel来订阅和发布消息。
 
-    public class MessengerExample : MonoBehaviour
-    {
+    public class MessengerExample : MonoBehaviour {
         private IDisposable subscription;
         private IDisposable chatroomSubscription;
-        private void Start()
-        {
+        private void Start() {
             //获得默认的Messenger
             Messenger messenger = Messenger.Default;
 
             //订阅一个消息,确保subscription是成员变量，否则subscription被GC回收时会自动退订消息
-            subscription = messenger.Subscribe((PropertyChangedMessage<string> message) =>
-            {
+            subscription = messenger.Subscribe((PropertyChangedMessage<string> message) => {
                 Debug.LogFormat("Received Message:{0}", message);
             });
 
@@ -2175,8 +2053,7 @@ Messenger用于应用模块间的通讯，它提供了消息订阅和发布的�
             messenger.Publish(new PropertyChangedMessage<string>("clark", "tom", "Name"));
 
             //订阅聊天频道"chatroom1"的消息
-            chatroomSubscription = messenger.Subscribe("chatroom1", (string message) =>
-             {
+            chatroomSubscription = messenger.Subscribe("chatroom1", (string message) => {
                  Debug.LogFormat("Received Message:{0}", message);
              });
 
@@ -2184,17 +2061,14 @@ Messenger用于应用模块间的通讯，它提供了消息订阅和发布的�
             messenger.Publish("chatroom1", "hello!");
         }
 
-        private void OnDestroy()
-        {
-            if (this.subscription != null)
-            {
+        private void OnDestroy() {
+            if (this.subscription != null) {
                 //退订消息
                 this.subscription.Dispose();
                 this.subscription = null;
             }
 
-            if (this.chatroomSubscription != null)
-            {
+            if (this.chatroomSubscription != null) {
                 //退订消息
                 this.chatroomSubscription.Dispose();
                 this.chatroomSubscription = null;
@@ -2210,12 +2084,10 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 下面我们看看ObservableDictionary的使用示例，当我们需要创建一个自定义的ListView控件时，我们需要了解其原理。
 
-    public class ObservableDictionaryExample : MonoBehaviour
-    {
+    public class ObservableDictionaryExample : MonoBehaviour {
         private ObservableDictionary<int, Item> dict;
 
-        protected void Start()
-        {
+        protected void Start() {
     #if UNITY_IOS
             //在IOS中，泛型类型的字典，需要提供IEqualityComparer<TKey>，否则可能JIT异常
             this.dict = new ObservableDictionary<int, Item>(new IntEqualityComparer());
@@ -2235,39 +2107,31 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
             dict.Clear();
         }
 
-        protected void OnDestroy()
-        {
-            if (this.dict != null)
-            {
+        protected void OnDestroy() {
+            if (this.dict != null) {
                 this.dict.CollectionChanged -= OnCollectionChanged;
                 this.dict = null;
             }
         }
 
         //集合改变事件
-        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
-        {
-            switch (eventArgs.Action)
-            {
+        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs) {
+            switch (eventArgs.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (KeyValuePair<int, Item> kv in eventArgs.NewItems)
-                    {
+                    foreach (KeyValuePair<int, Item> kv in eventArgs.NewItems) {
                         Debug.LogFormat("ADD key:{0} item:{1}", kv.Key, kv.Value);
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (KeyValuePair<int, Item> kv in eventArgs.OldItems)
-                    {
+                    foreach (KeyValuePair<int, Item> kv in eventArgs.OldItems) {
                         Debug.LogFormat("REMOVE key:{0} item:{1}", kv.Key, kv.Value);
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    foreach (KeyValuePair<int, Item> kv in eventArgs.OldItems)
-                    {
+                    foreach (KeyValuePair<int, Item> kv in eventArgs.OldItems) {
                         Debug.LogFormat("REPLACE before key:{0} item:{1}", kv.Key, kv.Value);
                     }
-                    foreach (KeyValuePair<int, Item> kv in eventArgs.NewItems)
-                    {
+                    foreach (KeyValuePair<int, Item> kv in eventArgs.NewItems) {
                         Debug.LogFormat("REPLACE after key:{0} item:{1}", kv.Key, kv.Value);
                     }
                     break;
@@ -2345,8 +2209,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
     //加载一个精灵图集
     Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
-    foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures"))
-    {
+    foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures")) {
         if (sprite != null)
             sprites.Add(sprite.name, sprite);
     }
@@ -2461,33 +2324,27 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 在示例中将一组Button按钮的Click事件绑定到视图模型的OnClick函数上，通过参数buttonName可以知道当前按下了哪个按钮。
 
-    public class ButtonGroupViewModel : ViewModelBase
-    {
+    public class ButtonGroupViewModel : ViewModelBase {
         private string text;
         private readonly SimpleCommand<string> click;
-        public ButtonGroupViewModel()
-        {
+        public ButtonGroupViewModel() {
             this.click = new SimpleCommand<string>(OnClick);
         }
 
-        public string Text
-        {
+        public string Text {
             get { return this.text; }
             set { this.Set<string>(ref text, value, "Text"); }
         }
 
-        public ICommand Click
-        {
+        public ICommand Click {
             get { return this.click; }
         }
 
-        public void OnClick(string buttonName)
-        {
+        public void OnClick(string buttonName) {
             Executors.RunOnCoroutineNoReturn(DoClick(buttonName));
         }
 
-        private IEnumerator DoClick(string buttonName)
-        {
+        private IEnumerator DoClick(string buttonName) {
             this.click.Enabled = false;
             this.Text = string.Format("Click Button:{0}.Restore button status after one second", buttonName);
             Debug.LogFormat("Click Button:{0}", buttonName);
@@ -2500,8 +2357,7 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
     }
 
 
-    protected override void Start()
-    {
+    protected override void Start() {
         ButtonGroupViewModel viewModel = new ButtonGroupViewModel();
 
         IBindingContext bindingContext = this.BindingContext();
@@ -2542,11 +2398,9 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
 
 包括IOS平台在内，无论是Mono还是IL2CPP，数据绑定功能访问对象的属性、域都通过动态生成委托来访问，方法调用因为IL2CPP不支持表达式树的编译，使用的是反射调用，Mono使用的是通过表达式树编译成委托的方式调用。对于常用的UI控件，也可以通过静态注入访问器的方式访问对象的属性和域。默认情况下，我已经创建了UGUI和Unity引擎的部分类的属性访问器，参考我的代码，你也可以将视图模型类的常用属性的访问器注册到类型代理中。
 
-    public class UnityProxyRegister
-    {
+    public class UnityProxyRegister {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Initialize()
-        {
+        static void Initialize() {
             Register<Transform, Vector3>("localPosition", t => t.localPosition, (t, v) => t.localPosition = v);
             Register<Transform, Vector3>("eulerAngles", t => t.eulerAngles, (t, v) => t.eulerAngles = v);
             Register<Transform, Vector3>("localEulerAngles", t => t.localEulerAngles, (t, v) => t.localEulerAngles = v);
@@ -2626,18 +2480,15 @@ ObservableObject、ObservableList、ObservableDictionary，在MVVM框架的数�
             Register<ToggleGroup, bool>("allowSwitchOff", t => t.allowSwitchOff, (t, v) => t.allowSwitchOff = v);
         }
 
-        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter)
-        {
+        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter) {
             var propertyInfo = typeof(T).GetProperty(name);
-            if (propertyInfo is PropertyInfo)
-            {
+            if (propertyInfo is PropertyInfo) {
                 ProxyFactory.Default.Register(new ProxyPropertyInfo<T, TValue>(name, getter, setter));
                 return;
             }
 
             var fieldInfo = typeof(T).GetField(name);
-            if (fieldInfo is FieldInfo)
-            {
+            if (fieldInfo is FieldInfo) {
                 ProxyFactory.Default.Register(new ProxyFieldInfo<T, TValue>(name, getter, setter));
                 return;
             }
@@ -2689,8 +2540,7 @@ UI视图定位器是一个查询和加载UI视图的服务，它提供了同步�
 
 ![](images/Animations_Alpha.png)
 
-    public class AlphaAnimation : UIAnimation
-    {
+    public class AlphaAnimation : UIAnimation {
         [Range (0f, 1f)]
         public float from = 1f;
         [Range (0f, 1f)]
@@ -2700,8 +2550,7 @@ UI视图定位器是一个查询和加载UI视图的服务，它提供了同步�
 
         private IUIView view;
 
-        void OnEnable ()
-        {
+        void OnEnable () {
             this.view = this.GetComponent<IUIView> ();
             switch (this.AnimationType) {
             case AnimationType.EnterAnimation:
@@ -2721,14 +2570,12 @@ UI视图定位器是一个查询和加载UI视图的服务，它提供了同步�
             }
 
             if (this.AnimationType == AnimationType.ActivationAnimation
-                    || this.AnimationType == AnimationType.EnterAnimation)
-            {
+                    || this.AnimationType == AnimationType.EnterAnimation) {
                 this.view.CanvasGroup.alpha = from;
             }
         }
 
-        public override IAnimation Play ()
-        {
+        public override IAnimation Play () {
             this.view.CanvasGroup.DOFade (this.to, this.duration)
             .OnStart (this.OnStart)
             .OnComplete (this.OnEnd)
@@ -2770,8 +2617,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
     //C#，打开一个对话框窗口
     AlertDialog.ShowMessage("This is a dialog test.", "Interation Example", "Yes", null, "No", true,
-    result =>
-    {
+    result => {
         Debug.LogFormat("Result:{0}",result);
     });
 
@@ -2798,15 +2644,13 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
     Window是一个UI界面视图的根容器(IUIViewGroup、IUIView)，同时也是一个控制器，它负责创建、销毁、显示、隐藏窗口视图，负责管理视图、视图模型的生命周期，负责创建子窗口、与子窗口交互等。
 
       //C#，创建窗口
-      public class ExampleWindow : Window
-      {
+      public class ExampleWindow : Window {
           public Text progressBarText;
           public Slider progressBarSlider;
           public Text tipText;
           public Button button;
 
-          protected override void OnCreate(IBundle bundle)
-          {
+          protected override void OnCreate(IBundle bundle) {
               BindingSet<ExampleWindow, ExampleViewModel> bindingSet;
               bindingSet = this.CreateBindingSet(new ExampleViewModel());
 
@@ -2823,8 +2667,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
               bindingSet.Build();
           }
 
-          protected override void OnDismiss()
-          {
+          protected override void OnDismiss() {
           }
       }
 
@@ -2886,8 +2729,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
         弹出窗口在被其他窗口覆盖时，会自动关闭，但是可以通过ITransition.Overlay()函数重写覆盖规则；
 
             var window = ...
-            window.Show().Overlay((previous,current) =>
-            {
+            window.Show().Overlay((previous,current) => {
                  if (previous == null || previous.WindowType == WindowType.FULL)
                     return ActionType.None;
 
@@ -2923,14 +2765,12 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
 请看下面的代码示例，使用交互请求来打开一个警告对话窗，同时在对话窗关闭时，收到用户选择的结果。
 
-    public class InteractionExampleViewModel : ViewModelBase
-    {
+    public class InteractionExampleViewModel : ViewModelBase {
         private InteractionRequest<DialogNotification> alertDialogRequest;
 
         private SimpleCommand openAlertDialog;
 
-        public InteractionExampleViewModel()
-        {
+        public InteractionExampleViewModel() {
             //创建一个交互请求，这个交互请求的作用就是向控制层(InteractionExample)发送一个打开对话窗的通知
             this.alertDialogRequest = new InteractionRequest<DialogNotification>(this);
 
@@ -2942,8 +2782,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
 
         public ICommand OpenAlertDialog { get { return this.openAlertDialog; } }
 
-        public void Click()
-        {
+        public void Click() {
             //设置命令的Enable为false，通过数据绑定解耦，间接将视图层按钮设置为不可点击状态
             this.openAlertDialog.Enabled = false;
 
@@ -2952,18 +2791,15 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
                 "This is a dialog test.", "Yes", "No", true);
 
             //创建一个回调函数，此回调函数会在AlertDialog对话框关闭时调用
-            Action<DialogNotification> callback = n =>
-            {
+            Action<DialogNotification> callback = n => {
                 //设置命令的Enable为true，通过绑定会自动恢复按钮的点击状态
                 this.openAlertDialog.Enabled = true;
 
-                if (n.DialogResult == AlertDialog.BUTTON_POSITIVE)
-                {
+                if (n.DialogResult == AlertDialog.BUTTON_POSITIVE) {
                     //对话框Yes按钮被按下
                     Debug.LogFormat("Click: Yes");
                 }
-                else if (n.DialogResult == AlertDialog.BUTTON_NEGATIVE)
-                {
+                else if (n.DialogResult == AlertDialog.BUTTON_NEGATIVE) {
                     //对话框No按钮被按下
                     Debug.LogFormat("Click: No");
                 }
@@ -2974,11 +2810,9 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
         }
     }
 
-    public class InteractionExample : WindowView
-    {
+    public class InteractionExample : WindowView {
         public Button openAlert;
-        protected override void Start()
-        {
+        protected override void Start() {
             InteractionExampleViewModel viewModel = new InteractionExampleViewModel();
             this.SetDataContext(viewModel);
 
@@ -2996,8 +2830,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
         }
 
         //创建和打开对话框的函数，通过交互请求触发
-        private void OnOpenAlert(object sender, InteractionEventArgs args)
-        {
+        private void OnOpenAlert(object sender, InteractionEventArgs args) {
             //收到视图模型层交互请求alertDialogRequest发来的通知
 
             //得到通知数据
@@ -3014,8 +2847,7 @@ UGUI虽然为我们提供了丰富的UI控件库，但是在某些时候，仍�
                 null,
                 notification.CancelButtonText,
                 notification.CanceledOnTouchOutside,
-                (result) =>
-                {
+                (result) => {
                     //将对话窗按钮事件响应结果赋值到notification，传递到视图模型层使用
                     notification.DialogResult = result;
 
@@ -3036,8 +2868,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
     this.loadingRequest = new InteractionRequest<VisibilityNotification>();
 
     //在ViewModel中创建一个显示Loading窗口的命令，通过命令调用交互请求打开一个Loading界面
-    this.ShowLoading = new SimpleCommand(() =>
-    {
+    this.ShowLoading = new SimpleCommand(() => {
         VisibilityNotification notification = new VisibilityNotification(true);
         this.loadingRequest.Raise(notification);
     });
@@ -3061,12 +2892,9 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
 
 首先我们创建一个ListView控件，通过这个控件来监听装备集合ObservableDictionary的改变，当集合中内容变化时，自动更新UGUI视图，向装备列表中添加、删除装备。
 
-    public class ListView : UIView
-    {
-        public class ItemClickedEvent : UnityEvent<int>
-        {
-            public ItemClickedEvent()
-            {
+    public class ListView : UIView {
+        public class ItemClickedEvent : UnityEvent<int> {
+            public ItemClickedEvent() {
             }
         }
 
@@ -3079,11 +2907,9 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         public ItemClickedEvent OnSelectChanged = new ItemClickedEvent();
 
         //装备集合，通过数据绑定赋值
-        public ObservableList<ListItemViewModel> Items
-        {
+        public ObservableList<ListItemViewModel> Items {
             get { return this.items; }
-            set
-            {
+            set {
                 if (this.items == value)
                     return;
 
@@ -3104,10 +2930,8 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
-        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs)
-        {
-            switch (eventArgs.Action)
-            {
+        protected void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs eventArgs) {
+            switch (eventArgs.Action) {
                 case NotifyCollectionChangedAction.Add:
                     this.AddItem(eventArgs.NewStartingIndex, eventArgs.NewItems[0]);
                     break;
@@ -3126,32 +2950,26 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
             }
         }
 
-        protected virtual void OnItemsChanged()
-        {
-            for (int i = 0; i < this.items.Count; i++)
-            {
+        protected virtual void OnItemsChanged() {
+            for (int i = 0; i < this.items.Count; i++) {
                 this.AddItem(i, items[i]);
             }
         }
 
-        protected virtual void OnSelectChange(GameObject itemViewGo)
-        {
+        protected virtual void OnSelectChange(GameObject itemViewGo) {
             if (this.OnSelectChanged == null || itemViewGo == null)
                 return;
 
-            for (int i = 0; i < this.content.childCount; i++)
-            {
+            for (int i = 0; i < this.content.childCount; i++) {
                 var child = this.content.GetChild(i);
-                if (itemViewGo.transform == child)
-                {
+                if (itemViewGo.transform == child) {
                     this.OnSelectChanged.Invoke(i);
                     break;
                 }
             }
         }
 
-        protected virtual void AddItem(int index, object item)
-        {
+        protected virtual void AddItem(int index, object item) {
             var itemViewGo = Instantiate(this.itemTemplate);
             itemViewGo.transform.SetParent(this.content, false);
             itemViewGo.transform.SetSiblingIndex(index);
@@ -3164,38 +2982,31 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
             itemView.SetDataContext(item);
         }
 
-        protected virtual void RemoveItem(int index, object item)
-        {
+        protected virtual void RemoveItem(int index, object item) {
             Transform transform = this.content.GetChild(index);
             UIView itemView = transform.GetComponent<UIView>();
-            if (itemView.GetDataContext() == item)
-            {
+            if (itemView.GetDataContext() == item) {
                 itemView.gameObject.SetActive(false);
                 Destroy(itemView.gameObject);
             }
         }
 
-        protected virtual void ReplaceItem(int index, object oldItem, object item)
-        {
+        protected virtual void ReplaceItem(int index, object oldItem, object item) {
             Transform transform = this.content.GetChild(index);
             UIView itemView = transform.GetComponent<UIView>();
-            if (itemView.GetDataContext() == oldItem)
-            {
+            if (itemView.GetDataContext() == oldItem) {
                 itemView.SetDataContext(item);
             }
         }
 
-        protected virtual void MoveItem(int oldIndex, int index, object item)
-        {
+        protected virtual void MoveItem(int oldIndex, int index, object item) {
             Transform transform = this.content.GetChild(oldIndex);
             UIView itemView = transform.GetComponent<UIView>();
             itemView.transform.SetSiblingIndex(index);
         }
 
-        protected virtual void ResetItem()
-        {
-            for (int i = this.content.childCount - 1; i >= 0; i--)
-            {
+        protected virtual void ResetItem() {
+            for (int i = this.content.childCount - 1; i >= 0; i--) {
                 Transform transform = this.content.GetChild(i);
                 Destroy(transform.gameObject);
             }
@@ -3204,15 +3015,13 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
 
 然后创建一个装备列表的Item视图ListItemView，它负责将Item视图上的UGUI控件和装备的视图模型绑定，当装备的视图模型改变时，自动更新Item视图的内容。
 
-    public class ListItemView : UIView
-    {
+    public class ListItemView : UIView {
         public Text title;
         public Text price;
         public Image image;
         public GameObject border;
 
-        protected override void Start()
-        {
+        protected override void Start() {
             //绑定Item上的视图元素
             BindingSet<ListItemView, ListItemViewModel> bindingSet = this.CreateBindingSet<ListItemView, ListItemViewModel>();
             bindingSet.Bind(this.title).For(v => v.text).To(vm => vm.Title).OneWay();
@@ -3226,21 +3035,16 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
 
 最后是ListView控件和ListItemView的视图模型代码如下。
 
-    public class ListViewViewModel : ViewModelBase
-    {
+    public class ListViewViewModel : ViewModelBase {
         private readonly ObservableList<ListItemViewModel> items = new ObservableList<ListItemViewModel>();
 
-        public ObservableList<ListItemViewModel> Items
-        {
+        public ObservableList<ListItemViewModel> Items {
             get { return this.items; }
         }
 
-        public ListItemViewModel SelectedItem
-        {
-            get
-            {
-                foreach (var item in items)
-                {
+        public ListItemViewModel SelectedItem {
+            get {
+                foreach (var item in items) {
                     if (item.IsSelected)
                         return item;
                 }
@@ -3248,8 +3052,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
             }
         }
 
-        public void AddItem()
-        {
+        public void AddItem() {
             int i = this.items.Count;
             int iconIndex = Random.Range(1, 30);
             this.items.Add(new ListItemViewModel() {
@@ -3259,8 +3062,7 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
             });
         }
 
-        public void RemoveItem()
-        {
+        public void RemoveItem() {
             if (this.items.Count <= 0)
                 return;
 
@@ -3268,82 +3070,69 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
             this.items.RemoveAt(index);
         }
 
-        public void ClearItem()
-        {
+        public void ClearItem() {
             if (this.items.Count <= 0)
                 return;
 
             this.items.Clear();
         }
 
-        public void ChangeItemIcon()
-        {
+        public void ChangeItemIcon() {
             if (this.items.Count <= 0)
                 return;
 
-            foreach (var item in this.items)
-            {
+            foreach (var item in this.items) {
                 int iconIndex = Random.Range(1, 30);
                 item.Icon = string.Format("EquipImages_{0}", iconIndex);
             }
         }
 
-        public void Select(int index)
-        {
+        public void Select(int index) {
             if (index <= -1 || index > this.items.Count - 1)
                 return;
 
-            for (int i = 0; i < this.items.Count; i++)
-            {
-                if (i == index)
-                {
+            for (int i = 0; i < this.items.Count; i++) {
+                if (i == index) {
                     items[i].IsSelected = !items[i].IsSelected;
                     if (items[i].IsSelected)
                         Debug.LogFormat("Select, Current Index:{0}", index);
                     else
                         Debug.LogFormat("Cancel");
                 }
-                else
-                {
+                else {
                     items[i].IsSelected = false;
                 }
             }
         }
     }
 
-    public class ListItemViewModel : ViewModelBase
-    {
+    public class ListItemViewModel : ViewModelBase {
         private string title;
         private string icon;
         private float price;
         private bool selected;
 
-        public string Title
-        {
+        public string Title {
             get { return this.title; }
             set { this.Set<string>(ref title, value, "Title"); }
         }
-        public string Icon
-        {
+        public string Icon {
             get { return this.icon; }
             set { this.Set<string>(ref icon, value, "Icon"); }
         }
 
-        public float Price
-        {
+        public float Price {
             get { return this.price; }
             set { this.Set<float>(ref price, value, "Price"); }
         }
 
-        public bool IsSelected
-        {
+        public bool IsSelected {
             get { return this.selected; }
             set { this.Set<bool>(ref selected, value, "IsSelected"); }
         }
     }
 
-    public class ListViewDatabindingExample : MonoBehaviour
-    {
+    public class ListViewDatabindingExample : MonoBehaviour {
         private int itemCount;
         private ListViewViewModel viewModel;
 
@@ -3357,15 +3146,13 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
 
         public ListView listView;
 
-        void Awake()
-        {
+        void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
 
             Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
-            foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures"))
-            {
+            foreach (var sprite in Resources.LoadAll<Sprite>("EquipTextures")) {
                 if (sprite != null)
                     sprites.Add(sprite.name, sprite);
             }
@@ -3373,11 +3160,9 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
             converterRegistry.Register("spriteConverter", new SpriteConverter(sprites));
         }
 
-        void Start()
-        {
+        void Start() {
             viewModel = new ListViewViewModel();
-            for (int i = 0; i < 3; i++)
-            {
+            for (int i = 0; i < 3; i++) {
                 viewModel.AddItem();
             }
 
@@ -3413,19 +3198,16 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
 
 
     [RequireComponent(typeof(Image))]
-    public class AsyncSpriteLoader : MonoBehaviour
-    {
+    public class AsyncSpriteLoader : MonoBehaviour {
         private Image target;
         private string spriteName;
         public Sprite defaultSprite;
         public Material defaultMaterial;
         public string spritePath;
 
-        public string SpriteName
-        {
+        public string SpriteName {
             get { return this.spriteName; }
-            set
-            {
+            set {
                 if (this.spriteName == value)
                     return;
 
@@ -3435,15 +3217,12 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
             }
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             this.target = this.GetComponent<Image>();
         }
 
-        protected virtual void OnSpriteChanged()
-        {
-            if (string.IsNullOrEmpty(this.spriteName))
-            {
+        protected virtual void OnSpriteChanged() {
+            if (string.IsNullOrEmpty(this.spriteName)) {
                 this.target.sprite = null;
                 this.target.material = null;
                 return;
@@ -3459,15 +3238,12 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
         /// 异步加载精灵，为了效果明显，在加载器等待了一秒钟
         /// </summary>
         /// <returns></returns>
-        IEnumerator LoadSprite()
-        {
+        IEnumerator LoadSprite() {
             yield return new WaitForSeconds(1f);
 
             Sprite[] sprites = Resources.LoadAll<Sprite>(this.spritePath);
-            foreach(var sprite in sprites)
-            {
-                if(sprite.name.Equals(this.spriteName))
-                {
+            foreach(var sprite in sprites) {
+                if(sprite.name.Equals(this.spriteName)) {
                     this.target.sprite = sprite;
                     this.target.material = null;
                 }
@@ -3477,37 +3253,31 @@ InteractionAction配合InteractionRequest配对使用，由交互请求发起交
 
 然后创建示例界面的视图和视图模型代码如下
 
-    public class SpriteViewModel : ViewModelBase
-    {
+    public class SpriteViewModel : ViewModelBase {
         private string spriteName = "EquipImages_1";
 
-        public string SpriteName
-        {
+        public string SpriteName {
             get { return this.spriteName; }
             set { this.Set<string>(ref spriteName, value, "SpriteName"); }
         }
 
-        public void ChangeSpriteName()
-        {
+        public void ChangeSpriteName() {
             this.SpriteName = string.Format("EquipImages_{0}", Random.Range(1, 30));
         }
     }
 
-    public class DatabindingForAsyncLoadingSpriteExample : MonoBehaviour
-    {
+    public class DatabindingForAsyncLoadingSpriteExample : MonoBehaviour {
         public Button changeSpriteButton;
 
         public AsyncSpriteLoader spriteLoader;
 
-        void Awake()
-        {
+        void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
         }
 
-        void Start()
-        {
+        void Start() {
             var viewModel = new SpriteViewModel();
 
             IBindingContext bindingContext = this.BindingContext();
@@ -3841,8 +3611,7 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
 
 比如添加如下代码，则可以在编辑界面看到如图中所示的界面
 
-    public class ExampleCryptographFactory : EncryptorFactory
-    {
+    public class ExampleCryptographFactory : EncryptorFactory {
         [Multiline(2)]
         [SerializeField]
         private string privateKey;
@@ -3851,8 +3620,7 @@ XLua为我们提供了一个在lua中创建迭代器(IEnumerator)的函数util.c
         [SerializeField]
         private string publicKey;
 
-        public override IEncryptor Create()
-        {
+        public override IEncryptor Create() {
             throw new NotImplementedException();
         }
     }

@@ -30,8 +30,7 @@
     "com.vovgou.loxodon-framework": "2.6.5",
     "com.vovgou.loxodon-framework-textformatting": "2.6.5"
   },
-  "samples": [
-    {
+  "samples": [ {
       "displayName": "Tutorials",
       "description": "Tutorials",
       "path": "Samples~/Tutorials"

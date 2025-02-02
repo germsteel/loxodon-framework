@@ -21,13 +21,11 @@
 
 ## 快速开始 ##
 
-    public class FairyGUIDatabindingExample : MonoBehaviour
-    {
+    public class FairyGUIDatabindingExample : MonoBehaviour {
         public GButton button;
         public GTextInput textInput;
 
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             //初始化数据绑定服务,如果使用XLua，则初始化 LuaBindingServiceBundle模块
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
@@ -38,8 +36,7 @@
             fairyGUIBindingServiceBundle.Start();
         }
 
-        protected virtual void Start()
-        {
+        protected virtual void Start() {
             var bindingSet = this.CreateBindingSet<FairyGUIDatabindingExample, AccountViewModel>();
 
             bindingSet.Bind(this.textInput).For(v => v.text, v => v.onChanged).To(vm => vm.Username).OneWay();

@@ -25,10 +25,8 @@
 using System;
 using System.Threading;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface ISubscription<T> : IDisposable
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface ISubscription<T> : IDisposable {
         /// <summary>
         /// 
         /// </summary>

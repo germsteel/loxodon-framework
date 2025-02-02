@@ -26,23 +26,19 @@ using Loxodon.Framework.Binding;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ListItemDetailView : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ListItemDetailView : MonoBehaviour {
         public GameObject panel;
         public Text title;
         public Text price;
         public Image image;
 
-        public ListItemViewModel Item
-        {
+        public ListItemViewModel Item {
             get { return (ListItemViewModel)this.GetDataContext(); }
             set { this.SetDataContext(value); }
         }
 
-        private void Start()
-        {
+        private void Start() {
             var bindingSet = this.CreateBindingSet<ListItemDetailView, ListItemViewModel>();
             bindingSet.Bind(panel).For(v => v.activeSelf).To(vm => vm.IsSelected);
             bindingSet.Bind(title).For(v => v.text).To(vm => vm.Title);

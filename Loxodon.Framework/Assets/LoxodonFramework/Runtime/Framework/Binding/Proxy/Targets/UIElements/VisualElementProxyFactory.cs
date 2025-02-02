@@ -29,13 +29,10 @@ using System;
 using System.Reflection;
 using UnityEngine.UIElements;
 
-namespace Loxodon.Framework.Binding.Proxy.Targets
-{
-    public class VisualElementProxyFactory : ITargetProxyFactory
-    {
+namespace Loxodon.Framework.Binding.Proxy.Targets {
+    public class VisualElementProxyFactory : ITargetProxyFactory {
         private static readonly string REGISTER_VALUE_CHANGED_CALLBACK = "RegisterValueChangedCallback";
-        public ITargetProxy CreateProxy(object target, BindingDescription description)
-        {
+        public ITargetProxy CreateProxy(object target, BindingDescription description) {
             if (TargetNameUtil.IsCollection(description.TargetName))
                 return null;
 
@@ -54,13 +51,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
                 throw new MissingMemberException(type.Type.FullName, description.TargetName);
 
             var propertyInfo = memberInfo as IProxyPropertyInfo;
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 if (typeof(IObservableProperty).IsAssignableFrom(propertyInfo.ValueType))
                     return null;
 
-                if (typeof(Clickable).IsAssignableFrom(propertyInfo.ValueType))
-                {
+                if (typeof(Clickable).IsAssignableFrom(propertyInfo.ValueType)) {
                     //Event Type
                     object clickable = propertyInfo.GetValue(target);
                     if (clickable == null)
@@ -77,13 +72,11 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
 
             var fieldInfo = memberInfo as IProxyFieldInfo;
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 if (typeof(IObservableProperty).IsAssignableFrom(fieldInfo.ValueType))
                     return null;
 
-                if (typeof(Clickable).IsAssignableFrom(fieldInfo.ValueType))
-                {
+                if (typeof(Clickable).IsAssignableFrom(fieldInfo.ValueType)) {
                     //Event Type
                     object clickable = fieldInfo.GetValue(target);
                     if (clickable == null)
@@ -102,8 +95,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             return null;
         }
 
-        protected virtual ITargetProxy CreateValueChangedEventProxy(object target)
-        {
+        protected virtual ITargetProxy CreateValueChangedEventProxy(object target) {
             var propertyInfo = target.GetType().GetProperty("value");
             Type type = propertyInfo.PropertyType;
 #if NETFX_CORE
@@ -112,8 +104,7 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             TypeCode typeCode = Type.GetTypeCode(type);
 #endif
 
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.String: return new ValueChangedEventProxy<string>((INotifyValueChanged<string>)target);
                 case TypeCode.Boolean: return new ValueChangedEventProxy<bool>((INotifyValueChanged<bool>)target);
                 case TypeCode.SByte: return new ValueChangedEventProxy<sbyte>((INotifyValueChanged<sbyte>)target);
@@ -134,11 +125,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
-        protected virtual ITargetProxy CreateVisualElementPropertyProxy(object target, IProxyPropertyInfo propertyInfo)
-        {
+        protected virtual ITargetProxy CreateVisualElementPropertyProxy(object target, IProxyPropertyInfo propertyInfo) {
             TypeCode typeCode = propertyInfo.ValueTypeCode;
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.String: return new VisualElementPropertyProxy<string>(target, propertyInfo);
                 case TypeCode.Boolean: return new VisualElementPropertyProxy<bool>(target, propertyInfo);
                 case TypeCode.SByte: return new VisualElementPropertyProxy<sbyte>(target, propertyInfo);
@@ -159,11 +148,9 @@ namespace Loxodon.Framework.Binding.Proxy.Targets
             }
         }
 
-        protected virtual ITargetProxy CreateVisualElementFieldProxy(object target, IProxyFieldInfo fieldInfo)
-        {
+        protected virtual ITargetProxy CreateVisualElementFieldProxy(object target, IProxyFieldInfo fieldInfo) {
             TypeCode typeCode = fieldInfo.ValueTypeCode;
-            switch (typeCode)
-            {
+            switch (typeCode) {
                 case TypeCode.String: return new VisualElementFieldProxy<string>(target, fieldInfo);
                 case TypeCode.Boolean: return new VisualElementFieldProxy<bool>(target, fieldInfo);
                 case TypeCode.SByte: return new VisualElementFieldProxy<sbyte>(target, fieldInfo);

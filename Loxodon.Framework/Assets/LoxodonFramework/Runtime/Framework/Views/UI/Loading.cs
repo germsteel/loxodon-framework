@@ -25,10 +25,8 @@
 using Loxodon.Log;
 using System;
 
-namespace Loxodon.Framework.Views
-{
-    public class Loading : UIBase, IDisposable
-    {
+namespace Loxodon.Framework.Views {
+    public class Loading : UIBase, IDisposable {
         private static readonly ILog log = LogManager.GetLogger(typeof(Loading));
 
         private const string DEFAULT_VIEW_NAME = "UI/Loading";
@@ -37,24 +35,19 @@ namespace Loxodon.Framework.Views
         private static LoadingWindow window;
         private static string viewName;
         private bool ignoreAnimation;
-        public static string ViewName
-        {
+        public static string ViewName {
             get { return string.IsNullOrEmpty(viewName) ? DEFAULT_VIEW_NAME : viewName; }
             set { viewName = value; }
         }
 
-        public static Loading Show(bool ignoreAnimation = false)
-        {
+        public static Loading Show(bool ignoreAnimation = false) {
             return new Loading(ignoreAnimation);
         }
 
-        protected Loading(bool ignoreAnimation)
-        {
+        protected Loading(bool ignoreAnimation) {
             this.ignoreAnimation = ignoreAnimation;
-            lock (_lock)
-            {
-                if (refCount <= 0)
-                {
+            lock (_lock) {
+                if (refCount <= 0) {
                     IUIViewLocator locator = GetUIViewLocator();
                     window = locator.LoadWindow<LoadingWindow>(ViewName);
                     window.Create();
@@ -67,18 +60,13 @@ namespace Loxodon.Framework.Views
         #region IDisposable Support
         private bool disposed = false;
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposed) {
                 disposed = true;
-                Execution.Executors.RunOnMainThread(() =>
-                {
-                    lock (_lock)
-                    {
+                Execution.Executors.RunOnMainThread(() => {
+                    lock (_lock) {
                         refCount--;
-                        if (refCount <= 0)
-                        {
+                        if (refCount <= 0) {
                             window.Dismiss(this.ignoreAnimation);
                             window = null;
                         }
@@ -87,13 +75,11 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        ~Loading()
-        {
+        ~Loading() {
             Dispose(false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }

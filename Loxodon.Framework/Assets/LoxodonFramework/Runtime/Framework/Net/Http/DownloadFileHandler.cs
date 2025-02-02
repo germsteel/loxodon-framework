@@ -28,10 +28,8 @@ using System.Text;
 using System.Threading;
 using UnityEngine.Networking;
 
-namespace Loxodon.Framework.Net.Http
-{
-    public class DownloadFileHandler : DownloadHandlerScript
-    {
+namespace Loxodon.Framework.Net.Http {
+    public class DownloadFileHandler : DownloadHandlerScript {
         private readonly FileInfo fileInfo;
         private readonly UnityWebRequest www;
         private readonly FileInfo downloadFileInfo;
@@ -39,31 +37,24 @@ namespace Loxodon.Framework.Net.Http
         private FileStream downloadFileStream;
         private DownloadInfo downloadInfo;
         private int initialized = 0;
-        public DownloadFileHandler(string fileName) : this(null, new FileInfo(fileName))
-        {
+        public DownloadFileHandler(string fileName) : this(null, new FileInfo(fileName)) {
         }
 
-        public DownloadFileHandler(UnityWebRequest www, string fileName) : this(www, new FileInfo(fileName))
-        {
+        public DownloadFileHandler(UnityWebRequest www, string fileName) : this(www, new FileInfo(fileName)) {
         }
 
-        public DownloadFileHandler(FileInfo fileInfo) : this(null, fileInfo)
-        {
+        public DownloadFileHandler(FileInfo fileInfo) : this(null, fileInfo) {
         }
 
-        public DownloadFileHandler(UnityWebRequest www, FileInfo fileInfo) : base(new byte[8192])
-        {
+        public DownloadFileHandler(UnityWebRequest www, FileInfo fileInfo) : base(new byte[8192]) {
             this.fileInfo = fileInfo;
             this.downloadFileInfo = new FileInfo(this.fileInfo.FullName + ".download");
             this.www = www;
             this.supportBreakpointResume = www != null;
-            if (supportBreakpointResume && downloadFileInfo.Exists)
-            {
-                try
-                {
+            if (supportBreakpointResume && downloadFileInfo.Exists) {
+                try {
                     this.downloadInfo = DownloadInfo.Read(downloadFileInfo);
-                    if (this.downloadInfo != null)
-                    {
+                    if (this.downloadInfo != null) {
                         if (!string.IsNullOrEmpty(downloadInfo.LastModified))
                             www.SetRequestHeader("If-Range", downloadInfo.LastModified);
                         if (!string.IsNullOrEmpty(downloadInfo.ETag))
@@ -71,8 +62,7 @@ namespace Loxodon.Framework.Net.Http
                         www.SetRequestHeader("Range", "bytes=" + downloadInfo.DownloadedSize + "-");
                     }
                 }
-                catch (Exception)
-                {
+                catch (Exception) {
                     downloadFileInfo.Delete();
                 }
             }
@@ -84,25 +74,21 @@ namespace Loxodon.Framework.Net.Http
                 downloadFileInfo.Directory.Create();
         }
 
-        private void CreateDownloadFile(DownloadInfo downloadInfo)
-        {
-            try
-            {
+        private void CreateDownloadFile(DownloadInfo downloadInfo) {
+            try {
                 if (downloadFileInfo.Exists)
                     downloadFileInfo.Delete();
 
                 if (!downloadFileInfo.Directory.Exists)
                     downloadFileInfo.Directory.Create();
 
-                using (Stream stream = downloadFileInfo.Open(FileMode.Create, FileAccess.ReadWrite, FileShare.None))
-                {
+                using (Stream stream = downloadFileInfo.Open(FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
                     stream.SetLength(downloadInfo.FileSize + DownloadInfo.DOWNLOAD_INFO_OFFSET);
                     stream.Position = downloadInfo.FileSize;
                     downloadInfo.WriteTo(stream);
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (downloadFileInfo.Exists)
                     downloadFileInfo.Delete();
                 if (www != null)
@@ -111,23 +97,19 @@ namespace Loxodon.Framework.Net.Http
             }
         }
 
-        public long TotalSize
-        {
+        public long TotalSize {
             get { return downloadInfo != null ? downloadInfo.FileSize : 0; }
         }
 
-        public long DownloadedSize
-        {
+        public long DownloadedSize {
             get { return this.downloadInfo != null ? downloadInfo.DownloadedSize : 0; }
         }
 
-        public float DownloadProgress
-        {
+        public float DownloadProgress {
             get { return GetProgress(); }
         }
 
-        protected override float GetProgress()
-        {
+        protected override float GetProgress() {
             if (this.downloadInfo == null)
                 return 0;
             return downloadInfo.GetProgress();
@@ -135,15 +117,13 @@ namespace Loxodon.Framework.Net.Http
 
         protected override byte[] GetData() { return null; }
 
-        protected override bool ReceiveData(byte[] data, int dataLength)
-        {
+        protected override bool ReceiveData(byte[] data, int dataLength) {
             if (data == null || data.Length < 1)
                 return false;
 
             InitializeDownloadFileStream(0);
 
-            if (supportBreakpointResume)
-            {
+            if (supportBreakpointResume) {
                 downloadFileStream.Position = downloadInfo.DownloadedSize;
                 downloadFileStream.Write(data, 0, dataLength);
                 downloadFileStream.Flush();
@@ -154,8 +134,7 @@ namespace Loxodon.Framework.Net.Http
                 downloadInfo.WriteDownloadedTo(downloadFileStream);
                 downloadFileStream.Flush();
             }
-            else
-            {
+            else {
                 downloadFileStream.Write(data, 0, dataLength);
                 downloadFileStream.Flush();
                 downloadInfo.DownloadedSize += dataLength;
@@ -163,26 +142,21 @@ namespace Loxodon.Framework.Net.Http
             return true;
         }
 
-        protected override void CompleteContent()
-        {
+        protected override void CompleteContent() {
             FileInfo tmpFileInfo = null;
-            try
-            {
-                if (downloadFileStream != null)
-                {
+            try {
+                if (downloadFileStream != null) {
                     downloadFileStream.Dispose();
                     downloadFileStream = null;
                 }
 
-                if (supportBreakpointResume)
-                {
+                if (supportBreakpointResume) {
                     tmpFileInfo = new FileInfo(this.fileInfo.FullName + ".tmp");
                     if (tmpFileInfo.Exists)
                         tmpFileInfo.Delete();
 
                     File.Move(downloadFileInfo.FullName, tmpFileInfo.FullName);
-                    using (Stream stream = tmpFileInfo.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None))
-                    {
+                    using (Stream stream = tmpFileInfo.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None)) {
                         stream.SetLength(downloadInfo.FileSize);
                     }
 
@@ -192,16 +166,14 @@ namespace Loxodon.Framework.Net.Http
                     File.Move(tmpFileInfo.FullName, fileInfo.FullName);
                     //tmpFileInfo.MoveTo(fileInfo.FullName);//This is a bug and this method may fail on the Android platform
                 }
-                else
-                {
+                else {
                     if (fileInfo.Exists)
                         fileInfo.Delete();
 
                     File.Move(downloadFileInfo.FullName, fileInfo.FullName);
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 SafeDelete(downloadFileInfo);
                 SafeDelete(tmpFileInfo);
                 SafeDelete(fileInfo);
@@ -209,10 +181,8 @@ namespace Loxodon.Framework.Net.Http
             }
         }
 
-        void SafeDelete(FileInfo file)
-        {
-            try
-            {
+        void SafeDelete(FileInfo file) {
+            try {
                 if (file != null && file.Exists)
                     file.Delete();
             }
@@ -223,25 +193,20 @@ namespace Loxodon.Framework.Net.Http
         protected override void ReceiveContentLengthHeader(ulong contentLength)
 #else
         protected override void ReceiveContentLength(int contentLength)
-#endif
-        {
+#endif {
             //On the IOS platform, this method is called multiple times, ensuring that only the first call is valid to avoid program errors.
             if (!InitializeDownloadFileStream((long)contentLength) && this.downloadInfo != null && this.downloadInfo.FileSize <= 0)
                 this.downloadInfo.FileSize = (long)contentLength;
         }
 
-        private bool InitializeDownloadFileStream(long contentLength)
-        {
+        private bool InitializeDownloadFileStream(long contentLength) {
 #if UNITY_WEBGL
-            if(initialized == 0)
-            {
+            if(initialized == 0) {
                 initialized = 1;
 #else
-            if (Interlocked.CompareExchange(ref initialized, 1, 0) == 0)
-            {
+            if (Interlocked.CompareExchange(ref initialized, 1, 0) == 0) {
 #endif
-                if (!supportBreakpointResume)
-                {
+                if (!supportBreakpointResume) {
                     this.downloadInfo = new DownloadInfo();
                     this.downloadInfo.DownloadedSize = 0;
                     this.downloadInfo.FileSize = contentLength;
@@ -249,8 +214,7 @@ namespace Loxodon.Framework.Net.Http
                     return true;
                 }
 
-                if (www.responseCode == 200)//206 breakpoint resume.
-                {
+                if (www.responseCode == 200)//206 breakpoint resume. {
                     if (contentLength <= 0)
                         Int64.TryParse(www.GetResponseHeader("Content-Length"), out contentLength);
                     this.downloadInfo = new DownloadInfo();
@@ -268,10 +232,8 @@ namespace Loxodon.Framework.Net.Http
         }
 
 #if UNITY_2021_3_OR_NEWER
-        public override void Dispose()
-        {
-            if (downloadFileStream != null)
-            {
+        public override void Dispose() {
+            if (downloadFileStream != null) {
                 downloadFileStream.Dispose();
                 downloadFileStream = null;
             }
@@ -279,10 +241,8 @@ namespace Loxodon.Framework.Net.Http
         }
 
 #else
-        ~DownloadFileHandler()
-        {
-            if (downloadFileStream != null)
-            {
+        ~DownloadFileHandler() {
+            if (downloadFileStream != null) {
                 downloadFileStream.Dispose();
                 downloadFileStream = null;
             }
@@ -290,8 +250,7 @@ namespace Loxodon.Framework.Net.Http
         }
 #endif
 
-        class DownloadInfo
-        {
+        class DownloadInfo {
             public const int DOWNLOAD_INFO_OFFSET = 128;
             public long FileSize { get; set; }
             public long DownloadedSize { get; set; }
@@ -299,27 +258,23 @@ namespace Loxodon.Framework.Net.Http
             public string ETag { get; set; }
 
             private byte[] buffer = new byte[256];
-            public static DownloadInfo Read(FileInfo fileInfo)
-            {
+            public static DownloadInfo Read(FileInfo fileInfo) {
                 if (!fileInfo.Exists || fileInfo.Length <= DOWNLOAD_INFO_OFFSET)
                     return null;
 
-                using (Stream stream = fileInfo.OpenRead())
-                {
+                using (Stream stream = fileInfo.OpenRead()) {
                     stream.Position = fileInfo.Length - DOWNLOAD_INFO_OFFSET;
                     return new DownloadInfo().ReadFrom(stream);
                 }
             }
 
-            public float GetProgress()
-            {
+            public float GetProgress() {
                 if (FileSize <= 0)
                     return 0;
                 return (float)DownloadedSize / FileSize;
             }
 
-            public DownloadInfo ReadFrom(Stream stream)
-            {
+            public DownloadInfo ReadFrom(Stream stream) {
                 this.DownloadedSize = ReadLong(stream, buffer);
                 this.FileSize = ReadLong(stream, buffer);
                 this.LastModified = ReadString(stream, buffer);
@@ -327,8 +282,7 @@ namespace Loxodon.Framework.Net.Http
                 return this;
             }
 
-            public DownloadInfo WriteTo(Stream stream)
-            {
+            public DownloadInfo WriteTo(Stream stream) {
                 Write(stream, buffer, DownloadedSize);
                 Write(stream, buffer, FileSize);
                 Write(stream, buffer, LastModified);
@@ -336,14 +290,12 @@ namespace Loxodon.Framework.Net.Http
                 return this;
             }
 
-            public DownloadInfo WriteDownloadedTo(Stream stream)
-            {
+            public DownloadInfo WriteDownloadedTo(Stream stream) {
                 Write(stream, buffer, DownloadedSize);
                 return this;
             }
 
-            public static void Write(Stream stream, byte[] buffer, int value)
-            {
+            public static void Write(Stream stream, byte[] buffer, int value) {
                 buffer[0] = (byte)value;
                 buffer[1] = (byte)(value >> 8);
                 buffer[2] = (byte)(value >> 16);
@@ -351,8 +303,7 @@ namespace Loxodon.Framework.Net.Http
                 stream.Write(buffer, 0, 4);
             }
 
-            public static void Write(Stream stream, byte[] buffer, long value)
-            {
+            public static void Write(Stream stream, byte[] buffer, long value) {
                 buffer[0] = (byte)value;
                 buffer[1] = (byte)(value >> 8);
                 buffer[2] = (byte)(value >> 16);
@@ -364,30 +315,26 @@ namespace Loxodon.Framework.Net.Http
                 stream.Write(buffer, 0, 8);
             }
 
-            public static void Write(Stream stream, byte[] buffer, string value)
-            {
+            public static void Write(Stream stream, byte[] buffer, string value) {
                 int len = string.IsNullOrEmpty(value) ? 0 : Encoding.UTF8.GetBytes(value, 0, value.Length, buffer, 2);
                 buffer[0] = (byte)len;
                 buffer[1] = (byte)(len >> 8);
                 stream.Write(buffer, 0, len + 2);
             }
 
-            public static long ReadLong(Stream stream, byte[] buffer)
-            {
+            public static long ReadLong(Stream stream, byte[] buffer) {
                 stream.Read(buffer, 0, 8);
                 uint lo = (uint)(buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24);
                 uint hi = (uint)(buffer[4] | buffer[5] << 8 | buffer[6] << 16 | buffer[7] << 24);
                 return ((long)hi) << 32 | lo;
             }
 
-            public static int ReadInt(Stream stream, byte[] buffer)
-            {
+            public static int ReadInt(Stream stream, byte[] buffer) {
                 stream.Read(buffer, 0, 4);
                 return (buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24);
             }
 
-            public static string ReadString(Stream stream, byte[] buffer)
-            {
+            public static string ReadString(Stream stream, byte[] buffer) {
                 stream.Read(buffer, 0, 2);
                 int len = (buffer[0] | buffer[1] << 8);
                 if (len <= 0)

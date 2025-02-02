@@ -32,13 +32,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Loxodon.Framework.Examples
-{
-    public class Window1 : UIToolkitWindow
-    {
+namespace Loxodon.Framework.Examples {
+    public class Window1 : UIToolkitWindow {
         private IUIViewLocator locator;
-        protected override void OnCreate(IBundle bundle)
-        {
+        protected override void OnCreate(IBundle bundle) {
             WindowViewMode viewModel = new WindowViewMode();
             VisualElement listContainer = this.Q<VisualElement>("listContainer");
             var listView = new ListView(viewModel.Items);
@@ -68,45 +65,37 @@ namespace Loxodon.Framework.Examples
             this.Q<Button>("close").clicked += () => this.Dismiss();
         }
 
-        protected void OnOpenDialogWindow(object sender, InteractionEventArgs args)
-        {
+        protected void OnOpenDialogWindow(object sender, InteractionEventArgs args) {
             var callback = args.Callback;
-            AlertDialog.ShowMessage("测试", "标题", "OK", r =>
-            {
+            AlertDialog.ShowMessage("测试", "标题", "OK", r => {
                 callback?.Invoke();
             });
         }
 
-        protected void OnOpenWindow(object sender, InteractionEventArgs args)
-        {
+        protected void OnOpenWindow(object sender, InteractionEventArgs args) {
             IWindow window = locator.LoadWindow<IWindow>(this.WindowManager, "UI/Window2");
             window.Create();
             window.Show();
         }
     }
 
-    public class WindowViewMode : ViewModelBase
-    {
+    public class WindowViewMode : ViewModelBase {
         private string name;
         private SimpleCommand dialogCommand;
         private SimpleCommand windowCommand;
         private InteractionRequest openDialogRequest;
         private InteractionRequest openWindowRequest;
         public readonly Observables.ObservableList<string> Items = new Observables.ObservableList<string>();
-        public WindowViewMode()
-        {
+        public WindowViewMode() {
             this.openDialogRequest = new InteractionRequest(this);
             this.openWindowRequest = new InteractionRequest(this);
-            this.dialogCommand = new SimpleCommand(() =>
-            {
+            this.dialogCommand = new SimpleCommand(() => {
                 this.dialogCommand.Enabled = false;
-                this.openDialogRequest.Raise(() =>
-                {
+                this.openDialogRequest.Raise(() => {
                     this.dialogCommand.Enabled = true;
                 });
             });
-            this.windowCommand = new SimpleCommand(() =>
-            {
+            this.windowCommand = new SimpleCommand(() => {
                 this.openWindowRequest.Raise();
             });
 
@@ -114,39 +103,32 @@ namespace Loxodon.Framework.Examples
                 Items.Add(i.ToString());
         }
 
-        public string Name
-        {
+        public string Name {
             get { return this.name; }
             set { this.Set<string>(ref name, value); }
         }
 
-        public IInteractionRequest OpenDialogRequest
-        {
+        public IInteractionRequest OpenDialogRequest {
             get { return this.openDialogRequest; }
         }
 
-        public IInteractionRequest OpenWindowRequest
-        {
+        public IInteractionRequest OpenWindowRequest {
             get { return this.openWindowRequest; }
         }
 
-        public ICommand DialogClick
-        {
+        public ICommand DialogClick {
             get { return this.dialogCommand; }
         }
 
-        public ICommand WindowClick
-        {
+        public ICommand WindowClick {
             get { return this.windowCommand; }
         }
 
-        public void OnClick()
-        {
+        public void OnClick() {
             Debug.LogFormat("Button OnClick");
         }
 
-        public void AddItem()
-        {
+        public void AddItem() {
             Items.Add("Item_" + Random.Range(1, 200));
         }
     }

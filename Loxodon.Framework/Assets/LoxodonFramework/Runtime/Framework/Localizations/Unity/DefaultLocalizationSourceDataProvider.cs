@@ -32,8 +32,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Localizations
-{
+namespace Loxodon.Framework.Localizations {
     /// <summary>
     /// Resources data provider.
     /// dir:
@@ -49,26 +48,22 @@ namespace Loxodon.Framework.Localizations
     /// root/en-CA/
     /// root/en-AU/
     /// </summary>
-    public class DefaultLocalizationSourceDataProvider : IDataProvider
-    {
+    public class DefaultLocalizationSourceDataProvider : IDataProvider {
         private static readonly ILog log = LogManager.GetLogger(typeof(DefaultLocalizationSourceDataProvider));
 
         protected string[] filenames;
         protected string root;
 
-        public DefaultLocalizationSourceDataProvider(string root, params string[] filenames)
-        {
+        public DefaultLocalizationSourceDataProvider(string root, params string[] filenames) {
             this.root = root;
             this.filenames = filenames;
         }
 
-        protected string GetDefaultPath(string filename)
-        {
+        protected string GetDefaultPath(string filename) {
             return GetPath("default", filename);
         }
 
-        protected string GetPath(string dir, string filename)
-        {
+        protected string GetPath(string dir, string filename) {
             StringBuilder buf = new StringBuilder();
             buf.Append(this.root);
             if (!this.root.EndsWith("/"))
@@ -77,26 +72,22 @@ namespace Loxodon.Framework.Localizations
             return buf.ToString();
         }
 
-        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
-        {
+        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo) {
             Dictionary<string, object> dict = new Dictionary<string, object>();
             List<Task> tasks = new List<Task>();
-            foreach (string filename in filenames)
-            {
+            foreach (string filename in filenames) {
                 tasks.Add(Load(dict, filename, cultureInfo));
             }
             await Task.WhenAll(tasks);
             return dict;
         }
 
-        protected virtual async Task Load(Dictionary<string, object> dict, string filename, CultureInfo cultureInfo)
-        {
+        protected virtual async Task Load(Dictionary<string, object> dict, string filename, CultureInfo cultureInfo) {
             LocalizationSourceAsset defaultSourceAsset = (LocalizationSourceAsset)await Resources.LoadAsync<LocalizationSourceAsset>(GetDefaultPath(filename)); //eg:default            
             LocalizationSourceAsset twoLetterISOSourceAsset = (LocalizationSourceAsset)await Resources.LoadAsync<LocalizationSourceAsset>(GetPath(cultureInfo.TwoLetterISOLanguageName, filename));//eg:zh  en
             LocalizationSourceAsset sourceAsset = cultureInfo.Name.Equals(cultureInfo.TwoLetterISOLanguageName) ? null : (LocalizationSourceAsset)await Resources.LoadAsync<LocalizationSourceAsset>(GetPath(cultureInfo.Name, filename));//eg:zh-CN  en-US
 
-            if (defaultSourceAsset == null && twoLetterISOSourceAsset == null && sourceAsset == null)
-            {
+            if (defaultSourceAsset == null && twoLetterISOSourceAsset == null && sourceAsset == null) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("Not found the localized file \"{0}\".", filename);
                 return;
@@ -110,13 +101,11 @@ namespace Loxodon.Framework.Localizations
                 FillData(dict, sourceAsset.Source);
         }
 
-        private void FillData(Dictionary<string, object> dict, MonolingualSource source)
-        {
+        private void FillData(Dictionary<string, object> dict, MonolingualSource source) {
             if (source == null)
                 return;
 
-            foreach (KeyValuePair<string, object> kv in source.GetData())
-            {
+            foreach (KeyValuePair<string, object> kv in source.GetData()) {
                 dict[kv.Key] = kv.Value;
             }
         }

@@ -24,10 +24,8 @@
 
 using System.Text;
 
-namespace Loxodon.Framework.Views.TextMeshPro
-{
-    public interface IFormattableText
-    {
+namespace Loxodon.Framework.Views.TextMeshPro {
+    public interface IFormattableText {
         internal static StringBuilder BUFFER = new StringBuilder();
         string Format { get; set; }
 

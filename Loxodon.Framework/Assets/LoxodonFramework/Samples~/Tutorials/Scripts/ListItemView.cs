@@ -28,10 +28,8 @@ using Loxodon.Framework.Views;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ListItemView : UIView
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ListItemView : UIView {
         public Text title;
         public Text price;
         public Image image;
@@ -39,8 +37,7 @@ namespace Loxodon.Framework.Tutorials
         public Button selectButton;
         public Button clickButton;
 
-        protected override void Start()
-        {
+        protected override void Start() {
             BindingSet<ListItemView, ListItemViewModel> bindingSet = this.CreateBindingSet<ListItemView, ListItemViewModel>();
             bindingSet.Bind(this.title).For(v => v.text).To(vm => vm.Title).OneWay();
             bindingSet.Bind(this.image).For(v => v.sprite).To(vm => vm.Icon).WithConversion("spriteConverter").OneWay();

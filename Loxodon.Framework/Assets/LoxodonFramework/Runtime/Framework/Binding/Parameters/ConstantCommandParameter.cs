@@ -24,45 +24,35 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Parameters
-{
-    public class ConstantCommandParameter : ICommandParameter
-    {
+namespace Loxodon.Framework.Binding.Parameters {
+    public class ConstantCommandParameter : ICommandParameter {
         private object parameter;
-        public ConstantCommandParameter(object parameter)
-        {
+        public ConstantCommandParameter(object parameter) {
             this.parameter = parameter;
         }
-        public object GetValue()
-        {
+        public object GetValue() {
             return parameter;
         }
 
-        public Type GetValueType()
-        {
+        public Type GetValueType() {
             return parameter != null ? parameter.GetType() : typeof(object);
         }
     }
 
-    public class ConstantCommandParameter<T> : ICommandParameter<T>
-    {
+    public class ConstantCommandParameter<T> : ICommandParameter<T> {
         private T parameter;
-        public ConstantCommandParameter(T parameter)
-        {
+        public ConstantCommandParameter(T parameter) {
             this.parameter = parameter;
         }
-        public T GetValue()
-        {
+        public T GetValue() {
             return parameter;
         }
 
-        public Type GetValueType()
-        {
+        public Type GetValueType() {
             return typeof(T);
         }
 
-        object ICommandParameter.GetValue()
-        {
+        object ICommandParameter.GetValue() {
             return GetValue();
         }
     }

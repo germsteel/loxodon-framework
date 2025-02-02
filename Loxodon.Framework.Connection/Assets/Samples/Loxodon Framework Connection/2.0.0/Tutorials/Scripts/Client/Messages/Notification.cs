@@ -25,12 +25,9 @@
 using Loxodon.Framework.Net.Connection;
 using System.Text;
 
-namespace Loxodon.Framework.Examples.Messages
-{
-    public class Notification : INotification
-    {
-        public Notification()
-        {
+namespace Loxodon.Framework.Examples.Messages {
+    public class Notification : INotification {
+        public Notification() {
             this.Type = MessageType.Notification;
         }
 
@@ -44,8 +41,7 @@ namespace Loxodon.Framework.Examples.Messages
 
         public byte[] Content { get; set; }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return string.Format("{0} CMD:{1} SEQ:{2} Content:{3}", Type, CommandID, Sequence, Encoding.UTF8.GetString(Content));
         }
     }

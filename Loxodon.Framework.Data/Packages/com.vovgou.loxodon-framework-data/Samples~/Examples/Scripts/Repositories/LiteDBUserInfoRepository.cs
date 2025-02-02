@@ -26,21 +26,16 @@
 using LiteDB;
 using Loxodon.Framework.Examples.Domains;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public class LiteDBUserInfoRepository : LiteDBRepository<UserInfo>, IUserInfoRepository
-    {
-        public LiteDBUserInfoRepository(ILiteDatabase database) : base(database)
-        {
+namespace Loxodon.Framework.Examples.Repositories {
+    public class LiteDBUserInfoRepository : LiteDBRepository<UserInfo>, IUserInfoRepository {
+        public LiteDBUserInfoRepository(ILiteDatabase database) : base(database) {
         }
 
-        public UserInfo GetById(int id)
-        {
+        public UserInfo GetById(int id) {
             return GetCollection().FindById(id);
         }
 
-        public UserInfo GetByUsername(string username)
-        {
+        public UserInfo GetByUsername(string username) {
             return GetCollection().FindOne(c => c.Username.Equals(username));
         }
     }

@@ -42,15 +42,13 @@ Loxodon.Framework.TextMeshPro提供了基于TextMeshPro的TemplateTextMeshPro和
 ### 修改Packages/manifest.json文件安装
 
 通过修改manifest.json文件安装，不需要安装nodejs和openupm-cli客户端。在Unity项目根目录下找到Packages/manifest.json文件，在文件的scopedRegistries（没有可以自己添加）节点下添加第三方仓库package.openupm.com的配置，同时在dependencies节点下添加com.vovgou.loxodon-framework-textmeshpro的配置，保存后切换到Unity窗口即可完成安装。
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-textformatting": "2.6.2"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -71,11 +69,9 @@ Loxodon.Framework.TextMeshPro提供了基于TextMeshPro的TemplateTextMeshPro和
 	using System.Text;
 	using UnityEngine;
 	using Loxodon.Framework.TextFormatting;//必须先引入这个包名
-	public class Example : MonoBehaviour
-	{
+	public class Example : MonoBehaviour {
 	    StringBuilder builder = new StringBuilder();
-	    void Update()
-	    {
+	    void Update() {
 	        builder.Clear();
 	        builder.AppendFormat<DateTime,int>("Now:{0:yyyy-MM-dd HH:mm:ss} Frame:{0:D6}", DateTime.Now,Time.frameCount);
 	        builder.AppendFormat<float>("{0:f2}", Time.realtimeSinceStartup);       

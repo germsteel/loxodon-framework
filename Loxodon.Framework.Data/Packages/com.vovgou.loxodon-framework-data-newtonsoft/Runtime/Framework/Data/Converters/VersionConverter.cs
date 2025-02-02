@@ -24,46 +24,37 @@
 
 using Newtonsoft.Json;
 using System;
-namespace Loxodon.Framework.Data.Converters
-{
-    public class VersionConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
+namespace Loxodon.Framework.Data.Converters {
+    public class VersionConverter : JsonConverter {
+        public override bool CanConvert(Type objectType) {
             return typeof(Version).Equals(objectType);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
             if (reader.TokenType == JsonToken.Null)
                 return null;
 
             if (reader.TokenType != JsonToken.String)
                 throw ExceptionUtil.Create(reader, "Unexpected token or value when parsing color.");
 
-            try
-            {
+            try {
                 var value = (string)reader.Value;
                 if (string.IsNullOrWhiteSpace(value))
                     return null;
                 return new Version(value.Trim());
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 throw ExceptionUtil.Create(reader, string.Format("Error parsing version string: {0}", reader.Value), ex);
             }
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
             if (value == null)
                 writer.WriteNull();
-            else if (value is Version version)
-            {
+            else if (value is Version version) {
                 writer.WriteValue(version.ToString());
             }
-            else
-            {
+            else {
                 throw new JsonSerializationException(string.Format("Unsupported types:{0}", value));
             }
         }

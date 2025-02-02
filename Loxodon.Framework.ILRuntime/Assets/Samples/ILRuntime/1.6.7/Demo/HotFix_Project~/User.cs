@@ -2,28 +2,23 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace HotFix_Project
-{
-    public class User
-    {
+namespace HotFix_Project {
+    public class User {
         private string firstName;
         private string lastName;
         private int old;
 
-        public string FirstName
-        {
+        public string FirstName {
             get { return this.firstName; }
             set { this.firstName = value; }
         }
 
-        public string LastName
-        {
+        public string LastName {
             get { return this.lastName; }
             set { this.lastName = value; }
         }
 
-        public int Old
-        {
+        public int Old {
             get { return this.old; }
             set { this.old = value; }
         }

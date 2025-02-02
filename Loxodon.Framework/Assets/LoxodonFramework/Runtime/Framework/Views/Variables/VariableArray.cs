@@ -26,26 +26,21 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views.Variables
-{
+namespace Loxodon.Framework.Views.Variables {
     [System.Serializable]
-    public class VariableArray
-    {
+    public class VariableArray {
         [SerializeField]
         private List<Variable> variables;
 
-        public ReadOnlyCollection<Variable> Variables
-        {
+        public ReadOnlyCollection<Variable> Variables {
             get { return variables.AsReadOnly(); }
         }
 
-        public Variable this[int index]
-        {
+        public Variable this[int index] {
             get { return variables[index]; }
         }
 
-        public object Get(string name)
-        {
+        public object Get(string name) {
             if (this.variables == null || this.variables.Count <= 0)
                 return null;
             var variable = this.variables.Find(v => v.Name.Equals(name));
@@ -54,8 +49,7 @@ namespace Loxodon.Framework.Views.Variables
             return variable.GetValue();
         }
 
-        public T Get<T>(string name)
-        {
+        public T Get<T>(string name) {
             if (this.variables == null || this.variables.Count <= 0)
                 return default(T);
             var variable = this.variables.Find(v => v.Name.Equals(name));
@@ -64,13 +58,11 @@ namespace Loxodon.Framework.Views.Variables
             return variable.GetValue<T>();
         }
 
-        public static implicit operator List<Variable>(VariableArray array)
-        {
+        public static implicit operator List<Variable>(VariableArray array) {
             return array.variables;
         }
 
-        public static implicit operator VariableArray(List<Variable> variables)
-        {
+        public static implicit operator VariableArray(List<Variable> variables) {
             return new VariableArray() { variables = variables };
         }
     }

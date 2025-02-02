@@ -27,24 +27,20 @@ using System.Collections.Generic;
 
 using XLua;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
-{
-    public class LuaExpressionSourceProxy : NotifiableSourceProxyBase, IExpressionSourceProxy
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions {
+    public class LuaExpressionSourceProxy : NotifiableSourceProxyBase, IExpressionSourceProxy {
         private bool disposed = false;
         private LuaFunction func;
         private List<ISourceProxy> inners = new List<ISourceProxy>();
 
-        public LuaExpressionSourceProxy(object source, LuaFunction func, List<ISourceProxy> inners) : base(source)
-        {
+        public LuaExpressionSourceProxy(object source, LuaFunction func, List<ISourceProxy> inners) : base(source) {
             this.func = func;
             this.inners = inners;
 
             if (this.inners == null || this.inners.Count <= 0)
                 return;
 
-            foreach (ISourceProxy proxy in this.inners)
-            {
+            foreach (ISourceProxy proxy in this.inners) {
                 if (proxy is INotifiable)
                     ((INotifiable)proxy).ValueChanged += OnValueChanged;
             }
@@ -52,8 +48,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
 
         public override Type Type { get { return typeof(object); } }
 
-        public virtual object GetValue()
-        {
+        public virtual object GetValue() {
             if (this.source == null)
                 return null;
 
@@ -63,26 +58,19 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Expressions
             return results[0];
         }
 
-        public virtual TValue GetValue<TValue>()
-        {
+        public virtual TValue GetValue<TValue>() {
             return (TValue)this.GetValue();
         }
 
-        private void OnValueChanged(object sender, EventArgs e)
-        {
+        private void OnValueChanged(object sender, EventArgs e) {
             RaiseValueChanged();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                if (disposing)
-                {
-                    if (this.inners != null && this.inners.Count > 0)
-                    {
-                        foreach (ISourceProxy proxy in this.inners)
-                        {
+        protected override void Dispose(bool disposing) {
+            if (!disposed) {
+                if (disposing) {
+                    if (this.inners != null && this.inners.Count > 0) {
+                        foreach (ISourceProxy proxy in this.inners) {
                             if (proxy is INotifiable)
                                 ((INotifiable)proxy).ValueChanged -= OnValueChanged;
                             proxy.Dispose();

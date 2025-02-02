@@ -26,10 +26,8 @@ using Loxodon.Log;
 using System;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public class ProxyPropertyInfo : IProxyPropertyInfo
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public class ProxyPropertyInfo : IProxyPropertyInfo {
         //private static readonly ILog log = LogManager.GetLogger(typeof(ProxyPropertyInfo));
 
         private readonly bool isValueType;
@@ -38,8 +36,7 @@ namespace Loxodon.Framework.Binding.Reflection
         protected MethodInfo getMethod;
         protected MethodInfo setMethod;
 
-        public ProxyPropertyInfo(PropertyInfo propertyInfo)
-        {
+        public ProxyPropertyInfo(PropertyInfo propertyInfo) {
             if (propertyInfo == null)
                 throw new ArgumentNullException("propertyInfo");
 
@@ -58,12 +55,9 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public virtual Type ValueType { get { return this.propertyInfo.PropertyType; } }
 
-        public TypeCode ValueTypeCode
-        {
-            get
-            {
-                if (typeCode == TypeCode.Empty)
-                {
+        public TypeCode ValueTypeCode {
+            get {
+                if (typeCode == TypeCode.Empty) {
 #if NETFX_CORE
                     typeCode = WinRTLegacy.TypeExtensions.GetTypeCode(ValueType);
 #else
@@ -80,16 +74,14 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public virtual bool IsStatic { get { return this.propertyInfo.IsStatic(); } }
 
-        public virtual object GetValue(object target)
-        {
+        public virtual object GetValue(object target) {
             if (this.getMethod == null)
                 throw new MemberAccessException($"The property \"{propertyInfo.DeclaringType}.{Name}\" is not public");
 
             return this.getMethod.Invoke(target, null);
         }
 
-        public virtual void SetValue(object target, object value)
-        {
+        public virtual void SetValue(object target, object value) {
             if (!propertyInfo.CanWrite)
                 throw new MemberAccessException($"The property \"{propertyInfo.DeclaringType}.{Name}\" is read-only.");
 
@@ -103,19 +95,16 @@ namespace Loxodon.Framework.Binding.Reflection
         }
     }
 
-    public class ProxyPropertyInfo<T, TValue> : ProxyPropertyInfo, IProxyPropertyInfo<T, TValue>
-    {
+    public class ProxyPropertyInfo<T, TValue> : ProxyPropertyInfo, IProxyPropertyInfo<T, TValue> {
         private static readonly ILog log = LogManager.GetLogger(typeof(ProxyPropertyInfo<T, TValue>));
 
         private Func<T, TValue> getter;
         private Action<T, TValue> setter;
 
-        public ProxyPropertyInfo(string propertyName) : this(typeof(T).GetProperty(propertyName))
-        {
+        public ProxyPropertyInfo(string propertyName) : this(typeof(T).GetProperty(propertyName)) {
         }
 
-        public ProxyPropertyInfo(PropertyInfo propertyInfo) : base(propertyInfo)
-        {
+        public ProxyPropertyInfo(PropertyInfo propertyInfo) : base(propertyInfo) {
             if (!typeof(TValue).Equals(this.propertyInfo.PropertyType) || !propertyInfo.DeclaringType.IsAssignableFrom(typeof(T)))
                 throw new ArgumentException("The property types do not match!");
 
@@ -126,12 +115,10 @@ namespace Loxodon.Framework.Binding.Reflection
             this.setter = this.MakeSetter(propertyInfo);
         }
 
-        public ProxyPropertyInfo(string propertyName, Func<T, TValue> getter, Action<T, TValue> setter) : this(typeof(T).GetProperty(propertyName), getter, setter)
-        {
+        public ProxyPropertyInfo(string propertyName, Func<T, TValue> getter, Action<T, TValue> setter) : this(typeof(T).GetProperty(propertyName), getter, setter) {
         }
 
-        public ProxyPropertyInfo(PropertyInfo propertyInfo, Func<T, TValue> getter, Action<T, TValue> setter) : base(propertyInfo)
-        {
+        public ProxyPropertyInfo(PropertyInfo propertyInfo, Func<T, TValue> getter, Action<T, TValue> setter) : base(propertyInfo) {
             if (!typeof(TValue).Equals(this.propertyInfo.PropertyType) || !propertyInfo.DeclaringType.IsAssignableFrom(typeof(T)))
                 throw new ArgumentException("The property types do not match!");
 
@@ -144,10 +131,8 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public override Type DeclaringType { get { return typeof(T); } }
 
-        private Action<T, TValue> MakeSetter(PropertyInfo propertyInfo)
-        {
-            try
-            {
+        private Action<T, TValue> MakeSetter(PropertyInfo propertyInfo) {
+            try {
                 if (this.IsValueType)
                     return null;
 
@@ -157,8 +142,7 @@ namespace Loxodon.Framework.Binding.Reflection
 
                 return (Action<T, TValue>)setMethod.CreateDelegate(typeof(Action<T, TValue>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
@@ -166,10 +150,8 @@ namespace Loxodon.Framework.Binding.Reflection
             return null;
         }
 
-        private Func<T, TValue> MakeGetter(PropertyInfo propertyInfo)
-        {
-            try
-            {
+        private Func<T, TValue> MakeGetter(PropertyInfo propertyInfo) {
+            try {
                 if (this.IsValueType)
                     return null;
 
@@ -179,42 +161,36 @@ namespace Loxodon.Framework.Binding.Reflection
 
                 return (Func<T, TValue>)getMethod.CreateDelegate(typeof(Func<T, TValue>));
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
             return null;
         }
 
-        public TValue GetValue(T target)
-        {
+        public TValue GetValue(T target) {
             if (this.getter != null)
                 return this.getter(target);
 
             return (TValue)base.GetValue(target);
         }
 
-        TValue IProxyPropertyInfo<TValue>.GetValue(object target)
-        {
+        TValue IProxyPropertyInfo<TValue>.GetValue(object target) {
             return this.GetValue((T)target);
         }
 
-        public override object GetValue(object target)
-        {
+        public override object GetValue(object target) {
             if (this.getter != null)
                 return this.getter((T)target);
 
             return base.GetValue(target);
         }
 
-        public void SetValue(T target, TValue value)
-        {
+        public void SetValue(T target, TValue value) {
             if (this.IsValueType)
                 throw new NotSupportedException($"The type \"{propertyInfo.DeclaringType}\" is a value type, and non-reference types cannot support assignment operations.");
 
-            if (setter != null)
-            {
+            if (setter != null) {
                 setter(target, value);
                 return;
             }
@@ -222,18 +198,15 @@ namespace Loxodon.Framework.Binding.Reflection
             base.SetValue(target, value);
         }
 
-        public void SetValue(object target, TValue value)
-        {
+        public void SetValue(object target, TValue value) {
             this.SetValue((T)target, value);
         }
 
-        public override void SetValue(object target, object value)
-        {
+        public override void SetValue(object target, object value) {
             if (this.IsValueType)
                 throw new NotSupportedException($"The type \"{propertyInfo.DeclaringType}\" is a value type, and non-reference types cannot support assignment operations.");
 
-            if (setter != null)
-            {
+            if (setter != null) {
                 setter((T)target, (TValue)value);
                 return;
             }

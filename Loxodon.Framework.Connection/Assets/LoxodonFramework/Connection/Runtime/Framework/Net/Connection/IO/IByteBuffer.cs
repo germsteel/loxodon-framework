@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface IByteBuffer
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface IByteBuffer {
         byte[] ToArray();
 
         int Capacity { get; }

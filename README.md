@@ -180,43 +180,36 @@ Create a view and view model of the progress bar.
 
 ![](docs/images/progress.png)
 
-    public class ProgressBarViewModel : ViewModelBase
-    {
+    public class ProgressBarViewModel : ViewModelBase {
         private string tip;
         private bool enabled;
         private float value;
-        public ProgressBarViewModel()
-        {
+        public ProgressBarViewModel() {
         }
 
-        public string Tip
-        {
+        public string Tip {
             get { return this.tip; }
             set { this.Set<string>(ref this.tip, value, nameof(Tip)); }
         }
 
-        public bool Enabled
-        {
+        public bool Enabled {
             get { return this.enabled; }
             set { this.Set<bool>(ref this.enabled, value, nameof(Enabled)); }
         }
 
-        public float Value
-        {
+        public float Value {
             get { return this.value; }
             set { this.Set<float>(ref this.value, value, nameof(Value)); }
         }
     }
 
-    public class ProgressBarView : UIView
-    {
+    public class ProgressBarView : UIView {
         public GameObject progressBar;
         public Text progressTip;
         public Text progressText;
         public Slider progressSlider;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             var bindingSet = this.CreateBindingSet<ProgressBar, ProgressBarViewModel>();
 
             bindingSet.Bind(this.progressBar).For(v => v.activeSelf).To(vm => vm.Enabled).OneWay();
@@ -230,13 +223,11 @@ Create a view and view model of the progress bar.
     }
 
 
-    IEnumerator Unzip(ProgressBarViewModel progressBar)
-    {
+    IEnumerator Unzip(ProgressBarViewModel progressBar) {
         progressBar.Tip = "Unziping";
         progressBar.Enabled = true;//Display the progress bar
 
-        for(int i=0;i<30;i++)
-        {            
+        for(int i=0;i<30;i++) {            
             //TODO:Add unzip code here.
 
             progressBar.Value = (i/(float)30);            

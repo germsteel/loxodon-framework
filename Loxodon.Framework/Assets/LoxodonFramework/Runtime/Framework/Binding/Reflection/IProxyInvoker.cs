@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public interface IProxyInvoker: IInvoker
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public interface IProxyInvoker: IInvoker {
         IProxyMethodInfo ProxyMethodInfo { get; }
     }
 }

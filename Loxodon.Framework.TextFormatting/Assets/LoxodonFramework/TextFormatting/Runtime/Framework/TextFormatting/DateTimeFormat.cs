@@ -10,8 +10,7 @@
 // Author Clark
 // 
 
-namespace Loxodon.Framework.TextFormatting
-{
+namespace Loxodon.Framework.TextFormatting {
     using System;
     using System.Text;
     using System.Threading;
@@ -135,14 +134,12 @@ namespace Loxodon.Framework.TextFormatting
     */
 
     //This class contains only static members and does not require the serializable attribute.
-    internal static class DateTimeFormat
-    {
+    internal static class DateTimeFormat {
 
         internal const int MaxSecondsFractionDigits = 7;
         internal static readonly TimeSpan NullOffset = TimeSpan.MinValue;
 
-        internal static char[] allStandardFormats =
-        {
+        internal static char[] allStandardFormats = {
             'd', 'D', 'f', 'F', 'g', 'G',
             'm', 'M', 'o', 'O', 'r', 'R',
             's', 't', 'T', 'u', 'U', 'y', 'Y',
@@ -186,29 +183,25 @@ namespace Loxodon.Framework.TextFormatting
         //  The function can format to Int32.MaxValue.
         //
         ////////////////////////////////////////////////////////////////////////////
-        internal static void FormatDigits(int value, int len, ref ValueStringBuilder result)
-        {
+        internal static void FormatDigits(int value, int len, ref ValueStringBuilder result) {
             Contract.Assert(value >= 0, "DateTimeFormat.FormatDigits(): value >= 0");
             FormatDigits(value, len, false, ref result);
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
-        internal unsafe static void FormatDigits(int value, int len, bool overrideLengthLimit, ref ValueStringBuilder result)
-        {
+        internal unsafe static void FormatDigits(int value, int len, bool overrideLengthLimit, ref ValueStringBuilder result) {
             Contract.Assert(value >= 0, "DateTimeFormat.FormatDigits(): value >= 0");
 
             // Limit the use of this function to be two-digits, so that we have the same behavior
             // as RTM bits.
-            if (!overrideLengthLimit && len > 2)
-            {
+            if (!overrideLengthLimit && len > 2) {
                 len = 2;
             }
 
             char* buffer = stackalloc char[16];
             char* p = buffer + 16;
             int n = value;
-            do
-            {
+            do {
                 *--p = (char)(n % 10 + '0');
                 n /= 10;
             } while ((n != 0) && (p > buffer));
@@ -218,35 +211,29 @@ namespace Loxodon.Framework.TextFormatting
             //If the repeat count is greater than 0, we're trying
             //to emulate the "00" format, so we have to prepend
             //a zero if the string only has one character.
-            while ((digits < len) && (p > buffer))
-            {
+            while ((digits < len) && (p > buffer)) {
                 *--p = '0';
                 digits++;
             }
             result.Append(p, digits);
         }
 
-        private static void HebrewFormatDigits(int digits, ref ValueStringBuilder result)
-        {
+        private static void HebrewFormatDigits(int digits, ref ValueStringBuilder result) {
             HebrewNumber.ToString(digits, ref result);
         }
 
-        internal static int ParseRepeatPattern(ReadOnlySpan<char> format, int pos, char patternChar)
-        {
+        internal static int ParseRepeatPattern(ReadOnlySpan<char> format, int pos, char patternChar) {
             int len = format.Length;
             int index = pos + 1;
-            while ((index < len) && (format[index] == patternChar))
-            {
+            while ((index < len) && (format[index] == patternChar)) {
                 index++;
             }
             return (index - pos);
         }
 
-        private static string FormatDayOfWeek(int dayOfWeek, int repeat, DateTimeFormatInfo dtfi)
-        {
+        private static string FormatDayOfWeek(int dayOfWeek, int repeat, DateTimeFormatInfo dtfi) {
             Contract.Assert(dayOfWeek >= 0 && dayOfWeek <= 6, "dayOfWeek >= 0 && dayOfWeek <= 6");
-            if (repeat == 3)
-            {
+            if (repeat == 3) {
                 return dtfi.GetAbbreviatedDayName((DayOfWeek)dayOfWeek);
             }
             // Call dtfi.GetDayName() here, instead of accessing DayNames property, because we don't
@@ -254,11 +241,9 @@ namespace Loxodon.Framework.TextFormatting
             return dtfi.GetDayName((DayOfWeek)dayOfWeek);
         }
 
-        private static string FormatMonth(int month, int repeatCount, DateTimeFormatInfo dtfi)
-        {
+        private static string FormatMonth(int month, int repeatCount, DateTimeFormatInfo dtfi) {
             Contract.Assert(month >= 1 && month <= 12, "month >=1 && month <= 12");
-            if (repeatCount == 3)
-            {
+            if (repeatCount == 3) {
                 return dtfi.GetAbbreviatedMonthName(month);
             }
             // Call GetMonthName() here, instead of accessing MonthNames property, because we don't
@@ -295,21 +280,17 @@ namespace Loxodon.Framework.TextFormatting
 
             Therefore, if we are in a regular year, we have to increment the month name if moth is greater or eqaul to 7.
         */
-        private static string FormatHebrewMonthName(DateTime time, int month, int repeatCount, DateTimeFormatInfo dtfi)
-        {
+        private static string FormatHebrewMonthName(DateTime time, int month, int repeatCount, DateTimeFormatInfo dtfi) {
             Contract.Assert(repeatCount != 3 || repeatCount != 4, "repeateCount should be 3 or 4");
-            if (dtfi.Calendar.IsLeapYear(dtfi.Calendar.GetYear(time)))
-            {
+            if (dtfi.Calendar.IsLeapYear(dtfi.Calendar.GetYear(time))) {
                 // This month is in a leap year
                 return GetMonthName(dtfi, month, 2, true);// dtfi.internalGetMonthName(month, MonthNameStyles.LeapYear, (repeatCount == 3));
             }
             // This is in a regular year.
-            if (month >= 7)
-            {
+            if (month >= 7) {
                 month++;
             }
-            if (repeatCount == 3)
-            {
+            if (repeatCount == 3) {
                 return dtfi.GetAbbreviatedMonthName(month);
             }
             return dtfi.GetMonthName(month);
@@ -319,8 +300,7 @@ namespace Loxodon.Framework.TextFormatting
         // The pos should point to a quote character. This method will
         // get the string encloed by the quote character.
         //
-        internal static int ParseQuoteString(ReadOnlySpan<char> format, int pos, ref ValueStringBuilder result)
-        {
+        internal static int ParseQuoteString(ReadOnlySpan<char> format, int pos, ref ValueStringBuilder result) {
             //
             // NOTE : pos will be the index of the quote character in the 'format' string.
             //
@@ -329,41 +309,34 @@ namespace Loxodon.Framework.TextFormatting
             char quoteChar = format[pos++]; // Get the character used to quote the following string.
 
             bool foundQuote = false;
-            while (pos < formatLen)
-            {
+            while (pos < formatLen) {
                 char ch = format[pos++];
-                if (ch == quoteChar)
-                {
+                if (ch == quoteChar) {
                     foundQuote = true;
                     break;
                 }
-                else if (ch == '\\')
-                {
+                else if (ch == '\\') {
                     // The following are used to support escaped character.
                     // Escaped character is also supported in the quoted string.
                     // Therefore, someone can use a format like "'minute:' mm\"" to display:
                     //  minute: 45"
                     // because the second double quote is escaped.
-                    if (pos < formatLen)
-                    {
+                    if (pos < formatLen) {
                         result.Append(format[pos++]);
                     }
-                    else
-                    {
+                    else {
                         //
                         // This means that '\' is at the end of the formatting string.
                         //
                         throw new FormatException("Invalid Format");
                     }
                 }
-                else
-                {
+                else {
                     result.Append(ch);
                 }
             }
 
-            if (!foundQuote)
-            {
+            if (!foundQuote) {
                 // Here we can't find the matching quote.
                 throw new FormatException("Invalid Format");
             }
@@ -379,10 +352,8 @@ namespace Loxodon.Framework.TextFormatting
         // Return value of -1 means 'pos' is already at the end of the 'format' string.
         // Otherwise, return value is the int value of the next character.
         //
-        internal static int ParseNextChar(ReadOnlySpan<char> format, int pos)
-        {
-            if (pos >= format.Length - 1)
-            {
+        internal static int ParseNextChar(ReadOnlySpan<char> format, int pos) {
+            if (pos >= format.Length - 1) {
                 return (-1);
             }
             return format[pos + 1];
@@ -401,8 +372,7 @@ namespace Loxodon.Framework.TextFormatting
         //      tokenLen    The len of the current pattern character.  This indicates how many "M" that we have.
         //      patternToMatch  The pattern that we want to search. This generally uses "d"
         //
-        private static bool IsUseGenitiveForm(ReadOnlySpan<char> format, int index, int tokenLen, char patternToMatch)
-        {
+        private static bool IsUseGenitiveForm(ReadOnlySpan<char> format, int index, int tokenLen, char patternToMatch) {
             int i;
             int repeat = 0;
             //
@@ -412,19 +382,16 @@ namespace Loxodon.Framework.TextFormatting
             // Find first "d".
             for (i = index - 1; i >= 0 && format[i] != patternToMatch; i--) {  /*Do nothing here */ };
 
-            if (i >= 0)
-            {
+            if (i >= 0) {
                 // Find a "d", so look back to see how many "d" that we can find.
-                while (--i >= 0 && format[i] == patternToMatch)
-                {
+                while (--i >= 0 && format[i] == patternToMatch) {
                     repeat++;
                 }
                 //
                 // repeat == 0 means that we have one (patternToMatch)
                 // repeat == 1 means that we have two (patternToMatch)
                 //
-                if (repeat <= 1)
-                {
+                if (repeat <= 1) {
                     return (true);
                 }
                 // Note that we can't just stop here.  We may find "ddd" while looking back, and we have to look
@@ -438,28 +405,24 @@ namespace Loxodon.Framework.TextFormatting
             // Find first "d"
             for (i = index + tokenLen; i < format.Length && format[i] != patternToMatch; i++) { /* Do nothing here */ };
 
-            if (i < format.Length)
-            {
+            if (i < format.Length) {
                 repeat = 0;
                 // Find a "d", so contine the walk to see how may "d" that we can find.
-                while (++i < format.Length && format[i] == patternToMatch)
-                {
+                while (++i < format.Length && format[i] == patternToMatch) {
                     repeat++;
                 }
                 //
                 // repeat == 0 means that we have one (patternToMatch)
                 // repeat == 1 means that we have two (patternToMatch)
                 //
-                if (repeat <= 1)
-                {
+                if (repeat <= 1) {
                     return (true);
                 }
             }
             return false;
         }
 
-        private static void FormatCustomized(DateTime dateTime, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, TimeSpan offset, ref ValueStringBuilder result)
-        {
+        private static void FormatCustomized(DateTime dateTime, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, TimeSpan offset, ref ValueStringBuilder result) {
             FormatCustomized(dateTime, format, 0, format.Length, dtfi, offset, ref result);
         }
 
@@ -468,8 +431,7 @@ namespace Loxodon.Framework.TextFormatting
         //
         //  Actions: Format the DateTime instance using the specified format.
         //
-        private static void FormatCustomized(DateTime dateTime, ReadOnlySpan<char> format, int index, int length, DateTimeFormatInfo dtfi, TimeSpan offset, ref ValueStringBuilder result)
-        {
+        private static void FormatCustomized(DateTime dateTime, ReadOnlySpan<char> format, int index, int length, DateTimeFormatInfo dtfi, TimeSpan offset, ref ValueStringBuilder result) {
             Calendar cal = dtfi.Calendar;
             //StringBuilder outputBuffer = StringBuilderCache.Acquire();
             // This is a flag to indicate if we are format the dates using Hebrew calendar.
@@ -484,12 +446,10 @@ namespace Loxodon.Framework.TextFormatting
             int end = index + length;// format.Length;
             int tokenLen, hour12;
 
-            while (i < end)
-            {
+            while (i < end) {
                 char ch = format[i];
                 int nextChar;
-                switch (ch)
-                {
+                switch (ch) {
                     case 'g':
                         tokenLen = ParseRepeatPattern(format, i, ch);
                         result.Append(dtfi.GetEraName(cal.GetEra(dateTime)));
@@ -497,8 +457,7 @@ namespace Loxodon.Framework.TextFormatting
                     case 'h':
                         tokenLen = ParseRepeatPattern(format, i, ch);
                         hour12 = dateTime.Hour % 12;
-                        if (hour12 == 0)
-                        {
+                        if (hour12 == 0) {
                             hour12 = 12;
                         }
                         FormatDigits(hour12, tokenLen, ref result);
@@ -518,72 +477,56 @@ namespace Loxodon.Framework.TextFormatting
                     case 'f':
                     case 'F':
                         tokenLen = ParseRepeatPattern(format, i, ch);
-                        if (tokenLen <= MaxSecondsFractionDigits)
-                        {
+                        if (tokenLen <= MaxSecondsFractionDigits) {
                             long fraction = (dateTime.Ticks % 10000000);//TicksPerSecond
                             fraction = fraction / (long)Math.Pow(10, 7 - tokenLen);
-                            if (ch == 'f')
-                            {
+                            if (ch == 'f') {
                                 //result.Append(((int)fraction).ToString(fixedNumberFormats[tokenLen - 1], CultureInfo.InvariantCulture));
                                 NumberFormatter.NumberToString(fixedNumberFormats[tokenLen - 1], (int)fraction, CultureInfo.InvariantCulture, ref result);
                             }
-                            else
-                            {
+                            else {
                                 int effectiveDigits = tokenLen;
-                                while (effectiveDigits > 0)
-                                {
-                                    if (fraction % 10 == 0)
-                                    {
+                                while (effectiveDigits > 0) {
+                                    if (fraction % 10 == 0) {
                                         fraction = fraction / 10;
                                         effectiveDigits--;
                                     }
-                                    else
-                                    {
+                                    else {
                                         break;
                                     }
                                 }
-                                if (effectiveDigits > 0)
-                                {
+                                if (effectiveDigits > 0) {
                                     //result.Append(((int)fraction).ToString(fixedNumberFormats[effectiveDigits - 1], CultureInfo.InvariantCulture));
                                     NumberFormatter.NumberToString(fixedNumberFormats[effectiveDigits - 1], (int)fraction, CultureInfo.InvariantCulture, ref result);
                                 }
-                                else
-                                {
+                                else {
                                     // No fraction to emit, so see if we should remove decimal also.
-                                    if (result.Length > 0 && result[result.Length - 1] == '.')
-                                    {
+                                    if (result.Length > 0 && result[result.Length - 1] == '.') {
                                         result.Remove(result.Length - 1, 1);
                                     }
                                 }
                             }
                         }
-                        else
-                        {
+                        else {
                             throw new FormatException("Invalid Format");
                         }
                         break;
                     case 't':
                         tokenLen = ParseRepeatPattern(format, i, ch);
-                        if (tokenLen == 1)
-                        {
-                            if (dateTime.Hour < 12)
-                            {
-                                if (dtfi.AMDesignator.Length >= 1)
-                                {
+                        if (tokenLen == 1) {
+                            if (dateTime.Hour < 12) {
+                                if (dtfi.AMDesignator.Length >= 1) {
                                     result.Append(dtfi.AMDesignator[0]);
                                 }
                             }
-                            else
-                            {
-                                if (dtfi.PMDesignator.Length >= 1)
-                                {
+                            else {
+                                if (dtfi.PMDesignator.Length >= 1) {
                                     result.Append(dtfi.PMDesignator[0]);
                                 }
                             }
 
                         }
-                        else
-                        {
+                        else {
                             result.Append((dateTime.Hour < 12 ? dtfi.AMDesignator : dtfi.PMDesignator));
                         }
                         break;
@@ -595,21 +538,17 @@ namespace Loxodon.Framework.TextFormatting
                         // tokenLen >= 4 : Day of week as its full name.
                         //
                         tokenLen = ParseRepeatPattern(format, i, ch);
-                        if (tokenLen <= 2)
-                        {
+                        if (tokenLen <= 2) {
                             int day = cal.GetDayOfMonth(dateTime);
-                            if (isHebrewCalendar)
-                            {
+                            if (isHebrewCalendar) {
                                 // For Hebrew calendar, we need to convert numbers to Hebrew text for yyyy, MM, and dd values.
                                 HebrewFormatDigits(day, ref result);
                             }
-                            else
-                            {
+                            else {
                                 FormatDigits(day, tokenLen, ref result);
                             }
                         }
-                        else
-                        {
+                        else {
                             int dayOfWeek = (int)cal.GetDayOfWeek(dateTime);
                             result.Append(FormatDayOfWeek(dayOfWeek, tokenLen, dtfi));
                         }
@@ -624,27 +563,21 @@ namespace Loxodon.Framework.TextFormatting
                         //
                         tokenLen = ParseRepeatPattern(format, i, ch);
                         int month = cal.GetMonth(dateTime);
-                        if (tokenLen <= 2)
-                        {
-                            if (isHebrewCalendar)
-                            {
+                        if (tokenLen <= 2) {
+                            if (isHebrewCalendar) {
                                 // For Hebrew calendar, we need to convert numbers to Hebrew text for yyyy, MM, and dd values.
                                 HebrewFormatDigits(month, ref result);
                             }
-                            else
-                            {
+                            else {
                                 FormatDigits(month, tokenLen, ref result);
                             }
                         }
-                        else
-                        {
+                        else {
                             //throw new FormatException("Unsupported format");
-                            if (isHebrewCalendar)
-                            {
+                            if (isHebrewCalendar) {
                                 result.Append(FormatHebrewMonthName(dateTime, month, tokenLen, dtfi));
                             }
-                            else
-                            {
+                            else {
                                 //if ((dtfi.FormatFlags & DateTimeFormatFlags.UseGenitiveMonth) != 0 && tokenLen >= 4)
                                 //{
                                 //    result.Append(
@@ -658,8 +591,7 @@ namespace Loxodon.Framework.TextFormatting
                                 //    result.Append(FormatMonth(month, tokenLen, dtfi));
                                 //}
 
-                                if (tokenLen >= 4 && IsUseGenitiveForm(format, i, tokenLen, 'd') && UseGenitiveMonth(dtfi))
-                                {
+                                if (tokenLen >= 4 && IsUseGenitiveForm(format, i, tokenLen, 'd') && UseGenitiveMonth(dtfi)) {
                                     result.Append(
                                         GetMonthName(
                                             dtfi,
@@ -667,8 +599,7 @@ namespace Loxodon.Framework.TextFormatting
                                              1,//MonthNameStyles.Genitive
                                             false));
                                 }
-                                else
-                                {
+                                else {
                                     result.Append(FormatMonth(month, tokenLen, dtfi));
                                 }
                             }
@@ -688,30 +619,24 @@ namespace Loxodon.Framework.TextFormatting
                             !FormatJapaneseFirstYearAsANumber() &&
                             year == 1 &&
                             ((i + tokenLen < format.Length && format[i + tokenLen] == CJKYearSuff[0]) ||
-                            (i + tokenLen < format.Length - 1 && format[i + tokenLen] == '\'' && format[i + tokenLen + 1] == CJKYearSuff[0])))
-                        {
+                            (i + tokenLen < format.Length - 1 && format[i + tokenLen] == '\'' && format[i + tokenLen + 1] == CJKYearSuff[0]))) {
                             // We are formatting a Japanese date with year equals 1 and the year number is followed by the year sign \u5e74
                             // In Japanese dates, the first year in the era is not formatted as a number 1 instead it is formatted as \u5143 which means
                             // first or beginning of the era.
                             //outputBuffer.Append(DateTimeFormatInfo.JapaneseEraStart[0]);
                             result.Append(JapaneseEraStart[0]);
                         }
-                        else if (HasForceTwoDigitYears(cal))
-                        {
+                        else if (HasForceTwoDigitYears(cal)) {
                             FormatDigits(year, tokenLen <= 2 ? tokenLen : 2, ref result);
                         }
-                        else if (isHebrewCalendar)
-                        {
+                        else if (isHebrewCalendar) {
                             HebrewFormatDigits(year, ref result);
                         }
-                        else
-                        {
-                            if (tokenLen <= 2)
-                            {
+                        else {
+                            if (tokenLen <= 2) {
                                 FormatDigits(year % 100, tokenLen, ref result);
                             }
-                            else
-                            {
+                            else {
                                 string fmtPattern = tokenLen > 7 ? "D" + tokenLen : fixedNumberFormats[tokenLen - 1];
                                 //result.Append(year.ToString(fmtPattern, CultureInfo.InvariantCulture));
                                 NumberFormatter.NumberToString(fmtPattern, year, CultureInfo.InvariantCulture, ref result);
@@ -750,15 +675,13 @@ namespace Loxodon.Framework.TextFormatting
                         nextChar = ParseNextChar(format, i);
                         // nextChar will be -1 if we already reach the end of the format string.
                         // Besides, we will not allow "%%" appear in the pattern.
-                        if (nextChar >= 0 && nextChar != (int)'%')
-                        {
+                        if (nextChar >= 0 && nextChar != (int)'%') {
                             //result.Append(FormatCustomized(dateTime, ((char)nextChar).ToString(), dtfi, offset));
                             //result.Append(FormatCustomized(dateTime, format, i + 1, 1, dtfi, offset));
                             FormatCustomized(dateTime, format, i + 1, 1, dtfi, offset, ref result);
                             tokenLen = 2;
                         }
-                        else
-                        {
+                        else {
                             //
                             // This means that '%' is at the end of the format string or
                             // "%%" appears in the format string.
@@ -776,13 +699,11 @@ namespace Loxodon.Framework.TextFormatting
                         // then we can remove this character.
                         //
                         nextChar = ParseNextChar(format, i);
-                        if (nextChar >= 0)
-                        {
+                        if (nextChar >= 0) {
                             result.Append(((char)nextChar));
                             tokenLen = 2;
                         }
-                        else
-                        {
+                        else {
                             //
                             // This means that '\' is at the end of the formatting string.
                             //
@@ -803,23 +724,19 @@ namespace Loxodon.Framework.TextFormatting
         }
 
         private static ConcurrentDictionary<DateTimeFormatInfo, DateTimeFormatInfoCache> dateTimeFormatInfoCaches = new ConcurrentDictionary<DateTimeFormatInfo, DateTimeFormatInfoCache>();
-        private static DateTimeFormatInfoCache GetDateTimeFormatInfoCache(DateTimeFormatInfo dtfi)
-        {
+        private static DateTimeFormatInfoCache GetDateTimeFormatInfoCache(DateTimeFormatInfo dtfi) {
             return dateTimeFormatInfoCaches.GetOrAdd(dtfi, (key) => new DateTimeFormatInfoCache(key));
         }
-        private static bool UseGenitiveMonth(DateTimeFormatInfo dtfi)
-        {
+        private static bool UseGenitiveMonth(DateTimeFormatInfo dtfi) {
             ////UseGenitiveMonth = 0x00000001,
             DateTimeFormatInfoCache cache = GetDateTimeFormatInfoCache(dtfi);
             return cache.UseGenitiveMonth;
         }
 
-        private static string GetMonthName(DateTimeFormatInfo dtfi, int month, int style, bool abbreviated)
-        {
+        private static string GetMonthName(DateTimeFormatInfo dtfi, int month, int style, bool abbreviated) {
             DateTimeFormatInfoCache cache = GetDateTimeFormatInfoCache(dtfi);
             string[] monthNamesArray = null;
-            switch (style)
-            {
+            switch (style) {
                 case 1://1: Genitive
                     monthNamesArray = abbreviated ? cache.AbbreviatedMonthGenitiveNames : cache.MonthGenitiveNames;
                     break;
@@ -837,8 +754,7 @@ namespace Loxodon.Framework.TextFormatting
             return (monthNamesArray[month - 1]);
         }
 
-        private static bool FormatJapaneseFirstYearAsANumber()
-        {
+        private static bool FormatJapaneseFirstYearAsANumber() {
             if (_formatJapaneseFirstYearAsANumber < 0)
                 return false;
             if (_formatJapaneseFirstYearAsANumber > 0)
@@ -850,8 +766,7 @@ namespace Loxodon.Framework.TextFormatting
             return isSwitchEnabled;
         }
 
-        private static bool HasForceTwoDigitYears(Calendar calendar)
-        {
+        private static bool HasForceTwoDigitYears(Calendar calendar) {
             if (calendar is JapaneseCalendar || calendar is TaiwanCalendar)
                 return true;
             return false;
@@ -859,22 +774,18 @@ namespace Loxodon.Framework.TextFormatting
 
 
         // output the 'z' famliy of formats, which output a the offset from UTC, e.g. "-07:30"
-        private static void FormatCustomizedTimeZone(DateTime dateTime, TimeSpan offset, ReadOnlySpan<char> format, int tokenLen, bool timeOnly, ref ValueStringBuilder result)
-        {
+        private static void FormatCustomizedTimeZone(DateTime dateTime, TimeSpan offset, ReadOnlySpan<char> format, int tokenLen, bool timeOnly, ref ValueStringBuilder result) {
             // See if the instance already has an offset
             bool dateTimeFormat = (offset == NullOffset);
-            if (dateTimeFormat)
-            {
+            if (dateTimeFormat) {
                 // No offset. The instance is a DateTime and the output should be the local time zone
 
-                if (timeOnly && dateTime.Ticks < TimeSpan.TicksPerDay)
-                {
+                if (timeOnly && dateTime.Ticks < TimeSpan.TicksPerDay) {
                     // For time only format and a time only input, the time offset on 0001/01/01 is less
                     // accurate than the system's current offset because of daylight saving time.
                     offset = TimeZoneInfo.Local.GetUtcOffset(dateTime);
                 }
-                else if (dateTime.Kind == DateTimeKind.Utc)
-                {
+                else if (dateTime.Kind == DateTimeKind.Utc) {
 #if FEATURE_CORECLR
                                     offset = TimeSpan.Zero;
 #else // FEATURE_CORECLR
@@ -888,35 +799,29 @@ namespace Loxodon.Framework.TextFormatting
                     offset = TimeZoneInfo.Local.GetUtcOffset(dateTime);
 #endif // FEATURE_CORECLR
                 }
-                else
-                {
+                else {
                     offset = TimeZoneInfo.Local.GetUtcOffset(dateTime);
                 }
             }
-            if (offset >= TimeSpan.Zero)
-            {
+            if (offset >= TimeSpan.Zero) {
                 result.Append('+');
             }
-            else
-            {
+            else {
                 result.Append('-');
                 // get a positive offset, so that you don't need a separate code path for the negative numbers.
                 offset = offset.Negate();
             }
 
-            if (tokenLen <= 1)
-            {
+            if (tokenLen <= 1) {
                 // 'z' format e.g "-7"              
                 //result.AppendFormat(CultureInfo.InvariantCulture, "{0:0}", offset.Hours);
                 NumberFormatter.NumberToString("0", offset.Hours, CultureInfo.InvariantCulture, ref result);
             }
-            else
-            {
+            else {
                 // 'zz' or longer format e.g "-07"
                 //result.AppendFormat(CultureInfo.InvariantCulture, "{0:00}", offset.Hours);
                 NumberFormatter.NumberToString("00", offset.Hours, CultureInfo.InvariantCulture, ref result);
-                if (tokenLen >= 3)
-                {
+                if (tokenLen >= 3) {
                     // 'zzz*' or longer format e.g "-07:30"
                     //result.AppendFormat(CultureInfo.InvariantCulture, ":{0:00}", offset.Minutes);
                     NumberFormatter.NumberToString("00", offset.Minutes, CultureInfo.InvariantCulture, ref result);
@@ -925,18 +830,15 @@ namespace Loxodon.Framework.TextFormatting
         }
 
         // output the 'K' format, which is for round-tripping the data
-        private static void FormatCustomizedRoundripTimeZone(DateTime dateTime, TimeSpan offset, ref ValueStringBuilder result)
-        {
+        private static void FormatCustomizedRoundripTimeZone(DateTime dateTime, TimeSpan offset, ref ValueStringBuilder result) {
 
             // The objective of this format is to round trip the data in the type
             // For DateTime it should round-trip the Kind value and preserve the time zone.
             // DateTimeOffset instance, it should do so by using the internal time zone.
 
-            if (offset == NullOffset)
-            {
+            if (offset == NullOffset) {
                 // source is a date time, so behavior depends on the kind.
-                switch (dateTime.Kind)
-                {
+                switch (dateTime.Kind) {
                     case DateTimeKind.Local:
                         // This should output the local offset, e.g. "-07:30"
                         offset = TimeZoneInfo.Local.GetUtcOffset(dateTime);
@@ -951,12 +853,10 @@ namespace Loxodon.Framework.TextFormatting
                         return;
                 }
             }
-            if (offset >= TimeSpan.Zero)
-            {
+            if (offset >= TimeSpan.Zero) {
                 result.Append('+');
             }
-            else
-            {
+            else {
                 result.Append('-');
                 // get a positive offset, so that you don't need a separate code path for the negative numbers.
                 offset = offset.Negate();
@@ -969,12 +869,10 @@ namespace Loxodon.Framework.TextFormatting
         }
 
 
-        internal static string GetRealFormat(ReadOnlySpan<char> format, DateTimeFormatInfo dtfi)
-        {
+        internal static string GetRealFormat(ReadOnlySpan<char> format, DateTimeFormatInfo dtfi) {
             string realFormat = null;
 
-            switch (format[0])
-            {
+            switch (format[0]) {
                 case 'd':       // Short Date
                     realFormat = dtfi.ShortDatePattern;
                     break;
@@ -1036,29 +934,24 @@ namespace Loxodon.Framework.TextFormatting
         // This method also convert the dateTime if necessary (e.g. when the format is in Universal time),
         // and change dtfi if necessary (e.g. when the format should use invariant culture).
         //
-        private static ReadOnlySpan<char> ExpandPredefinedFormat(ReadOnlySpan<char> format, ref DateTime dateTime, ref DateTimeFormatInfo dtfi, ref TimeSpan offset)
-        {
-            switch (format[0])
-            {
+        private static ReadOnlySpan<char> ExpandPredefinedFormat(ReadOnlySpan<char> format, ref DateTime dateTime, ref DateTimeFormatInfo dtfi, ref TimeSpan offset) {
+            switch (format[0]) {
                 case 's':       // Sortable without Time Zone Info
                     dtfi = DateTimeFormatInfo.InvariantInfo;
                     break;
                 case 'u':       // Universal time in sortable format.
-                    if (offset != NullOffset)
-                    {
+                    if (offset != NullOffset) {
                         // Convert to UTC invariants mean this will be in range
                         dateTime = dateTime - offset;
                     }
-                    else if (dateTime.Kind == DateTimeKind.Local)
-                    {
+                    else if (dateTime.Kind == DateTimeKind.Local) {
 
                         InvalidFormatForLocal(format, dateTime);
                     }
                     dtfi = DateTimeFormatInfo.InvariantInfo;
                     break;
                 case 'U':       // Universal time in culture dependent format.
-                    if (offset != NullOffset)
-                    {
+                    if (offset != NullOffset) {
                         // This format is not supported by DateTimeOffset
                         throw new FormatException($"This format \"{format.ToString()}\" is not supported by DateTimeOffset");
                     }
@@ -1067,8 +960,7 @@ namespace Loxodon.Framework.TextFormatting
                     // Change the Calendar to be Gregorian Calendar.
                     //
                     dtfi = (DateTimeFormatInfo)dtfi.Clone();
-                    if (dtfi.Calendar.GetType() != typeof(GregorianCalendar))
-                    {
+                    if (dtfi.Calendar.GetType() != typeof(GregorianCalendar)) {
                         dtfi.Calendar = DEFAULT_GREGORIAN_CALENDAR;// GregorianCalendar.GetDefaultInstance();
                     }
                     dateTime = dateTime.ToUniversalTime();
@@ -1077,24 +969,19 @@ namespace Loxodon.Framework.TextFormatting
             return GetRealFormat(format, dtfi);
         }
 
-        internal static void Format(DateTime dateTime, ReadOnlySpan<char> format, ref ValueStringBuilder result)
-        {
+        internal static void Format(DateTime dateTime, ReadOnlySpan<char> format, ref ValueStringBuilder result) {
             Format(dateTime, format, DateTimeFormatInfo.GetInstance(null), NullOffset, ref result);
         }
 
-        internal static void Format(DateTime dateTime, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, ref ValueStringBuilder result)
-        {
+        internal static void Format(DateTime dateTime, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, ref ValueStringBuilder result) {
             Format(dateTime, format, dtfi, NullOffset, ref result);
         }
 
-        internal static void Format(DateTime dateTime, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, TimeSpan offset, ref ValueStringBuilder result)
-        {
+        internal static void Format(DateTime dateTime, ReadOnlySpan<char> format, DateTimeFormatInfo dtfi, TimeSpan offset, ref ValueStringBuilder result) {
             Contract.Requires(dtfi != null);
-            if (format == null || format.Length == 0)
-            {
+            if (format == null || format.Length == 0) {
                 bool timeOnlySpecialCase = false;
-                if (dateTime.Ticks < TimeSpan.TicksPerDay)
-                {
+                if (dateTime.Ticks < TimeSpan.TicksPerDay) {
                     // If the time is less than 1 day, consider it as time of day.
                     // Just print out the short time format.
                     //
@@ -1122,52 +1009,41 @@ namespace Loxodon.Framework.TextFormatting
                     //        break;
                     //}
                     Calendar cal = dtfi.Calendar;
-                    if (cal is JapaneseCalendar || cal is TaiwanCalendar || cal is HijriCalendar || cal is HebrewCalendar || cal is JulianCalendar || cal is UmAlQuraCalendar || cal is PersianCalendar)
-                    {
+                    if (cal is JapaneseCalendar || cal is TaiwanCalendar || cal is HijriCalendar || cal is HebrewCalendar || cal is JulianCalendar || cal is UmAlQuraCalendar || cal is PersianCalendar) {
                         timeOnlySpecialCase = true;
                         dtfi = DateTimeFormatInfo.InvariantInfo;
                     }
                 }
-                if (offset == NullOffset)
-                {
+                if (offset == NullOffset) {
                     // Default DateTime.ToString case.
-                    if (timeOnlySpecialCase)
-                    {
+                    if (timeOnlySpecialCase) {
                         format = "s";
                     }
-                    else
-                    {
+                    else {
                         format = "G";
                     }
                 }
-                else
-                {
+                else {
                     // Default DateTimeOffset.ToString case.
-                    if (timeOnlySpecialCase)
-                    {
+                    if (timeOnlySpecialCase) {
                         format = RoundtripDateTimeUnfixed;
                     }
-                    else
-                    {
+                    else {
                         format = GetDateTimeFormatInfoCache(dtfi).DateTimeOffsetPattern;// dtfi.DateTimeOffsetPattern;
                     }
                 }
 
             }
 
-            if (format.Length == 1)
-            {
-                switch (format[0])
-                {
+            if (format.Length == 1) {
+                switch (format[0]) {
                     case 'O':
-                    case 'o':
-                        {
+                    case 'o': {
                             FastFormatRoundtrip(dateTime, offset, ref result);
                             return;
                         }
                     case 'R':
-                    case 'r':
-                        {
+                    case 'r': {
                             FastFormatRfc1123(dateTime, offset, dtfi, ref result);
                             return;
                         }
@@ -1181,14 +1057,12 @@ namespace Loxodon.Framework.TextFormatting
 
 
 
-        internal static void FastFormatRfc1123(DateTime dateTime, TimeSpan offset, DateTimeFormatInfo dtfi, ref ValueStringBuilder result)
-        {
+        internal static void FastFormatRfc1123(DateTime dateTime, TimeSpan offset, DateTimeFormatInfo dtfi, ref ValueStringBuilder result) {
             // ddd, dd MMM yyyy HH:mm:ss GMT
             //const int Rfc1123FormatLength = 29;
             //StringBuilder result = StringBuilderCache.Acquire(Rfc1123FormatLength);
 
-            if (offset != NullOffset)
-            {
+            if (offset != NullOffset) {
                 // Convert to UTC invariants
                 dateTime = dateTime - offset;
             }
@@ -1208,8 +1082,7 @@ namespace Loxodon.Framework.TextFormatting
             //return result;
         }
 
-        internal static void FastFormatRoundtrip(DateTime dateTime, TimeSpan offset, ref ValueStringBuilder result)
-        {
+        internal static void FastFormatRoundtrip(DateTime dateTime, TimeSpan offset, ref ValueStringBuilder result) {
             // yyyy-MM-ddTHH:mm:ss.fffffffK
             //const int roundTripFormatLength = 28;
             //StringBuilder result = StringBuilderCache.Acquire(roundTripFormatLength);
@@ -1230,8 +1103,7 @@ namespace Loxodon.Framework.TextFormatting
             //return result;
         }
 
-        private static void AppendHHmmssTimeOfDay(DateTime dateTime, ref ValueStringBuilder result)
-        {
+        private static void AppendHHmmssTimeOfDay(DateTime dateTime, ref ValueStringBuilder result) {
             // HH:mm:ss
             AppendNumber(dateTime.Hour, 2, ref result);
             result.Append(':');
@@ -1240,16 +1112,13 @@ namespace Loxodon.Framework.TextFormatting
             AppendNumber(dateTime.Second, 2, ref result);
         }
 
-        internal static void AppendNumber(long val, int digits, ref ValueStringBuilder result)
-        {
-            for (int i = 0; i < digits; i++)
-            {
+        internal static void AppendNumber(long val, int digits, ref ValueStringBuilder result) {
+            for (int i = 0; i < digits; i++) {
                 result.Append('0');
             }
 
             int index = 1;
-            while (val > 0 && index <= digits)
-            {
+            while (val > 0 && index <= digits) {
                 result[result.Length - index] = (char)('0' + (val % 10));
                 val = val / 10;
                 index++;
@@ -1333,22 +1202,19 @@ namespace Loxodon.Framework.TextFormatting
 
         // This is a placeholder for an MDA to detect when the user is using a
         // local DateTime with a format that will be interpreted as UTC.
-        internal static void InvalidFormatForLocal(ReadOnlySpan<char> format, DateTime dateTime)
-        {
+        internal static void InvalidFormatForLocal(ReadOnlySpan<char> format, DateTime dateTime) {
         }
 
         // This is an MDA for cases when the user is using a local format with
         // a Utc DateTime.
         [System.Security.SecuritySafeCritical]  // auto-generated
-        internal static void InvalidFormatForUtc(ReadOnlySpan<char> format, DateTime dateTime)
-        {
+        internal static void InvalidFormatForUtc(ReadOnlySpan<char> format, DateTime dateTime) {
 #if MDA_SUPPORTED
                     Mda.DateTimeInvalidLocalFormat();
 #endif
         }
 
-        private class DateTimeFormatInfoCache
-        {
+        private class DateTimeFormatInfoCache {
             private readonly DateTimeFormatInfo dtfi;
             private string[] monthGenitiveNames;
             private string[] abbreviatedMonthGenitiveNames;
@@ -1361,24 +1227,18 @@ namespace Loxodon.Framework.TextFormatting
             private string dateTimeOffsetPattern;
             private int formatFlags = -1;
 
-            public DateTimeFormatInfoCache(DateTimeFormatInfo dtfi)
-            {
+            public DateTimeFormatInfoCache(DateTimeFormatInfo dtfi) {
                 this.dtfi = dtfi;
             }
 
-            private int FormatFlags
-            {
-                get
-                {
-                    if (formatFlags == -1)
-                    {
-                        try
-                        {
+            private int FormatFlags {
+                get {
+                    if (formatFlags == -1) {
+                        try {
                             PropertyInfo property = typeof(DateTimeFormatInfo).GetProperty("FormatFlags", BindingFlags.NonPublic | BindingFlags.Instance);
                             formatFlags = (int)property.GetValue(dtfi);
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             formatFlags = 0;
                             //if (LOG.IsWarnEnabled)
                             //    LOG.WarnFormat("Failed to obtain DateTimeFormatInfo.FormatFlags using reflection, use default value instead of this property,Exception:{0}", e);
@@ -1389,19 +1249,14 @@ namespace Loxodon.Framework.TextFormatting
             }
             public bool UseGenitiveMonth { get { return (FormatFlags & 0x1) != 0; } }
 
-            public string[] LeapYearMonthNames
-            {
-                get
-                {
-                    if (leapYearMonthNames == null)
-                    {
-                        try
-                        {
+            public string[] LeapYearMonthNames {
+                get {
+                    if (leapYearMonthNames == null) {
+                        try {
                             MethodInfo method = typeof(DateTimeFormatInfo).GetMethod("internalGetLeapYearMonthNames", BindingFlags.NonPublic | BindingFlags.Instance);
                             leapYearMonthNames = (string[])method.Invoke(dtfi, null);
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             leapYearMonthNames = this.MonthNames;
                             //if (LOG.IsWarnEnabled)
                             //    LOG.WarnFormat("Calling DateTimeFormatInfo.internalGetLeapYearMonthNames() method using reflection fails,Exception:{0}", e);
@@ -1411,82 +1266,65 @@ namespace Loxodon.Framework.TextFormatting
                 }
             }
 
-            public string[] MonthGenitiveNames
-            {
-                get
-                {
+            public string[] MonthGenitiveNames {
+                get {
                     if (monthGenitiveNames == null)
                         monthGenitiveNames = dtfi.MonthGenitiveNames;
                     return monthGenitiveNames;
                 }
             }
 
-            public string[] AbbreviatedMonthGenitiveNames
-            {
-                get
-                {
+            public string[] AbbreviatedMonthGenitiveNames {
+                get {
                     if (abbreviatedMonthGenitiveNames == null)
                         abbreviatedMonthGenitiveNames = dtfi.AbbreviatedMonthGenitiveNames;
                     return abbreviatedMonthGenitiveNames;
                 }
             }
 
-            public string[] MonthNames
-            {
-                get
-                {
+            public string[] MonthNames {
+                get {
                     if (monthNames == null)
                         monthNames = dtfi.MonthNames;
                     return monthNames;
                 }
             }
 
-            public string[] AbbreviatedMonthNames
-            {
-                get
-                {
+            public string[] AbbreviatedMonthNames {
+                get {
                     if (abbreviatedMonthNames == null)
                         abbreviatedMonthNames = dtfi.AbbreviatedMonthNames;
                     return abbreviatedMonthNames;
                 }
             }
 
-            public string LongDateShortTimePattern
-            {
-                get
-                {
+            public string LongDateShortTimePattern {
+                get {
                     if (longDateShortTimePattern == null)
                         longDateShortTimePattern = dtfi.LongDatePattern + " " + dtfi.ShortTimePattern;
                     return longDateShortTimePattern;
                 }
             }
 
-            public string GeneralShortTimePattern
-            {
-                get
-                {
+            public string GeneralShortTimePattern {
+                get {
                     if (generalShortTimePattern == null)
                         generalShortTimePattern = dtfi.ShortDatePattern + " " + dtfi.ShortTimePattern;//dtfi.GeneralShortTimePattern; 
                     return generalShortTimePattern;
                 }
             }
 
-            public string GeneralLongTimePattern
-            {
-                get
-                {
+            public string GeneralLongTimePattern {
+                get {
                     if (generalLongTimePattern == null)
                         generalLongTimePattern = dtfi.ShortDatePattern + " " + dtfi.LongTimePattern;//dtfi.GeneralLongTimePattern; 
                     return generalLongTimePattern;
                 }
             }
 
-            public string DateTimeOffsetPattern
-            {
-                get
-                {
-                    if (dateTimeOffsetPattern == null)
-                    {
+            public string DateTimeOffsetPattern {
+                get {
+                    if (dateTimeOffsetPattern == null) {
                         dateTimeOffsetPattern = dtfi.ShortDatePattern + " " + dtfi.LongTimePattern;
 
                         /* LongTimePattern might contain a "z" as part of the format string in which case we don't want to append a time zone offset */
@@ -1495,10 +1333,8 @@ namespace Loxodon.Framework.TextFormatting
                         bool inQuote = false;
                         char quote = '\'';
                         string longTimePattern = dtfi.LongTimePattern;
-                        for (int i = 0; !foundZ && i < longTimePattern.Length; i++)
-                        {
-                            switch (longTimePattern[i])
-                            {
+                        for (int i = 0; !foundZ && i < longTimePattern.Length; i++) {
+                            switch (longTimePattern[i]) {
                                 case 'z':
                                     /* if we aren't in a quote, we've found a z */
                                     foundZ = !inQuote;
@@ -1506,18 +1342,15 @@ namespace Loxodon.Framework.TextFormatting
                                     break;
                                 case '\'':
                                 case '\"':
-                                    if (inQuote && (quote == longTimePattern[i]))
-                                    {
+                                    if (inQuote && (quote == longTimePattern[i])) {
                                         /* we were in a quote and found a matching exit quote, so we are outside a quote now */
                                         inQuote = false;
                                     }
-                                    else if (!inQuote)
-                                    {
+                                    else if (!inQuote) {
                                         quote = longTimePattern[i];
                                         inQuote = true;
                                     }
-                                    else
-                                    {
+                                    else {
                                         /* we were in a quote and saw the other type of quote character, so we are still in a quote */
                                     }
                                     break;
@@ -1530,8 +1363,7 @@ namespace Loxodon.Framework.TextFormatting
                             }
                         }
 
-                        if (!foundZ)
-                        {
+                        if (!foundZ) {
                             dateTimeOffsetPattern = dateTimeOffsetPattern + " zzz";
                         }
                     }

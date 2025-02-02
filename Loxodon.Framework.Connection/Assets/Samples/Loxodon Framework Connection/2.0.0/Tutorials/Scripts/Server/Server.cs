@@ -36,10 +36,8 @@ using UnityEngine;
 using BinaryReader = Loxodon.Framework.Net.Connection.BinaryReader;
 using BinaryWriter = Loxodon.Framework.Net.Connection.BinaryWriter;
 
-namespace Loxodon.Framework.Examples
-{
-    public class Server
-    {
+namespace Loxodon.Framework.Examples {
+    public class Server {
         TcpListener tcpListener;
         CancellationTokenSource cancellationTokenSource;
         CancellationToken cancellationToken;
@@ -50,37 +48,31 @@ namespace Loxodon.Framework.Examples
         List<TcpClient> clients = new List<TcpClient>();
         bool started = false;
         int port;
-        public Server(int port)
-        {
+        public Server(int port) {
             this.port = port;
         }
 
         public bool Started { get { return started; } }
 
-        public void Secure(bool secure, X509Certificate cert = null)
-        {
+        public void Secure(bool secure, X509Certificate cert = null) {
             Secure(secure, cert, null);
         }
 
-        public void Secure(bool secure, X509Certificate cert, RemoteCertificateValidationCallback remoteCertificateValidationCallback)
-        {
+        public void Secure(bool secure, X509Certificate cert, RemoteCertificateValidationCallback remoteCertificateValidationCallback) {
             this.secure = secure;
             this.cert = cert;
             this.remoteCertificateValidationCallback = remoteCertificateValidationCallback;
         }
 
-        public void Start()
-        {
+        public void Start() {
             cancellationTokenSource = new CancellationTokenSource();
             cancellationToken = cancellationTokenSource.Token;
 
             tcpListener = TcpListener.Create(port);
             tcpListener.Start();
             started = true;
-            Task.Run(() =>
-            {
-                while (true)
-                {
+            Task.Run(() => {
+                while (true) {
                     if (cancellationToken.IsCancellationRequested)
                         cancellationToken.ThrowIfCancellationRequested();
 
@@ -90,30 +82,23 @@ namespace Loxodon.Framework.Examples
             }, cancellationToken);
         }
 
-        protected virtual void Work(TcpClient client, CancellationToken cancellationToken)
-        {
-            Task.Run(async () =>
-            {
-                try
-                {
+        protected virtual void Work(TcpClient client, CancellationToken cancellationToken) {
+            Task.Run(async () => {
+                try {
                     clients.Add(client);
                     Stream stream = null;
-                    if (secure)
-                    {
-                        try
-                        {
+                    if (secure) {
+                        try {
                             SslStream sslStream = new SslStream(client.GetStream(), false, new RemoteCertificateValidationCallback(ValidateClientCertificate));
                             await sslStream.AuthenticateAsServerAsync(cert, false, SslProtocols.Tls | SslProtocols.Ssl3 | SslProtocols.Ssl2, false);
                             stream = sslStream;
                         }
-                        catch (System.Exception e)
-                        {
+                        catch (System.Exception e) {
                             Debug.LogErrorFormat("AuthenticateAsServerAsync,Exception:{0}", e);
                             throw;
                         }
                     }
-                    else
-                    {
+                    else {
                         stream = client.GetStream();
                     }
 
@@ -124,8 +109,7 @@ namespace Loxodon.Framework.Examples
                     DefaultDecoder decoder = new DefaultDecoder();
                     DefaultEncoder encoder = new DefaultEncoder();
 
-                    while (true)
-                    {
+                    while (true) {
                         if (cancellationToken.IsCancellationRequested)
                             cancellationToken.ThrowIfCancellationRequested();
 
@@ -133,8 +117,7 @@ namespace Loxodon.Framework.Examples
                         var message = await decoder.Decode(reader);
 
                         Request request = message as Request;
-                        if (request != null)
-                        {
+                        if (request != null) {
                             //收到请求，返回一个响应消息
                             Debug.LogFormat("Server Received:{0}", request.ToString());
 
@@ -155,8 +138,7 @@ namespace Loxodon.Framework.Examples
                         }
 
                         Notification notification = message as Notification;
-                        if (notification != null)
-                        {
+                        if (notification != null) {
                             //收到通知，返回一个通知消息
                             Debug.LogFormat("Server Received:{0}", notification.ToString());
 
@@ -172,10 +154,8 @@ namespace Loxodon.Framework.Examples
                         }
                     }
                 }
-                finally
-                {
-                    if (client != null)
-                    {
+                finally {
+                    if (client != null) {
                         clients.Remove(client);
                         client.Close();
                     }
@@ -184,8 +164,7 @@ namespace Loxodon.Framework.Examples
             }, cancellationToken);
         }
 
-        protected virtual bool ValidateClientCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
+        protected virtual bool ValidateClientCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
             if (remoteCertificateValidationCallback != null)
                 return remoteCertificateValidationCallback(sender, certificate, chain, sslPolicyErrors);
 
@@ -199,24 +178,19 @@ namespace Loxodon.Framework.Examples
         }
 
 
-        public void Stop()
-        {
+        public void Stop() {
             started = false;
-            if (tcpListener != null)
-            {
+            if (tcpListener != null) {
                 tcpListener.Stop();
                 tcpListener = null;
             }
-            if (cancellationTokenSource != null)
-            {
+            if (cancellationTokenSource != null) {
                 cancellationTokenSource.Cancel();
                 cancellationTokenSource = null;
             }
 
-            if (clients != null)
-            {
-                foreach (var client in clients)
-                {
+            if (clients != null) {
+                foreach (var client in clients) {
                     client.Close();
                 }
             }

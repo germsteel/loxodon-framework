@@ -15,10 +15,8 @@ using System.Collections;
 using System.Collections.Specialized;
 
 
-namespace LitJson
-{
-    public class JsonMockWrapper : IJsonWrapper
-    {
+namespace LitJson {
+    public class JsonMockWrapper : IJsonWrapper {
         public bool IsArray   { get { return false; } }
         public bool IsBoolean { get { return false; } }
         public bool IsDouble  { get { return false; } }

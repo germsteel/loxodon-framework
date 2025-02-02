@@ -25,13 +25,10 @@
 using System;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public class ProxyEventInfo : IProxyEventInfo
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public class ProxyEventInfo : IProxyEventInfo {
         protected EventInfo eventInfo;
-        public ProxyEventInfo(EventInfo eventInfo)
-        {
+        public ProxyEventInfo(EventInfo eventInfo) {
             this.eventInfo = eventInfo;
         }
 
@@ -43,13 +40,11 @@ namespace Loxodon.Framework.Binding.Reflection
 
         public Type HandlerType { get { return this.eventInfo.EventHandlerType; } }
 
-        public void Add(object target, Delegate handler)
-        {
+        public void Add(object target, Delegate handler) {
             this.eventInfo.AddEventHandler(target, handler);
         }
 
-        public void Remove(object target, Delegate handler)
-        {
+        public void Remove(object target, Delegate handler) {
             this.eventInfo.RemoveEventHandler(target, handler);
         }
     }

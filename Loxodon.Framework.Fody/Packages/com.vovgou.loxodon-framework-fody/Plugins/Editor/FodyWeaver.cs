@@ -31,10 +31,8 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using UnityEngine;
 
-namespace Loxodon.Framework.Fody
-{
-    public class FodyWeaver : IWeaver
-    {
+namespace Loxodon.Framework.Fody {
+    public class FodyWeaver : IWeaver {
         protected const string CONFIG_DIR = "Assets/LoxodonFramework/Editor/AppData/Fody/";
         protected const string CONFIG_FULLNAME = "Assets/LoxodonFramework/Editor/AppData/Fody/FodyWeavers.xml";
         protected const string DEFAULT_CONFIG_TEMPLATE_DIR = "Assets/LoxodonFramework/Fody/Plugins/Editor/";
@@ -46,13 +44,11 @@ namespace Loxodon.Framework.Fody
         protected const string ASSEMBLIE_FILENAME_SUFFIX = ".dll";
         public static FodyWeaver Default = new FodyWeaver();
 
-        public virtual void Weave(string assembliesRootPath)
-        {
+        public virtual void Weave(string assembliesRootPath) {
             if (Regex.IsMatch(Application.dataPath, @"[\u4e00-\u9fbb]+"))
                 throw new Exception("Chinese/Unicode characters are not allowed in the project path.");
 
-            if (!File.Exists(CONFIG_FULLNAME))
-            {
+            if (!File.Exists(CONFIG_FULLNAME)) {
                 if (!Directory.Exists(CONFIG_DIR))
                     Directory.CreateDirectory(CONFIG_DIR);
 
@@ -84,10 +80,8 @@ namespace Loxodon.Framework.Fody
             List<string> assemblyNames = new List<string>();
             XElement config = XElement.Load(CONFIG_FULLNAME);
             XElement assemblyNamesNode = config.Element(XName.Get("AssemblyNames"));
-            if (assemblyNamesNode != null)
-            {
-                foreach (var node in assemblyNamesNode.Elements())
-                {
+            if (assemblyNamesNode != null) {
+                foreach (var node in assemblyNamesNode.Elements()) {
                     string assemblyName = node.Value;
                     if (string.IsNullOrEmpty(assemblyName))
                         continue;
@@ -100,8 +94,7 @@ namespace Loxodon.Framework.Fody
             if (assemblyNames.Count <= 0)
                 assemblyNames.Add(DEFAULT_ASSEMBLIE_FILENAME);
 
-            foreach (string name in assemblyNames)
-            {
+            foreach (string name in assemblyNames) {
                 string assemblyFilename = assembliesRootPath + name;
                 if (!assemblyFilename.EndsWith(ASSEMBLIE_FILENAME_SUFFIX, StringComparison.OrdinalIgnoreCase))
                     assemblyFilename += ASSEMBLIE_FILENAME_SUFFIX;
@@ -120,16 +113,13 @@ namespace Loxodon.Framework.Fody
             }
         }
 
-        protected static bool Execute(object target)
-        {
+        protected static bool Execute(object target) {
             MethodInfo methodInfo = target.GetType().GetMethod("Execute");
             return (bool)methodInfo.Invoke(target, null);
         }
 
-        protected static void Log(int level, string message)
-        {
-            switch (level)
-            {
+        protected static void Log(int level, string message) {
+            switch (level) {
                 case 0:
                 case 1:
                     Debug.Log(message);
@@ -146,66 +136,53 @@ namespace Loxodon.Framework.Fody
             }
         }
 
-        protected static Type WeaverFinder(string weaverName)
-        {
+        protected static Type WeaverFinder(string weaverName) {
             Assembly assembly = FindWeaverAssembly(weaverName);
             return FindType(assembly, "ModuleWeaver");
         }
 
-        protected static Assembly LoadAssembly(string path)
-        {
+        protected static Assembly LoadAssembly(string path) {
             return Assembly.Load(File.ReadAllBytes(path));
         }
 
-        protected static Assembly FindWeaverAssembly(string weaverName)
-        {
+        protected static Assembly FindWeaverAssembly(string weaverName) {
             string weaverDllName = $"{weaverName}.Fody.dll";
             DirectoryInfo weaverRoot = new DirectoryInfo(DEFAULT_CONFIG_TEMPLATE_DIR);
-            if (weaverRoot.Exists)
-            {
-                foreach (var file in weaverRoot.GetFiles(weaverDllName, SearchOption.AllDirectories))
-                {
+            if (weaverRoot.Exists) {
+                foreach (var file in weaverRoot.GetFiles(weaverDllName, SearchOption.AllDirectories)) {
                     return LoadAssembly(file.FullName);
                 }
             }
 
             weaverRoot = new DirectoryInfo("Packages");
-            if (weaverRoot.Exists)
-            {
-                foreach (var file in weaverRoot.GetFiles(weaverDllName, SearchOption.AllDirectories))
-                {
+            if (weaverRoot.Exists) {
+                foreach (var file in weaverRoot.GetFiles(weaverDllName, SearchOption.AllDirectories)) {
                     return LoadAssembly(file.FullName);
                 }
             }
 
             weaverRoot = new DirectoryInfo("Library/PackageCache");
-            if (weaverRoot.Exists)
-            {
-                foreach (var file in weaverRoot.GetFiles(weaverDllName, SearchOption.AllDirectories))
-                {
+            if (weaverRoot.Exists) {
+                foreach (var file in weaverRoot.GetFiles(weaverDllName, SearchOption.AllDirectories)) {
                     return LoadAssembly(file.FullName);
                 }
             }
 
             Assembly[] listAssembly = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (Assembly assembly in listAssembly)
-            {
+            foreach (Assembly assembly in listAssembly) {
                 if (Regex.IsMatch(assembly.FullName, $"^{weaverName}.Fody"))
                     return assembly;
             }
             return null;
         }
 
-        protected static Type FindType(Assembly assembly, string typeName)
-        {
-            try
-            {
+        protected static Type FindType(Assembly assembly, string typeName) {
+            try {
                 return assembly
                     .GetTypes()
                     .FirstOrDefault(x => x.Name == typeName);
             }
-            catch (ReflectionTypeLoadException exception)
-            {
+            catch (ReflectionTypeLoadException exception) {
                 throw new Exception(string.Format(
                     @"Could not load '{0}' from '{1}' due to ReflectionTypeLoadException.{2}", typeName, assembly.FullName, exception));
             }

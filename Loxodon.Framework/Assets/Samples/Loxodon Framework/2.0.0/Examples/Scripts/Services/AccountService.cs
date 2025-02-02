@@ -25,38 +25,32 @@
 using Loxodon.Framework.Messaging;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Examples
-{
-    public class AccountService : IAccountService
-    {
+namespace Loxodon.Framework.Examples {
+    public class AccountService : IAccountService {
         private IAccountRepository repository;
         private IMessenger messenger;
 
         public IMessenger Messenger { get { return messenger; } }
 
-        public AccountService(IAccountRepository repository)
-        {
+        public AccountService(IAccountRepository repository) {
             this.repository = repository;
             this.messenger = new Messenger();
         }
 
 
-        public virtual async Task<Account> Register(Account account)
-        {
+        public virtual async Task<Account> Register(Account account) {
             await this.repository.Save(account);
             messenger.Publish(new AccountEventArgs(AccountEventType.Register, account));
             return account;
         }
 
-        public virtual async Task<Account> Update(Account account)
-        {
+        public virtual async Task<Account> Update(Account account) {
             await this.repository.Update(account);
             messenger.Publish(new AccountEventArgs(AccountEventType.Update, account));
             return account;
         }
 
-        public virtual async Task<Account> Login(string username, string password)
-        {
+        public virtual async Task<Account> Login(string username, string password) {
             Account account = await this.GetAccount(username);
             if (account == null || !account.Password.Equals(password))
                 return null;
@@ -65,8 +59,7 @@ namespace Loxodon.Framework.Examples
             return account;
         }
 
-        public virtual Task<Account> GetAccount(string username)
-        {
+        public virtual Task<Account> GetAccount(string username) {
             return this.repository.Get(username);
         }
     }

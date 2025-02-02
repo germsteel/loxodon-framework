@@ -25,13 +25,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Prefs
-{
+namespace Loxodon.Framework.Prefs {
     /// <summary>
     /// Abstract class for accessing and modifying preference data
     /// </summary>
-    public abstract class Preferences
-    {
+    public abstract class Preferences {
         /// <summary>
         /// The name of global preferences.
         /// </summary>
@@ -43,8 +41,7 @@ namespace Loxodon.Framework.Prefs
 
         private string name;
 
-        static Preferences()
-        {
+        static Preferences() {
             _defaultFactory = new PlayerPrefsPreferencesFactory();
         }
 
@@ -52,8 +49,7 @@ namespace Loxodon.Framework.Prefs
         /// Retrieve a factory of Preferences.
         /// </summary>
         /// <returns></returns>
-        protected static IFactory GetFactory()
-        {
+        protected static IFactory GetFactory() {
             if (_factory != null)
                 return _factory;
             return _defaultFactory;
@@ -65,8 +61,7 @@ namespace Loxodon.Framework.Prefs
         /// Retrieve a global preferences.
         /// </summary>
         /// <returns></returns>
-        public static Preferences GetGlobalPreferences()
-        {
+        public static Preferences GetGlobalPreferences() {
             return GetPreferences(GLOBAL_NAME);
         }
 
@@ -75,8 +70,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="name">The name of the preferences to retrieve.eg:username or username@zone</param>
         /// <returns></returns>
-        public static Preferences GetPreferences(string name)
-        {
+        public static Preferences GetPreferences(string name) {
             Preferences prefs;
             if (cache.TryGetValue(name, out prefs))
                 return prefs;
@@ -90,18 +84,15 @@ namespace Loxodon.Framework.Prefs
         /// Register a factory of Preferences.
         /// </summary>
         /// <param name="factory"></param>
-        public static void Register(IFactory factory)
-        {
+        public static void Register(IFactory factory) {
             _factory = factory;
         }
 
         /// <summary>
         /// Save all these preferences.
         /// </summary>
-        public static void SaveAll()
-        {
-            foreach (Preferences prefs in cache.Values)
-            {
+        public static void SaveAll() {
+            foreach (Preferences prefs in cache.Values) {
                 prefs.Save();
             }
         }
@@ -109,10 +100,8 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// Delete all these preferences.
         /// </summary>
-        public static void DeleteAll()
-        {
-            foreach (Preferences prefs in cache.Values)
-            {
+        public static void DeleteAll() {
+            foreach (Preferences prefs in cache.Values) {
                 prefs.Delete();
             }
             cache.Clear();
@@ -122,8 +111,7 @@ namespace Loxodon.Framework.Prefs
         /// Preferences
         /// </summary>
         /// <param name="name"></param>
-        public Preferences(string name)
-        {
+        public Preferences(string name) {
             this.name = name;
             if (string.IsNullOrEmpty(this.name))
                 this.name = GLOBAL_NAME;
@@ -132,8 +120,7 @@ namespace Loxodon.Framework.Prefs
         /// <summary>
         /// The name of the preferences
         /// </summary>
-        public string Name
-        {
+        public string Name {
             get { return this.name; }
             protected set { this.name = value; }
         }
@@ -151,8 +138,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a string.</returns>
-        public string GetString(string key)
-        {
+        public string GetString(string key) {
             return this.GetObject<string>(key, null);
         }
 
@@ -165,8 +151,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a string.</returns>
-        public string GetString(string key, string defaultValue)
-        {
+        public string GetString(string key, string defaultValue) {
             return this.GetObject<string>(key, defaultValue);
         }
 
@@ -175,8 +160,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key">The name of the preference</param>
         /// <param name="value">The new value for the preference</param>
-        public void SetString(string key, string value)
-        {
+        public void SetString(string key, string value) {
             this.SetObject<string>(key, value);
         }
 
@@ -188,8 +172,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a float.</returns>
-        public float GetFloat(string key)
-        {
+        public float GetFloat(string key) {
             return this.GetObject<float>(key, 0f);
         }
 
@@ -202,8 +185,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a float.</returns>
-        public float GetFloat(string key, float defaultValue)
-        {
+        public float GetFloat(string key, float defaultValue) {
             return this.GetObject<float>(key, defaultValue);
         }
 
@@ -212,8 +194,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key">The name of the preference</param>
         /// <param name="value">The new value for the preference</param>
-        public void SetFloat(string key, float value)
-        {
+        public void SetFloat(string key, float value) {
             this.SetObject<float>(key, value);
         }
 
@@ -225,8 +206,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a double.</returns>
-        public double GetDouble(string key)
-        {
+        public double GetDouble(string key) {
             return this.GetObject<double>(key, 0d);
         }
 
@@ -239,8 +219,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a double.</returns>
-        public double GetDouble(string key, double defaultValue)
-        {
+        public double GetDouble(string key, double defaultValue) {
             return this.GetObject<double>(key, defaultValue);
         }
 
@@ -249,8 +228,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key">The name of the preference</param>
         /// <param name="value">The new value for the preference</param>
-        public void SetDouble(string key, double value)
-        {
+        public void SetDouble(string key, double value) {
             this.SetObject<double>(key, value);
         }
 
@@ -262,8 +240,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a bool.</returns>
-        public bool GetBool(string key)
-        {
+        public bool GetBool(string key) {
             return this.GetObject<bool>(key, false);
         }
 
@@ -276,8 +253,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a bool.</returns>
-        public bool GetBool(string key, bool defaultValue)
-        {
+        public bool GetBool(string key, bool defaultValue) {
             return this.GetObject<bool>(key, defaultValue);
         }
 
@@ -286,8 +262,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key">The name of the preference</param>
         /// <param name="value">The new value for the preference</param>
-        public void SetBool(string key, bool value)
-        {
+        public void SetBool(string key, bool value) {
             this.SetObject<bool>(key, value);
         }
 
@@ -299,8 +274,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a int.</returns>
-        public int GetInt(string key)
-        {
+        public int GetInt(string key) {
             return this.GetObject<int>(key, 0);
         }
 
@@ -313,8 +287,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a int.</returns>
-        public int GetInt(string key, int defaultValue)
-        {
+        public int GetInt(string key, int defaultValue) {
             return this.GetObject<int>(key, defaultValue);
         }
 
@@ -323,8 +296,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key">The name of the preference</param>
         /// <param name="value">The new value for the preference</param>
-        public void SetInt(string key, int value)
-        {
+        public void SetInt(string key, int value) {
             this.SetObject<int>(key, value);
         }
 
@@ -336,8 +308,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a long.</returns>
-        public long GetLong(string key)
-        {
+        public long GetLong(string key) {
             return this.GetObject<long>(key, 0L);
         }
 
@@ -350,8 +321,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a long.</returns>
-        public long GetLong(string key, long defaultValue)
-        {
+        public long GetLong(string key, long defaultValue) {
             return this.GetObject<long>(key, defaultValue);
         }
 
@@ -360,8 +330,7 @@ namespace Loxodon.Framework.Prefs
         /// </summary>
         /// <param name="key">The name of the preference</param>
         /// <param name="value">The new value for the preference</param>
-        public void SetLong(string key, long value)
-        {
+        public void SetLong(string key, long value) {
             this.SetObject<long>(key, value);
         }
 
@@ -375,8 +344,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not the type.</returns>
-        public object GetObject(string key, Type type)
-        {
+        public object GetObject(string key, Type type) {
             return this.GetObject(key, type, null);
         }
 
@@ -411,8 +379,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.  Throws
         /// Exception if there is a preference with this name that is not a T.</returns>
-        public T GetObject<T>(string key)
-        {
+        public T GetObject<T>(string key) {
             return this.GetObject<T>(key, default(T));
         }
 
@@ -448,8 +415,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.Throws
         /// Exception if there is a preference with this name that is not an array.</returns>
-        public object[] GetArray(string key, Type type)
-        {
+        public object[] GetArray(string key, Type type) {
             return GetArray(key, type, null);
         }
 
@@ -485,8 +451,7 @@ namespace Loxodon.Framework.Prefs
         /// <exception cref="Exception"></exception>
         /// <returns>Returns the preference value if it exists, or defaultValue.Throws
         /// Exception if there is a preference with this name that is not an array of T.</returns>
-        public T[] GetArray<T>(string key)
-        {
+        public T[] GetArray<T>(string key) {
             return GetArray<T>(key, null);
         }
 

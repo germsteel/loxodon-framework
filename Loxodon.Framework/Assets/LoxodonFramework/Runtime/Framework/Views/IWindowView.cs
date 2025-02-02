@@ -24,10 +24,8 @@
 
 using Loxodon.Framework.Views.Animations;
 
-namespace Loxodon.Framework.Views
-{
-    public interface IWindowView : IUIViewGroup
-    {
+namespace Loxodon.Framework.Views {
+    public interface IWindowView : IUIViewGroup {
         /// <summary>
         /// Activation animation
         /// </summary>

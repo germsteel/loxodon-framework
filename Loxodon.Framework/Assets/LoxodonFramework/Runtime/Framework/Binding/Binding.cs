@@ -33,10 +33,8 @@ using UnityEngine;
 using Loxodon.Framework.Binding.Contexts;
 using System.Threading;
 
-namespace Loxodon.Framework.Binding
-{
-    public class Binding : AbstractBinding
-    {
+namespace Loxodon.Framework.Binding {
+    public class Binding : AbstractBinding {
         private static readonly ILog log = LogManager.GetLogger(typeof(Binding));
         private readonly ISourceProxyFactory sourceProxyFactory;
         private readonly ITargetProxyFactory targetProxyFactory;
@@ -56,8 +54,7 @@ namespace Loxodon.Framework.Binding
         private string targetTypeName;
         private SendOrPostCallback updateTargetAction;
 
-        public Binding(IBindingContext bindingContext, object source, object target, BindingDescription bindingDescription, ISourceProxyFactory sourceProxyFactory, ITargetProxyFactory targetProxyFactory) : base(bindingContext, source, target)
-        {
+        public Binding(IBindingContext bindingContext, object source, object target, BindingDescription bindingDescription, ISourceProxyFactory sourceProxyFactory, ITargetProxyFactory targetProxyFactory) : base(bindingContext, source, target) {
             this.targetTypeName = target.GetType().Name;
             this.bindingDescription = bindingDescription;
 
@@ -70,8 +67,7 @@ namespace Loxodon.Framework.Binding
             this.UpdateDataOnBind();
         }
 
-        protected virtual string GetViewName()
-        {
+        protected virtual string GetViewName() {
             if (this.BindingContext == null)
                 return "unknown";
 
@@ -84,8 +80,7 @@ namespace Loxodon.Framework.Binding
             return string.IsNullOrEmpty(name) ? typeName : string.Format("{0}[{1}]", typeName, name);
         }
 
-        protected override void OnDataContextChanged()
-        {
+        protected override void OnDataContextChanged() {
             if (this.bindingDescription.Source.IsStatic)
                 return;
 
@@ -93,10 +88,8 @@ namespace Loxodon.Framework.Binding
             this.UpdateDataOnBind();
         }
 
-        protected BindingMode BindingMode
-        {
-            get
-            {
+        protected BindingMode BindingMode {
+            get {
                 if (this.bindingMode != BindingMode.Default)
                     return this.bindingMode;
 
@@ -111,48 +104,37 @@ namespace Loxodon.Framework.Binding
             }
         }
 
-        protected void UpdateDataOnBind()
-        {
-            try
-            {
-                if (this.UpdateTargetOnFirstBind(this.BindingMode) && this.sourceProxy != null)
-                {
+        protected void UpdateDataOnBind() {
+            try {
+                if (this.UpdateTargetOnFirstBind(this.BindingMode) && this.sourceProxy != null) {
                     this.UpdateTargetFromSource();
                 }
 
-                if (this.UpdateSourceOnFirstBind(this.BindingMode) && this.targetProxy != null && this.targetProxy is IObtainable)
-                {
+                if (this.UpdateSourceOnFirstBind(this.BindingMode) && this.targetProxy != null && this.targetProxy is IObtainable) {
                     this.UpdateSourceFromTarget();
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("An exception occurs in UpdateTargetOnBind.exception: {0}", e);
             }
         }
 
-        protected void CreateSourceProxy(object source, SourceDescription description)
-        {
+        protected void CreateSourceProxy(object source, SourceDescription description) {
             this.DisposeSourceProxy();
 
             this.sourceProxy = this.sourceProxyFactory.CreateProxy(description.IsStatic ? null : source, description);
 
-            if (this.IsSubscribeSourceValueChanged(this.BindingMode) && this.sourceProxy is INotifiable)
-            {
+            if (this.IsSubscribeSourceValueChanged(this.BindingMode) && this.sourceProxy is INotifiable) {
                 this.sourceValueChangedHandler = (sender, args) => this.UpdateTargetFromSource();
                 (this.sourceProxy as INotifiable).ValueChanged += this.sourceValueChangedHandler;
             }
         }
 
-        protected void DisposeSourceProxy()
-        {
-            try
-            {
-                if (this.sourceProxy != null)
-                {
-                    if (this.sourceValueChangedHandler != null)
-                    {
+        protected void DisposeSourceProxy() {
+            try {
+                if (this.sourceProxy != null) {
+                    if (this.sourceValueChangedHandler != null) {
                         (this.sourceProxy as INotifiable).ValueChanged -= this.sourceValueChangedHandler;
                         this.sourceValueChangedHandler = null;
                     }
@@ -164,27 +146,21 @@ namespace Loxodon.Framework.Binding
             catch (Exception) { }
         }
 
-        protected void CreateTargetProxy(object target, BindingDescription description)
-        {
+        protected void CreateTargetProxy(object target, BindingDescription description) {
             this.DisposeTargetProxy();
 
             this.targetProxy = this.targetProxyFactory.CreateProxy(target, description);
 
-            if (this.IsSubscribeTargetValueChanged(this.BindingMode) && this.targetProxy is INotifiable)
-            {
+            if (this.IsSubscribeTargetValueChanged(this.BindingMode) && this.targetProxy is INotifiable) {
                 this.targetValueChangedHandler = (sender, args) => this.UpdateSourceFromTarget();
                 (this.targetProxy as INotifiable).ValueChanged += this.targetValueChangedHandler;
             }
         }
 
-        protected void DisposeTargetProxy()
-        {
-            try
-            {
-                if (this.targetProxy != null)
-                {
-                    if (this.targetValueChangedHandler != null)
-                    {
+        protected void DisposeTargetProxy() {
+            try {
+                if (this.targetProxy != null) {
+                    if (this.targetValueChangedHandler != null) {
                         (this.targetProxy as INotifiable).ValueChanged -= this.targetValueChangedHandler;
                         this.targetValueChangedHandler = null;
                     }
@@ -196,14 +172,11 @@ namespace Loxodon.Framework.Binding
         }
 
 
-        protected virtual void UpdateTargetFromSource()
-        {
-            if (UISynchronizationContext.InThread)
-            {
+        protected virtual void UpdateTargetFromSource() {
+            if (UISynchronizationContext.InThread) {
                 DoUpdateTargetFromSource(null);
             }
-            else
-            {
+            else {
 #if UNITY_WEBGL
                 if (updateTargetAction == null)
                     updateTargetAction = DoUpdateTargetFromSource;
@@ -216,10 +189,8 @@ namespace Loxodon.Framework.Binding
             }
         }
 
-        protected void DoUpdateTargetFromSource(object state)
-        {
-            try
-            {
+        protected void DoUpdateTargetFromSource(object state) {
+            try {
                 if (this.isUpdatingSource)
                     return;
 
@@ -234,166 +205,136 @@ namespace Loxodon.Framework.Binding
                     return;
 
                 TypeCode typeCode = this.sourceProxy.TypeCode;
-                switch (typeCode)
-                {
-                    case TypeCode.Boolean:
-                        {
+                switch (typeCode) {
+                    case TypeCode.Boolean: {
                             var value = obtainable.GetValue<bool>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Byte:
-                        {
+                    case TypeCode.Byte: {
                             var value = obtainable.GetValue<byte>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Char:
-                        {
+                    case TypeCode.Char: {
                             var value = obtainable.GetValue<char>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.DateTime:
-                        {
+                    case TypeCode.DateTime: {
                             var value = obtainable.GetValue<DateTime>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Decimal:
-                        {
+                    case TypeCode.Decimal: {
                             var value = obtainable.GetValue<decimal>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Double:
-                        {
+                    case TypeCode.Double: {
                             var value = obtainable.GetValue<double>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Int16:
-                        {
+                    case TypeCode.Int16: {
                             var value = obtainable.GetValue<short>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Int32:
-                        {
+                    case TypeCode.Int32: {
                             var value = obtainable.GetValue<int>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Int64:
-                        {
+                    case TypeCode.Int64: {
                             var value = obtainable.GetValue<long>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.SByte:
-                        {
+                    case TypeCode.SByte: {
                             var value = obtainable.GetValue<sbyte>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Single:
-                        {
+                    case TypeCode.Single: {
                             var value = obtainable.GetValue<float>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.String:
-                        {
+                    case TypeCode.String: {
                             var value = obtainable.GetValue<string>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.UInt16:
-                        {
+                    case TypeCode.UInt16: {
                             var value = obtainable.GetValue<ushort>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.UInt32:
-                        {
+                    case TypeCode.UInt32: {
                             var value = obtainable.GetValue<uint>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.UInt64:
-                        {
+                    case TypeCode.UInt64: {
                             var value = obtainable.GetValue<ulong>();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Object:
-                        {
+                    case TypeCode.Object: {
                             Type valueType = this.sourceProxy.Type;
-                            if (valueType.Equals(typeof(Vector2)))
-                            {
+                            if (valueType.Equals(typeof(Vector2))) {
                                 var value = obtainable.GetValue<Vector2>();
                                 this.SetTargetValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Vector3)))
-                            {
+                            else if (valueType.Equals(typeof(Vector3))) {
                                 var value = obtainable.GetValue<Vector3>();
                                 this.SetTargetValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Vector4)))
-                            {
+                            else if (valueType.Equals(typeof(Vector4))) {
                                 var value = obtainable.GetValue<Vector4>();
                                 this.SetTargetValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Color)))
-                            {
+                            else if (valueType.Equals(typeof(Color))) {
                                 var value = obtainable.GetValue<Color>();
                                 this.SetTargetValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Rect)))
-                            {
+                            else if (valueType.Equals(typeof(Rect))) {
                                 var value = obtainable.GetValue<Rect>();
                                 this.SetTargetValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Quaternion)))
-                            {
+                            else if (valueType.Equals(typeof(Quaternion))) {
                                 var value = obtainable.GetValue<Quaternion>();
                                 this.SetTargetValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(TimeSpan)))
-                            {
+                            else if (valueType.Equals(typeof(TimeSpan))) {
                                 var value = obtainable.GetValue<TimeSpan>();
                                 this.SetTargetValue(modifier, value);
                             }
-                            else
-                            {
+                            else {
                                 var value = obtainable.GetValue();
                                 this.SetTargetValue(modifier, value);
                             }
                             break;
                         }
-                    default:
-                        {
+                    default: {
                             var value = obtainable.GetValue();
                             this.SetTargetValue(modifier, value);
                             break;
                         }
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsErrorEnabled)
                     log.ErrorFormat("An exception occurs when the target property is updated.Please check the binding \"{0}{1}\" in the view \"{2}\".exception: {3}", this.targetTypeName, this.bindingDescription.ToString(), GetViewName(), e);
             }
-            finally
-            {
+            finally {
                 this.isUpdatingTarget = false;
             }
         }
 
-        protected virtual void UpdateSourceFromTarget()
-        {
-            try
-            {
+        protected virtual void UpdateSourceFromTarget() {
+            try {
                 if (this.isUpdatingTarget)
                     return;
 
@@ -409,166 +350,136 @@ namespace Loxodon.Framework.Binding
                     return;
 
                 TypeCode typeCode = this.targetProxy.TypeCode;
-                switch (typeCode)
-                {
-                    case TypeCode.Boolean:
-                        {
+                switch (typeCode) {
+                    case TypeCode.Boolean: {
                             var value = obtainable.GetValue<bool>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Byte:
-                        {
+                    case TypeCode.Byte: {
                             var value = obtainable.GetValue<byte>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Char:
-                        {
+                    case TypeCode.Char: {
                             var value = obtainable.GetValue<char>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.DateTime:
-                        {
+                    case TypeCode.DateTime: {
                             var value = obtainable.GetValue<DateTime>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Decimal:
-                        {
+                    case TypeCode.Decimal: {
                             var value = obtainable.GetValue<decimal>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Double:
-                        {
+                    case TypeCode.Double: {
                             var value = obtainable.GetValue<double>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Int16:
-                        {
+                    case TypeCode.Int16: {
                             var value = obtainable.GetValue<short>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Int32:
-                        {
+                    case TypeCode.Int32: {
                             var value = obtainable.GetValue<int>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Int64:
-                        {
+                    case TypeCode.Int64: {
                             var value = obtainable.GetValue<long>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.SByte:
-                        {
+                    case TypeCode.SByte: {
                             var value = obtainable.GetValue<sbyte>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Single:
-                        {
+                    case TypeCode.Single: {
                             var value = obtainable.GetValue<float>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.String:
-                        {
+                    case TypeCode.String: {
                             var value = obtainable.GetValue<string>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.UInt16:
-                        {
+                    case TypeCode.UInt16: {
                             var value = obtainable.GetValue<ushort>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.UInt32:
-                        {
+                    case TypeCode.UInt32: {
                             var value = obtainable.GetValue<uint>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.UInt64:
-                        {
+                    case TypeCode.UInt64: {
                             var value = obtainable.GetValue<ulong>();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
-                    case TypeCode.Object:
-                        {
+                    case TypeCode.Object: {
                             Type valueType = this.targetProxy.Type;
-                            if (valueType.Equals(typeof(Vector2)))
-                            {
+                            if (valueType.Equals(typeof(Vector2))) {
                                 var value = obtainable.GetValue<Vector2>();
                                 this.SetSourceValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Vector3)))
-                            {
+                            else if (valueType.Equals(typeof(Vector3))) {
                                 var value = obtainable.GetValue<Vector3>();
                                 this.SetSourceValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Vector4)))
-                            {
+                            else if (valueType.Equals(typeof(Vector4))) {
                                 var value = obtainable.GetValue<Vector4>();
                                 this.SetSourceValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Color)))
-                            {
+                            else if (valueType.Equals(typeof(Color))) {
                                 var value = obtainable.GetValue<Color>();
                                 this.SetSourceValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Rect)))
-                            {
+                            else if (valueType.Equals(typeof(Rect))) {
                                 var value = obtainable.GetValue<Rect>();
                                 this.SetSourceValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(Quaternion)))
-                            {
+                            else if (valueType.Equals(typeof(Quaternion))) {
                                 var value = obtainable.GetValue<Quaternion>();
                                 this.SetSourceValue(modifier, value);
                             }
-                            else if (valueType.Equals(typeof(TimeSpan)))
-                            {
+                            else if (valueType.Equals(typeof(TimeSpan))) {
                                 var value = obtainable.GetValue<TimeSpan>();
                                 this.SetSourceValue(modifier, value);
                             }
-                            else
-                            {
+                            else {
                                 var value = obtainable.GetValue();
                                 this.SetSourceValue(modifier, value);
                             }
                             break;
                         }
-                    default:
-                        {
+                    default: {
                             var value = obtainable.GetValue();
                             this.SetSourceValue(modifier, value);
                             break;
                         }
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsErrorEnabled)
                     log.ErrorFormat("An exception occurs when the source property is updated.Please check the binding \"{0}{1}\" in the view \"{2}\".exception: {3}", this.targetTypeName, this.bindingDescription.ToString(), GetViewName(), e);
             }
-            finally
-            {
+            finally {
                 this.isUpdatingSource = false;
             }
         }
 
-        protected void SetTargetValue<T>(IModifiable modifier, T value)
-        {
-            if (this.converter == null && typeof(T).Equals(this.targetProxy.Type))
-            {
+        protected void SetTargetValue<T>(IModifiable modifier, T value) {
+            if (this.converter == null && typeof(T).Equals(this.targetProxy.Type)) {
                 modifier.SetValue(value);
                 return;
             }
@@ -583,10 +494,8 @@ namespace Loxodon.Framework.Binding
             modifier.SetValue(safeValue);
         }
 
-        private void SetSourceValue<T>(IModifiable modifier, T value)
-        {
-            if (this.converter == null && typeof(T).Equals(this.sourceProxy.Type))
-            {
+        private void SetSourceValue<T>(IModifiable modifier, T value) {
+            if (this.converter == null && typeof(T).Equals(this.sourceProxy.Type)) {
                 modifier.SetValue(value);
                 return;
             }
@@ -600,10 +509,8 @@ namespace Loxodon.Framework.Binding
             modifier.SetValue(safeValue);
         }
 
-        protected bool IsSubscribeSourceValueChanged(BindingMode bindingMode)
-        {
-            switch (bindingMode)
-            {
+        protected bool IsSubscribeSourceValueChanged(BindingMode bindingMode) {
+            switch (bindingMode) {
                 case BindingMode.Default:
                     return true;
 
@@ -620,10 +527,8 @@ namespace Loxodon.Framework.Binding
             }
         }
 
-        protected bool IsSubscribeTargetValueChanged(BindingMode bindingMode)
-        {
-            switch (bindingMode)
-            {
+        protected bool IsSubscribeTargetValueChanged(BindingMode bindingMode) {
+            switch (bindingMode) {
                 case BindingMode.Default:
                     return true;
 
@@ -640,10 +545,8 @@ namespace Loxodon.Framework.Binding
             }
         }
 
-        protected bool UpdateTargetOnFirstBind(BindingMode bindingMode)
-        {
-            switch (bindingMode)
-            {
+        protected bool UpdateTargetOnFirstBind(BindingMode bindingMode) {
+            switch (bindingMode) {
                 case BindingMode.Default:
                     return true;
 
@@ -660,10 +563,8 @@ namespace Loxodon.Framework.Binding
             }
         }
 
-        protected bool UpdateSourceOnFirstBind(BindingMode bindingMode)
-        {
-            switch (bindingMode)
-            {
+        protected bool UpdateSourceOnFirstBind(BindingMode bindingMode) {
+            switch (bindingMode) {
                 case BindingMode.OneWayToSource:
                     return true;
 
@@ -680,10 +581,8 @@ namespace Loxodon.Framework.Binding
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
+        protected override void Dispose(bool disposing) {
+            if (!disposed) {
                 this.DisposeSourceProxy();
                 this.DisposeTargetProxy();
                 this.bindingDescription = null;

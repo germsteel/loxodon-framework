@@ -25,21 +25,17 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Interactivity
-{
+namespace Loxodon.Framework.Interactivity {
     /// <summary>
     /// Implementation of the <see cref="IInteractionRequest"/> interface.
     /// </summary>
-    public class AsyncInteractionRequest : IInteractionRequest
-    {
+    public class AsyncInteractionRequest : IInteractionRequest {
         private object sender;
 
-        public AsyncInteractionRequest() : this(null)
-        {
+        public AsyncInteractionRequest() : this(null) {
         }
 
-        public AsyncInteractionRequest(object sender)
-        {
+        public AsyncInteractionRequest(object sender) {
             this.sender = sender != null ? sender : this;
         }
 
@@ -51,8 +47,7 @@ namespace Loxodon.Framework.Interactivity
         /// <summary>
         /// Fires the Raised event.
         /// </summary>
-        public Task Raise()
-        {
+        public Task Raise() {
             TaskCompletionSource<object> source = new TaskCompletionSource<object>();
             this.Raised?.Invoke(this.sender, new AsyncInteractionEventArgs(source, null));
             return source.Task;
@@ -62,15 +57,12 @@ namespace Loxodon.Framework.Interactivity
     /// <summary>
     /// Implementation of the <see cref="IInteractionRequest"/> interface.
     /// </summary>
-    public class AsyncInteractionRequest<T> : IInteractionRequest
-    {
+    public class AsyncInteractionRequest<T> : IInteractionRequest {
         private object sender;
-        public AsyncInteractionRequest() : this(null)
-        {
+        public AsyncInteractionRequest() : this(null) {
         }
 
-        public AsyncInteractionRequest(object sender)
-        {
+        public AsyncInteractionRequest(object sender) {
             this.sender = sender != null ? sender : this;
         }
 
@@ -83,8 +75,7 @@ namespace Loxodon.Framework.Interactivity
         /// Fires the Raised event.
         /// </summary>
         /// <param name="context">The context for the interaction request.</param>
-        public async Task<T> Raise(T context)
-        {
+        public async Task<T> Raise(T context) {
             TaskCompletionSource<object> source = new TaskCompletionSource<object>();
             this.Raised?.Invoke(this.sender, new AsyncInteractionEventArgs(source, context));
             await source.Task;

@@ -8,14 +8,11 @@ using System.Text;
 using System.IO;
 using UnityEditorInternal;
 
-namespace Loxodon.Log.Editors.Log4Net
-{
+namespace Loxodon.Log.Editors.Log4Net {
 
-    public class ConsoleWindow : EditorWindow
-    {
+    public class ConsoleWindow : EditorWindow {
         [MenuItem("Tools/Loxodon/Log4Net Console")]
-        static void ShowWindow()
-        {
+        static void ShowWindow() {
             var window = GetWindow<ConsoleWindow>(false, "Remoting");
             window.Show();
         }
@@ -64,8 +61,7 @@ namespace Loxodon.Log.Editors.Log4Net
         private List<LoggingData> renderedList;
         private List<int> renderedLineCountList;
 
-        void OnEnable()
-        {
+        void OnEnable() {
             loggingVerticalScrollBarPercent = 1f;
             lineHeight = 30;
             toolbarHeight = 20f;
@@ -82,23 +78,19 @@ namespace Loxodon.Log.Editors.Log4Net
                        
         }
 
-        void Disable()
-        {
+        void Disable() {
             if (consoleVM != null)
                 consoleVM.OnDisable();
         }
 
-        void OnDestroy()
-        {
-            if (this.consoleVM != null)
-            {
+        void OnDestroy() {
+            if (this.consoleVM != null) {
                 this.consoleVM.Stop();
                 this.consoleVM = null;
             }
         }
 
-        private void Init()
-        {
+        private void Init() {
             if (this.splitterLineTexture!=null)
                 return;
 
@@ -160,8 +152,7 @@ namespace Loxodon.Log.Editors.Log4Net
 
             collapseToggle = new GUISwitchContentData(consoleVM.Collapse, new GUIContent("Collapse", "Collapse"), EditorStyles.toolbarButton);
 
-            levelIconTextures = new Texture[]
-            {  Resources.Load<Texture2D>("Icons/debug")  ,
+            levelIconTextures = new Texture[] {  Resources.Load<Texture2D>("Icons/debug")  ,
                  Resources.Load<Texture2D>("Icons/info")  ,
                  Resources.Load<Texture2D>("Icons/warn")  ,
                  Resources.Load<Texture2D>("Icons/error")  ,
@@ -182,8 +173,7 @@ namespace Loxodon.Log.Editors.Log4Net
             columnButtonDatas[2] = new GUISwitchContentData(consoleVM.IsColumnShow(Columns.Logger), new GUIContent("Logger", "Logger"), EditorStyles.toolbarButton);
         }   
 
-        void OnGUI()
-        {
+        void OnGUI() {
             Init();
 
             LoggingContainer container = consoleVM.GetCurrentContainer();
@@ -201,10 +191,8 @@ namespace Loxodon.Log.Editors.Log4Net
             this.Repaint();
         }
 
-        Texture GetTextureIcon(Level level)
-        {
-            switch (level)
-            {
+        Texture GetTextureIcon(Level level) {
+            switch (level) {
                 case Level.DEBUG:
                     return this.levelIconTextures[0];
                 case Level.INFO:
@@ -220,10 +208,8 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        string GetColorString(Level level)
-        {
-            switch (level)
-            {
+        string GetColorString(Level level) {
+            switch (level) {
                 case Level.DEBUG:
                     return "#b4b4b4";
                 case Level.INFO:
@@ -239,8 +225,7 @@ namespace Loxodon.Log.Editors.Log4Net
             }
         }
 
-        private GUIContent GetLogLineGUIContent(LoggingData data)
-        {
+        private GUIContent GetLogLineGUIContent(LoggingData data) {
             StringBuilder buf = new StringBuilder();
             buf.AppendFormat("<color={0}>", GetColorString(data.Level));
 
@@ -261,8 +246,7 @@ namespace Loxodon.Log.Editors.Log4Net
             return new GUIContent(buf.ToString(), GetTextureIcon(data.Level));
         }
 
-        private string GetLogDetailContent(LoggingData data)
-        {
+        private string GetLogDetailContent(LoggingData data) {
             StringBuilder buf = new StringBuilder();
             buf.AppendFormat("<color={0}>", GetColorString(data.Level));
 
@@ -280,10 +264,8 @@ namespace Loxodon.Log.Editors.Log4Net
             buf.Append("</color>");
             buf.Append("\r\n\r\n");
 
-            if (data.LocationInfo != null && data.LocationInfo.StackFrames != null)
-            {
-                foreach (var frame in data.LocationInfo.StackFrames)
-                {
+            if (data.LocationInfo != null && data.LocationInfo.StackFrames != null) {
+                foreach (var frame in data.LocationInfo.StackFrames) {
                     buf.Append(frame.FullInfo.Replace(Directory.GetCurrentDirectory().ToString() + @"\", "")).Append("\r\n");
                 }
             }
@@ -291,18 +273,15 @@ namespace Loxodon.Log.Editors.Log4Net
             return buf.ToString();
         }
 
-        string[] GetTerminalInfoOptions()
-        {
+        string[] GetTerminalInfoOptions() {
             List<string> list = new List<string>();
-            foreach (var info in consoleVM.TerminalInfos)
-            {
+            foreach (var info in consoleVM.TerminalInfos) {
                 list.Add(info.ToString());
             }
             return list.ToArray();
         }
 
-        void DrawToolbar(LoggingContainer container)
-        {
+        void DrawToolbar(LoggingContainer container) {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
             if (this.consoleVM.CurrentIndex >= 0)
@@ -311,8 +290,7 @@ namespace Loxodon.Log.Editors.Log4Net
             GUILayout.Space(5f);
 
             this.collapseToggle.Value = consoleVM.Collapse;
-            this.Toggle(this.collapseToggle, () =>
-            {
+            this.Toggle(this.collapseToggle, () => {
                 consoleVM.Collapse = this.collapseToggle.Value;
             });
 
@@ -326,8 +304,7 @@ namespace Loxodon.Log.Editors.Log4Net
 
             GUI.SetNextControlName("searchTextField");
             consoleVM.FilterText = EditorGUILayout.TextField(consoleVM.FilterText, this.toolbarSeachTextFieldStyle, GUILayout.MinWidth(100), GUILayout.MaxWidth(500));
-            if (GUILayout.Button("", this.toolbarSeachCancelButtonStyle))
-            {
+            if (GUILayout.Button("", this.toolbarSeachCancelButtonStyle)) {
                 consoleVM.FilterText = "";
                 GUI.FocusControl("");
             }
@@ -337,8 +314,7 @@ namespace Loxodon.Log.Editors.Log4Net
             GUILayout.Space(5f);
 
             this.playToggle.Value = this.consoleVM.PlayState;
-            this.Toggle(this.playToggle, () =>
-            {
+            this.Toggle(this.playToggle, () => {
                 this.consoleVM.PlayState = this.playToggle.Value;
                 if (this.playToggle.Value)
                     this.consoleVM.Start();
@@ -347,13 +323,10 @@ namespace Loxodon.Log.Editors.Log4Net
 
             });
 
-            if (consoleVM.PlayState)
-            {
-                if (GUILayout.Button("Running", EditorStyles.toolbarDropDown, GUILayout.Width(60)))
-                {
+            if (consoleVM.PlayState) {
+                if (GUILayout.Button("Running", EditorStyles.toolbarDropDown, GUILayout.Width(60))) {
                     GenericMenu menu = new GenericMenu();
-                    menu.AddItem(new GUIContent(string.Format("{0}:{1}", consoleVM.GetLocalIPAddress().ToString(), consoleVM.Port.ToString())), false, delegate ()
-                    {
+                    menu.AddItem(new GUIContent(string.Format("{0}:{1}", consoleVM.GetLocalIPAddress().ToString(), consoleVM.Port.ToString())), false, delegate () {
                     });
                     menu.ShowAsContext();
                 }
@@ -367,51 +340,42 @@ namespace Loxodon.Log.Editors.Log4Net
             this.DrawToolbarLevelButtons(container);
 
 
-            if (this.Button(this.clearButton))
-            {
+            if (this.Button(this.clearButton)) {
                 EditorApplication.delayCall += () => this.consoleVM.ClearLoggingData();
             }
 
-            if (this.Button(this.saveButton))
-            {
+            if (this.Button(this.saveButton)) {
                 EditorApplication.delayCall += () => this.consoleVM.SaveLoggingData();
             }
             GUILayout.Space(5f);
             EditorGUILayout.EndHorizontal();
         }
 
-        void DrawToolbarLevelButtons(LoggingContainer container)
-        {
-            for (int i = 0; i < this.levelButtonDatas.Length; i++)
-            {
+        void DrawToolbarLevelButtons(LoggingContainer container) {
+            for (int i = 0; i < this.levelButtonDatas.Length; i++) {
                 var data = levelButtonDatas[i];
                 Level level = (Level)(i + 1);
                 data.Value = consoleVM.IsLevelShow(level);
                 int count = container.GetCount(level);
                 data.Text = count < 1000 ? count.ToString() : "999+";
-                this.Toggle(data, () =>
-                {
+                this.Toggle(data, () => {
                     consoleVM.SetLevelShow(level, data.Value);
                 });
             }
         }
 
-        void DrawToolbarColumnButtons(LoggingContainer container)
-        {
-            for (int i = 0; i < this.columnButtonDatas.Length; i++)
-            {
+        void DrawToolbarColumnButtons(LoggingContainer container) {
+            for (int i = 0; i < this.columnButtonDatas.Length; i++) {
                 var data = columnButtonDatas[i];
                 Columns column = (Columns)i;
                 data.Value = consoleVM.IsColumnShow(column);
-                this.Toggle(data, () =>
-                {
+                this.Toggle(data, () => {
                     consoleVM.SetColumnShow(column, data.Value);
                 });
             }
         }
 
-        bool ShouldShow(LoggingEntry logging)
-        {
+        bool ShouldShow(LoggingEntry logging) {
             if (!consoleVM.IsLevelShow(logging.Level))
                 return false;
 
@@ -424,21 +388,18 @@ namespace Loxodon.Log.Editors.Log4Net
             return false;
         }
 
-        void DrawLoggingGrid(LoggingContainer container)
-        {
+        void DrawLoggingGrid(LoggingContainer container) {
             var areaRect = new Rect(0f, toolbarHeight, position.width, position.height * this.verticalSplitterPercent - toolbarHeight - splitterRectHeight / 2f);
             List<LoggingEntry> list = container.GetLoggingList();
 
             this.renderedList.Clear();
             this.renderedLineCountList.Clear();
 
-            foreach (LoggingEntry logging in list)
-            {
+            foreach (LoggingEntry logging in list) {
                 if (!ShouldShow(logging))
                     continue;
 
-                if (consoleVM.Collapse)
-                {
+                if (consoleVM.Collapse) {
                     renderedList.Add(logging.LoggingData);
                     renderedLineCountList.Add(logging.Count);
                 }
@@ -466,8 +427,7 @@ namespace Loxodon.Log.Editors.Log4Net
             if (this.selectedIndex >= count)
                 this.selectedIndex = -1;
 
-            for (int i = firstIndex; i < lastIndex; i++)
-            {
+            for (int i = firstIndex; i < lastIndex; i++) {
                 LoggingData data = renderedList[i];
                 var content = this.GetLogLineGUIContent(data);
                 var lineStyle = (i % 2 == 0) ? entryStyleBackEven : entryStyleBackOdd;
@@ -475,29 +435,23 @@ namespace Loxodon.Log.Editors.Log4Net
                 bool selected = i == selectedIndex;
                 lineStyle.normal = selected ? GUI.skin.GetStyle(lineStyle.name).onNormal : GUI.skin.GetStyle(lineStyle.name).normal;
 
-                if (GUI.Button(new Rect(0f, i * lineHeight, viewRect.width, lineHeight), content, lineStyle))
-                {
-                    if (selected)
-                    {
-                        if (EditorApplication.timeSinceStartup - lastClickTime < doubleClickInterval)
-                        {
+                if (GUI.Button(new Rect(0f, i * lineHeight, viewRect.width, lineHeight), content, lineStyle)) {
+                    if (selected) {
+                        if (EditorApplication.timeSinceStartup - lastClickTime < doubleClickInterval) {
                             lastClickTime = 0;
                             OpenSourceFile(data.LocationInfo);
                         }
-                        else
-                        {
+                        else {
                             lastClickTime = EditorApplication.timeSinceStartup;
                         }
                     }
-                    else
-                    {
+                    else {
                         this.selectedIndex = i;
                         lastClickTime = EditorApplication.timeSinceStartup;
                     }
                 }
 
-                if (consoleVM.Collapse)
-                {
+                if (consoleVM.Collapse) {
                     int logCount = renderedLineCountList[i];
                     GUIContent countContent = new GUIContent(logCount < 100 ? logCount.ToString() : "99+");
                     var size = countBadgeStyle.CalcSize(countContent);
@@ -510,14 +464,12 @@ namespace Loxodon.Log.Editors.Log4Net
             GUI.EndScrollView();
         }
 
-        void DrawLoggingDetail()
-        {
+        void DrawLoggingDetail() {
             var areaRect = new Rect(0f, this.verticalSplitterLineRect.y + this.splitterRectHeight / 2f, position.width, this.position.height * (1f - this.verticalSplitterPercent) - splitterRectHeight / 2f);
             GUILayout.BeginArea(areaRect);
             detailPanelScrollPosition = EditorGUILayout.BeginScrollView(detailPanelScrollPosition);
 
-            if (this.selectedIndex >= 0 && this.selectedIndex < this.renderedList.Count)
-            {
+            if (this.selectedIndex >= 0 && this.selectedIndex < this.renderedList.Count) {
                 var data = renderedList[selectedIndex];
                 EditorGUILayout.SelectableLabel(this.GetLogDetailContent(data), detailStyle, GUILayout.Width(areaRect.width - 10), GUILayout.Height(areaRect.height - 10));
             }
@@ -526,8 +478,7 @@ namespace Loxodon.Log.Editors.Log4Net
             GUILayout.EndArea();
         }
 
-        void DrawVerticalSplitter()
-        {
+        void DrawVerticalSplitter() {
             if (splitterLineTexture == null)
                 return;
 
@@ -540,8 +491,7 @@ namespace Loxodon.Log.Editors.Log4Net
             if (Event.current.type == EventType.MouseDown && verticalSplitterRect.Contains(Event.current.mousePosition))
                 resizingVerticalSplitter = true;
 
-            if (resizingVerticalSplitter)
-            {
+            if (resizingVerticalSplitter) {
                 verticalSplitterPercent = Mathf.Clamp(Event.current.mousePosition.y / this.position.height, 0.15f, 0.9f);
                 verticalSplitterLineRect.y = position.height * verticalSplitterPercent;
             }
@@ -550,22 +500,19 @@ namespace Loxodon.Log.Editors.Log4Net
                 resizingVerticalSplitter = false;
         }
 
-        private bool Button(GUIContentData model)
-        {
+        private bool Button(GUIContentData model) {
             if (model == null)
                 return false;
 
             return GUILayout.Button(model.Content, model.Style, model.LayoutOptions);
         }
 
-        private bool Toggle(GUISwitchContentData model, Action onValueChanged = null)
-        {
+        private bool Toggle(GUISwitchContentData model, Action onValueChanged = null) {
             if (model == null)
                 return false;
 
             var result = GUILayout.Toggle(model.Value, model.Content, model.Style, model.LayoutOptions);
-            if (result != model.Value)
-            {
+            if (result != model.Value) {
                 model.Value = result;
                 if (onValueChanged != null)
                     onValueChanged();
@@ -573,15 +520,12 @@ namespace Loxodon.Log.Editors.Log4Net
             return result;
         }
 
-        private bool OpenSourceFile(Log.Log4Net.LocationInfo location)
-        {
+        private bool OpenSourceFile(Log.Log4Net.LocationInfo location) {
             if (location == null || location.StackFrames == null)
                 return false;
 
-            foreach (var frame in location.StackFrames)
-            {
-                try
-                {
+            foreach (var frame in location.StackFrames) {
+                try {
                     if (frame == null)
                         continue;
 
@@ -609,15 +553,13 @@ namespace Loxodon.Log.Editors.Log4Net
         }
 
         [Serializable]
-        class GUIContentData
-        {
+        class GUIContentData {
             protected bool dirty;
             protected GUIContent content;
             protected GUIStyle style;
             protected GUILayoutOption[] layoutOptions;
 
-            public GUIContentData(GUIContent content, GUIStyle style)
-            {
+            public GUIContentData(GUIContent content, GUIStyle style) {
                 this.dirty = true;
                 this.content = content;
                 this.style = style;
@@ -625,43 +567,34 @@ namespace Loxodon.Log.Editors.Log4Net
                 this.layoutOptions = new GUILayoutOption[] { GUILayout.Width(size.x) };
             }
 
-            public string Text
-            {
+            public string Text {
                 get { return this.content.text; }
-                set
-                {
+                set {
                     this.content.text = value;
                     this.dirty = true;
                 }
             }
 
-            public Texture Image
-            {
+            public Texture Image {
                 get { return this.content.image; }
-                set
-                {
+                set {
                     this.content.image = value;
                     this.dirty = true;
                 }
             }
 
-            public GUIContent Content
-            {
+            public GUIContent Content {
                 get { return this.content; }
             }
 
-            public GUIStyle Style
-            {
+            public GUIStyle Style {
                 get { return this.style; }
             }
 
 
-            public GUILayoutOption[] LayoutOptions
-            {
-                get
-                {
-                    if (this.dirty)
-                    {
+            public GUILayoutOption[] LayoutOptions {
+                get {
+                    if (this.dirty) {
                         Vector2 size = style.CalcSize(this.Content);
                         this.layoutOptions = new GUILayoutOption[] { GUILayout.Width(size.x) };
                         this.dirty = false;
@@ -673,8 +606,7 @@ namespace Loxodon.Log.Editors.Log4Net
 
 
         [Serializable]
-        class GUISwitchContentData
-        {
+        class GUISwitchContentData {
             protected bool dirty;
             protected bool value;
             protected GUIContent contentOn;
@@ -682,12 +614,10 @@ namespace Loxodon.Log.Editors.Log4Net
             protected GUIStyle style;
             protected GUILayoutOption[] layoutOptions;
 
-            public GUISwitchContentData(bool value, GUIContent contentOn, GUIStyle style) : this(value, contentOn, null, style)
-            {
+            public GUISwitchContentData(bool value, GUIContent contentOn, GUIStyle style) : this(value, contentOn, null, style) {
             }
 
-            public GUISwitchContentData(bool value, GUIContent contentOn, GUIContent contentOff, GUIStyle style)
-            {
+            public GUISwitchContentData(bool value, GUIContent contentOn, GUIContent contentOff, GUIStyle style) {
                 this.dirty = true;
                 this.value = value;
                 this.contentOn = contentOn;
@@ -696,11 +626,9 @@ namespace Loxodon.Log.Editors.Log4Net
                 this.layoutOptions = null;
             }
 
-            public bool Value
-            {
+            public bool Value {
                 get { return this.value; }
-                set
-                {
+                set {
                     if (this.value == value)
                         return;
 
@@ -709,11 +637,9 @@ namespace Loxodon.Log.Editors.Log4Net
                 }
             }
 
-            public string Text
-            {
+            public string Text {
                 get { return this.Content.text; }
-                set
-                {
+                set {
                     if (string.Equals(this.Content.text, value))
                         return;
 
@@ -722,32 +648,25 @@ namespace Loxodon.Log.Editors.Log4Net
                 }
             }
 
-            public Texture Image
-            {
+            public Texture Image {
                 get { return this.Content.image; }
-                set
-                {
+                set {
                     this.Content.image = value;
                     this.dirty = true;
                 }
             }
 
-            public GUIContent Content
-            {
+            public GUIContent Content {
                 get { return this.value ? this.contentOn : this.contentOff; }
             }
 
-            public GUIStyle Style
-            {
+            public GUIStyle Style {
                 get { return this.style; }
             }
 
-            public GUILayoutOption[] LayoutOptions
-            {
-                get
-                {
-                    if (this.dirty)
-                    {
+            public GUILayoutOption[] LayoutOptions {
+                get {
+                    if (this.dirty) {
                         Vector2 size = style.CalcSize(this.Content);
                         this.layoutOptions = new GUILayoutOption[] { GUILayout.Width(size.x) };
                         this.dirty = false;

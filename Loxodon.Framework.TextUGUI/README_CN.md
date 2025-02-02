@@ -38,15 +38,13 @@
 ### 修改Packages/manifest.json文件安装
 
 通过修改manifest.json文件安装，不需要安装nodejs和openupm-cli客户端。在Unity项目根目录下找到Packages/manifest.json文件，在文件的scopedRegistries（没有可以自己添加）节点下添加第三方仓库package.openupm.com的配置，同时在dependencies节点下添加com.vovgou.loxodon-framework-textugui的配置，保存后切换到Unity窗口即可完成安装。
-
-    {
+ {
       "dependencies": {
         ...
         "com.unity.modules.xr": "1.0.0",
         "com.vovgou.loxodon-framework-textugui": "2.6.5"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -67,11 +65,9 @@
 	using System.Text;
 	using UnityEngine;
 	using Loxodon.Framework.TextFormatting;//必须先引入这个包名
-	public class Example : MonoBehaviour
-	{
+	public class Example : MonoBehaviour {
 	    StringBuilder builder = new StringBuilder();
-	    void Update()
-	    {
+	    void Update() {
 	        builder.Clear();
 	        builder.AppendFormat<DateTime,int>("Now:{0:yyyy-MM-dd HH:mm:ss} Frame:{0:D6}", DateTime.Now,Time.frameCount);
 	        builder.AppendFormat<float>("{0:f2}", Time.realtimeSinceStartup);       
@@ -87,14 +83,12 @@
 
 使用方式一：使用FormattableText.AsParameters<DateTime, int>()方法获得参数集GenericParameters<DateTime,int>，然后与视图模型绑定。
 
-	public class FormattableTextExample : MonoBehaviour
-    {
+	public class FormattableTextExample : MonoBehaviour {
         public FormattableText paramBinding1;//参数绑定示例1，支持1-4个不同参数
 
         private ExampleViewModel viewModel;
 
-        private void Start()
-        {
+        private void Start() {
             ApplicationContext context = Context.GetApplicationContext();
             IServiceContainer container = context.GetContainer();
             BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -118,14 +112,12 @@
 
 使用方式二：在脚本FormattableTextExample中定义一个类型为GenericParameters<DateTime,int>的参数集变量，在UnityEditor中将FormattableText拖放到下图脚本的属性paramBinding1上。然后与视图模型绑定。
 
-	public class FormattableTextExample : MonoBehaviour
-	{
+	public class FormattableTextExample : MonoBehaviour {
 	    public GenericParameters<DateTime,int> paramBinding1;//参数绑定示例1，支持1-4个不同参数
 
 	    private ExampleViewModel viewModel;
 
-	    private void Start()
-	    {
+	    private void Start() {
 	        ApplicationContext context = Context.GetApplicationContext();
 	        IServiceContainer container = context.GetContainer();
 	        BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -161,14 +153,12 @@
 
 同样的只有在StringBuilder.ToString()时会产生垃圾回收(GC)。（建议安装[Loxodon.Framework.TextMeshPro](https://github.com/vovgou/loxodon-framework?path=Loxodon.Framework.TextMeshPro)，使用TemplateTextMeshProUGUI替代TemplateText，那是完全0GC的）
 
-	public class TemplateTextExample : MonoBehaviour
-    {
+	public class TemplateTextExample : MonoBehaviour {
         public TemplateText template;//模版绑定
 
         private ExampleViewModel viewModel;
 
-        private void Start()
-        {
+        private void Start() {
             ApplicationContext context = Context.GetApplicationContext();
             IServiceContainer container = context.GetContainer();
             BindingServiceBundle bundle = new BindingServiceBundle(context.GetContainer());
@@ -193,78 +183,66 @@
 	}
 
 	//下面的类是ViewModel对象
-	public class ExampleViewModel : ObservableObject
-    {
+	public class ExampleViewModel : ObservableObject {
         private DateTime time;
         private TimeSpan timeSpan;
         private string template;
         private int frameCount;
         private Hero hero;
-        public DateTime Time
-        {
+        public DateTime Time {
             get { return this.time; }
             set { this.Set(ref time, value); }
         }
 
-        public TimeSpan TimeSpan
-        {
+        public TimeSpan TimeSpan {
             get { return this.timeSpan; }
             set { this.Set(ref timeSpan, value); }
         }
 
-        public int FrameCount
-        {
+        public int FrameCount {
             get { return this.frameCount; }
             set { this.Set(ref frameCount, value); }
         }
 
-        public string Template
-        {
+        public string Template {
             get { return this.template; }
             set { this.Set(ref template, value); }
         }
 
-        public Hero Hero
-        {
+        public Hero Hero {
             get { return this.hero; }
             set { this.Set(ref hero, value); }
         }
     }
 
-    public class Hero : ObservableObject
-    {
+    public class Hero : ObservableObject {
         private float attackSpeed = 95.5f;
         private float moveSpeed = 2.4f;
         private int health = 100;
         private int attackDamage = 20;
         private int armor = 30;
 
-        public float AttackSpeed
-        {
+        public float AttackSpeed {
             get { return this.attackSpeed; }
             set { this.Set(ref attackSpeed, value); }
         }
 
-        public float MoveSpeed
-        {
+        public float MoveSpeed {
             get { return this.moveSpeed; }
             set { this.Set(ref moveSpeed, value); }
         }
 
-        public int Health
-        {
+        public int Health {
             get { return this.health; }
             set { this.Set(ref health, value); }
         }
 
-        public int AttackDamage
-        {
+        public int AttackDamage {
             get { return this.attackDamage; }
             set { this.Set(ref attackDamage, value); }
         }
 
-        public int Armor
-        {
+        public int Armor {
             get { return this.armor; }
             set { this.Set(ref armor, value); }
         }

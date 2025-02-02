@@ -26,25 +26,20 @@ using Newtonsoft.Json;
 using System;
 using UnityEngine;
 
-namespace Loxodon.Framework.Data.Converters
-{
-    public class ColorConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
+namespace Loxodon.Framework.Data.Converters {
+    public class ColorConverter : JsonConverter {
+        public override bool CanConvert(Type objectType) {
             return typeof(Color).Equals(objectType);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
             if (reader.TokenType == JsonToken.Null)
                 return default(Color);
 
             if (reader.TokenType != JsonToken.String)
                 throw ExceptionUtil.Create(reader, "Unexpected token or value when parsing color.");
 
-            try
-            {
+            try {
                 var value = (string)reader.Value;
                 if (string.IsNullOrWhiteSpace(value))
                     return default(Color);
@@ -55,22 +50,18 @@ namespace Loxodon.Framework.Data.Converters
 
                 throw ExceptionUtil.Create(reader, string.Format("Error parsing color string: {0}", reader.Value));
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 throw ExceptionUtil.Create(reader, string.Format("Error parsing color string: {0}", reader.Value), ex);
             }
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
             if (value == null)
                 writer.WriteNull();
-            else if (value is Color)
-            {
+            else if (value is Color) {
                 writer.WriteValue(ColorUtility.ToHtmlStringRGBA((Color)value));
             }
-            else
-            {
+            else {
                 throw new JsonSerializationException(string.Format("Unsupported types:{0}", value));
             }
         }

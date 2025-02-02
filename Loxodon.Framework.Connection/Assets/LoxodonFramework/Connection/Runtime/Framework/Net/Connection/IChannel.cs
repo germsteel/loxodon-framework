@@ -25,10 +25,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Net.Connection
-{
-    public interface IChannel<T>
-    {
+namespace Loxodon.Framework.Net.Connection {
+    public interface IChannel<T> {
         /// <summary>
         /// Whether a connection has been established.
         /// </summary>

@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Reflection
-{
-    public interface IProxyFieldInfo : IProxyMemberInfo
-    {
+namespace Loxodon.Framework.Binding.Reflection {
+    public interface IProxyFieldInfo : IProxyMemberInfo {
         Type ValueType { get; }
 
         TypeCode ValueTypeCode { get; }
@@ -37,15 +35,13 @@ namespace Loxodon.Framework.Binding.Reflection
         void SetValue(object target, object value);
     }
 
-    public interface IProxyFieldInfo<TValue> : IProxyFieldInfo
-    {
+    public interface IProxyFieldInfo<TValue> : IProxyFieldInfo {
         new TValue GetValue(object target);
 
         void SetValue(object target, TValue value);
     }
 
-    public interface IProxyFieldInfo<T, TValue> : IProxyFieldInfo<TValue>
-    {
+    public interface IProxyFieldInfo<T, TValue> : IProxyFieldInfo<TValue> {
         TValue GetValue(T target);
 
         void SetValue(T target, TValue value);

@@ -26,22 +26,18 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
 
-namespace Loxodon.Framework.Fody
-{
-    public class FodyWeavingPostprocessor : IPostBuildPlayerScriptDLLs
-    {
+namespace Loxodon.Framework.Fody {
+    public class FodyWeavingPostprocessor : IPostBuildPlayerScriptDLLs {
         private const string ASSEMBLIES_EDITOR_LIB_PATH = "Library/ScriptAssemblies/";
         private const string ASSEMBLIES_BUILD_TEMP_PATH = "Temp/StagingArea/Data/Managed/";
         public int callbackOrder => 0;
 
         [DidReloadScripts]
-        public static void OnScriptsReloaded()
-        {
+        public static void OnScriptsReloaded() {
             FodyWeaver.Default.Weave(ASSEMBLIES_EDITOR_LIB_PATH);
         }
 
-        public void OnPostBuildPlayerScriptDLLs(BuildReport report)
-        {
+        public void OnPostBuildPlayerScriptDLLs(BuildReport report) {
             FodyWeaver.Default.Weave(ASSEMBLIES_BUILD_TEMP_PATH);
         }
     }

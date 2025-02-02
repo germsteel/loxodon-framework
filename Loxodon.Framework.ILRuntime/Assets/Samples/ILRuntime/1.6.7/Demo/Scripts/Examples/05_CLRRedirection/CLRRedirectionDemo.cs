@@ -11,21 +11,18 @@ using ILRuntime.Runtime.Enviorment;
 //下面这行为了取消使用WWW的警告，Unity2018以后推荐使用UnityWebRequest，处于兼容性考虑Demo依然使用WWW
 #pragma warning disable CS0618
 
-public class CLRRedirectionDemo : MonoBehaviour
-{
+public class CLRRedirectionDemo : MonoBehaviour {
     //AppDomain是ILRuntime的入口，最好是在一个单例类中保存，整个游戏全局就一个，这里为了示例方便，每个例子里面都单独做了一个
     //大家在正式项目中请全局只创建一个AppDomain
     AppDomain appdomain;
     System.IO.MemoryStream fs;
     System.IO.MemoryStream p;
 
-    void Start()
-    {
+    void Start() {
         StartCoroutine(LoadHotFixAssembly());
     }
 
-    IEnumerator LoadHotFixAssembly()
-    {
+    IEnumerator LoadHotFixAssembly() {
         //首先实例化ILRuntime的AppDomain，AppDomain是一个应用程序域，每个AppDomain都是一个独立的沙盒
         appdomain = new ILRuntime.Runtime.Enviorment.AppDomain();
         //正常项目中应该是自行从其他地方下载dll，或者打包在AssetBundle中读取，平时开发以及为了演示方便直接从StreammingAssets中读取，
@@ -59,12 +56,10 @@ public class CLRRedirectionDemo : MonoBehaviour
         byte[] pdb = www.bytes;
         fs = new MemoryStream(dll);
         p = new MemoryStream(pdb);
-        try
-        {
+        try {
             appdomain.LoadAssembly(fs, p, new ILRuntime.Mono.Cecil.Pdb.PdbReaderProvider());
         }
-        catch
-        {
+        catch {
             Debug.LogError("加载热更DLL失败，请确保已经通过VS打开Assets/Samples/ILRuntime/1.6/Demo/HotFix_Project/HotFix_Project.sln编译过热更DLL");
         }
 
@@ -73,8 +68,7 @@ public class CLRRedirectionDemo : MonoBehaviour
         OnHotFixLoaded();
     }
 
-    unsafe void InitializeILRuntime()
-    {
+    unsafe void InitializeILRuntime() {
 #if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
         //由于Unity的Profiler接口只允许在主线程使用，为了避免出异常，需要告诉ILRuntime主线程的线程ID才能正确将函数运行耗时报告给Profiler
         appdomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -84,8 +78,7 @@ public class CLRRedirectionDemo : MonoBehaviour
         appdomain.RegisterCLRMethodRedirection(mi, Log_11);
     }
 
-    unsafe void OnHotFixLoaded()
-    {
+    unsafe void OnHotFixLoaded() {
         Debug.Log("什么时候需要CLR重定向呢，当我们需要挟持原方法实现，添加一些热更DLL中的特殊处理的时候，就需要CLR重定向了");
         Debug.Log("详细文档请参见Github主页的相关文档");
         Debug.Log("CLR重定向对ILRuntime底层实现密切相关，因此要完全理解这个Demo，需要大家先看关于ILRuntime实现原理的Demo");
@@ -100,8 +93,7 @@ public class CLRRedirectionDemo : MonoBehaviour
 
     //编写重定向方法对于刚接触ILRuntime的朋友可能比较困难，比较简单的方式是通过CLR绑定生成绑定代码，然后在这个基础上改，比如下面这个代码是从UnityEngine_Debug_Binding里面复制来改的
     //如何使用CLR绑定请看相关教程和文档
-    unsafe static StackObject* Log_11(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj)
-    {
+    unsafe static StackObject* Log_11(ILIntepreter __intp, StackObject* __esp, IList<object> __mStack, CLRMethod __method, bool isNewObj) {
         //ILRuntime的调用约定为被调用者清理堆栈，因此执行这个函数后需要将参数从堆栈清理干净，并把返回值放在栈顶，具体请看ILRuntime实现原理文档
         ILRuntime.Runtime.Enviorment.AppDomain __domain = __intp.AppDomain;
         StackObject* ptr_of_this_method;
@@ -124,13 +116,11 @@ public class CLRRedirectionDemo : MonoBehaviour
         return __ret;
     }
 
-    void Update()
-    {
+    void Update() {
 
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         if (fs != null)
             fs.Close();
         if (p != null)

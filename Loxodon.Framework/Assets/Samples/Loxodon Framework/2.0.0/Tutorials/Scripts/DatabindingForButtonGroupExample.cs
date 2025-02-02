@@ -36,35 +36,28 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ButtonGroupViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ButtonGroupViewModel : ViewModelBase {
         private string text;
         private readonly SimpleCommand<string> click;
-        public ButtonGroupViewModel()
-        {
+        public ButtonGroupViewModel() {
             this.click = new SimpleCommand<string>(OnClick);
         }
 
-        public string Text
-        {
+        public string Text {
             get { return this.text; }
             set { this.Set(ref text, value); }
         }
 
-        public ICommand Click
-        {
+        public ICommand Click {
             get { return this.click; }
         }
 
-        public void OnClick(string buttonText)
-        {
+        public void OnClick(string buttonText) {
             Executors.RunOnCoroutineNoReturn(DoClick(buttonText));
         }
 
-        private IEnumerator DoClick(string buttonText)
-        {
+        private IEnumerator DoClick(string buttonText) {
             this.click.Enabled = false;
             this.Text = string.Format("Click Button:{0}.Restore button status after one second", buttonText);
             Debug.LogFormat("Click Button:{0}", buttonText);
@@ -76,8 +69,7 @@ namespace Loxodon.Framework.Tutorials
 
     }
 
-    public class DatabindingForButtonGroupExample : UIView
-    {
+    public class DatabindingForButtonGroupExample : UIView {
         public Button button1;
         public Button button2;
         public Button button3;
@@ -85,8 +77,7 @@ namespace Loxodon.Framework.Tutorials
         public Button button5;
         public Text text;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
@@ -97,8 +88,7 @@ namespace Loxodon.Framework.Tutorials
             localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
         }
 
-        protected override void Start()
-        {
+        protected override void Start() {
             ButtonGroupViewModel viewModel = new ButtonGroupViewModel();
 
             IBindingContext bindingContext = this.BindingContext();

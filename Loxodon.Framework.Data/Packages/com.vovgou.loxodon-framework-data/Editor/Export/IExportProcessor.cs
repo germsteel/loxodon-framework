@@ -25,23 +25,18 @@
 using System;
 using System.Collections.Generic;
 
-namespace Loxodon.Framework.Data.Editors
-{
-    public interface IExportProcessor
-    {
+namespace Loxodon.Framework.Data.Editors {
+    public interface IExportProcessor {
         void ImportFiles(string inputRoot, Action<string, float> onProgress, Action<List<FileEntry>> onFinished);
 
         void ExportFiles(string outputRoot, List<FileEntry> files, Action<string, float> onProgress, Action onFinished);
     }
 
     [Serializable]
-    public class FileEntry
-    {
-        public FileEntry()
-        {
+    public class FileEntry {
+        public FileEntry() {
         }
-        public FileEntry(string filename, List<SheetInfo> sheets)
-        {
+        public FileEntry(string filename, List<SheetInfo> sheets) {
             this.Filename = filename;
             this.Sheets = sheets;
         }
@@ -50,8 +45,7 @@ namespace Loxodon.Framework.Data.Editors
 
         public List<SheetInfo> Sheets { get; private set; }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             if (!(obj is FileEntry))
                 return false;
 
@@ -65,30 +59,24 @@ namespace Loxodon.Framework.Data.Editors
             return false;
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return this.Filename.GetHashCode();
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return this.Filename.ToString();
         }
     }
 
     [Serializable]
-    public class SheetInfo
-    {
-        public SheetInfo()
-        {
+    public class SheetInfo {
+        public SheetInfo() {
         }
 
-        public SheetInfo(string name) : this(name, true)
-        {
+        public SheetInfo(string name) : this(name, true) {
         }
 
-        public SheetInfo(string name, bool isValid)
-        {
+        public SheetInfo(string name, bool isValid) {
             this.Name = name;
             this.IsValid = isValid;
         }
@@ -98,8 +86,7 @@ namespace Loxodon.Framework.Data.Editors
         public bool IsValid { get; set; }
     }
 
-    public enum LineNo
-    {
+    public enum LineNo {
         None = -1,
         Line1,
         Line2,

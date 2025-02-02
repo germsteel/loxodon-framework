@@ -31,10 +31,8 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-namespace Loxodon.Framework.Examples
-{
-    public class ConnectorExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Examples {
+    public class ConnectorExample : MonoBehaviour {
         Server server;
 
         DefaultConnector<Request, Response, Notification> connector;
@@ -43,16 +41,14 @@ namespace Loxodon.Framework.Examples
         ISubscription<Notification> messageSubscription;
 
         int port = 8000;
-        void Start()
-        {
+        void Start() {
             //初始化服务器
             server = new Server(port);
 
             //开启TLS加密，这是可选的，可用不设置
             TextAsset textAsset = Resources.Load<TextAsset>("vovgou.pfx");
             X509Certificate2 cert = new X509Certificate2(textAsset.bytes, "123456");
-            server.Secure(true, cert, (sender, certificate, chain, sslPolicyErrors) =>
-             {
+            server.Secure(true, cert, (sender, certificate, chain, sslPolicyErrors) => {
                  //服务器设置不要求客户端证书，服务器方不校验客户端的协议，直接返回true
                  return true;
              });
@@ -67,8 +63,7 @@ namespace Loxodon.Framework.Examples
             channel.IsBigEndian = true;//默认使用大端字节序，一般网络字节流用大端
 
             //如果服务器没有开启TLS加密，可用不设置
-            channel.Secure(true, "vovgou.com", null, (sender, certificate, chain, sslPolicyErrors) =>
-             {
+            channel.Secure(true, "vovgou.com", null, (sender, certificate, chain, sslPolicyErrors) => {
                  //客户端方校验服务器端的自签名协议
                  if (sslPolicyErrors == SslPolicyErrors.None)
                      return true;
@@ -88,28 +83,24 @@ namespace Loxodon.Framework.Examples
             connector.AutoReconnect = true;//开启自动重连，只重连一次，失败后不再重试，建议使用心跳包保证连接可用
 
             //订阅事件,收到ConnectionEventArgs参数
-            eventSubscription = connector.Events().Filter(e =>
-            {
+            eventSubscription = connector.Events().Filter(e => {
                 //消息过滤，只订阅ConnectionEventArgs类型的事件
                 //if (e is ConnectionEventArgs)
                 //    return true;
                 //return false;
                 return true;
-            }).ObserveOn(SynchronizationContext.Current).Subscribe((e) =>
-            {
+            }).ObserveOn(SynchronizationContext.Current).Subscribe((e) => {
                 Debug.LogFormat("Client Received Event:{0}", e);
             });
 
             //订阅通知
             //使用ObserveOn(SynchronizationContext.Current)切换消息处理线程为当前的UI线程
-            messageSubscription = connector.Received().Filter(notification =>
-            {
+            messageSubscription = connector.Received().Filter(notification => {
                 //过滤消息，只监听CommandID在0-100之间的消息
                 if (notification.CommandID > 0 && notification.CommandID <= 100)
                     return true;
                 return false;
-            }).ObserveOn(SynchronizationContext.Current).Subscribe(notification =>
-            {
+            }).ObserveOn(SynchronizationContext.Current).Subscribe(notification => {
                 Debug.LogFormat("Client Received Notification:{0}", notification);
             });
 
@@ -117,14 +108,10 @@ namespace Loxodon.Framework.Examples
             idleEventSubscription = connector.Events()
                 .Filter(e => e is IdleStateEventArgs)
                 .ObserveOn(SynchronizationContext.Current)
-                .Subscribe(e =>
-                {
-                    try
-                    {
-                        if (e is IdleStateEventArgs idleStateEventArgs)
-                        {
-                            if (idleStateEventArgs.IsFirst && (idleStateEventArgs.State == IdleState.ReaderIdle))
-                            {
+                .Subscribe(e => {
+                    try {
+                        if (e is IdleStateEventArgs idleStateEventArgs) {
+                            if (idleStateEventArgs.IsFirst && (idleStateEventArgs.State == IdleState.ReaderIdle)) {
                                 //send a ping message
                                 SendHeartbeatMessage();
                             }
@@ -134,71 +121,57 @@ namespace Loxodon.Framework.Examples
                 });
         }
 
-        async void Connect()
-        {
-            try
-            {
+        async void Connect() {
+            try {
                 await connector.Connect("127.0.0.1", port, 1000);
                 Debug.LogFormat("连接成功");
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Debug.LogFormat("连接异常：{0}", e);
             }
         }
 
-        async void Send(Request request)
-        {
-            try
-            {
+        async void Send(Request request) {
+            try {
                 Response response = await connector.Send(request);
                 Debug.LogFormat("The client received a response message successfully,Message:{0}", response);
 
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Debug.LogFormat("The client failed to send a request,Exception:{0}", e);
             }
         }
 
-        async void Send(Notification notification)
-        {
-            try
-            {
+        async void Send(Notification notification) {
+            try {
                 await connector.Send(notification);
                 Debug.LogFormat("The client has successfully sent a notification");
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Debug.LogFormat("The client failed to send a notification,Exception:{0}", e);
             }
         }
 
-        async void SendHeartbeatMessage()
-        {
-            try
-            {
+        async void SendHeartbeatMessage() {
+            try {
                 Request request = new Request();
                 request.CommandID = 0;
                 request.ContentType = 0;
                 request.Content = Encoding.UTF8.GetBytes("ping");
                 Response response = await connector.Send(request);
             }
-            catch (TimeoutException e)
-            {
+            catch (TimeoutException e) {
                 //Timeout
                 if (connector.State == ConnectionState.Connected)
                     await connector.Reconnect();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 //Exception
                 Debug.LogFormat("{0}", e);
             }
         }
 
-        void OnGUI()
-        {
+        void OnGUI() {
             int x = 50;
             int y = 50;
             int width = 200;
@@ -208,24 +181,21 @@ namespace Loxodon.Framework.Examples
 
             GUI.skin.button.fontSize = 25;
 
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), server.Started ? "Stop Server" : "Start Server"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), server.Started ? "Stop Server" : "Start Server")) {
                 if (server.Started)
                     server.Stop();
                 else
                     server.Start();
             }
 
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), connector.Connected ? "Disconnect" : "Connect"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), connector.Connected ? "Disconnect" : "Connect")) {
                 if (connector.Connected)
                     _ = connector.Disconnect();
                 else
                     Connect();
             }
 
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Send Request"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Send Request")) {
                 Request request = new Request();
                 request.CommandID = 20;
                 request.ContentType = 0;
@@ -233,8 +203,7 @@ namespace Loxodon.Framework.Examples
                 Send(request);
             }
 
-            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Send Notification"))
-            {
+            if (GUI.Button(new Rect(x, y + i++ * (height + padding), width, height), "Send Notification")) {
                 Notification notification = new Notification();
                 notification.CommandID = 10;
                 notification.ContentType = 0;
@@ -243,35 +212,29 @@ namespace Loxodon.Framework.Examples
             }
         }
 
-        private void OnDestroy()
-        {
-            if (eventSubscription != null)
-            {
+        private void OnDestroy() {
+            if (eventSubscription != null) {
                 eventSubscription.Dispose();
                 eventSubscription = null;
             }
 
-            if (idleEventSubscription != null)
-            {
+            if (idleEventSubscription != null) {
                 idleEventSubscription.Dispose();
                 idleEventSubscription = null;
             }
 
-            if (messageSubscription != null)
-            {
+            if (messageSubscription != null) {
                 messageSubscription.Dispose();
                 messageSubscription = null;
             }
 
-            if (connector != null)
-            {
+            if (connector != null) {
                 _ = connector.Shutdown();
                 connector.Dispose();
                 connector = null;
             }
 
-            if (server != null)
-            {
+            if (server != null) {
                 server.Stop();
                 server = null;
             }

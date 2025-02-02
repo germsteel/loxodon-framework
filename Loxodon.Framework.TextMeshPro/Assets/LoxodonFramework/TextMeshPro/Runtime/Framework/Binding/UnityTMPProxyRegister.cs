@@ -30,13 +30,10 @@ using TMPro;
 using static TMPro.TMP_Dropdown;
 using static TMPro.TMP_InputField;
 
-namespace Loxodon.Framework.Binding
-{
-    public class UnityTMPProxyRegister
-    {
+namespace Loxodon.Framework.Binding {
+    public class UnityTMPProxyRegister {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Initialize()
-        {
+        static void Initialize() {
             Register<TMP_Text, string>("text", t => t.text, (t, v) => t.text = v);
             Register<TMP_Text, float>("fontSize", t => t.fontSize, (t, v) => t.fontSize = v);
             Register<TMP_Text, FontStyles>("fontStyle", t => t.fontStyle, (t, v) => t.fontStyle = v);
@@ -58,18 +55,15 @@ namespace Loxodon.Framework.Binding
             Register<TMP_InputField, TouchScreenKeyboardEvent>("onTouchScreenKeyboardStatusChanged", t => t.onTouchScreenKeyboardStatusChanged, null);
         }
 
-        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter)
-        {
+        static void Register<T, TValue>(string name, Func<T, TValue> getter, Action<T, TValue> setter) {
             var propertyInfo = typeof(T).GetProperty(name);
-            if (propertyInfo != null)
-            {
+            if (propertyInfo != null) {
                 ProxyFactory.Default.Register(new ProxyPropertyInfo<T, TValue>(name, getter, setter));
                 return;
             }
 
             var fieldInfo = typeof(T).GetField(name);
-            if (fieldInfo != null)
-            {
+            if (fieldInfo != null) {
                 ProxyFactory.Default.Register(new ProxyFieldInfo<T, TValue>(name, getter, setter));
                 return;
             }

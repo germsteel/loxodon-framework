@@ -1,10 +1,8 @@
-﻿namespace Loxodon.Framework.TextFormatting
-{
+﻿namespace Loxodon.Framework.TextFormatting {
     /// <summary>
     /// https://github.com/mono/mono/blob/main/mono/metadata/number-formatter.h
     /// </summary>
-    internal static class NumberConstants
-    {
+    internal static class NumberConstants {
         public static readonly ulong[] MantissaBitsTable = {
             4556951262222748432UL, 9113902524445496865UL, 1822780504889099373UL,
             3645561009778198746UL, 7291122019556397492UL, 14582244039112794984UL,

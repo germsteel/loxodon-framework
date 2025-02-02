@@ -1,13 +1,10 @@
 ﻿using NLog;
 using NLog.Targets;
 
-namespace Loxodon.Log.NLogger.Targets
-{
+namespace Loxodon.Log.NLogger.Targets {
     [Target("UnityConsole")]
-    public class UnityConsoleTarget : TargetWithLayout
-    {
-        protected override void Write(LogEventInfo logEvent)
-        {
+    public class UnityConsoleTarget : TargetWithLayout {
+        protected override void Write(LogEventInfo logEvent) {
             LogLevel level = logEvent.Level;
             if (LogLevel.Off.Equals(level))
                 return;

@@ -26,18 +26,15 @@ using Loxodon.Framework.Observables;
 using System;
 using UnityEngine;
 
-namespace Loxodon.Framework.Localizations
-{
+namespace Loxodon.Framework.Localizations {
     [DefaultExecutionOrder(100)]
-    public abstract class AbstractLocalized<T> : MonoBehaviour where T : Component
-    {
+    public abstract class AbstractLocalized<T> : MonoBehaviour where T : Component {
         [SerializeField]
         private string key;
         protected T target;
         protected IObservableProperty value;
 
-        protected virtual void OnKeyChanged()
-        {
+        protected virtual void OnKeyChanged() {
             if (this.value != null)
                 this.value.ValueChanged -= OnValueChanged;
 
@@ -50,11 +47,9 @@ namespace Loxodon.Framework.Localizations
             this.OnValueChanged(this.value, EventArgs.Empty);
         }
 
-        public string Key
-        {
+        public string Key {
             get { return this.key; }
-            set
-            {
+            set {
                 if (string.IsNullOrEmpty(value) || value.Equals(this.key))
                     return;
 
@@ -63,8 +58,7 @@ namespace Loxodon.Framework.Localizations
             }
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             if (this.target == null)
                 this.target = this.GetComponent<T>();
 
@@ -74,10 +68,8 @@ namespace Loxodon.Framework.Localizations
             this.OnKeyChanged();
         }
 
-        protected virtual void OnDisable()
-        {
-            if (this.value != null)
-            {
+        protected virtual void OnDisable() {
+            if (this.value != null) {
                 this.value.ValueChanged -= OnValueChanged;
                 this.value = null;
             }

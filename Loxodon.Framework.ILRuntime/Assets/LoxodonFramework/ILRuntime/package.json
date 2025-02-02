@@ -28,8 +28,7 @@
     "com.ourpalm.ilruntime": "2.0.2",
     "com.vovgou.loxodon-framework": "2.6.4"
   },
-  "samples": [
-    {
+  "samples": [ {
       "displayName": "Examples",
       "description": "Examples",
       "path": "Samples~/Examples"

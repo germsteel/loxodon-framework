@@ -35,10 +35,8 @@ using UnityEngine;
 using Loxodon.Framework.TextFormatting;
 using static Loxodon.Framework.TextFormatting.IFormatter;
 
-namespace Loxodon.Framework.Views.TextMeshPro
-{
-    public class TextTemplateBinding : IDisposable
-    {
+namespace Loxodon.Framework.Views.TextMeshPro {
+    public class TextTemplateBinding : IDisposable {
         private const int BUFFER_SIZE = 128;
         [ThreadStatic]
         private static StringBuilder BUFFER = new StringBuilder();
@@ -54,16 +52,13 @@ namespace Loxodon.Framework.Views.TextMeshPro
         protected IPathParser PathParser { get { return this.pathParser ?? (this.pathParser = Context.GetApplicationContext().GetService<IPathParser>()); } }
         protected ISourceProxyFactory SourceProxyFactory { get { return this.sourceProxyFactory ?? (this.sourceProxyFactory = Context.GetApplicationContext().GetService<ISourceProxyFactory>()); } }
 
-        public TextTemplateBinding(Action<StringBuilder> output)
-        {
+        public TextTemplateBinding(Action<StringBuilder> output) {
             this.output = output;
 
         }
-        public string Template
-        {
+        public string Template {
             get { return this.m_Template; }
-            set
-            {
+            set {
                 if (string.Equals(this.m_Template, value))
                     return;
 
@@ -71,11 +66,9 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 OnTemplateChanged();
             }
         }
-        public object Data
-        {
+        public object Data {
             get { return this.data; }
-            set
-            {
+            set {
                 if (Equals(this.data, value))
                     return;
 
@@ -84,8 +77,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
             }
         }
 
-        protected void OnTemplateChanged()
-        {
+        protected void OnTemplateChanged() {
             if (string.IsNullOrEmpty(m_Template) || data == null)
                 return;
 
@@ -97,13 +89,11 @@ namespace Loxodon.Framework.Views.TextMeshPro
 
         }
 
-        protected void OnDataChanged()
-        {
+        protected void OnDataChanged() {
             if (string.IsNullOrEmpty(m_Template) || data == null)
                 return;
 
-            if (this.dataType == null || !dataType.Equals(data.GetType()))
-            {
+            if (this.dataType == null || !dataType.Equals(data.GetType())) {
                 this.Unbind();
                 this.dataType = data.GetType();
                 this.Parse(m_Template, dataType);
@@ -112,35 +102,28 @@ namespace Loxodon.Framework.Views.TextMeshPro
             }
         }
 
-        private void OnValueChanged()
-        {
+        private void OnValueChanged() {
             StringBuilder buffer = BUFFER.Clear();
             ValueStringBuilder builder = new ValueStringBuilder(stackalloc char[BUFFER_SIZE]);
-            try
-            {
-                foreach (var token in tokens)
-                {
+            try {
+                foreach (var token in tokens) {
                     builder.Clear();
                     token.WriteTo(ref builder);
                     buffer.Append(builder.AsSpan());
                 }
             }
-            finally
-            {
+            finally {
                 builder.Dispose();
             }
             output(buffer);
         }
 
-        protected void Bind()
-        {
+        protected void Bind() {
             if (this.valueChangedHandler == null)
                 this.valueChangedHandler = (sender, args) => this.OnValueChanged();
 
-            foreach (var token in tokens)
-            {
-                if (token is PathParameterToken parameterToken)
-                {
+            foreach (var token in tokens) {
+                if (token is PathParameterToken parameterToken) {
                     var sourceProxy = this.SourceProxyFactory.CreateProxy(data, parameterToken.Description);
                     if (sourceProxy is INotifiable notifiable)
                         notifiable.ValueChanged += this.valueChangedHandler;
@@ -151,15 +134,11 @@ namespace Loxodon.Framework.Views.TextMeshPro
             }
         }
 
-        protected void Unbind()
-        {
-            try
-            {
+        protected void Unbind() {
+            try {
                 this.dataType = null;
-                for (int i = 0; i < tokens.Count; i++)
-                {
-                    if (tokens[i] is PathParameterToken token)
-                    {
+                for (int i = 0; i < tokens.Count; i++) {
+                    if (tokens[i] is PathParameterToken token) {
                         ISourceProxy sourceProxy = token.SourceProxy;
                         if (sourceProxy == null)
                             continue;
@@ -171,43 +150,35 @@ namespace Loxodon.Framework.Views.TextMeshPro
                 }
             }
             catch (Exception) { }
-            finally
-            {
+            finally {
                 this.tokens.Clear();
             }
         }
 
-        private void Parse(string template, Type dataType)
-        {
+        private void Parse(string template, Type dataType) {
             bool isArray = dataType.IsArray;
             int pos = 0;
             int len = template.Length;
             char ch = '\x0';
             ValueStringBuilder buffer = new ValueStringBuilder(stackalloc char[BUFFER_SIZE]);
-            try
-            {
-                while (true)
-                {
+            try {
+                while (true) {
                     buffer.Clear();
-                    while (pos < len)
-                    {
+                    while (pos < len) {
                         ch = template[pos];
 
                         pos++;
-                        if (ch == '}')
-                        {
+                        if (ch == '}') {
                             if (pos < len && template[pos] == '}') // Treat as escape character for }}
                                 pos++;
                             else
                                 FormatError("missing '}'", template);
                         }
 
-                        if (ch == '{')
-                        {
+                        if (ch == '{') {
                             if (pos < len && template[pos] == '{') // Treat as escape character for {{
                                 pos++;
-                            else
-                            {
+                            else {
                                 pos--;
                                 break;
                             }
@@ -228,10 +199,8 @@ namespace Loxodon.Framework.Views.TextMeshPro
                         FormatError(null, template);
 
                     ch = template[pos];
-                    if (isArray && IsValidNumber(ch))
-                    {
-                        do
-                        {
+                    if (isArray && IsValidNumber(ch)) {
+                        do {
                             index = index * 10 + ch - '0';
                             pos++;
                             if (pos == len)
@@ -239,11 +208,9 @@ namespace Loxodon.Framework.Views.TextMeshPro
                             ch = template[pos];
                         } while (IsValidNumber(ch) && index < 1000000);
                     }
-                    else if (IsValidPathFirstChar(ch))
-                    {
+                    else if (IsValidPathFirstChar(ch)) {
                         buffer.Clear();
-                        do
-                        {
+                        do {
                             buffer.Append(ch);
                             pos++;
                             if (pos == len)
@@ -256,8 +223,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
 
                         pathStr = buffer.ToString();
                     }
-                    else
-                    {
+                    else {
                         FormatError("Illegal path parameter", template);
                     }
 
@@ -303,11 +269,9 @@ namespace Loxodon.Framework.Views.TextMeshPro
                         pos++;
 
                     buffer.Clear();
-                    if (ch == ':')
-                    {
+                    if (ch == ':') {
                         pos++;
-                        while (true)
-                        {
+                        while (true) {
                             if (pos == len)
                                 FormatError(null, template);
                             ch = template[pos];
@@ -360,37 +324,31 @@ namespace Loxodon.Framework.Views.TextMeshPro
 
                     string format = buffer.Length > 0 ? buffer.ToString() : string.Empty;
                     Path path = null;
-                    if (string.IsNullOrEmpty(pathStr))
-                    {
+                    if (string.IsNullOrEmpty(pathStr)) {
                         path = new Path();
                         path.AppendIndexed(index);
                     }
-                    else
-                    {
+                    else {
                         path = PathParser.Parse(pathStr);
                     }
                     Type valueType = GetValueType(path, dataType);
                     tokens.Add(CreatePathParameterToken(format, path, valueType));
                 }
             }
-            finally
-            {
+            finally {
                 buffer.Dispose();
             }
         }
 
-        private static void FormatError(string reason, string content)
-        {
+        private static void FormatError(string reason, string content) {
             if (string.IsNullOrEmpty(reason))
                 throw new FormatException($"Invalid Format:{content}");
             throw new FormatException($"{reason},Invalid Format:{content}");
         }
 
-        private PathParameterToken CreatePathParameterToken(string format, Path path, Type valueType)
-        {
+        private PathParameterToken CreatePathParameterToken(string format, Path path, Type valueType) {
             TypeCode code = Type.GetTypeCode(valueType);
-            switch (code)
-            {
+            switch (code) {
                 case TypeCode.Boolean:
                     return new PathParameterToken<bool>(format, new ObjectSourceDescription(path), BOOLEAN_FORMATTER);
                 case TypeCode.Char:
@@ -421,8 +379,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
                     return new PathParameterToken<DateTime>(format, new ObjectSourceDescription(path), DATETIME_FORMATTER);
                 case TypeCode.String:
                     return new PathParameterToken<object>(format, new ObjectSourceDescription(path), DEFAULT_FORMATTER);
-                case TypeCode.Object:
-                    {
+                case TypeCode.Object: {
                         if (valueType.Equals(typeof(TimeSpan)))
                             return new PathParameterToken<TimeSpan>(format, new ObjectSourceDescription(path), TIMESPAN_FORMATTER);
                         else if (valueType.Equals(typeof(Vector2)))
@@ -441,26 +398,22 @@ namespace Loxodon.Framework.Views.TextMeshPro
             }
         }
 
-        private Type GetValueType(Path path, Type dataType)
-        {
+        private Type GetValueType(Path path, Type dataType) {
             if (path.IsEmpty)
                 return dataType;
 
             IProxyType type = dataType.AsProxy();
             PathToken token = path.AsPathToken();
-            while (true)
-            {
+            while (true) {
                 IPathNode node = token.Current;
-                if (node is IndexedNode)
-                {
+                if (node is IndexedNode) {
                     IProxyItemInfo itemInfo = type.GetItem();
                     if (itemInfo != null)
                         type = itemInfo.ValueType.AsProxy();
                     else
                         return typeof(object);// throw new ArgumentException($"Illegal path:{path}");
                 }
-                else if (node is MemberNode memberNode)
-                {
+                else if (node is MemberNode memberNode) {
                     IProxyMemberInfo memberInfo = type.GetMember(memberNode.Name);
                     if (memberInfo is IProxyPropertyInfo propertyInfo)
                         type = propertyInfo.ValueType.AsProxy();
@@ -477,8 +430,7 @@ namespace Loxodon.Framework.Views.TextMeshPro
             }
         }
 
-        private bool IsValidFormatChar(char ch)
-        {
+        private bool IsValidFormatChar(char ch) {
             if (ch == 123 || ch == 125)//{ }
                 return false;
 
@@ -487,74 +439,60 @@ namespace Loxodon.Framework.Views.TextMeshPro
             return false;
         }
 
-        private bool IsValidNumber(char ch)
-        {
+        private bool IsValidNumber(char ch) {
             if (ch >= 48 && ch <= 57)
                 return true;
             return false;
         }
 
-        private bool IsValidPathFirstChar(char ch)
-        {
+        private bool IsValidPathFirstChar(char ch) {
             if ((ch >= 65 && ch <= 91) || (ch >= 97 && ch <= 122) || ch == 93 || ch == 95)
                 return true;
             return false;
         }
 
-        private bool IsValidPathChar(char ch)
-        {
+        private bool IsValidPathChar(char ch) {
             if ((ch >= 48 && ch <= 57) || (ch >= 65 && ch <= 91) || (ch >= 97 && ch <= 122) || ch == 93 || ch == 95 || ch == 46)
                 return true;
             return false;
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
+        protected virtual void Dispose(bool disposing) {
+            if (!disposedValue) {
                 this.Unbind();
                 disposedValue = true;
             }
         }
 
-        ~TextTemplateBinding()
-        {
+        ~TextTemplateBinding() {
             Dispose(disposing: false);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-        public abstract class Token
-        {
+        public abstract class Token {
             public abstract void WriteTo(ref ValueStringBuilder builder);
         }
 
-        private class TextToken : Token
-        {
+        private class TextToken : Token {
             private string text;
-            public TextToken(string text)
-            {
+            public TextToken(string text) {
                 this.text = text;
             }
 
-            public override void WriteTo(ref ValueStringBuilder builder)
-            {
+            public override void WriteTo(ref ValueStringBuilder builder) {
                 builder.Append(text);
             }
 
-            public override string ToString()
-            {
+            public override string ToString() {
                 return string.Format("TextToken{{ Text:{0} }}", new string(text));
             }
         }
 
-        private abstract class PathParameterToken : Token
-        {
-            public PathParameterToken(string format, SourceDescription description)
-            {
+        private abstract class PathParameterToken : Token {
+            public PathParameterToken(string format, SourceDescription description) {
                 this.Format = format;
                 this.Description = description;
             }
@@ -564,25 +502,20 @@ namespace Loxodon.Framework.Views.TextMeshPro
             public ISourceProxy SourceProxy { get; set; }
         }
 
-        private class PathParameterToken<TValue> : PathParameterToken
-        {
+        private class PathParameterToken<TValue> : PathParameterToken {
             private readonly IFormatter<TValue> formatter;
-            public PathParameterToken(string format, SourceDescription description, IFormatter<TValue> formatter) : base(format, description)
-            {
+            public PathParameterToken(string format, SourceDescription description, IFormatter<TValue> formatter) : base(format, description) {
                 this.formatter = formatter;
             }
 
-            public override void WriteTo(ref ValueStringBuilder builder)
-            {
-                if (SourceProxy is IObtainable obtainable)
-                {
+            public override void WriteTo(ref ValueStringBuilder builder) {
+                if (SourceProxy is IObtainable obtainable) {
                     TValue v = obtainable.GetValue<TValue>();
                     formatter.Format(Format, v, ref builder);
                 }
             }
 
-            public override string ToString()
-            {
+            public override string ToString() {
                 return string.Format("PathParameterToken{{ Format:{0}, {1} }}", Format, Description);
             }
         }

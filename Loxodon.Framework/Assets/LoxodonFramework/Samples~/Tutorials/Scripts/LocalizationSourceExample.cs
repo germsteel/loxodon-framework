@@ -27,16 +27,13 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class LocalizationSourceExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class LocalizationSourceExample : MonoBehaviour {
         public Dropdown dropdown;
 
         private Localization localization;
 
-        void Awake()
-        {
+        void Awake() {
             this.localization = Localization.Current;
             this.localization.CultureInfo = new CultureInfo("en-CA");
             this.localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
@@ -45,10 +42,8 @@ namespace Loxodon.Framework.Tutorials
             this.dropdown.onValueChanged.AddListener(OnValueChanged);
         }
 
-        void OnValueChanged(int value)
-        {
-            switch (value)
-            {
+        void OnValueChanged(int value) {
+            switch (value) {
                 case 0:
                     this.localization.CultureInfo = new CultureInfo("en-CA");
                     break;
@@ -67,8 +62,7 @@ namespace Loxodon.Framework.Tutorials
             }
         }
 
-        void OnDestroy()
-        {
+        void OnDestroy() {
             this.dropdown.onValueChanged.RemoveListener(OnValueChanged);
         }
     }

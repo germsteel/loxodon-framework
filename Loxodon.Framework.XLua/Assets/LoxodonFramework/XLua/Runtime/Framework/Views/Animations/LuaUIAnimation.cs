@@ -26,14 +26,12 @@ using Loxodon.Framework.Views.Variables;
 using System;
 using XLua;
 
-namespace Loxodon.Framework.Views.Animations
-{
+namespace Loxodon.Framework.Views.Animations {
     [CSharpCallLua]
     public delegate void LuaAnimationAction(LuaUIAnimation target, IUIView view, Action startCallback, Action endCallback);
 
     [LuaCallCSharp]
-    public class LuaUIAnimation : UIAnimation, ILuaExtendable
-    {
+    public class LuaUIAnimation : UIAnimation, ILuaExtendable {
         public ScriptReference script;
         public VariableArray variables;
 
@@ -42,13 +40,11 @@ namespace Loxodon.Framework.Views.Animations
         protected LuaAnimationAction play;
         protected IUIView view;
 
-        public virtual LuaTable GetMetatable()
-        {
+        public virtual LuaTable GetMetatable() {
             return this.metatable;
         }
 
-        protected virtual void Initialize()
-        {
+        protected virtual void Initialize() {
             var luaEnv = LuaEnvironment.LuaEnv;
             scriptEnv = luaEnv.NewTable();
 
@@ -63,10 +59,8 @@ namespace Loxodon.Framework.Views.Animations
                 throw new Exception("");
 
             metatable = (LuaTable)result[0];
-            if (variables != null && variables.Variables != null)
-            {
-                foreach (var variable in variables.Variables)
-                {
+            if (variables != null && variables.Variables != null) {
+                foreach (var variable in variables.Variables) {
                     var name = variable.Name.Trim();
                     if (string.IsNullOrEmpty(name))
                         continue;
@@ -78,16 +72,13 @@ namespace Loxodon.Framework.Views.Animations
             this.play = metatable.Get<LuaAnimationAction>("play");
         }
 
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             this.Initialize();
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             this.view = this.GetComponent<IUIView>();
-            switch (this.AnimationType)
-            {
+            switch (this.AnimationType) {
                 case AnimationType.EnterAnimation:
                     this.view.EnterAnimation = this;
                     break;
@@ -105,23 +96,19 @@ namespace Loxodon.Framework.Views.Animations
             }
         }
 
-        public override IAnimation Play()
-        {
+        public override IAnimation Play() {
             if (this.play != null)
                 this.play(this, this.view, OnStart, OnEnd);
             return this;
         }
 
-        protected virtual void OnDestroy()
-        {
-            if (metatable != null)
-            {
+        protected virtual void OnDestroy() {
+            if (metatable != null) {
                 metatable.Dispose();
                 metatable = null;
             }
 
-            if (scriptEnv != null)
-            {
+            if (scriptEnv != null) {
                 scriptEnv.Dispose();
                 scriptEnv = null;
             }

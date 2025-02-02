@@ -9,21 +9,18 @@ using ILRuntime.Runtime.Intepreter;
 //下面这行为了取消使用WWW的警告，Unity2018以后推荐使用UnityWebRequest，处于兼容性考虑Demo依然使用WWW
 #pragma warning disable CS0618
 
-public class ReflectionDemo : MonoBehaviour
-{
+public class ReflectionDemo : MonoBehaviour {
     //AppDomain是ILRuntime的入口，最好是在一个单例类中保存，整个游戏全局就一个，这里为了示例方便，每个例子里面都单独做了一个
     //大家在正式项目中请全局只创建一个AppDomain
     AppDomain appdomain;
     System.IO.MemoryStream fs;
     System.IO.MemoryStream p;
 
-    void Start()
-    {
+    void Start() {
         StartCoroutine(LoadHotFixAssembly());
     }
 
-    IEnumerator LoadHotFixAssembly()
-    {
+    IEnumerator LoadHotFixAssembly() {
         //首先实例化ILRuntime的AppDomain，AppDomain是一个应用程序域，每个AppDomain都是一个独立的沙盒
         appdomain = new ILRuntime.Runtime.Enviorment.AppDomain();
         //正常项目中应该是自行从其他地方下载dll，或者打包在AssetBundle中读取，平时开发以及为了演示方便直接从StreammingAssets中读取，
@@ -56,12 +53,10 @@ public class ReflectionDemo : MonoBehaviour
         byte[] pdb = www.bytes;
         fs = new MemoryStream(dll);
         p = new MemoryStream(pdb);
-        try
-        {
+        try {
             appdomain.LoadAssembly(fs, p, new ILRuntime.Mono.Cecil.Pdb.PdbReaderProvider());
         }
-        catch
-        {
+        catch {
             Debug.LogError("加载热更DLL失败，请确保已经通过VS打开Assets/Samples/ILRuntime/1.6/Demo/HotFix_Project/HotFix_Project.sln编译过热更DLL");
         }
 
@@ -69,8 +64,7 @@ public class ReflectionDemo : MonoBehaviour
         OnHotFixLoaded();
     }
 
-    void InitializeILRuntime()
-    {
+    void InitializeILRuntime() {
 #if DEBUG && (UNITY_EDITOR || UNITY_ANDROID || UNITY_IPHONE)
         //由于Unity的Profiler接口只允许在主线程使用，为了避免出异常，需要告诉ILRuntime主线程的线程ID才能正确将函数运行耗时报告给Profiler
         appdomain.UnityMainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
@@ -79,8 +73,7 @@ public class ReflectionDemo : MonoBehaviour
 
     }
 
-    void OnHotFixLoaded()
-    {
+    void OnHotFixLoaded() {
         Debug.Log("C#工程中反射是一个非常经常用到功能，ILRuntime也对反射进行了支持，在热更DLL中使用反射跟原生C#没有任何区别，故不做介绍");
         Debug.Log("这个Demo主要是介绍如何在主工程中反射热更DLL中的类型");
         Debug.Log("假设我们要通过反射创建HotFix_Project.InstanceClass的实例");
@@ -102,8 +95,7 @@ public class ReflectionDemo : MonoBehaviour
         Debug.Log("ID = " + pi.GetValue(obj, null));
     }
 
-    private void OnDestroy()
-    {
+    private void OnDestroy() {
         if (fs != null)
             fs.Close();
         if (p != null)

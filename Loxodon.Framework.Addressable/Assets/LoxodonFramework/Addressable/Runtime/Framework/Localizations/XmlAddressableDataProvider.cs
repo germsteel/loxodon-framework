@@ -35,8 +35,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using static UnityEngine.AddressableAssets.Addressables;
 
-namespace Loxodon.Framework.Localizations
-{
+namespace Loxodon.Framework.Localizations {
     /// <summary>
     /// Addressable data provider.
     /// It supports localized resources in xml format.
@@ -53,8 +52,7 @@ namespace Loxodon.Framework.Localizations
     /// root/en-CA/
     /// root/en-AU/
     /// </summary>
-    public class XmlAddressableDataProvider : IDataProvider
-    {
+    public class XmlAddressableDataProvider : IDataProvider {
         private static readonly ILog log = LogManager.GetLogger(typeof(XmlAddressableDataProvider));
 
         private IList<object> keys;
@@ -64,8 +62,7 @@ namespace Loxodon.Framework.Localizations
         /// Load localized resources based on asset's label or address.
         /// </summary>
         /// <param name="key">The label of asset in the AssetBundle.</param>
-        public XmlAddressableDataProvider(object key) : this(new List<object>() { key }, new XmlDocumentParser())
-        {
+        public XmlAddressableDataProvider(object key) : this(new List<object>() { key }, new XmlDocumentParser()) {
         }
 
         /// <summary>
@@ -73,16 +70,14 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="key">The label of asset in the AssetBundle.</param>
         /// <param name="parser">XML document parser</param>
-        public XmlAddressableDataProvider(object key, IDocumentParser parser) : this(new List<object>() { key }, parser)
-        {
+        public XmlAddressableDataProvider(object key, IDocumentParser parser) : this(new List<object>() { key }, parser) {
         }
 
         /// <summary>
         /// Load localized resources based on asset's label or address.
         /// </summary>
         /// <param name="keys">The label of asset in the AssetBundle.</param>
-        public XmlAddressableDataProvider(IList<object> keys) : this(keys, new XmlDocumentParser())
-        {
+        public XmlAddressableDataProvider(IList<object> keys) : this(keys, new XmlDocumentParser()) {
         }
 
         /// <summary>
@@ -90,16 +85,13 @@ namespace Loxodon.Framework.Localizations
         /// </summary>
         /// <param name="keys">The label of asset in the AssetBundle.</param>
         /// <param name="parser">XML document parser</param>
-        public XmlAddressableDataProvider(IList<object> keys, IDocumentParser parser)
-        {
+        public XmlAddressableDataProvider(IList<object> keys, IDocumentParser parser) {
             this.keys = keys ?? throw new ArgumentNullException("keys");
             this.parser = parser ?? throw new ArgumentNullException("parser");
         }
 
-        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo)
-        {
-            try
-            {
+        public virtual async Task<Dictionary<string, object>> Load(CultureInfo cultureInfo) {
+            try {
                 Dictionary<string, object> dict = new Dictionary<string, object>();
                 var locations = await Addressables.LoadResourceLocationsAsync(this.keys, MergeMode.Union, typeof(TextAsset));
                 List<IResourceLocation> list = locations.Where(l => l.InternalId.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)).ToList();
@@ -112,38 +104,30 @@ namespace Loxodon.Framework.Localizations
                 await FillData(dict, paths, cultureInfo);
                 return dict;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("An error occurred when loading localized data.Error:{0}", e);
                 throw;
             }
         }
 
-        protected virtual async Task FillData(Dictionary<string, object> dict, IList<IResourceLocation> paths, CultureInfo cultureInfo)
-        {
-            try
-            {
+        protected virtual async Task FillData(Dictionary<string, object> dict, IList<IResourceLocation> paths, CultureInfo cultureInfo) {
+            try {
                 if (paths == null || paths.Count <= 0)
                     return;
 
                 var result = Addressables.LoadAssetsAsync<TextAsset>(paths, null);
                 IList<TextAsset> texts = await result;
-                foreach (TextAsset text in texts)
-                {
-                    try
-                    {
-                        using (MemoryStream stream = new MemoryStream(text.bytes))
-                        {
+                foreach (TextAsset text in texts) {
+                    try {
+                        using (MemoryStream stream = new MemoryStream(text.bytes)) {
                             var data = parser.Parse(stream, cultureInfo);
-                            foreach (KeyValuePair<string, object> kv in data)
-                            {
+                            foreach (KeyValuePair<string, object> kv in data) {
                                 dict[kv.Key] = kv.Value;
                             }
                         }
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         if (log.IsWarnEnabled)
                             log.WarnFormat("An error occurred when loading localized data from \"{0}\".Error:{1}", text.name, e);
                     }

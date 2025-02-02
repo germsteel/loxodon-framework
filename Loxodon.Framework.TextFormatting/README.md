@@ -44,14 +44,12 @@ Requires [nodejs](https://nodejs.org/en/download/)'s npm and openupm-cli, if not
 Modify the Packages/manifest.json file in your project, add the third-party repository "package.openupm.com"'s configuration and add "com.vovgou.loxodon-framework-textformatting" in the "dependencies" node.
 
 Installing the framework in this way does not require nodejs and openm-cli.
-
-    {
+ {
       "dependencies": {
         ...
         "com.vovgou.loxodon-framework-textformatting": "2.6.2"
       },
-      "scopedRegistries": [
-        {
+      "scopedRegistries": [ {
           "name": "package.openupm.com",
           "url": "https://package.openupm.com",
           "scopes": [
@@ -72,11 +70,9 @@ This plugin enhances the AppendFormat<>() function of StringBuilder. It provides
 	using System.Text;
 	using UnityEngine;
 	using Loxodon.Framework.TextFormatting;//make sure to first import the required namespace
-	public class Example : MonoBehaviour
-	{
+	public class Example : MonoBehaviour {
 	    StringBuilder builder = new StringBuilder();
-	    void Update()
-	    {
+	    void Update() {
 	        builder.Clear();
 	        builder.AppendFormat<DateTime,int>("Now:{0:yyyy-MM-dd HH:mm:ss} Frame:{0:D6}", DateTime.Now,Time.frameCount);
 	        builder.AppendFormat<float>("{0:f2}", Time.realtimeSinceStartup);       

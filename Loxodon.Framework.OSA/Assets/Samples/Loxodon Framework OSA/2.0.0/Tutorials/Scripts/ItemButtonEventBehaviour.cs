@@ -25,18 +25,14 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
-namespace Loxodon.Framework.Tutorials.OSA
-{
-    public class ItemButtonEventBehaviour : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials.OSA {
+    public class ItemButtonEventBehaviour : MonoBehaviour {
         [Serializable]
-        public class SelectedEvent : UnityEvent<ItemViewModel>
-        {
+        public class SelectedEvent : UnityEvent<ItemViewModel> {
         }
 
         [Serializable]
-        public class ClickEvent : UnityEvent<ItemViewModel>
-        {
+        public class ClickEvent : UnityEvent<ItemViewModel> {
         }
 
         public readonly SelectedEvent OnSelected = new SelectedEvent();

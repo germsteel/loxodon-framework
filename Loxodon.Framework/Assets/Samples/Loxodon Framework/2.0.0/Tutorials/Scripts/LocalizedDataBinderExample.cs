@@ -31,14 +31,11 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class LocalizedDataBinderExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class LocalizedDataBinderExample : MonoBehaviour {
         public Dropdown dropdown;
         private Localization localization;
-        void Awake()
-        {
+        void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
@@ -52,10 +49,8 @@ namespace Loxodon.Framework.Tutorials
             this.dropdown.onValueChanged.AddListener(OnValueChanged);
         }
 
-        public void OnValueChanged(int value)
-        {
-            switch (value)
-            {
+        public void OnValueChanged(int value) {
+            switch (value) {
                 case 0:
                     this.localization.CultureInfo = Locale.GetCultureInfoByLanguage(SystemLanguage.English);
                     break;

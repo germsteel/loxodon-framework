@@ -22,10 +22,8 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.ObjectPool
-{
-    public interface IObjectFactory<T> where T : class
-    {
+namespace Loxodon.Framework.ObjectPool {
+    public interface IObjectFactory<T> where T : class {
         /// <summary>
         /// Create a <typeparamref name="T"/>.
         /// </summary>

@@ -38,10 +38,8 @@ using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Contexts;
 using Loxodon.Framework.Binding.Builder;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class Account : ObservableObject
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class Account : ObservableObject {
         private int id;
         private string username;
         private string password;
@@ -49,100 +47,83 @@ namespace Loxodon.Framework.Tutorials
         private DateTime birthday;
         private readonly ObservableProperty<string> address = new ObservableProperty<string>();
 
-        public int ID
-        {
+        public int ID {
             get { return this.id; }
             set { this.Set(ref this.id, value); }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set(ref this.username, value); }
         }
 
-        public string Password
-        {
+        public string Password {
             get { return this.password; }
             set { this.Set(ref this.password, value); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set(ref this.email, value); }
         }
 
-        public DateTime Birthday
-        {
+        public DateTime Birthday {
             get { return this.birthday; }
             set { this.Set(ref this.birthday, value); }
         }
 
-        public ObservableProperty<string> Address
-        {
+        public ObservableProperty<string> Address {
             get { return this.address; }
         }
     }
 
-    public class AccountViewModel : ViewModelBase
-    {
+    public class AccountViewModel : ViewModelBase {
         private Account account;
         private bool remember;
         private string username;
         private string email;
         private ObservableDictionary<string, string> errors = new ObservableDictionary<string, string>();
 
-        public Account Account
-        {
+        public Account Account {
             get { return this.account; }
             set { this.Set(ref account, value); }
         }
 
-        public string Username
-        {
+        public string Username {
             get { return this.username; }
             set { this.Set(ref this.username, value); }
         }
 
-        public string Email
-        {
+        public string Email {
             get { return this.email; }
             set { this.Set(ref this.email, value); }
         }
 
-        public bool Remember
-        {
+        public bool Remember {
             get { return this.remember; }
             set { this.Set(ref this.remember, value); }
         }
 
-        public ObservableDictionary<string, string> Errors
-        {
+        public ObservableDictionary<string, string> Errors {
             get { return this.errors; }
             set { this.Set(ref this.errors, value); }
         }
 
-        public void OnUsernameValueChanged(string value)
-        {
+        public void OnUsernameValueChanged(string value) {
             Debug.LogFormat("Username ValueChanged:{0}", value);
         }
 
-        public void OnEmailValueChanged(string value)
-        {
+        public void OnEmailValueChanged(string value) {
             Debug.LogFormat("Email ValueChanged:{0}", value);
         }
 
-        public void OnSubmit()
-        {
-            if (string.IsNullOrEmpty(this.Username) || !Regex.IsMatch(this.Username, "^[a-zA-Z0-9_-]{4,12}$"))
-            {
+        public void OnSubmit() {
+            if (string.IsNullOrEmpty(this.Username) || !Regex.IsMatch(this.Username, "^[a-zA-Z0-9_-]{4,12}$")) {
                 this.errors["errorMessage"] = "Please enter a valid username.";
                 return;
             }
 
-            if (string.IsNullOrEmpty(this.Email) || !Regex.IsMatch(this.Email, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"))
-            {
+            if (string.IsNullOrEmpty(this.Email) || !Regex.IsMatch(this.Email, @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$")) {
                 this.errors["errorMessage"] = "Please enter a valid email.";
                 return;
             }
@@ -153,8 +134,7 @@ namespace Loxodon.Framework.Tutorials
         }
     }
 
-    public class DatabindingExample : UIView
-    {
+    public class DatabindingExample : UIView {
         public Text description;
         public Text title;
         public Text username;
@@ -173,8 +153,7 @@ namespace Loxodon.Framework.Tutorials
 
         private Localization localization;
 
-        protected override void Awake()
-        {
+        protected override void Awake() {
             ApplicationContext context = Context.GetApplicationContext();
             BindingServiceBundle bindingService = new BindingServiceBundle(context.GetContainer());
             bindingService.Start();
@@ -185,10 +164,8 @@ namespace Loxodon.Framework.Tutorials
             localization.AddDataProvider(new DefaultDataProvider("LocalizationTutorials", new XmlDocumentParser()));
         }
 
-        protected override void Start()
-        {
-            Account account = new Account()
-            {
+        protected override void Start() {
+            Account account = new Account() {
                 ID = 1,
                 Username = "test",
                 Password = "test",
@@ -197,8 +174,7 @@ namespace Loxodon.Framework.Tutorials
             };
             account.Address.Value = "beijing";
 
-            AccountViewModel accountViewModel = new AccountViewModel()
-            {
+            AccountViewModel accountViewModel = new AccountViewModel() {
                 Account = account
             };
 

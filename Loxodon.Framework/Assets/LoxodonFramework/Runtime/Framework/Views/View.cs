@@ -25,18 +25,14 @@
 using System;
 using UnityEngine;
 
-namespace Loxodon.Framework.Views
-{
-    public class View : MonoBehaviour, IView
-    {
+namespace Loxodon.Framework.Views {
+    public class View : MonoBehaviour, IView {
         [NonSerialized]
         private IAttributes attributes = new Attributes();
 
-        public virtual string Name
-        {
+        public virtual string Name {
             get { return this.gameObject != null ? this.gameObject.name : null; }
-            set
-            {
+            set {
                 if (this.gameObject == null)
                     return;
 
@@ -44,26 +40,21 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        public virtual Transform Parent
-        {
+        public virtual Transform Parent {
             get { return this.transform != null ? this.transform.parent : null; }
         }
 
-        public virtual GameObject Owner
-        {
+        public virtual GameObject Owner {
             get { return this.gameObject; }
         }
 
-        public virtual Transform Transform
-        {
+        public virtual Transform Transform {
             get { return this.transform; }
         }
 
-        public virtual bool Visibility
-        {
+        public virtual bool Visibility {
             get { return this.gameObject != null ? this.gameObject.activeSelf : false; }
-            set
-            {
+            set {
                 if (this.gameObject == null)
                     return;
                 if (this.gameObject.activeSelf == value)
@@ -73,20 +64,17 @@ namespace Loxodon.Framework.Views
             }
         }
 
-        protected virtual void OnEnable()
-        {
+        protected virtual void OnEnable() {
             this.OnVisibilityChanged();
         }
 
-        protected virtual void OnDisable()
-        {
+        protected virtual void OnDisable() {
             this.OnVisibilityChanged();
         }
 
         public virtual IAttributes ExtraAttributes { get { return this.attributes; } }       
 
-        protected virtual void OnVisibilityChanged()
-        {
+        protected virtual void OnVisibilityChanged() {
         }
     }
 }

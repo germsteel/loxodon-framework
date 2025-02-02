@@ -30,31 +30,25 @@ using UnityEngine;
 using System.Linq;
 using System;
 
-namespace Loxodon.Framework.XLua
-{
+namespace Loxodon.Framework.XLua {
     [Serializable]
-    public class LuaSettings : ScriptableObject
-    {
+    public class LuaSettings : ScriptableObject {
         public const string LUA_SETTINGS_PATH = "Assets/LoxodonFramework/Editor/AppData/XLua/LuaSettings.asset";
 
         [SerializeField]
         private List<DefaultAsset> srcRoots = new List<DefaultAsset>();
 
-        public List<string> SrcRoots
-        {
-            get
-            {
+        public List<string> SrcRoots {
+            get {
                 if (this.srcRoots == null)
                     return new List<string>();
                 return this.srcRoots.Where(asset => asset != null).Select(asset => AssetDatabase.GetAssetPath(asset)).ToList();
             }
         }
 
-        public static LuaSettings GetOrCreateSettings()
-        {
+        public static LuaSettings GetOrCreateSettings() {
             var settings = AssetDatabase.LoadAssetAtPath<LuaSettings>(LUA_SETTINGS_PATH);
-            if (settings == null)
-            {
+            if (settings == null) {
                 settings = ScriptableObject.CreateInstance<LuaSettings>();
                 FileInfo file = new FileInfo(LUA_SETTINGS_PATH);
                 if (!file.Directory.Exists)
@@ -66,8 +60,7 @@ namespace Loxodon.Framework.XLua
             return settings;
         }
 
-        public static SerializedObject GetSerializedSettings()
-        {
+        public static SerializedObject GetSerializedSettings() {
             return new SerializedObject(GetOrCreateSettings());
         }
     }

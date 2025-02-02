@@ -24,13 +24,11 @@
 
 using System;
 
-namespace Loxodon.Framework.Commands
-{
+namespace Loxodon.Framework.Commands {
     /// <summary>
     /// 
     /// </summary>
-	public interface ICommand
-	{
+	public interface ICommand {
 		/// <summary>
 		/// Occurs when can execute changed.
 		/// </summary>
@@ -53,8 +51,7 @@ namespace Loxodon.Framework.Commands
 	/// <summary>
 	/// 
 	/// </summary>
-	public interface ICommand<T> : ICommand
-	{
+	public interface ICommand<T> : ICommand {
 		/// <summary>
 		/// Determines whether this instance can execute the specified parameter.
 		/// </summary>

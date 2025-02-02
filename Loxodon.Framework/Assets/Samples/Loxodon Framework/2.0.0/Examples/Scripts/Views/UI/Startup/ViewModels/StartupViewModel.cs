@@ -32,10 +32,8 @@ using Loxodon.Framework.ViewModels;
 using Loxodon.Log;
 using UnityEngine;
 
-namespace Loxodon.Framework.Examples
-{
-    public class StartupViewModel : ViewModelBase
-    {
+namespace Loxodon.Framework.Examples {
+    public class StartupViewModel : ViewModelBase {
         private static readonly ILog log = LogManager.GetLogger(typeof(StartupViewModel));
 
         private ProgressBar progressBar = new ProgressBar();
@@ -48,12 +46,10 @@ namespace Loxodon.Framework.Examples
         public InteractionRequest DismissRequest { get; private set; }
 
 
-        public StartupViewModel() : this(null)
-        {
+        public StartupViewModel() : this(null) {
         }
 
-        public StartupViewModel(IMessenger messenger) : base(messenger)
-        {
+        public StartupViewModel(IMessenger messenger) : base(messenger) {
             ApplicationContext context = Context.GetApplicationContext();
             this.localization = context.GetService<Localization>();
             var accountService = context.GetService<IAccountService>();
@@ -76,55 +72,46 @@ namespace Loxodon.Framework.Examples
             //    });
             //});
 
-            this.command = new SimpleCommand(async () =>
-            {
+            this.command = new SimpleCommand(async () => {
                 this.command.Enabled = false;
                 await this.LoginRequest.Raise(WindowNotification.CreateShowNotification(loginViewModel, false, true));
                 this.command.Enabled = true;
-                if (loginViewModel.Account != null)
-                {
+                if (loginViewModel.Account != null) {
                     await LoadSceneRequest.Raise(ProgressBar);
                     this.DismissRequest.Raise();
                 }
             });
         }
 
-        public ProgressBar ProgressBar
-        {
+        public ProgressBar ProgressBar {
             get { return this.progressBar; }
         }
 
-        public ICommand Click
-        {
+        public ICommand Click {
             get { return this.command; }
         }
 
-        public void OnClick()
-        {
+        public void OnClick() {
             log.Debug("onClick");
         }
 
         /// <summary>
         /// Simulate a unzip task.
         /// </summary>
-        public async void Unzip()
-        {
+        public async void Unzip() {
             this.command.Enabled = false;
             this.progressBar.Enable = true;
             this.ProgressBar.Tip = R.startup_progressbar_tip_unziping;
 
-            try
-            {
+            try {
                 var progress = 0f;
-                while (progress < 1f)
-                {
+                while (progress < 1f) {
                     progress += 0.01f;
                     this.ProgressBar.Progress = progress;/* update progress */
                     await new WaitForSecondsRealtime(0.02f);
                 }
             }
-            finally
-            {
+            finally {
                 this.command.Enabled = true;
                 this.progressBar.Enable = false;
                 this.progressBar.Tip = "";

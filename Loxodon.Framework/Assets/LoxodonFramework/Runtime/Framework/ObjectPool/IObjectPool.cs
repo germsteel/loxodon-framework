@@ -24,10 +24,8 @@
 
 using System;
 
-namespace Loxodon.Framework.ObjectPool
-{
-    public interface IObjectPool : IDisposable
-    {
+namespace Loxodon.Framework.ObjectPool {
+    public interface IObjectPool : IDisposable {
         /// <summary>
         /// Gets an object from the pool if one is available, otherwise creates one.
         /// </summary>
@@ -41,8 +39,7 @@ namespace Loxodon.Framework.ObjectPool
         void Free(object obj);
     }
 
-    public interface IObjectPool<T> : IObjectPool, IDisposable where T : class
-    {
+    public interface IObjectPool<T> : IObjectPool, IDisposable where T : class {
         /// <summary>
         /// Gets an object from the pool if one is available, otherwise creates one.
         /// </summary>

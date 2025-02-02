@@ -30,30 +30,23 @@ using Loxodon.Log;
 using System;
 using System.Threading.Tasks;
 
-namespace Loxodon.Framework.Views.InteractionActions
-{
-    public class AsyncDialogInteractionAction : AsyncLoadableInteractionActionBase<object>
-    {
+namespace Loxodon.Framework.Views.InteractionActions {
+    public class AsyncDialogInteractionAction : AsyncLoadableInteractionActionBase<object> {
         private static readonly ILog log = LogManager.GetLogger(typeof(AsyncDialogInteractionAction));
 
         private Window window;
 
-        public AsyncDialogInteractionAction(string viewName) : base(viewName, null, null)
-        {
+        public AsyncDialogInteractionAction(string viewName) : base(viewName, null, null) {
         }
 
-        public AsyncDialogInteractionAction(string viewName, IUIViewLocator locator) : base(viewName, locator)
-        {
+        public AsyncDialogInteractionAction(string viewName, IUIViewLocator locator) : base(viewName, locator) {
         }
         public Window Window { get { return this.window; } }
 
-        public override Task Action(object context)
-        {
-            if (context is WindowNotification notification)
-            {
+        public override Task Action(object context) {
+            if (context is WindowNotification notification) {
                 bool ignoreAnimation = notification.IgnoreAnimation;
-                switch (notification.ActionType)
-                {
+                switch (notification.ActionType) {
                     case Interactivity.ActionType.CREATE:
                         return Create(notification.ViewModel);
                     case Interactivity.ActionType.SHOW:
@@ -65,26 +58,21 @@ namespace Loxodon.Framework.Views.InteractionActions
                 }
                 return Task.CompletedTask;
             }
-            else
-            {
+            else {
                 return Show(context);
             }
         }
 
-        protected async Task Create(object viewModel)
-        {
-            try
-            {
+        protected async Task Create(object viewModel) {
+            try {
                 window = await LoadWindowAsync<Window>();
                 if (window == null)
                     throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", ViewName));
 
-                if (window is AlertDialogWindowBase && viewModel is AlertDialogViewModel)
-                {
+                if (window is AlertDialogWindowBase && viewModel is AlertDialogViewModel) {
                     (window as AlertDialogWindowBase).ViewModel = viewModel as AlertDialogViewModel;
                 }
-                else if (window is AlertDialogWindowBase && viewModel is DialogNotification notification)
-                {
+                else if (window is AlertDialogWindowBase && viewModel is DialogNotification notification) {
                     AlertDialogViewModel dialogViewModel = new AlertDialogViewModel();
                     dialogViewModel.Message = notification.Message;
                     dialogViewModel.Title = notification.Title;
@@ -95,25 +83,21 @@ namespace Loxodon.Framework.Views.InteractionActions
                     dialogViewModel.Click = (result) => notification.DialogResult = result;
                     (window as AlertDialogWindowBase).ViewModel = dialogViewModel;
                 }
-                else
-                {
+                else {
                     if (viewModel != null)
                         window.SetDataContext(viewModel);
                 }
 
                 window.Create();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 window = null;
                 throw e;
             }
         }
 
-        protected async Task Show(object viewModel, bool ignoreAnimation = false)
-        {
-            try
-            {
+        protected async Task Show(object viewModel, bool ignoreAnimation = false) {
+            try {
                 if (window == null)
                     await Create(viewModel);
 
@@ -121,8 +105,7 @@ namespace Loxodon.Framework.Views.InteractionActions
                 await window.WaitDismissed();
                 window = null;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (window != null)
                     await window.Dismiss(ignoreAnimation);
                 window = null;
@@ -130,14 +113,12 @@ namespace Loxodon.Framework.Views.InteractionActions
             }
         }
 
-        protected async Task Hide(bool ignoreAnimation = false)
-        {
+        protected async Task Hide(bool ignoreAnimation = false) {
             if (window != null)
                 await window.Hide(ignoreAnimation);
         }
 
-        protected async Task Dismiss(bool ignoreAnimation = false)
-        {
+        protected async Task Dismiss(bool ignoreAnimation = false) {
             if (window != null)
                 await window.Dismiss(ignoreAnimation);
         }

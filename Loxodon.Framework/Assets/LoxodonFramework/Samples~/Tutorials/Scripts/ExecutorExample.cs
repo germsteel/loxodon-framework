@@ -28,32 +28,25 @@ using Loxodon.Framework.Execution;
 #if NETFX_CORE
 using System.Threading.Tasks;
 #endif
-namespace Loxodon.Framework.Tutorials
-{
-    public class ExecutorExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class ExecutorExample : MonoBehaviour {
 
-        IEnumerator Start()
-        {
-            Executors.RunAsync(() =>
-            {
+        IEnumerator Start() {
+            Executors.RunAsync(() => {
                 Debug.LogFormat("RunAsync ");
             });
 
 
-            Executors.RunAsync(() =>
-            {
+            Executors.RunAsync(() => {
 #if NETFX_CORE
             Task.Delay(1000).Wait();
 #endif
-            Executors.RunOnMainThread(() =>
-                {
+            Executors.RunOnMainThread(() => {
                     Debug.LogFormat("RunOnMainThread Time:{0} frame:{1}", Time.time, Time.frameCount);
                 }, true);
             });
 
-            Executors.RunOnMainThread(() =>
-            {
+            Executors.RunOnMainThread(() => {
                 Debug.LogFormat("RunOnMainThread 2 Time:{0} frame:{1}", Time.time, Time.frameCount);
             }, false);
 
@@ -65,10 +58,8 @@ namespace Loxodon.Framework.Tutorials
 
         }
 
-        IEnumerator DoRun()
-        {
-            for (int i = 0; i < 10; i++)
-            {
+        IEnumerator DoRun() {
+            for (int i = 0; i < 10; i++) {
                 Debug.LogFormat("i = {0}", i);
                 yield return null;
             }

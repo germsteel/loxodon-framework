@@ -27,61 +27,50 @@ using Loxodon.Framework.Execution;
 using Loxodon.Log;
 using System;
 
-namespace Loxodon.Framework.Net
-{
-    public class Progress<T> : IProgress<T>
-    {
+namespace Loxodon.Framework.Net {
+    public class Progress<T> : IProgress<T> {
         private static readonly ILog log = LogManager.GetLogger(typeof(Progress<T>));
 
         private readonly bool runOnMainThread;
         private readonly Action<T> handler;
 
-        public Progress() : this(null, true)
-        {
+        public Progress() : this(null, true) {
         }
 
-        public Progress(Action<T> handler) : this(handler, true)
-        {
+        public Progress(Action<T> handler) : this(handler, true) {
             if (handler == null)
                 throw new ArgumentNullException("handler");
         }
 
-        public Progress(Action<T> handler, bool runOnMainThread)
-        {
+        public Progress(Action<T> handler, bool runOnMainThread) {
             this.handler = handler;
             this.runOnMainThread = runOnMainThread;
         }
 
         public event EventHandler<T> ProgressChanged;
 
-        protected virtual void OnReport(T value)
-        {
-            try
-            {
+        protected virtual void OnReport(T value) {
+            try {
                 Action<T> handler = this.handler;
                 EventHandler<T> changedEvent = ProgressChanged;
-                if (handler != null || changedEvent != null)
-                {
+                if (handler != null || changedEvent != null) {
                     if (runOnMainThread)
                         Executors.RunOnMainThread(() => { RaiseProgressChanged(value); });
                     else
                         RaiseProgressChanged(value);
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsErrorEnabled)
                     log.Error(e);
             }
         }
 
-        void IProgress<T>.Report(T value)
-        {
+        void IProgress<T>.Report(T value) {
             OnReport(value);
         }
 
-        private void RaiseProgressChanged(T value)
-        {
+        private void RaiseProgressChanged(T value) {
             Action<T> handler = this.handler;
             EventHandler<T> progressChanged = this.ProgressChanged;
 

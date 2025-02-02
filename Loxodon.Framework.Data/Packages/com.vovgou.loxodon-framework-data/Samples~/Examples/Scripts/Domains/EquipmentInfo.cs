@@ -27,10 +27,8 @@ using Loxodon.Framework.Localizations;
 using Newtonsoft.Json;
 #endif
 
-namespace Loxodon.Framework.Examples.Domains
-{
-    public class EquipmentInfo
-    {
+namespace Loxodon.Framework.Examples.Domains {
+    public class EquipmentInfo {
 #if NEWTONSOFT
         [JsonProperty("id")]
 #endif

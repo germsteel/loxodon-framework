@@ -12,33 +12,27 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Loxodon.Framework.TextFormatting
-{
-    public ref struct ValueStringBuilder
-    {
+namespace Loxodon.Framework.TextFormatting {
+    public ref struct ValueStringBuilder {
         private char[]? _arrayToReturnToPool;
         private Span<char> _chars;
         private int _pos;
 
-        public ValueStringBuilder(Span<char> initialBuffer)
-        {
+        public ValueStringBuilder(Span<char> initialBuffer) {
             _arrayToReturnToPool = null;
             _chars = initialBuffer;
             _pos = 0;
         }
 
-        public ValueStringBuilder(int initialCapacity)
-        {
+        public ValueStringBuilder(int initialCapacity) {
             _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(initialCapacity);
             _chars = _arrayToReturnToPool;
             _pos = 0;
         }
 
-        public int Length
-        {
+        public int Length {
             get => _pos;
-            set
-            {
+            set {
                 Debug.Assert(value >= 0);
                 Debug.Assert(value <= _chars.Length);
                 _pos = value;
@@ -47,8 +41,7 @@ namespace Loxodon.Framework.TextFormatting
 
         public int Capacity => _chars.Length;
 
-        public void EnsureCapacity(int capacity)
-        {
+        public void EnsureCapacity(int capacity) {
             // This is not expected to be called this with negative capacity
             Debug.Assert(capacity >= 0);
 
@@ -63,8 +56,7 @@ namespace Loxodon.Framework.TextFormatting
         /// This overload is pattern matched in the C# 7.3+ compiler so you can omit
         /// the explicit method call, and write eg "fixed (char* c = builder)"
         /// </summary>
-        public ref char GetPinnableReference()
-        {
+        public ref char GetPinnableReference() {
             return ref MemoryMarshal.GetReference(_chars);
         }
 
@@ -72,27 +64,22 @@ namespace Loxodon.Framework.TextFormatting
         /// Get a pinnable reference to the builder.
         /// </summary>
         /// <param name="terminate">Ensures that the builder has a null char after <see cref="Length"/></param>
-        public ref char GetPinnableReference(bool terminate)
-        {
-            if (terminate)
-            {
+        public ref char GetPinnableReference(bool terminate) {
+            if (terminate) {
                 EnsureCapacity(Length + 1);
                 _chars[Length] = '\0';
             }
             return ref MemoryMarshal.GetReference(_chars);
         }
 
-        public ref char this[int index]
-        {
-            get
-            {
+        public ref char this[int index] {
+            get {
                 Debug.Assert(index < _pos);
                 return ref _chars[index];
             }
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             string s = _chars.Slice(0, _pos).ToString();
             Dispose();
             return s;
@@ -105,10 +92,8 @@ namespace Loxodon.Framework.TextFormatting
         /// Returns a span around the contents of the builder.
         /// </summary>
         /// <param name="terminate">Ensures that the builder has a null char after <see cref="Length"/></param>
-        public ReadOnlySpan<char> AsSpan(bool terminate)
-        {
-            if (terminate)
-            {
+        public ReadOnlySpan<char> AsSpan(bool terminate) {
+            if (terminate) {
                 EnsureCapacity(Length + 1);
                 _chars[Length] = '\0';
             }
@@ -119,26 +104,21 @@ namespace Loxodon.Framework.TextFormatting
         public ReadOnlySpan<char> AsSpan(int start) => _chars.Slice(start, _pos - start);
         public ReadOnlySpan<char> AsSpan(int start, int length) => _chars.Slice(start, length);
 
-        public bool TryCopyTo(Span<char> destination, out int charsWritten)
-        {
-            if (_chars.Slice(0, _pos).TryCopyTo(destination))
-            {
+        public bool TryCopyTo(Span<char> destination, out int charsWritten) {
+            if (_chars.Slice(0, _pos).TryCopyTo(destination)) {
                 charsWritten = _pos;
                 Dispose();
                 return true;
             }
-            else
-            {
+            else {
                 charsWritten = 0;
                 Dispose();
                 return false;
             }
         }
 
-        public void Insert(int index, char value, int count)
-        {
-            if (_pos > _chars.Length - count)
-            {
+        public void Insert(int index, char value, int count) {
+            if (_pos > _chars.Length - count) {
                 Grow(count);
             }
 
@@ -148,17 +128,14 @@ namespace Loxodon.Framework.TextFormatting
             _pos += count;
         }
 
-        public void Insert(int index, string? s)
-        {
-            if (s == null)
-            {
+        public void Insert(int index, string? s) {
+            if (s == null) {
                 return;
             }
 
             int count = s.Length;
 
-            if (_pos > (_chars.Length - count))
-            {
+            if (_pos > (_chars.Length - count)) {
                 Grow(count);
             }
 
@@ -173,44 +150,36 @@ namespace Loxodon.Framework.TextFormatting
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Append(char c)
-        {
+        public void Append(char c) {
             int pos = _pos;
             Span<char> chars = _chars;
-            if ((uint)pos < (uint)chars.Length)
-            {
+            if ((uint)pos < (uint)chars.Length) {
                 chars[pos] = c;
                 _pos = pos + 1;
             }
-            else
-            {
+            else {
                 GrowAndAppend(c);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Append(string s)
-        {
+        public void Append(string s) {
             if (s == null)
                 return;
 
             int pos = _pos;
-            if (s.Length == 1 && (uint)pos < (uint)_chars.Length) // very common case, e.g. appending strings from NumberFormatInfo like separators, percent symbols, etc.
-            {
+            if (s.Length == 1 && (uint)pos < (uint)_chars.Length) // very common case, e.g. appending strings from NumberFormatInfo like separators, percent symbols, etc. {
                 _chars[pos] = s[0];
                 _pos = pos + 1;
             }
-            else
-            {
+            else {
                 AppendSlow(s);
             }
         }
 
-        private void AppendSlow(string s)
-        {
+        private void AppendSlow(string s) {
             int pos = _pos;
-            if (pos > _chars.Length - s.Length)
-            {
+            if (pos > _chars.Length - s.Length) {
                 Grow(s.Length);
             }
 
@@ -223,42 +192,34 @@ namespace Loxodon.Framework.TextFormatting
             _pos += s.Length;
         }
 
-        public void Append(char c, int count)
-        {
-            if (_pos > _chars.Length - count)
-            {
+        public void Append(char c, int count) {
+            if (_pos > _chars.Length - count) {
                 Grow(count);
             }
 
             Span<char> dst = _chars.Slice(_pos, count);
-            for (int i = 0; i < dst.Length; i++)
-            {
+            for (int i = 0; i < dst.Length; i++) {
                 dst[i] = c;
             }
             _pos += count;
         }
 
-        public unsafe void Append(char* value, int length)
-        {
+        public unsafe void Append(char* value, int length) {
             int pos = _pos;
-            if (pos > _chars.Length - length)
-            {
+            if (pos > _chars.Length - length) {
                 Grow(length);
             }
 
             Span<char> dst = _chars.Slice(_pos, length);
-            for (int i = 0; i < dst.Length; i++)
-            {
+            for (int i = 0; i < dst.Length; i++) {
                 dst[i] = *value++;
             }
             _pos += length;
         }
 
-        public void Append(ReadOnlySpan<char> value)
-        {
+        public void Append(ReadOnlySpan<char> value) {
             int pos = _pos;
-            if (pos > _chars.Length - value.Length)
-            {
+            if (pos > _chars.Length - value.Length) {
                 Grow(value.Length);
             }
 
@@ -267,11 +228,9 @@ namespace Loxodon.Framework.TextFormatting
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Span<char> AppendSpan(int length)
-        {
+        public Span<char> AppendSpan(int length) {
             int origPos = _pos;
-            if (origPos > _chars.Length - length)
-            {
+            if (origPos > _chars.Length - length) {
                 Grow(length);
             }
 
@@ -279,19 +238,16 @@ namespace Loxodon.Framework.TextFormatting
             return _chars.Slice(origPos, length);
         }
 
-        public void Remove(int startIndex, int length)
-        {
+        public void Remove(int startIndex, int length) {
             if (startIndex < 0 || length <= 0 || startIndex >= _pos || _pos == 0)
                 return;
 
-            if (_pos == length && startIndex == 0)
-            {
+            if (_pos == length && startIndex == 0) {
                 _pos = 0;
                 return;
             }
 
-            if (startIndex < (_pos - 1) && startIndex + length >= _pos)
-            {
+            if (startIndex < (_pos - 1) && startIndex + length >= _pos) {
                 _pos = startIndex;
                 return;
             }
@@ -300,14 +256,12 @@ namespace Loxodon.Framework.TextFormatting
             _pos = _pos - length;
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             _pos = 0;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void GrowAndAppend(char c)
-        {
+        private void GrowAndAppend(char c) {
             Grow(1);
             Append(c);
         }
@@ -321,8 +275,7 @@ namespace Loxodon.Framework.TextFormatting
         /// Number of chars requested beyond current position.
         /// </param>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void Grow(int additionalCapacityBeyondPos)
-        {
+        private void Grow(int additionalCapacityBeyondPos) {
             Debug.Assert(additionalCapacityBeyondPos > 0);
             Debug.Assert(_pos > _chars.Length - additionalCapacityBeyondPos, "Grow called incorrectly, no resize is needed.");
 
@@ -342,19 +295,16 @@ namespace Loxodon.Framework.TextFormatting
 
             char[]? toReturn = _arrayToReturnToPool;
             _chars = _arrayToReturnToPool = poolArray;
-            if (toReturn != null)
-            {
+            if (toReturn != null) {
                 ArrayPool<char>.Shared.Return(toReturn);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Dispose()
-        {
+        public void Dispose() {
             char[]? toReturn = _arrayToReturnToPool;
             this = default; // for safety, to avoid using pooled array if this instance is erroneously appended to again
-            if (toReturn != null)
-            {
+            if (toReturn != null) {
                 ArrayPool<char>.Shared.Return(toReturn);
             }
         }

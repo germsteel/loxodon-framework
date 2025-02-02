@@ -22,13 +22,11 @@
  * SOFTWARE.
  */
 
-namespace Loxodon.Framework.Prefs
-{
+namespace Loxodon.Framework.Prefs {
     /// <summary>
     /// A interface for encoding and decoding preference data.
     /// </summary>
-    public interface IEncryptor
-    {
+    public interface IEncryptor {
         /// <summary>
         /// encryption
         /// </summary>

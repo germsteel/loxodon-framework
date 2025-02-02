@@ -1,21 +1,16 @@
 ﻿using Loxodon.Log;
 using UnityEngine;
-namespace Loxodon.Framework.Tutorials
-{
-    public class NLogExample : MonoBehaviour
-    {
+namespace Loxodon.Framework.Tutorials {
+    public class NLogExample : MonoBehaviour {
         private ILog log;
-        private void Start()
-        {
+        private void Start() {
             log = LogManager.GetLogger(typeof(NLogExample));
             log.Debug("This is a debug test.");
         }
 
-        void Update()
-        {
+        void Update() {
             int r = Random.Range(0, 3);
-            switch (r)
-            {
+            switch (r) {
                 case 0:
                     if (log.IsDebugEnabled)
                         log.DebugFormat("This is a debug test.frame count:{0}", Time.frameCount);

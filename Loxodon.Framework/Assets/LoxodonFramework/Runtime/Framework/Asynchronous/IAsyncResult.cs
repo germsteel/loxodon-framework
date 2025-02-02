@@ -24,13 +24,11 @@
 
 using System;
 
-namespace Loxodon.Framework.Asynchronous
-{
+namespace Loxodon.Framework.Asynchronous {
     /// <summary>
     /// IAsyncResult
     /// </summary>
-    public interface IAsyncResult
-    {
+    public interface IAsyncResult {
         /// <summary>
         /// Gets the result of the asynchronous operation.
         /// </summary>
@@ -89,8 +87,7 @@ namespace Loxodon.Framework.Asynchronous
     /// IAsyncResult
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public interface IAsyncResult<TResult> : IAsyncResult
-    {
+    public interface IAsyncResult<TResult> : IAsyncResult {
         /// <summary>
         /// Gets the result of the asynchronous operation.
         /// </summary>

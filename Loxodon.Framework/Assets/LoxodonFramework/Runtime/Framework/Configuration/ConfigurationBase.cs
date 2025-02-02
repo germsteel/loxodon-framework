@@ -28,10 +28,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Loxodon.Framework.Configurations
-{
-    public abstract class ConfigurationBase : IConfiguration
-    {
+namespace Loxodon.Framework.Configurations {
+    public abstract class ConfigurationBase : IConfiguration {
         private static readonly ILog log = LogManager.GetLogger(typeof(ConfigurationBase));
 
         private static readonly DefaultTypeConverter defaultTypeConverter = new DefaultTypeConverter();
@@ -42,24 +40,19 @@ namespace Loxodon.Framework.Configurations
 
         private List<ITypeConverter> converters = new List<ITypeConverter>();
 
-        public ConfigurationBase() : this(null)
-        {
+        public ConfigurationBase() : this(null) {
         }
 
-        public ConfigurationBase(ITypeConverter[] converters)
-        {
+        public ConfigurationBase(ITypeConverter[] converters) {
             this.converters.Add(defaultTypeConverter);
-            if (converters != null && converters.Length > 0)
-            {
-                foreach (var converter in converters)
-                {
+            if (converters != null && converters.Length > 0) {
+                foreach (var converter in converters) {
                     this.converters.Insert(0, converter);
                 }
             }
         }
 
-        protected virtual T GetProperty<T>(string key, T defaultValue)
-        {
+        protected virtual T GetProperty<T>(string key, T defaultValue) {
             object value = GetProperty(key);
             if (value == null)
                 return defaultValue;
@@ -67,8 +60,7 @@ namespace Loxodon.Framework.Configurations
             return (T)ConvertTo(typeof(T), value);
         }
 
-        protected virtual object GetProperty(string key, Type type, object defaultValue)
-        {
+        protected virtual object GetProperty(string key, Type type, object defaultValue) {
             object value = GetProperty(key);
             if (value == null)
                 return defaultValue;
@@ -76,12 +68,9 @@ namespace Loxodon.Framework.Configurations
             return ConvertTo(type, value);
         }
 
-        protected virtual object ConvertTo(Type type, object value)
-        {
-            try
-            {
-                for (int i = 0; i < converters.Count; i++)
-                {
+        protected virtual object ConvertTo(Type type, object value) {
+            try {
+                for (int i = 0; i < converters.Count; i++) {
                     var converter = converters[i];
                     if (!converter.Support(type))
                         continue;
@@ -89,15 +78,13 @@ namespace Loxodon.Framework.Configurations
                     return converter.Convert(type, value);
                 }
             }
-            catch (FormatException e)
-            {
+            catch (FormatException e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("This value \"{0}\" cannot be converted to type \"{1}\"", value, type.Name);
 
                 throw e;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("This value \"{0}\" cannot be converted to type \"{1}\"", value, type.Name);
 
@@ -107,13 +94,11 @@ namespace Loxodon.Framework.Configurations
             throw new NotSupportedException(string.Format("This value \"{0}\" cannot be converted to the type \"{1}\"", value, type.Name));
         }
 
-        public virtual void AddTypeConverter(ITypeConverter converter)
-        {
+        public virtual void AddTypeConverter(ITypeConverter converter) {
             this.converters.Insert(0, converter);
         }
 
-        public virtual IConfiguration Subset(string prefix)
-        {
+        public virtual IConfiguration Subset(string prefix) {
             if (string.IsNullOrEmpty(prefix))
                 throw new ArgumentException("the prefix is null or empty", "prefix");
 
@@ -122,86 +107,69 @@ namespace Loxodon.Framework.Configurations
 
         public virtual bool IsEmpty { get { return !this.GetKeys().MoveNext(); } }
 
-        public virtual IEnumerator<string> GetKeys(string prefix)
-        {
-            return new FilterEnumerator<string>(GetKeys(), (it) =>
-            {
+        public virtual IEnumerator<string> GetKeys(string prefix) {
+            return new FilterEnumerator<string>(GetKeys(), (it) => {
                 return it.StartsWith(prefix + KEY_DELIMITER);
             });
         }
 
-        public bool GetBoolean(string key)
-        {
+        public bool GetBoolean(string key) {
             return GetBoolean(key, false);
         }
 
-        public bool GetBoolean(string key, bool defaultValue)
-        {
+        public bool GetBoolean(string key, bool defaultValue) {
             return GetProperty(key, defaultValue);
         }
 
-        public float GetFloat(string key)
-        {
+        public float GetFloat(string key) {
             return this.GetFloat(key, 0);
         }
 
-        public float GetFloat(string key, float defaultValue)
-        {
+        public float GetFloat(string key, float defaultValue) {
             return this.GetProperty(key, defaultValue);
         }
 
-        public double GetDouble(string key)
-        {
+        public double GetDouble(string key) {
             return this.GetDouble(key, 0);
         }
 
-        public double GetDouble(string key, double defaultValue)
-        {
+        public double GetDouble(string key, double defaultValue) {
             return this.GetProperty(key, defaultValue);
         }
 
-        public short GetShort(string key)
-        {
+        public short GetShort(string key) {
             return this.GetShort(key, 0);
         }
 
-        public short GetShort(string key, short defaultValue)
-        {
+        public short GetShort(string key, short defaultValue) {
             return this.GetProperty(key, defaultValue);
         }
 
-        public int GetInt(string key)
-        {
+        public int GetInt(string key) {
             return this.GetInt(key, 0);
         }
 
-        public int GetInt(string key, int defaultValue)
-        {
+        public int GetInt(string key, int defaultValue) {
             return this.GetProperty(key, defaultValue);
         }
 
-        public long GetLong(string key)
-        {
+        public long GetLong(string key) {
             return this.GetLong(key, 0);
         }
 
-        public long GetLong(string key, long defaultValue)
-        {
+        public long GetLong(string key, long defaultValue) {
             return this.GetProperty(key, defaultValue);
         }
 
-        public string GetString(string key)
-        {
+        public string GetString(string key) {
             return this.GetString(key, null);
         }
 
-        public string GetString(string key, string defaultValue)
-        {
+        public string GetString(string key, string defaultValue) {
             return GetProperty<string>(key, defaultValue);
         }
 
-        public string GetFormattedString(string key, params object[] args)
-        {
+        public string GetFormattedString(string key, params object[] args) {
             string format = GetString(key, null);
             if (format == null)
                 return null;
@@ -209,64 +177,52 @@ namespace Loxodon.Framework.Configurations
             return string.Format(format, args);
         }
 
-        public DateTime GetDateTime(string key)
-        {
+        public DateTime GetDateTime(string key) {
             return this.GetDateTime(key, DEFAULT_DATETIME);
         }
 
-        public DateTime GetDateTime(string key, DateTime defaultValue)
-        {
+        public DateTime GetDateTime(string key, DateTime defaultValue) {
             return this.GetProperty(key, defaultValue);
         }
 
-        public Version GetVersion(string key)
-        {
+        public Version GetVersion(string key) {
             return this.GetVersion(key, DEFAULT_VERSION);
         }
 
-        public virtual Version GetVersion(string key, Version defaultValue)
-        {
+        public virtual Version GetVersion(string key, Version defaultValue) {
             return this.GetProperty(key, defaultValue);
         }
 
-        public T GetObject<T>(string key)
-        {
+        public T GetObject<T>(string key) {
             return this.GetObject(key, default(T));
         }
 
-        public virtual T GetObject<T>(string key, T defaultValue)
-        {
+        public virtual T GetObject<T>(string key, T defaultValue) {
             return this.GetProperty(key, defaultValue);
         }
 
-        public object[] GetArray(string key, Type type)
-        {
+        public object[] GetArray(string key, Type type) {
             return GetArray(key, type, new object[0]);
         }
 
-        public object[] GetArray(string key, Type type, object[] defaultValue)
-        {
+        public object[] GetArray(string key, Type type, object[] defaultValue) {
             object value = GetProperty(key);
             if (value == null)
                 return defaultValue;
 
-            if (value is string)
-            {
+            if (value is string) {
                 string str = (string)value;
                 if (string.IsNullOrEmpty(str))
                     return defaultValue;
 
                 List<object> list = new List<object>();
                 string[] items = StringSpliter.Split(str, ',');
-                foreach (string item in items)
-                {
+                foreach (string item in items) {
                     object ret = null;
-                    try
-                    {
+                    try {
                         ret = ConvertTo(type, item);
                     }
-                    catch (NotSupportedException e)
-                    {
+                    catch (NotSupportedException e) {
                         throw e;
                     }
                     catch (Exception) { }
@@ -276,19 +232,15 @@ namespace Loxodon.Framework.Configurations
             }
 
             Array array = value as Array;
-            if (array != null)
-            {
+            if (array != null) {
                 List<object> list = new List<object>();
-                for (int i = 0; i < array.Length; i++)
-                {
+                for (int i = 0; i < array.Length; i++) {
                     var item = array.GetValue(i);
                     object ret = null;
-                    try
-                    {
+                    try {
                         ret = ConvertTo(type, item);
                     }
-                    catch (NotSupportedException e)
-                    {
+                    catch (NotSupportedException e) {
                         throw e;
                     }
                     catch (Exception) { }
@@ -300,34 +252,28 @@ namespace Loxodon.Framework.Configurations
             throw new FormatException(string.Format("This value \"{0}\" cannot be converted to an \"{1}\" array.", value, type.Name));
         }
 
-        public T[] GetArray<T>(string key)
-        {
+        public T[] GetArray<T>(string key) {
             return GetArray(key, new T[0]);
         }
 
-        public virtual T[] GetArray<T>(string key, T[] defaultValue)
-        {
+        public virtual T[] GetArray<T>(string key, T[] defaultValue) {
             object value = GetProperty(key);
             if (value == null)
                 return defaultValue;
 
-            if (value is string)
-            {
+            if (value is string) {
                 string str = (string)value;
                 if (string.IsNullOrEmpty(str))
                     return defaultValue;
 
                 List<T> list = new List<T>();
                 string[] items = StringSpliter.Split(str, ',');
-                foreach (string item in items)
-                {
+                foreach (string item in items) {
                     T ret = default(T);
-                    try
-                    {
+                    try {
                         ret = (T)ConvertTo(typeof(T), item);
                     }
-                    catch (NotSupportedException e)
-                    {
+                    catch (NotSupportedException e) {
                         throw e;
                     }
                     catch (Exception) { }
@@ -340,19 +286,15 @@ namespace Loxodon.Framework.Configurations
                 return (T[])value;
 
             Array array = value as Array;
-            if (array != null)
-            {
+            if (array != null) {
                 List<T> list = new List<T>();
-                for (int i = 0; i < array.Length; i++)
-                {
+                for (int i = 0; i < array.Length; i++) {
                     var item = array.GetValue(i);
                     T ret = default(T);
-                    try
-                    {
+                    try {
                         ret = (T)ConvertTo(typeof(T), item);
                     }
-                    catch (NotSupportedException e)
-                    {
+                    catch (NotSupportedException e) {
                         throw e;
                     }
                     catch (Exception) { }
@@ -364,13 +306,11 @@ namespace Loxodon.Framework.Configurations
             throw new FormatException(string.Format("This value \"{0}\" cannot be converted to an \"{1}\" array.", value, typeof(T).Name));
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             IEnumerator<string> it = this.GetKeys();
             StringBuilder buf = new StringBuilder();
             buf.Append(this.GetType().Name).Append("{ \r\n");
-            while (it.MoveNext())
-            {
+            while (it.MoveNext()) {
                 string key = it.Current;
                 buf.AppendFormat("  {0} = {1}\r\n", key, GetProperty(key));
             }

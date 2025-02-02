@@ -24,14 +24,11 @@
 
 using System;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
-{
-    public abstract class WovenPropertyNodeProxy<T, TValue> : NotifiableSourceProxyBase, IObtainable, IObtainable<TValue>, IModifiable, IModifiable<TValue>, INotifiable, IPropertyNodeProxy where T : class
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving {
+    public abstract class WovenPropertyNodeProxy<T, TValue> : NotifiableSourceProxyBase, IObtainable, IObtainable<TValue>, IModifiable, IModifiable<TValue>, INotifiable, IPropertyNodeProxy where T : class {
         private readonly Type valueType;
         protected new T source;
-        public WovenPropertyNodeProxy(T source) : base(source)
-        {
+        public WovenPropertyNodeProxy(T source) : base(source) {
             this.source = source;
             this.valueType = typeof(TValue);
         }
@@ -40,33 +37,28 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Weaving
 
         public abstract TValue GetValue();
 
-        public void OnPropertyChanged()
-        {
+        public void OnPropertyChanged() {
             this.RaiseValueChanged();
         }
 
         public abstract void SetValue(TValue value);
 
-        object IObtainable.GetValue()
-        {
+        object IObtainable.GetValue() {
             return this.GetValue();
         }
 
-        TValue1 IObtainable.GetValue<TValue1>()
-        {
+        TValue1 IObtainable.GetValue<TValue1>() {
             if (this is IObtainable<TValue1> proxy)
                 return proxy.GetValue();
 
             return (TValue1)Convert.ChangeType(GetValue(), typeof(TValue1));
         }
 
-        void IModifiable.SetValue(object value)
-        {
+        void IModifiable.SetValue(object value) {
             this.SetValue((TValue)value);
         }
 
-        void IModifiable.SetValue<TValue1>(TValue1 value)
-        {
+        void IModifiable.SetValue<TValue1>(TValue1 value) {
             if (this is IModifiable<TValue1> proxy)
                 proxy.SetValue(value);
             else

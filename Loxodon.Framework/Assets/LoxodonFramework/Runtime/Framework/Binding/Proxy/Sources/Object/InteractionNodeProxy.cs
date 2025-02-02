@@ -29,10 +29,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Loxodon.Framework.Binding.Proxy.Sources.Object
-{
-    public class InteractionNodeProxy : SourceProxyBase, IModifiable
-    {
+namespace Loxodon.Framework.Binding.Proxy.Sources.Object {
+    public class InteractionNodeProxy : SourceProxyBase, IModifiable {
         private static readonly ILog log = LogManager.GetLogger(typeof(InteractionNodeProxy));
 
         private readonly IInteractionRequest request;
@@ -41,25 +39,21 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
         protected IInvoker invoker;/* Method Binding or  Script Function Binding*/
         protected Delegate handler;/* Delegate Binding */
 
-        public InteractionNodeProxy(IInteractionRequest request) : this(null, request)
-        {
+        public InteractionNodeProxy(IInteractionRequest request) : this(null, request) {
         }
 
-        public InteractionNodeProxy(object source, IInteractionRequest request) : base(source)
-        {
+        public InteractionNodeProxy(object source, IInteractionRequest request) : base(source) {
             this.request = request;
             this.BindEvent();
         }
 
         public override Type Type { get { return typeof(EventHandler<InteractionEventArgs>); } }
 
-        public virtual void SetValue<TValue>(TValue value)
-        {
+        public virtual void SetValue<TValue>(TValue value) {
             this.SetValue((object)value);
         }
 
-        public virtual void SetValue(object value)
-        {
+        public virtual void SetValue(object value) {
             if (value != null && !(value is IInvoker || value is Delegate))
                 throw new ArgumentException("Binding object to InteractionRequest failed, unsupported object type", "value");
 
@@ -73,26 +67,21 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                 return;
 
             //Bind Method
-            if (value is IProxyInvoker proxyInvoker)
-            {
-                if (this.IsValid(proxyInvoker))
-                {
+            if (value is IProxyInvoker proxyInvoker) {
+                if (this.IsValid(proxyInvoker)) {
                     this.invoker = proxyInvoker;
                     return;
                 }
 
                 throw new ArgumentException("Binding the IProxyInvoker to InteractionRequest failed, mismatched parameter type.");
             }
-            else if (value is IInvoker invoker)
-            {
+            else if (value is IInvoker invoker) {
                 this.invoker = invoker;
             }
 
             //Bind Delegate
-            if (value is Delegate handler)
-            {
-                if (this.IsValid(handler))
-                {
+            if (value is Delegate handler) {
+                if (this.IsValid(handler)) {
                     this.handler = handler;
                     return;
                 }
@@ -101,8 +90,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             }
         }
 
-        protected virtual bool IsValid(Delegate handler)
-        {
+        protected virtual bool IsValid(Delegate handler) {
             if (handler is EventHandler<InteractionEventArgs>)
                 return true;
 #if NETFX_CORE
@@ -120,8 +108,7 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return parameterTypes[0].IsAssignableFrom(typeof(object)) && parameterTypes[1].IsAssignableFrom(typeof(InteractionEventArgs));
         }
 
-        protected virtual bool IsValid(IProxyInvoker invoker)
-        {
+        protected virtual bool IsValid(IProxyInvoker invoker) {
             IProxyMethodInfo info = invoker.ProxyMethodInfo;
             if (!info.ReturnType.Equals(typeof(void)))
                 return false;
@@ -133,30 +120,24 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
             return parameters[0].ParameterType.IsAssignableFrom(typeof(object)) && parameters[1].ParameterType.IsAssignableFrom(typeof(InteractionEventArgs));
         }
 
-        protected virtual void BindEvent()
-        {
+        protected virtual void BindEvent() {
             if (this.request != null)
                 this.request.Raised += OnRaised;
         }
 
-        protected virtual void UnbindEvent()
-        {
+        protected virtual void UnbindEvent() {
             if (this.request != null)
                 this.request.Raised -= OnRaised;
         }
 
-        protected virtual void OnRaised(object sender, InteractionEventArgs args)
-        {
-            try
-            {
-                if (this.invoker != null)
-                {
+        protected virtual void OnRaised(object sender, InteractionEventArgs args) {
+            try {
+                if (this.invoker != null) {
                     this.invoker.Invoke(sender, args);
                     return;
                 }
 
-                if (this.handler != null)
-                {
+                if (this.handler != null) {
                     if (this.handler is EventHandler<InteractionEventArgs> eventHandler)
                         eventHandler(sender, args);
                     else
@@ -164,17 +145,14 @@ namespace Loxodon.Framework.Binding.Proxy.Sources.Object
                     return;
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 if (log.IsWarnEnabled)
                     log.WarnFormat("{0}", e);
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
+        protected override void Dispose(bool disposing) {
+            if (!disposed) {
                 this.UnbindEvent();
                 this.handler = null;
                 this.invoker = null;

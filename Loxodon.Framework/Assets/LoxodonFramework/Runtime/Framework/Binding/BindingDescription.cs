@@ -30,11 +30,9 @@ using Loxodon.Framework.Binding.Proxy.Sources;
 using Loxodon.Framework.Binding.Proxy.Sources.Object;
 using Loxodon.Framework.Binding.Converters;
 
-namespace Loxodon.Framework.Binding
-{
+namespace Loxodon.Framework.Binding {
     [Serializable]
-    public class BindingDescription
-    {
+    public class BindingDescription {
         public string TargetName { get; set; }
 
         public Type TargetType { get; set; }
@@ -49,23 +47,19 @@ namespace Loxodon.Framework.Binding
 
         public object CommandParameter { get; set; }
 
-        public BindingDescription()
-        {
+        public BindingDescription() {
         }
 
-        public BindingDescription(string targetName, Path path, IConverter converter = null, BindingMode mode = BindingMode.Default)
-        {
+        public BindingDescription(string targetName, Path path, IConverter converter = null, BindingMode mode = BindingMode.Default) {
             this.TargetName = targetName;
             this.Mode = mode;
             this.Converter = converter;
-            this.Source = new ObjectSourceDescription
-            {
+            this.Source = new ObjectSourceDescription {
                 Path = path
             };
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             StringBuilder buf = new StringBuilder();
             buf.Append("{binding ").Append(this.TargetName);
 

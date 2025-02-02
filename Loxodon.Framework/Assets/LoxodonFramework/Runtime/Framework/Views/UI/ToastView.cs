@@ -24,14 +24,11 @@
 
 using UnityEngine.UI;
 
-namespace Loxodon.Framework.Views
-{
-    public class ToastView : ToastViewBase
-    {
+namespace Loxodon.Framework.Views {
+    public class ToastView : ToastViewBase {
         public Text text;
 
-        protected override void OnContentChanged()
-        {
+        protected override void OnContentChanged() {
             if (this.text != null)
                 this.text.text = this.content;
         }

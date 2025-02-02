@@ -29,23 +29,18 @@ using Loxodon.Framework.ViewModels;
 using Loxodon.Log;
 using System;
 
-namespace Loxodon.Framework.Views.InteractionActions
-{
-    public class DialogInteractionAction : InteractionActionBase<object>
-    {
+namespace Loxodon.Framework.Views.InteractionActions {
+    public class DialogInteractionAction : InteractionActionBase<object> {
         private static readonly ILog log = LogManager.GetLogger(typeof(DialogInteractionAction));
 
         private string viewName;
-        public DialogInteractionAction(string viewName)
-        {
+        public DialogInteractionAction(string viewName) {
             this.viewName = viewName;
         }
 
-        public override void Action(object viewModel, Action callback)
-        {
+        public override void Action(object viewModel, Action callback) {
             Window window = null;
-            try
-            {
+            try {
                 ApplicationContext context = Context.GetApplicationContext();
                 IUIViewLocator locator = context.GetService<IUIViewLocator>();
                 if (locator == null)
@@ -58,12 +53,10 @@ namespace Loxodon.Framework.Views.InteractionActions
                 if (window == null)
                     throw new NotFoundException(string.Format("Not found the dialog window named \"{0}\".", viewName));
 
-                if (window is AlertDialogWindowBase && viewModel is AlertDialogViewModel)
-                {
+                if (window is AlertDialogWindowBase && viewModel is AlertDialogViewModel) {
                     (window as AlertDialogWindowBase).ViewModel = viewModel as AlertDialogViewModel;
                 }
-                else if (window is AlertDialogWindowBase && viewModel is DialogNotification notification)
-                {
+                else if (window is AlertDialogWindowBase && viewModel is DialogNotification notification) {
                     AlertDialogViewModel dialogViewModel = new AlertDialogViewModel();
                     dialogViewModel.Message = notification.Message;
                     dialogViewModel.Title = notification.Title;
@@ -74,21 +67,18 @@ namespace Loxodon.Framework.Views.InteractionActions
                     dialogViewModel.Click = (result) => notification.DialogResult = result;
                     (window as AlertDialogWindowBase).ViewModel = dialogViewModel;
                 }
-                else
-                {
+                else {
                     window.SetDataContext(viewModel);
                 }
                                 
                 window.Create();
-                window.WaitDismissed().Callbackable().OnCallback((r) =>
-                {
+                window.WaitDismissed().Callbackable().OnCallback((r) => {
                     callback?.Invoke();
                     callback = null;
                 });
                 window.Show(true);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 callback?.Invoke();
                 callback = null;
 

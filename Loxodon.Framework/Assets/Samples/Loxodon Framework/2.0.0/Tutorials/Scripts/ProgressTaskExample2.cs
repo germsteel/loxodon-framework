@@ -33,29 +33,21 @@ using System.Threading;
 
 using Loxodon.Framework.Asynchronous;
 
-namespace Loxodon.Framework.Tutorials
-{
-    public class ProgressTaskExample2 : MonoBehaviour
-    {
-        protected IEnumerator Start()
-        {
+namespace Loxodon.Framework.Tutorials {
+    public class ProgressTaskExample2 : MonoBehaviour {
+        protected IEnumerator Start() {
             ProgressTask<float, string> task = new ProgressTask<float, string>(new System.Action<IProgressPromise<float, string>>(DoTask), false, true);
 
             /* Start the task */
-            task.OnPreExecute(() =>
-            {
+            task.OnPreExecute(() => {
                 Debug.Log("The task has started.");
-            }).OnPostExecute((result) =>
-            {
+            }).OnPostExecute((result) => {
                 Debug.LogFormat("The task has completed. result:{0}", result);/* only execute successfully */
-            }).OnProgressUpdate((progress) =>
-            {
+            }).OnProgressUpdate((progress) => {
                 Debug.LogFormat("The current progress:{0}%", (int)(progress * 100));
-            }).OnError((e) =>
-            {
+            }).OnError((e) => {
                 Debug.LogFormat("An error occurred:{0}", e);
-            }).OnFinish(() =>
-            {
+            }).OnFinish(() => {
                 Debug.Log("The task has been finished.");/* completed or error or canceled*/
             }).Start();
 
@@ -73,18 +65,14 @@ namespace Loxodon.Framework.Tutorials
         /// </summary>
         /// <returns>The task.</returns>
         /// <param name="promise">Promise.</param>
-        protected void DoTask(IProgressPromise<float, string> promise)
-        {
-            try
-            {
+        protected void DoTask(IProgressPromise<float, string> promise) {
+            try {
                 int n = 50;
                 float progress = 0f;
                 StringBuilder buf = new StringBuilder();
-                for (int i = 0; i < n; i++)
-                {
+                for (int i = 0; i < n; i++) {
                     /* If the task is cancelled, then stop the task */
-                    if (promise.IsCancellationRequested)
-                    {
+                    if (promise.IsCancellationRequested) {
                         promise.SetCancelled();
                         break;
                     }
@@ -101,8 +89,7 @@ namespace Loxodon.Framework.Tutorials
                 promise.UpdateProgress(1f);
                 promise.SetResult(buf.ToString()); /* update the result. */
             }
-            catch (System.Exception e)
-            {
+            catch (System.Exception e) {
                 promise.SetException(e);
             }
         }
@@ -112,8 +99,7 @@ namespace Loxodon.Framework.Tutorials
         /// </summary>
         /// <returns>The cancel.</returns>
         /// <param name="result">Result.</param>
-        protected IEnumerator DoCancel(IAsyncResult result)
-        {
+        protected IEnumerator DoCancel(IAsyncResult result) {
             yield return new WaitForSeconds(3f);
             result.Cancel();
         }

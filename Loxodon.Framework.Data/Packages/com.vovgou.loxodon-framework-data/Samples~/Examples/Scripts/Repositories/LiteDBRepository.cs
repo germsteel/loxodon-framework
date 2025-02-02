@@ -25,19 +25,15 @@
 #if LITEDB
 using LiteDB;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public abstract class LiteDBRepository<T>
-    {
+namespace Loxodon.Framework.Examples.Repositories {
+    public abstract class LiteDBRepository<T> {
         protected ILiteDatabase database;
         protected ILiteCollection<T> collection;
-        public LiteDBRepository(ILiteDatabase database)
-        {
+        public LiteDBRepository(ILiteDatabase database) {
             this.database = database;
         }
 
-        protected ILiteCollection<T> GetCollection()
-        {
+        protected ILiteCollection<T> GetCollection() {
             if (collection == null)
                 collection = database.GetCollection<T>();
             return collection;

@@ -29,24 +29,19 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace Loxodon.Framework.Examples.Repositories
-{
-    public class JsonUserInfoRepository : IUserInfoRepository
-    {
+namespace Loxodon.Framework.Examples.Repositories {
+    public class JsonUserInfoRepository : IUserInfoRepository {
         private Dictionary<int, UserInfo> idAndUserInfoMapping = new Dictionary<int, UserInfo>();
         private Dictionary<string, UserInfo> usernameAndUserInfoMapping = new Dictionary<string, UserInfo>();
         private bool loaded = false;
-        private void LoadAll()
-        {
+        private void LoadAll() {
             var text = Resources.Load<TextAsset>("Json/userinfo");
             if (text == null || text.text.Length <= 0)
                 return;
 
-            using (StringReader reader = new StringReader(text.text))
-            {
+            using (StringReader reader = new StringReader(text.text)) {
                 string line;
-                while ((line = reader.ReadLine()) != null)
-                {
+                while ((line = reader.ReadLine()) != null) {
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
 
@@ -61,8 +56,7 @@ namespace Loxodon.Framework.Examples.Repositories
             this.loaded = true;
         }
 
-        public virtual UserInfo GetById(int id)
-        {
+        public virtual UserInfo GetById(int id) {
             if (!loaded)
                 this.LoadAll();
 
@@ -71,8 +65,7 @@ namespace Loxodon.Framework.Examples.Repositories
             return userInfo;
         }
 
-        public virtual UserInfo GetByUsername(string username)
-        {
+        public virtual UserInfo GetByUsername(string username) {
             if (!loaded)
                 this.LoadAll();
 
